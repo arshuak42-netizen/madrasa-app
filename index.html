@@ -30,11 +30,13 @@
         .fee-paid { color: green; font-weight: bold; }
         .fee-unpaid { color: red; font-weight: bold; }
         input[type="file"] { padding: 5px; font-size: 13px; background: #fff; }
-        .holiday-label { display: flex; align-items: center; background: #ffebee; padding: 10px; border-radius: 5px; color: #c62828; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .holiday-label input { width: auto; margin-right: 10px; }
+        .holiday-label { background: #ffebee; padding: 10px; border-radius: 5px; color: #c62828; font-weight: bold; margin-bottom: 10px; }
         .accordion-btn { background-color: #eceff1; color: #37474f; border: 1px solid #cfd8dc; margin-top: 8px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .accordion-btn:hover { background-color: #cfd8dc; }
         .accordion-content { display: none; padding: 15px 5px; }
+        .btn-whatsapp { background-color: #25d366; color: white; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: bold; margin-top: 2px; }
+        .btn-whatsapp:hover { background-color: #128c7e; }
+        .reply-box { background: #e0f2f1; padding: 8px; border-radius: 4px; margin-top: 5px; font-size: 12px; border-left: 3px solid #009688; }
     </style>
 </head>
 <body>
@@ -79,27 +81,27 @@
         <div id="parent-attendance-report"></div>
     </div>
     
-    <h3>📝 പരാതികളും നിർദ്ദേശങ്ങളും (Complaints)</h3>
+    <h3>📝 പരാതികളും മറുപടിയും (Complaints Box)</h3>
     <div class="card" style="background: #fce4ec;">
         <div class="form-group">
-            <label>മാനേജ്മെന്റിന് നൽകാനുള്ള പരാതി ഇവിടെ ടൈപ്പ് ചെയ്യുക:</label>
+            <label>മാനേജ്മെന്റിന് നൽകാനുള്ള പരാതി/അഭിപ്രായം ഇവിടെ ടൈപ്പ് ചെയ്യുക:</label>
             <textarea id="parent-complaint-text" rows="3" placeholder="പരാതികൾ ഇവിടെ എഴുതാം..."></textarea>
         </div>
         <button style="background:#c2185b; padding:8px;" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
+        <h4 style="color:#c2185b; margin-top:15px;">നിങ്ങൾ നൽകിയ പരാതികളുടെ നിലവാരം:</h4>
+        <div id="parent-complaints-list-view" style="font-size:13px;">പരാതികൾ ഒന്നും സമർപ്പിച്ചിട്ടില്ല.</div>
     </div>
 
-    <h3>📝 പരീക്ഷാ വിവരങ്ങൾ (Exam Info)</h3>
+    <h3>📝 പരീക്ഷാ വിവരങ്ങൾ (Exam Timetable)</h3>
     <div class="card">
-        <h4>📅 ടൈംടേബിൾ</h4>
         <div id="parent-timetable-view">ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല.</div>
-        <h4>📊 പരീക്ഷാ ഫലം (Result)</h4>
-        <div id="parent-result-view">റിസൾട്ടുകൾ പ്രസിദ്ധീകരിച്ചിട്ടില്ല.</div>
+        <div id="parent-result-view" style="margin-top:15px; font-weight:bold;"></div>
     </div>
 
     <h3>🕌 മദ്രസ ഭാരവാഹികൾ & ഉസ്താദുമാർ</h3>
     <h4>ഭാരവാഹികൾ (Committee)</h4>
     <div id="parent-committee-view" class="teacher-grid"></div>
-    <h4 style="margin-top:20px;">അધ്യാപകർ (Teachers)</h4>
+    <h4 style="margin-top:20px;">അധ്യാപകർ (Teachers)</h4>
     <div id="parent-teachers-view" class="teacher-grid"></div>
 
     <button style="background:#555; margin-top:20px;" onclick="logout()">Logout</button>
@@ -125,10 +127,12 @@
         <select id="teacher-day-select" onchange="loadAttendanceList('teacher')"></select>
     </div>
 
-    <label class="holiday-label">
-        <input type="checkbox" id="teacher-holiday-checkbox" onchange="toggleHolidayMode('teacher')"> 
-        📢 ഇന്ന് മദ്രസ അവധിയാണ് (Holiday)
-    </label>
+    <div class="holiday-label">
+        <label style="display:inline-flex; align-items:center; color:#c62828; cursor:pointer;">
+            <input type="checkbox" id="teacher-holiday-checkbox" onchange="toggleHolidayMode('teacher')" style="width:auto; margin-right:8px;"> 📢 ഇന്ന് മദ്രസ അവധിയാണ് (Holiday)
+        </label>
+        <input type="text" id="teacher-holiday-reason" placeholder="അവധിയുടെ കാരണം ഇവിടെ നൽകുക (ഉദാ: മഴ കാരണം)" style="margin-top:5px; font-size:13px; padding:6px;">
+    </div>
 
     <h3>ദൈനംദിന ഹാജർ (Attendance)</h3>
     <table>
@@ -143,14 +147,14 @@
     <h3>കമ്മിറ്റി പാനൽ (മാനേജ്മെന്റ് ഡാഷ്‌ബോർഡ്)</h3>
     
     <div class="card" style="background:#fce4ec;">
-        <h4>📥 രക്ഷിതാക്കളുടെ പരാതികൾ (Complaints Box)</h4>
+        <h4>📥 രക്ഷിതാക്കളുടെ പരാതികളും മറുപടിയും</h4>
         <div id="committee-complaints-view">പരാതികൾ ഒന്നും ലഭിച്ചിട്ടില്ല.</div>
     </div>
 
     <div class="card" style="background:#e8f5e9; border: 2px solid #2e7d32;">
         <h4>🙋‍♂️ ഉസ്താദുമാരുടെ ഹാജർ നില (Staff Attendance)</h4>
         <div class="form-group">
-            <label>മാസം തിരഞ്ഞെടുക്കുക:</label>
+            <label>മാസം:</label>
             <select id="comm-t-month" onchange="loadTeachersAttendanceForCommittee()">
                 <option value="ജൂൺ">ജൂൺ</option><option value="ജൂലൈ">ജൂലൈ</option><option value="ഓഗസ്റ്റ്">ഓഗസ്റ്റ്</option>
                 <option value="സെപ്റ്റംബർ">സെപ്റ്റംബർ</option><option value="ഒക്ടോബർ">ഒക്ടോബർ</option><option value="നവംബർ">നവംബർ</option>
@@ -159,14 +163,14 @@
             </select>
         </div>
         <div class="form-group">
-            <label>തീയതി തിരഞ്ഞെടുക്കുക:</label>
+            <label>തീയതി:</label>
             <select id="comm-t-day" onchange="loadTeachersAttendanceForCommittee()"></select>
         </div>
         <div id="comm-teachers-attendance-report">ഹാജർ വിവരങ്ങൾ ലഭ്യമല്ല.</div>
     </div>
 
     <div class="card" style="background:#fff3e0;">
-        <h4>📋 കുട്ടികളുടെ ഹാജർ പരിശോധിക്കുക</h4>
+        <h4>📋 കുട്ടികളുടെ ഹാജർ & അവധി കാരണം</h4>
         <div class="form-group">
             <label>ക്ലാസ്:</label>
             <select id="comm-class-select" onchange="loadStudentAttendanceForCommittee()"></select>
@@ -200,7 +204,7 @@
     <h3>സദർ പാനൽ (മാനേജ്മെന്റ്)</h3>
 
     <div class="card" style="background:#fce4ec;">
-        <h4>📥 രക്ഷിതാക്കളുടെ പരാതികൾ (Complaints Box)</h4>
+        <h4>📥 രക്ഷിതാക്കളുടെ പരാതികളും മറുപടിയും</h4>
         <div id="sadr-complaints-view">പരാതികൾ ഒന്നും ലഭിച്ചിട്ടില്ല.</div>
     </div>
     
@@ -224,10 +228,12 @@
             <select id="sadr-day-select" onchange="loadAttendanceList('sadr')"></select>
         </div>
 
-        <label class="holiday-label">
-            <input type="checkbox" id="sadr-holiday-checkbox" onchange="toggleHolidayMode('sadr')"> 
-            📢 ഇന്ന് മദ്രസ അവധിയാണ് (Holiday)
-        </label>
+        <div class="holiday-label">
+            <label style="display:inline-flex; align-items:center; color:#c62828; cursor:pointer;">
+                <input type="checkbox" id="sadr-holiday-checkbox" onchange="toggleHolidayMode('sadr')" style="width:auto; margin-right:8px;"> 📢 ഇന്ന് മദ്രസ അവധിയാണ് (Holiday)
+            </label>
+            <input type="text" id="sadr-holiday-reason" placeholder="അവധിയുടെ കാരണം ഇവിടെ നൽകുക (ഉദാ: നബിദിനം പ്രമാണിച്ച്)" style="margin-top:5px; font-size:13px; padding:6px;">
+        </div>
 
         <table>
             <thead><tr><th>പേര്</th><th>ഹാജർ</th></tr></thead>
@@ -242,7 +248,7 @@
     <div id="acc-t-attendance" class="accordion-content">
         <div class="card" style="background:#efebe9;">
             <div class="form-group">
-                <label>മാസം തിരഞ്ഞെടുക്കുക:</label>
+                <label>മാസം:</label>
                 <select id="sadr-t-month" onchange="loadTeachersAttendanceForSadr()">
                     <option value="ജൂൺ">ജൂൺ</option><option value="ജൂലൈ">ജൂലൈ</option><option value="ഓഗസ്റ്റ്">ഓഗസ്റ്റ്</option>
                     <option value="സെപ്റ്റംബർ">സെപ്റ്റംബർ</option><option value="ഒക്ടോബർ">ഒക്ടോബർ</option><option value="നവംബർ">നവംബർ</option>
@@ -251,7 +257,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>തീയതി തിരഞ്ഞെടുക്കുക:</label>
+                <label>തീയതി:</label>
                 <select id="sadr-t-day" onchange="loadTeachersAttendanceForSadr()"></select>
             </div>
             <table>
@@ -274,7 +280,7 @@
                 <strong style="color:#2e7d32;">+ പുതിയ കുട്ടിയെ ആഡ് ചെയ്യുക (Add New)</strong>
                 <div class="form-group" style="margin-top:8px;"><label>കുട്ടിയുടെ പേര്:</label><input type="text" id="new-stud-name"></div>
                 <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="new-stud-reg"></div>
-                <div class="form-group"><label>രക്ഷിതാവിന്റെ നമ്പർ:</label><input type="text" id="new-stud-phone"></div>
+                <div class="form-group"><label>രക്ഷിതാവിന്റെ നമ്പർ:</label><input type="text" id="new-stud-phone" placeholder="ഉദാ: +919876543210"></div>
                 <div class="form-group">
                     <label>ഫോട്ടോ:</label>
                     <input type="file" id="new-stud-file" accept="image/*" onchange="previewNewStudentImage(this)">
@@ -283,6 +289,38 @@
                 <button style="background:#2e7d32; padding:8px; font-size:14px;" onclick="addNewCustomStudent()">ഈ കുട്ടിയെ ലിസ്റ്റിലേക്ക് ചേർക്കുക</button>
             </div>
             <div id="sadr-student-editor-list"></div>
+        </div>
+    </div>
+
+    <button class="accordion-btn" onclick="toggleAccordion('acc-exams')"><span>📝 പരീക്ഷാ ടൈംടേബിൾ ഒന്നിച്ച് ക്രമീകരിക്കൽ</span> <span>▼</span></button>
+    <div id="acc-exams" class="accordion-content">
+        <div class="card" style="background:#fff8e1;">
+            <h4>📅 പുതിയ പരീക്ഷാ ഷെഡ്യൂൾ നിർമ്മിക്കുക</h4>
+            <div class="form-group">
+                <label>ക്ലാസ് തിരഞ്ഞെടുക്കുക:</label>
+                <select id="exam-class-select">
+                    <option value="1">ക്ലാസ് 1</option><option value="2">ക്ലാസ് 2</option><option value="3">ക്ലാസ് 3</option>
+                    <option value="4">ക്ലാസ് 4</option><option value="5">ക്ലാസ് 5</option><option value="6">ക്ലാസ് 6</option>
+                    <option value="7">ക്ലാസ് 7</option><option value="8">ക്ലാസ് 8</option><option value="9">ക്ലാസ് 9</option>
+                    <option value="10">ക്ലാസ് 10</option><option value="+1">ക്ലാസ് +1</option><option value="+2">ക്ലാസ് +2</option>
+                </select>
+            </div>
+            <div class="form-group"><label>പരീക്ഷാ കാലയളവ് (ഉദാ: മാർച്ച് 10 മുതൽ 15 വരെ):</label><input type="text" id="exam-duration" placeholder="ഇന്ന ദിവസം മുതൽ ഇന്ന ദിവസം വരെ"></div>
+            <div class="form-group"><label>പരീക്ഷാ സമയം (ഉദാ: 09:30 AM to 11:30 AM):</label><input type="text" id="exam-time-string" placeholder="ഇത്ര മണിക്ക്"></div>
+            <div class="form-group">
+                <label>വിഷയങ്ങളും തീയതികളും (വിശദമായി എഴുതുക):</label>
+                <textarea id="exam-subjects-list" rows="5" placeholder="ഉദാ:&#10;10/03 - ഫിഖ്ഹ്&#10;11/03 - അഖീദ&#10;12/03 - താരിഖ്"></textarea>
+            </div>
+            <button style="background:#ff9100;" onclick="saveCompleteTimetable()">ടൈംടേബിൾ ഒന്നിച്ച് പബ്ലിഷ് ചെയ്യുക</button>
+            <div id="sadr-timetable-list" style="margin-top:15px;"></div>
+        </div>
+
+        <div class="card" style="background:#efebe9;">
+            <h4>📊 പരീക്ഷാ ഫലം (Result)</h4>
+            <div class="form-group"><label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="res-reg"></div>
+            <div class="form-group"><label>മാർക്ക് / ഗ്രേഡ്:</label><input type="text" id="res-mark" placeholder="95/100 (A+)"></div>
+            <button style="background:#795548;" onclick="saveResult()">റിസൾട്ട് പബ്ലിഷ് ചെയ്യുക</button>
+            <div id="sadr-result-list" style="margin-top:10px;"></div>
         </div>
     </div>
 
@@ -318,6 +356,7 @@
                 </select>
             </div>
             <button style="background:#33691e;" onclick="saveFeeStatus()">ഫീസ് വിവരം അപ്ഡേറ്റ് ചെയ്യുക</button>
+            <div id="fee-whatsapp-receipt-box" style="margin-top:12px;"></div>
         </div>
     </div>
 
@@ -346,39 +385,20 @@
         </div>
     </div>
 
-    <button class="accordion-btn" onclick="toggleAccordion('acc-exams')"><span>📝 പരീക്ഷകളും ഫലങ്ങളും</span> <span>▼</span></button>
-    <div id="acc-exams" class="accordion-content">
-        <div class="card" style="background:#fff8e1;">
-            <h4>📅 ടൈംടേബിൾ അപ്‌ലോഡ്</h4>
-            <div class="form-group"><label>തീയതി & സമയം:</label><input type="text" id="exam-date" placeholder="12/10/2026, 09:30 AM"></div>
-            <div class="form-group"><label>വിഷയം & ക്ലാസ്:</label><input type="text" id="exam-subject" placeholder="ഫിഖ്ഹ് - ക്ലാസ് 1"></div>
-            <button style="background:#ff9100;" onclick="saveTimetable()">ടൈംടേബിൾ ആഡ് ചെയ്യുക</button>
-            <div id="sadr-timetable-list" style="margin-top:10px;"></div>
-        </div>
-
-        <div class="card" style="background:#efebe9;">
-            <h4>📊 പരീക്ഷാ ഫലം (Result)</h4>
-            <div class="form-group"><label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="res-reg"></div>
-            <div class="form-group"><label>മാർക്ക് / ഗ്രേഡ്:</label><input type="text" id="res-mark" placeholder="95/100 (A+)"></div>
-            <button style="background:#795548;" onclick="saveResult()">റിസൾട്ട് പബ്ലിഷ് ചെയ്യുക</button>
-            <div id="sadr-result-list" style="margin-top:10px;"></div>
-        </div>
-    </div>
-
     <button style="background:#555; margin-top:20px; width:100%;" onclick="logout()">Logout</button>
 </div>
 
 <script>
     const masterStudentList = [
-        { id: 1, name: "അത്വാഉറഹ്മാൻ", class: "1" }, { id: 2, name: "മുഹമ്മദ് ഷാസിൽ", class: "1" }, { id: 3, name: "മുഹമ്മദ് രിഫ്ദ്", class: "1" }, { id: 4, name: "ഇബ്രാഹിം KM", class: "1" }, { id: 5, name: "സൈന മറിയം മെഹ്‌വിഷ്", class: "1" }, { id: 6, name: "റുഖയ്യ സിദ", class: "1" },
+        { id: 1, name: "അത്വാഉറഹ്മാൻ", class: "1" }, { id: 2, name: "മുحمد ഷാസിൽ", class: "1" }, { id: 3, name: "മുഹമ്മദ് രിഫ്ദ്", class: "1" }, { id: 4, name: "ഇബ്രാഹിം KM", class: "1" }, { id: 5, name: "സൈന മറിയം മെഹ്‌വിഷ്", class: "1" }, { id: 6, name: "റുഖയ്യ സിദ", class: "1" },
         { id: 7, name: "അബ്്ദുൽ ബാസിത്", class: "2" }, { id: 8, name: "ഷാൻ അബ്ദുൽ റഹ്മാൻ നജാൻ", class: "2" }, { id: 9, name: "അഹദ് മുഹ്‌യിദ്ദീൻ", class: "2" }, { id: 10, name: "മുഹമ്മദ് റബീഹ്", class: "2" }, { id: 11, name: "നസീഹ് ഇബ്രാഹിം", class: "2" }, { id: 12, name: "മുഹമ്മദ് അമൻ സാഹിദ്", class: "2" }, { id: 13, name: "ആയിഷ ലൈബ", class: "2" }, { id: 14, name: "സൻഹ റuഖയ്യ", class: "2" }, { id: 15, name: "സൈനബ ഇശൽ", class: "2" }, { id: 16, name: "ഖദീജ ലിബ", class: "2" }, { id: 17, name: "റുഖയ്യ നദ", class: "2" },
         { id: 18, name: "അബ്ദുല്ല അദ്നാൻ", class: "3" }, { id: 19, name: "അബ്ദുൽ നാസിഹ്", class: "3" }, { id: 20, name: "രെഹാൻ ശൈഖ്", class: "3" }, { id: 21, name: "മുഹമ്മദ് ലബീബ്", class: "3" }, { id: 22, name: "അഹമദ് നസ്വാൻ", class: "3" }, { id: 23, name: "ഇസ്ഹാഖ് ഇസ്മായിൽ", class: "3" }, { id: 24, name: "മുഹമ്മദ് ഷംആൻ", class: "3" }, { id: 25, name: "അബ്ദുല്ലാഹ് ആമിർ", class: "3" }, { id: 26, name: "മുഹ്സിൽ മിശാൽ", class: "3" }, { id: 27, name: "മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", class: "3" }, { id: 28, name: "മുഹമ്മദ് ഹയ്യാൻ", class: "3" }, { id: 29, name: "സിംസാറുൽ ഹഖ്", class: "3" }, { id: 30, name: "അഫ്രാ അഷ്റഫ്", class: "3" }, { id: 31, name: "നഫീസ സ്വഫ", class: "3" }, { id: 32, name: "ഫാത്തിമ ഇഷൽ", class: "3" }, { id: 33, name: "റിംസ സക്കീർ", class: "3" },
-        { id: 34, name: "അബ്ദുൽ ഹയ്യൻ", class: "4" }, { id: 35, name: "അബ്ദുറഹ്മാൻ നസ്‌വാൻ", class: "4" }, { id: 36, name: "ഇബ്രാഹിം ഖലീൽ", class: "4" }, { id: 37, name: "അയാസ് അബൂബക്കർ", class: "4" }, { id: 38, name: "മുഹമ്മദ് രിഫാൽ", class: "4" }, { id: 39, name: "ആസിം മുആസ്", class: "4" }, { id: 40, name: "മുഹമ്മദ് ഹാഫിള്", class: "4" }, { id: 41, name: "മുഹമ്മദ് നഹ്‌യാൻ", class: "4" }, { id: 42, name: "മുഹമ്മദ് മിശ്ഹദ്", class: "4" }, { id: 43, name: "യൂസഫ് സാഹി", class: "4" }, { id: 44, name: "അബ്ദുല്ലാഹ് ഷയാൻ സലാം", class: "4" }, { id: 45, name: "അലാ ബിൻ ബിലാൽ", class: "4" }, { id: 46, name: "മുഹമ്മദ് അമ്മാർ", class: "4" }, { id: 47, name: "അബ്ദുൽ റഹ്മാൻ ഇസാൻ", class: "4" }, { id: 48, name: "അസാ മറിയം", class: "4" },
+        { id: 34, name: "അബ്ദുൽ ഹയ്യൻ", class: "4" }, { id: 35, name: "അബ്ദുറഹ്മാൻ നസ്‌വാൻ", class: "4" }, { id: 36, name: "ഇബ്രാഹിം ഖലീൽ", class: "4" }, { id: 37, name: "അയാസ് അബൂബക്കർ", class: "4" }, { id: 38, name: "മുഹമ്മദ് രിഫാൽ", class: "4" }, { id: 39, name: "ആസിം മുആസ്", class: "4" }, { id: 40, name: "മുഹമ്മദ് ഹാഫിള്", class: "4" }, { id: 41, name: "മുഹമ്മദ് നഹ്‌യാൻ", class: "4" }, { id: 42, name: "മുഹമ്മദ് മിശ്හദ്", class: "4" }, { id: 43, name: "യൂസഫ് സാഹി", class: "4" }, { id: 44, name: "അബ്ദുല്ലാഹ് ഷയാൻ സലാം", class: "4" }, { id: 45, name: "അലാ ബിൻ ബിലാൽ", class: "4" }, { id: 46, name: "മുഹമ്മദ് അമ്മാർ", class: "4" }, { id: 47, name: "അബ്ദുൽ റഹ്മാൻ ഇസാൻ", class: "4" }, { id: 48, name: "അസാ മറിയം", class: "4" },
         { id: 49, name: "അബ്ദുല്ലാഹ്", class: "5" }, { id: 50, name: "മുഈനുദ്ദീൻ", class: "5" }, { id: 51, name: "മുഹമ്മദ് അദ്നാൻ", class: "5" }, { id: 52, name: "മുഹമ്മദ് മിൻഹാജ്", class: "5" }, { id: 53, name: "വാഹിദ് സമാൻ", class: "5" }, { id: 54, name: "ഷൈമ മറിയം", class: "5" }, { id: 55, name: "മറിയം സഫ", class: "5" }, { id: 56, name: "ഫാത്തിമ TK", class: "5" }, { id: 57, name: "ആയിഷ അബ്ദുല്ലാഹ്", class: "5" }, { id: 58, name: "ഫാത്തിമ ജുമാന", class: "5" }, { id: 59, name: "ആയിഷ മെഹ്സിൻ", class: "5" },
         { id: 60, name: "അബൂ ത്വാഹിർ", class: "6" }, { id: 61, name: "അബ്ദുൽ ഖാദർ ഷഹാൻ", class: "6" }, { id: 62, name: "മഹ്മൂദ് അസാൻ", class: "6" }, { id: 63, name: "മാലിക് ഹസൻ", class: "6" }, { id: 64, name: "അحمد നസൽ", class: "6" }, { id: 65, name: "ഫിസാൻ", class: "6" }, { id: 66, name: "ഇബ്രാഹിം ഇസ്മായിൽ", class: "6" }, { id: 67, name: "മുഹമ്മദ് സിനാൻ", class: "6" }, { id: 68, name: "മുഹമ്മദ് ഷിബിലി", class: "6" }, { id: 69, name: "ആയിഷ ഐഫ", class: "6" }, { id: 70, name: "ആയിഷ സുഹാന ഷഹറിൻ", class: "6" }, { id: 71, name: "ലൈലിയ  ഫാത്തിമ", class: "6" }, { id: 72, name: "ആയിഷ മെഹ്റ അസ്മി", class: "6" }, { id: 73, name: "ആയിഷ ഹിബ", class: "6" },
         { id: 74, name: "മുഹമ്മദ് സ്വബാഹ്", class: "7" }, { id: 75, name: "അബ്ദുല്ലാഹ് സെയ്ഫ്", class: "7" }, { id: 76, name: "മറിയം സുഹാ", class: "7" }, { id: 77, name: "ഫാത്തിമ ഹമീദ്", class: "7" }, { id: 78, name: "ആയിഷ തമന്ന", class: "7" }, { id: 79, name: "മറിയം ფൈഹ", class: "7" }, { id: 80, name: "അംന  ഫാത്തിമ", class: "7" }, { id: 81, name: "സെബ മറിയം", class: "7" }, { id: 82, name: "സെല്ലാ ഷംസീർ", class: "7" }, { id: 83, name: "മെഹ്റ മുംതാസ്", class: "7" }, { id: 84, name: "മിൻഹാ  ഫാത്തിമ", class: "7" }, { id: 85, name: "ഹാസിയ ഹംന", class: "7" },
         { id: 86, name: "മുഹമ്മദ് ഷഹ്സാദ്", class: "8" }, { id: 87, name: "അബ്ദുല്ലാഹ് അഷ്റഫ്", class: "8" }, { id: 88, name: "മുഹമ്മദ് നസ്മിൽ", class: "8" }, { id: 89, name: "ആയിഷ അഷ്റഫ്", class: "8" }, { id: 90, name: "സഹ്റ ബത്തൂൽ", class: "8" }, { id: 91, name: "ഫാത്തിമ മിസ്ന", class: "8" }, { id: 92, name: "ആയിഷ നുവൈറ", class: "8" }, { id: 93, name: "ആമിന സുസൈന", class: "8" },
-        { id: 94, name: "അസ്ം മിസാൽ", class: "9" }, { id: 95, name: "അബ്ദുല്ലാഹ് സഈം", class: "9" }, { id: 96, name: "അഹ്സൻ ഷാസിൽ", class: "9" }, { id: 97, name: "മുഹമ്മദ് ഷഹീൻ", class: "9" }, { id: 98, name: "മുഹ്‌യിദ്ദീൻ നിහാൽ", class: "9" }, { id: 99, name: "മുഹമ്മദ് മിദ്‌ലാജ്", class: "9" }, { id: 100, name: "ഹിബ മിഫന്ന", class: "9" }, { id: 101, name: "ഫാത്തിമ ഷാഹിയ", class: "9" }, { id: 102, name: "ഫാത്തിമ KS", class: "9" }, { id: 103, name: "ഖദീജ മിൻഹ", class: "9" }, { id: 104, name: "അഖീല", class: "9" },
+        { id: 94, name: "അസ്ം മിസാൽ", class: "9" }, { id: 95, name: "അബ്ദുല്ലാഹ് സഈം", class: "9" }, { id: 96, name: "അഹ്സൻ ഷാസിൽ", class: "9" }, { id: 97, name: "മുഹമ്മദ് ഷഹീൻ", class: "9" }, { id: 98, name: "മുഹ്‌യിദ്ദീൻ നിහาล", class: "9" }, { id: 99, name: "മുഹമ്മദ് മിദ്‌ലാജ്", class: "9" }, { id: 100, name: "ഹിബ മിഫന്ന", class: "9" }, { id: 101, name: "ഫാത്തിമ ഷാഹിയ", class: "9" }, { id: 102, name: "ഫാത്തിമ KS", class: "9" }, { id: 103, name: "ഖദീജ മിൻഹ", class: "9" }, { id: 104, name: "അഖീല", class: "9" },
         { id: 105, name: "ഇബ്രാഹിം നബീൽ", class: "10" }, { id: 106, name: "മുഹമ്മദ് ഷംനാദ്", class: "10" }, { id: 107, name: "സനൂബിയ", class: "10" }, { id: 108, name: "ഷെസാ  ഫാത്തിമ", class: "10" }, { id: 109, name: "ഫാത്തിമ ഷാഹില", class: "10" }, { id: 110, name: "ആയിഷ നജ", class: "10" },
         { id: 111, name: "മുഹമ്മദ് നിහാൽ", class: "+1" }, { id: 112, name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", class: "+1" }, { id: 113, name: "ജാസിം", class: "+1" }, { id: 114, name: "ഷെസിൻ KS", class: "+1" }, { id: 115, name: "മഹ്ഫൂസ്", class: "+1" }, { id: 116, name: "മുഹമ്മദ് സ്വഫ്വാൻ", class: "+1" }, { id: 117, name: "ഫാത്തിമ", class: "+1" }, { id: 118, name: "ഖദീജ", class: "+1" }, { id: 119, name: "ആയിഷ മുൻദിറ", class: "+1" },
         { id: 120, name: "മുഹമ്മദ് ലുബൈബ്", class: "+2" }, { id: 121, name: "മുഹമ്മദ് മിസാജ്", class: "+2" }, { id: 122, name: "ഹുദാ  ഫാത്തിമ", class: "+2" }, { id: 123, name: "ലൈല നസ്രിൻ മുഹിബ്ബ", class: "+2" }, { id: 124, name: "ആയിഷ നജാഹ്", class: "+2" }
@@ -399,7 +419,6 @@
         120: "574", 121: "585", 122: "492", 123: "493", 124: "494"
     };
 
-    // Preloaded Teachers Data (EASY LOGIN UPDATED)
     const defaultTeachers = [
         { name: "അർഷദ് അൽ-ഹാദി", classes: "1,7,10", username: "arshad", password: "123", phone: "+91 70121 46533", img: "" },
         { name: "അബ്ദുൽ നാസർ സഖാഫി", classes: "2,8,+2", username: "nasar", password: "123", phone: "+91 70254 55012", img: "" },
@@ -418,14 +437,17 @@
     let feesDatabase = JSON.parse(localStorage.getItem('m_fees_db')) || {};
     let teachers = JSON.parse(localStorage.getItem('m_teachers')) || defaultTeachers;
     let committee = JSON.parse(localStorage.getItem('m_committee')) || defaultCommittee;
-    let timetables = JSON.parse(localStorage.getItem('m_timetables')) || [];
     let results = JSON.parse(localStorage.getItem('m_results')) || [];
-    let attendanceDb = JSON.parse(localStorage.getItem('m_attendance_v8')) || {};
     let complaintsDb = JSON.parse(localStorage.getItem('m_complaints_db')) || [];
     let nabiPrograms = JSON.parse(localStorage.getItem('m_nabi_programs')) || [];
     let removedStudentIds = JSON.parse(localStorage.getItem('m_removed_ids')) || [];
     let teachersAttendanceDb = JSON.parse(localStorage.getItem('m_teachers_attendance')) || {};
     
+    // NEW COMPREHENSIVE DATABASES
+    let attendanceDb = JSON.parse(localStorage.getItem('m_attendance_v9')) || {};
+    let examTimetableDb = JSON.parse(localStorage.getItem('m_exam_timetable_v2')) || {}; 
+    let holidayReasonsDb = JSON.parse(localStorage.getItem('m_holiday_reasons')) || {};
+
     let loggedInTeacher = null;
     let currentActiveParentReg = "";
     const academicMonths = ["ജൂൺ", "ജൂലൈ", "ഓഗസ്റ്റ്", "സെപ്റ്റംബർ", "ഒക്ടോബർ", "നവംബർ", "ഡിസംബർ", "ജനുവരി", "ഫെബ്രുവരി", "മാർച്ച്", "ഏപ്രിൽ"];
@@ -484,20 +506,21 @@
         localStorage.setItem('m_fees_db', JSON.stringify(feesDatabase));
         localStorage.setItem('m_teachers', JSON.stringify(teachers));
         localStorage.setItem('m_committee', JSON.stringify(committee));
-        localStorage.setItem('m_timetables', JSON.stringify(timetables));
         localStorage.setItem('m_results', JSON.stringify(results));
-        localStorage.setItem('m_attendance_v8', JSON.stringify(attendanceDb));
         localStorage.setItem('m_complaints_db', JSON.stringify(complaintsDb));
         localStorage.setItem('m_nabi_programs', JSON.stringify(nabiPrograms));
         localStorage.setItem('m_removed_ids', JSON.stringify(removedStudentIds));
         localStorage.setItem('m_teachers_attendance', JSON.stringify(teachersAttendanceDb));
+        localStorage.setItem('m_attendance_v9', JSON.stringify(attendanceDb));
+        localStorage.setItem('m_exam_timetable_v2', JSON.stringify(examTimetableDb));
+        localStorage.setItem('m_holiday_reasons', JSON.stringify(holidayReasonsDb));
 
         renderSadrStudentEditor();
         loadAttendanceList('sadr');
         loadTeachersAttendanceForSadr();
         renderTeachers();
         renderCommittee();
-        renderTimetables();
+        renderCompleteTimetables();
         renderResults();
         renderComplaints();
         renderNabiPrograms();
@@ -542,6 +565,7 @@
         }
     }
 
+    // TEACHERS ATTENDANCE
     function loadTeachersAttendanceForSadr() {
         let month = document.getElementById('sadr-t-month').value;
         let day = document.getElementById('sadr-t-day').value;
@@ -582,10 +606,29 @@
             let key = `T_${idx}_${month}_${day}`;
             let status = teachersAttendanceDb[key] || "ഹാജർ എടുത്തിട്ടില്ല";
             let color = status === "Present" ? "green" : (status === "Absent" ? "red" : "#666");
-            let statusText = status === "Present" ? "Present (ഹാജരുണ്ട്)" : (status === "Absent" ? "Absent (അവധിയാണ്)" : status);
+            let statusText = status === "Present" ? "Present" : (status === "Absent" ? "Absent" : status);
             html += `<tr><td><b>${t.name}</b></td><td style="color:${color};font-weight:bold;">${statusText}</td></tr>`;
         });
         div.innerHTML = html + "</table>";
+    }
+
+    // HOLIDAY MANAGEMENT WITH REASON
+    function toggleHolidayMode(prefix) {
+        let cls = document.getElementById(prefix + '-class-select').value;
+        let month = document.getElementById(prefix + '-month-select').value;
+        let day = document.getElementById(prefix + '-day-select').value;
+        let isHoliday = document.getElementById(prefix + '-holiday-checkbox').checked;
+        let reasonInput = document.getElementById(prefix + '-holiday-reason').value.trim();
+
+        let holidayKey = `HOLIDAY_${cls}_${month}_${day}`;
+        if(isHoliday) { 
+            attendanceDb[holidayKey] = "YES"; 
+            holidayReasonsDb[holidayKey] = reasonInput || "വ്യക്തമായ കാരണം നൽകിയിട്ടില്ല";
+        } else { 
+            delete attendanceDb[holidayKey]; 
+            delete holidayReasonsDb[holidayKey];
+        }
+        loadAttendanceList(prefix);
     }
 
     function loadStudentAttendanceForCommittee() {
@@ -597,7 +640,8 @@
 
         let holidayKey = `HOLIDAY_${cls}_${month}_${day}`;
         if(attendanceDb[holidayKey] === "YES") {
-            div.innerHTML = `<p style="color:red; font-weight:bold; text-align:center;">📢 ഇന്ന് ഈ ക്ലാസിന് മദ്രസ അവധിയാണ് (Holiday)</p>`;
+            let reason = holidayReasonsDb[holidayKey] || "അവധി";
+            div.innerHTML = `<p style="color:red; font-weight:bold; text-align:center; background:#ffebee; padding:10px; border-radius:5px;">📢 ഇന്ന് അവധിയാണ്! കാരണം: ${reason}</p>`;
             return;
         }
 
@@ -617,14 +661,28 @@
         div.innerHTML = html + "</table>";
     }
 
-    function toggleHolidayMode(prefix) {
-        let cls = document.getElementById(prefix + '-class-select').value;
-        let month = document.getElementById(prefix + '-month-select').value;
-        let day = document.getElementById(prefix + '-day-select').value;
-        let isHoliday = document.getElementById(prefix + '-holiday-checkbox').checked;
-        let holidayKey = `HOLIDAY_${cls}_${month}_${day}`;
-        if(isHoliday) { attendanceDb[holidayKey] = "YES"; } else { delete attendanceDb[holidayKey]; }
-        loadAttendanceList(prefix);
+    function sendWhatsAppAlert(studName, phone) {
+        if(!phone) { alert('രക്ഷിതാവിന്റെ ഫോൺ നമ്പർ ലഭ്യമല്ല!'); return; }
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if(!cleanPhone.startsWith('91') && cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+        let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, നിങ്ങളുടെ കുട്ടി ${studName} ഇന്ന് മദ്രസയിൽ ഹാജരായിട്ടില്ല എന്ന വിവരം അറിയിക്കുന്നു. - മമ്പഉൽ ഉലൂം മദ്രസ`;
+        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function sendWhatsAppFeeAlert(studName, phone, month, balance) {
+        if(!phone) { alert('രക്ഷിതാവിന്റെ ഫോൺ നമ്പർ ലഭ്യമല്ല!'); return; }
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if(!cleanPhone.startsWith('91') && cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+        let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, നിങ്ങളുടെ മകൻ/മകൾ ${studName} ${month} മാസത്തെ ഫീസ് (100 രൂപ) അടച്ചിട്ടുണ്ട്. ഇനി ബാക്കി കുടിശ്ശിക: ${balance} രൂപയാണ്. - മമ്പഉൽ ഉലൂം മദ്രസ`;
+        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function sendWhatsAppExamAlert(phone, clsNum, duration, timeStr, subjects) {
+        if(!phone) { alert('രക്ഷിതാവിന്റെ ഫോൺ നമ്പർ ലഭ്യമല്ല!'); return; }
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if(!cleanPhone.startsWith('91') && cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+        let msg = `📢 പരീക്ഷാ ടൈംടേബിൾ അലേർട്ട്! (ക്ലാസ് ${clsNum})\n\nപരീക്ഷാ തീയതി: ${duration}\nസമയം: ${timeStr}\n\nവിഷയവിവരങ്ങൾ:\n${subjects}\n\nദയവായി ശ്രദ്ധിക്കുക. - മമ്പഉൽ ഉലൂം മദ്രസ`;
+        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function loadAttendanceList(prefix) {
@@ -637,44 +695,49 @@
         let holidayKey = `HOLIDAY_${cls}_${month}_${day}`;
         let isHoliday = attendanceDb[holidayKey] === "YES";
         document.getElementById(prefix + '-holiday-checkbox').checked = isHoliday;
+        if(isHoliday) {
+            document.getElementById(prefix + '-holiday-reason').value = holidayReasonsDb[holidayKey] || "";
+        } else {
+            document.getElementById(prefix + '-holiday-reason').value = "";
+        }
 
         let filtered = getAllStudents().filter(s => s.class === cls);
         if(!filtered.length) { tbody.innerHTML = "<tr><td colspan='2'>കുട്ടികളില്ല</td></tr>"; return; }
 
         filtered.forEach(s => {
-            let extra = editableStudentData[s.id] || { reg: '' };
+            let extra = editableStudentData[s.id] || { reg: '', phone: '' };
             if(extra.reg) {
                 let key = `${extra.reg}_${month}_${day}`;
                 let status = attendanceDb[key];
                 let isChecked = isHoliday ? "disabled" : (status === "Present" || (!status && status !== "Absent") ? "checked" : "");
+                
+                let sName = getStudentName(s);
+                let wpBtn = "";
+                if(status === "Absent" && !isHoliday) {
+                    wpBtn = `<button class="btn-whatsapp" onclick="sendWhatsAppAlert('${sName}', '${extra.phone}')">💬 WhatsApp</button>`;
+                }
 
                 tbody.innerHTML += `<tr>
-                    <td>${getStudentName(s)} (${extra.reg}) ${isHoliday ? '<span style="color:red;font-size:11px;">(അവധി)</span>':''}</td>
-                    <td><input type="checkbox" id="att-${prefix}-${extra.reg}" ${isChecked} ${isHoliday ? 'disabled':''} style="width:auto;"></td>
+                    <td>${sName} (${extra.reg}) ${isHoliday ? '<br><span style="color:red;font-size:11px;">(അവധി: '+(holidayReasonsDb[holidayKey] || '')+')</span>':''} ${wpBtn}</td>
+                    <td><input type="checkbox" id="att-${prefix}-${extra.reg}" ${isChecked} ${isHoliday ? 'disabled':''} onchange="onAttendanceCheckboxChange('${prefix}', '${extra.reg}', '${sName}', '${extra.phone}')" style="width:auto;"></td>
                 </tr>`;
             }
         });
     }
-    
-    function saveAttendance(prefix) {
-        let cls = document.getElementById(prefix + '-class-select').value;
+
+    function onAttendanceCheckboxChange(prefix, regNo, sName, phone) {
+        let cb = document.getElementById(`att-${prefix}-${regNo}`);
         let month = document.getElementById(prefix + '-month-select').value;
         let day = document.getElementById(prefix + '-day-select').value;
-        let isHoliday = document.getElementById(prefix + '-holiday-checkbox').checked;
-
-        let filtered = getAllStudents().filter(s => s.class === cls);
-        filtered.forEach(s => {
-            let extra = editableStudentData[s.id] || { reg: '' };
-            if(extra.reg) {
-                let key = `${extra.reg}_${month}_${day}`;
-                if(isHoliday) { attendanceDb[key] = "Holiday"; } else {
-                    let cb = document.getElementById(`att-${prefix}-${extra.reg}`);
-                    if(cb) attendanceDb[key] = cb.checked ? "Present" : "Absent";
-                }
-            }
-        });
-        localStorage.setItem('m_attendance_v8', JSON.stringify(attendanceDb));
-        alert(`${month} മാസം തീയതി ${day}-ലെ ഹാജർ വിവരങ്ങൾ സേവ് ചെയ്തു!`); renderAll();
+        let key = `${regNo}_${month}_${day}`;
+        attendanceDb[key] = (cb && cb.checked) ? "Present" : "Absent";
+        localStorage.setItem('m_attendance_v9', JSON.stringify(attendanceDb));
+        loadAttendanceList(prefix);
+    }
+    
+    function saveAttendance(prefix) {
+        alert('ഹാജർ വിവരങ്ങൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!');
+        renderAll();
     }
 
     function loadTeacherPanel() {
@@ -684,6 +747,82 @@
             clsArray.forEach(c => { select.innerHTML += `<option value="${c.trim()}">ക്ലാസ് ${c.trim()}</option>`; });
         }
         loadAttendanceList('teacher');
+    }
+
+    // ONE-TIME COMPREHENSIVE TIMETABLE FUNCTIONALITY
+    function saveCompleteTimetable() {
+        let cls = document.getElementById('exam-class-select').value;
+        let duration = document.getElementById('exam-duration').value.trim();
+        let timeStr = document.getElementById('exam-time-string').value.trim();
+        let subjects = document.getElementById('exam-subjects-list').value.trim();
+
+        if(!duration || !timeStr || !subjects) return alert('എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക!');
+
+        examTimetableDb[cls] = { duration, timeStr, subjects };
+        alert(`ക്ലാസ് ${cls}-ന്റെ പരീക്ഷാ ടൈംടേബിൾ ഒന്നിച്ച് പബ്ലിഷ് ചെയ്തു!`);
+        document.getElementById('exam-duration').value = '';
+        document.getElementById('exam-time-string').value = '';
+        document.getElementById('exam-subjects-list').value = '';
+        renderAll();
+    }
+
+    function renderCompleteTimetables() {
+        let sadrDiv = document.getElementById('sadr-timetable-list');
+        let parentDiv = document.getElementById('parent-timetable-view');
+        let commDiv = document.getElementById('comm-timetable-view');
+
+        let sadrHtml = "";
+        Object.keys(examTimetableDb).forEach(cls => {
+            let t = examTimetableDb[cls];
+            sadrHtml += `<div class="item-list" style="flex-direction:column; align-items:flex-start;">
+                <div><strong>ക്ലാസ് ${cls} പരീക്ഷാ ഷെഡ്യൂൾ</strong></div>
+                <div style="font-size:12px; color:#555; margin:3px 0;">🗓️ തീയതി: ${t.duration} | ⏱️ സമയം: ${t.timeStr}</div>
+                <div style="font-size:12px; background:#fff; padding:5px; width:95%; border-radius:4px; white-space:pre-wrap;">${t.subjects}</div>
+                <div><button class="btn-delete" style="margin-top:5px;" onclick="deleteTimetableSchema('${cls}')">X Remove</button></div>
+            </div>`;
+        });
+        if(sadrDiv) sadrDiv.innerHTML = sadrHtml || "ടൈംടേബിളുകൾ ഒന്നും പബ്ലിഷ് ചെയ്തിട്ടില്ല.";
+
+        // For Active Parent
+        if(parentDiv) {
+            if(currentActiveParentReg) {
+                let studentId = Object.keys(editableStudentData).find(key => editableStudentData[key].reg === currentActiveParentReg);
+                let sInfo = getAllStudents().find(s => s.id == studentId);
+                if(sInfo && examTimetableDb[sInfo.class]) {
+                    let t = examTimetableDb[sInfo.class];
+                    parentDiv.innerHTML = `
+                        <h4 style="margin:0 0 5px 0; color:#e65100;">📅 ആകെ പരീക്ഷാ ഷെഡ്യൂൾ (ക്ലാസ് ${sInfo.class})</h4>
+                        <p style="font-size:13px; margin:3px 0;"><strong>തീയതികൾ:</strong> ${t.duration}</p>
+                        <p style="font-size:13px; margin:3px 0;"><strong>സമയം:</strong> ${t.timeStr}</p>
+                        <div style="background:#fff; padding:8px; border-radius:4px; font-size:13px; margin-top:8px; white-space:pre-wrap; border-left:3px solid #ff9100;">${t.subjects}</div>
+                        
+                        <div style="margin-top:12px; background:#e8f5e9; padding:8px; border-radius:4px; border:1px solid #2e7d32;">
+                            <label style="font-size:11px; font-weight:bold; color:#2e7d32; display:block; margin-bottom:4px;">⏰ നാളത്തെ പരീക്ഷാ റിമൈൻഡർ അലേർട്ട് അയക്കുക:</label>
+                            <input type="text" id="parent-tomorrow-subject-input" placeholder="നാളെ പരീക്ഷയുള്ള വിഷയം എഴുതുക" style="padding:5px; font-size:12px;">
+                            <button class="btn-whatsapp" style="margin-top:5px; width:100%; padding:6px;" onclick="sendTomorrowExamNotification('${editableStudentData[studentId].phone}', '${sInfo.class}', '${t.timeStr}')">വാട്സാപ്പ് റിമൈൻഡർ അയക്കുക</button>
+                        </div>`;
+                } else {
+                    parentDiv.innerHTML = "നിങ്ങളുടെ ക്ലാസ്സിലെ പരീക്ഷാ ടൈംടേബിൾ പ്രസിദ്ധീകരിച്ചിട്ടില്ല.";
+                }
+            }
+        }
+    }
+
+    function sendTomorrowExamNotification(phone, cls, timeStr) {
+        let subInput = document.getElementById('parent-tomorrow-subject-input').value.trim();
+        if(!subInput) return alert('നാളത്തെ പരീക്ഷാ വിഷയം ടൈപ്പ് ചെയ്യുക!');
+        if(!phone) return alert('രക്ഷിതാവിന്റെ ഫോൺ നമ്പർ ലഭ്യമല്ല!');
+        
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if(!cleanPhone.startsWith('91') && cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+        let msg = `⏰ നാളത്തെ പരീക്ഷാ ഓർമ്മപ്പെടുത്തൽ! (ക്ലാസ് ${cls})\n\nനാളെ മദ്രസയിൽ [ ${subInput} ] പരീക്ഷ ഉണ്ടായിരിക്കുന്നതാണ്.\nപരീക്ഷാ സമയം: ${timeStr}.\n\nകുട്ടിയെ കൃത്യസമയത്ത് പരീക്ഷയ്ക്ക് ഹാജരാക്കാൻ ശ്രദ്ധിക്കുമല്ലോ. - മമ്പഉൽ ഉലൂം മദ്രസ`;
+        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function deleteTimetableSchema(cls) {
+        if(confirm(`ക്ലാസ് ${cls}-ന്റെ ടൈംടേബിൾ നീക്കം ചെയ്യണോ?`)) {
+            delete examTimetableDb[cls]; renderAll();
+        }
     }
 
     function renderSadrStudentEditor() {
@@ -697,7 +836,7 @@
                 <div class="card" style="background:#fff; border-left:4px solid #1e88e5;">
                     <div class="form-group"><label>കുട്ടിയുടെ പേര്:</label><input type="text" id="name-${s.id}" value="${extra.name ? extra.name : s.name}"></div>
                     <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="reg-${s.id}" value="${extra.reg || ''}"></div>
-                    <div class="form-group"><label>രക്ഷിതാവിന്റെ നമ്പർ:</label><input type="text" id="phone-${s.id}" value="${extra.phone || ''}"></div>
+                    <div class="form-group"><label>രക്ഷിതാവിന്റെ നമ്പർ:</label><input type="text" id="phone-${s.id}" value="${extra.phone || ''}" placeholder="+919876543210"></div>
                     <div class="form-group">
                         <label>കുട്ടിയുടെ ഫോട്ടോ:</label><input type="file" id="file-${s.id}" accept="image/*" onchange="previewAndConvertImage(this, ${s.id})">
                         <div id="preview-box-${s.id}" style="margin-top:5px;">
@@ -705,14 +844,14 @@
                         </div>
                     </div>
                     <button style="padding:6px; font-size:13px; width:auto; margin-right:10px;" onclick="updateStudentExtra(${s.id})">Save Changes</button>
-                    <button class="btn-delete" style="width:auto; padding:6px 12px;" onclick="removeStudentPermanently(${s.id})">Remove Student (നീക്കം ചെയ്യുക)</button>
+                    <button class="btn-delete" style="width:auto; padding:6px 12px;" onclick="removeStudentPermanently(${s.id})">Remove Student</button>
                 </div>`;
         });
     }
 
     function removeStudentPermanently(id) {
         if(confirm('ഈ കുട്ടിയെ ആപ്പിൽ നിന്നും പൂർണ്ണമായി നീക്കം ചെയ്യണോ?')) {
-            removedStudentIds.push(id); alert('കുട്ടിയെ വിജയകരമായി നീക്കം ചെയ്തു.'); renderAll();
+            removedStudentIds.push(id); alert('കുട്ടിയെ നീക്കം ചെയ്തു.'); renderAll();
         }
     }
 
@@ -728,12 +867,24 @@
         }
     }
 
+    let newStudentImgBase64 = "";
+    function previewNewStudentImage(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                newStudentImgBase64 = e.target.result;
+                document.getElementById('new-preview-box').innerHTML = `<img src="${e.target.result}" style="width:50px;height:50px;border-radius:5px;object-fit:cover;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
     function updateStudentExtra(id) {
         let updatedName = document.getElementById(`name-${id}`).value.trim();
         let reg = document.getElementById(`reg-${id}`).value.trim();
         let phone = document.getElementById(`phone-${id}`).value.trim();
         let finalImg = tempImageStorage[id] ? tempImageStorage[id] : (editableStudentData[id] ? editableStudentData[id].img : '');
-        if(!updatedName || !reg) return alert('പേരും രജിസ്റ്റർ നമ്പറും നൽകണം!');
+        if(!updatedName || !reg) return alert('വിവരങ്ങൾ നൽകണം!');
         editableStudentData[id] = { name: updatedName, reg, phone, img: finalImg };
         alert('വിവരങ്ങൾ സേവ് ചെയ്തു!'); renderAll();
     }
@@ -814,11 +965,14 @@
         committee.push({name, role, phone, img: tempCommImg}); renderAll();
     }
 
+    // COMPLAINTS WITH INTERACTIVE REPLIES
     function submitComplaint() {
         let text = document.getElementById('parent-complaint-text').value.trim();
         if(!text) return alert('പരാതി ടൈപ്പ് ചെയ്യുക!');
-        complaintsDb.push({ reg: currentActiveParentReg, text: text, date: new Date().toLocaleDateString('ml-IN') });
+        complaintsDb.push({ reg: currentActiveParentReg, text: text, date: new Date().toLocaleDateString('ml-IN'), reply: "" });
+        document.getElementById('parent-complaint-text').value = '';
         alert('പരാതി സമർപ്പിച്ചു!'); renderAll();
+        renderComplaintsForActiveParent();
     }
 
     function renderComplaints() {
@@ -830,19 +984,69 @@
                 let studentId = Object.keys(editableStudentData).find(key => editableStudentData[key].reg === c.reg);
                 let sName = "Unknown"; if(studentId) { let sInfo = getAllStudents().find(s => s.id == studentId); sName = getStudentName(sInfo); }
                 html += `<div style="background:#fff; padding:10px; border-radius:5px; margin-bottom:10px; border-left:4px solid #c2185b; font-size:13px;">
-                    <div><strong>കുട്ടി:</strong> ${sName} (Reg: ${c.reg})</div><div style="margin:5px 0; color:#444;">"${c.text}"</div>
-                    <div style="font-size:11px; color:#888; text-align:right;">تീയതി: ${c.date} <button class="btn-delete" style="padding:2px 5px; font-size:11px; width:auto; margin-left:10px;" onclick="complaintsDb.splice(${idx},1); renderAll();">Remove</button></div>
+                    <div><strong>കുട്ടി:</strong> ${sName} (Reg: ${c.reg}) - <small>${c.date}</small></div>
+                    <div style="margin:5px 0; color:#444; font-weight:bold;">"${c.text}"</div>
+                    
+                    <div style="margin-top:8px; background:#f5f5f5; padding:6px; border-radius:4px;">
+                        <label style="font-size:11px; font-weight:bold; color:#00796b;">✍️ മറുപടി നൽകുക:</label>
+                        <input type="text" id="complaint-reply-input-${idx}" value="${c.reply || ''}" placeholder="രക്ഷിതാവിനുള്ള മറുപടി ഇവിടെ ടൈപ്പ് ചെയ്യുക" style="padding:5px; font-size:12px; width:100%; box-sizing:border-box;">
+                        <button style="background:#00897b; padding:4px 10px; font-size:11px; width:auto; margin-top:4px;" onclick="saveComplaintReply(${idx})">Reply സേവ് ചെയ്യുക</button>
+                    </div>
+                    
+                    <div style="font-size:11px; text-align:right; margin-top:8px;"><button class="btn-delete" style="padding:2px 5px; font-size:11px; width:auto;" onclick="complaintsDb.splice(${idx},1); renderAll();">Remove</button></div>
                 </div>`;
             });
         }
         if(sadrDiv) sadrDiv.innerHTML = html; if(commDiv) commDiv.innerHTML = html;
     }
 
+    function saveComplaintReply(idx) {
+        let replyText = document.getElementById(`complaint-reply-input-${idx}`).value.trim();
+        if(!replyText) return alert('മറുപടി ടൈപ്പ് ചെയ്യുക!');
+        complaintsDb[idx].reply = replyText;
+        alert('മറുപടി വിജയകരമായി രേഖപ്പെടുത്തി!');
+        renderAll();
+    }
+
+    function renderComplaintsForActiveParent() {
+        let div = document.getElementById('parent-complaints-list-view');
+        if(!div) return;
+        let parentComplaints = complaintsDb.filter(c => c.reg === currentActiveParentReg);
+        if(!parentComplaints.length) { div.innerHTML = "പരാതികൾ ഒന്നും സമർപ്പിച്ചിട്ടില്ല."; return; }
+
+        let html = "";
+        parentComplaints.forEach(c => {
+            html += `<div style="background:#fff; padding:8px; border-radius:4px; margin-bottom:8px; border-left:3px solid #c2185b;">
+                <div><strong>നിങ്ങൾ നൽകിയത്:</strong> "${c.text}" <small style="color:#888;">(${c.date})</small></div>
+                ${c.reply ? `<div class="reply-box"><strong>🕌 മറുപടി:</strong> ${c.reply}</div>` : `<div style="font-size:11px; color:#e65100; margin-top:3px;">⏳ മറുപടി ലഭ്യമായിട്ടില്ല</div>`}
+            </div>`;
+        });
+        div.innerHTML = html;
+    }
+
     function saveFeeStatus() {
         let reg = document.getElementById('fee-reg').value.trim(); let month = document.getElementById('fee-month').value; let status = document.getElementById('fee-status').value;
         if(!reg) return alert('രജിസ്റ്റർ നമ്പർ നൽകുക!');
         if(!feesDatabase[reg]) feesDatabase[reg] = {}; feesDatabase[reg][month] = status;
-        alert(`ഫീസ് വിവരം അപ്ഡേറ്റ് ചെയ്തു!`); renderAll();
+        
+        let studentId = Object.keys(editableStudentData).find(key => editableStudentData[key].reg === reg);
+        let receiptBox = document.getElementById('fee-whatsapp-receipt-box');
+        
+        if(status === "Paid" && studentId) {
+            let sInfo = getAllStudents().find(s => s.id == studentId);
+            let sName = getStudentName(sInfo);
+            let phone = editableStudentData[studentId].phone || '';
+            let paidMonthsCount = academicMonths.filter(m => (feesDatabase[reg] || {})[m] === "Paid").length;
+            let balanceAmount = 1100 - (paidMonthsCount * 100);
+            
+            receiptBox.innerHTML = `
+                <div style="background:#e8f5e9; padding:10px; border:1px solid #2e7d32; border-radius:5px; text-align:center;">
+                    <p style="color:#2e7d32; font-weight:bold; margin:0 0 8px 0;">ഫീസ് അപ്‌ഡേറ്റ് വിജയകരം! രസീത് അയക്കാം:</p>
+                    <button class="btn-whatsapp" style="width:auto; padding:8px 15px; font-size:14px; margin:0;" onclick="sendWhatsAppFeeAlert('${sName}', '${phone}', '${month}', ${balanceAmount})">💬 WhatsApp Receipt</button>
+                </div>`;
+        } else { receiptBox.innerHTML = ''; }
+        localStorage.setItem('m_fees_db', JSON.stringify(feesDatabase));
+        alert(`ഫീസ് വിവരം അപ്ഡേറ്റ് ചെയ്തു!`);
     }
 
     function generateFeesReport(regNo) {
@@ -882,33 +1086,16 @@
         document.getElementById('parent-stud-img').src = editableStudentData[studentId].img || 'https://www.w3schools.com/howto/img_avatar.png';
         document.getElementById('parent-fees-report').innerHTML = generateFeesReport(regNo);
         document.getElementById('parent-attendance-report').innerHTML = getStudentAttendanceReport(regNo, sInfo.class);
-    }
-
-    function renderTimetables() {
-        let div = document.getElementById('sadr-timetable-list'); if(div) div.innerHTML = '';
-        let parentDiv = document.getElementById('parent-timetable-view');
-        let commDiv = document.getElementById('comm-timetable-view');
-        let html = ""; if(!timetables.length) { html = "ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല."; }
-        timetables.forEach((t, idx) => { 
-            if(div) div.innerHTML += `<div class="item-list"><div><b>${t.sub}</b> - ${t.date}</div><button class="btn-delete" onclick="timetables.splice(${idx},1); renderAll();">X</button></div>`; 
-            html += `• <b>${t.sub}</b>: ${t.date}<br>`;
-        });
-        if(parentDiv) parentDiv.innerHTML = html; if(commDiv) commDiv.innerHTML = html;
-    }
-    function saveTimetable() {
-        let date = document.getElementById('exam-date').value; let sub = document.getElementById('exam-subject').value;
-        if(!date || !sub) return alert('വിവരങ്ങൾ നൽകുക');
-        timetables.push({date, sub}); renderAll();
+        renderComplaintsForActiveParent();
+        renderCompleteTimetables();
     }
 
     function renderResults() {
-        let div = document.getElementById('sadr-result-list'); if(div) div.innerHTML = '';
         let parentDiv = document.getElementById('parent-result-view'); let html = "";
         results.forEach((r, idx) => { 
-            if(div) div.innerHTML += `<div class="item-list"><div>Reg ${r.reg}: <b>${r.mark}</b></div><button class="btn-delete" onclick="results.splice(${idx},1); renderAll();">X</button></div>`; 
-            if(currentActiveParentReg && r.reg === currentActiveParentReg) { html = `<span style="color:#1b5e20; font-weight:bold; font-size:16px;">നിങ്ങളുടെ മാർക്ക്/ഗ്രേഡ്: ${r.mark}</span>`; }
+            if(currentActiveParentReg && r.reg === currentActiveParentReg) { html = `<span style="color:#1b5e20; font-weight:bold; font-size:14px;">📊 പരീക്ഷാ റിസൾട്ട്: ${r.mark}</span>`; }
         });
-        if(parentDiv) parentDiv.innerHTML = html || "റിസൾട്ടുകൾ ലഭ്യമായിട്ടില്ല.";
+        if(parentDiv) parentDiv.innerHTML = html || "റിസൾട്ടുകൾ പ്രസിദ്ധീകരിച്ചിട്ടില്ല.";
     }
     function saveResult() {
         let reg = document.getElementById('res-reg').value; let mark = document.getElementById('res-mark').value;
@@ -924,7 +1111,7 @@
             div.innerHTML += `<div class="item-list"><div>Reg: ${extra.reg} - <b>${getStudentName(s)}</b> (Cls ${s.class})</div><div style="color:red; font-size:12px;">കുടിശ്ശിക: ${unpaidMonths.join(', ') || 'None'}</div></div>`;
         });
         loadTeachersAttendanceForCommittee(); loadStudentAttendanceForCommittee();
-        renderComplaints(); renderTimetables();
+        renderComplaints(); renderCompleteTimetables();
     }
 </script>
 </body>
