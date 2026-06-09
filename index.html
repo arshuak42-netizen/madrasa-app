@@ -3,439 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>മമ്പഉൽ ഉലൂം സ്റ്റുഡന്റ് മാനേജ്മെന്റ് സിസ്റ്റം</title>
+    <title>മമ്പഉൽ ഉലൂം മദ്രസ സ്റ്റുഡന്റ് മാനേജ്മെന്റ്</title>
     <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #0d9488;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --accent-red: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding-bottom: 40px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
         }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color), #2563eb);
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            font-size: 24px;
+        h1 {
+            color: #2c3e50;
+            font-size: 22px;
             margin-bottom: 5px;
         }
-
-        header p {
+        .subtitle {
+            color: #7f8c8d;
             font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .academic-year {
-            background-color: rgba(255, 255, 255, 0.2);
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 15px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            background: #e2e8f0;
-            padding: 5px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: none;
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: var(--card-bg);
-            color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .panel-section {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            border: 1px solid var(--border-color);
-            display: none;
-        }
-
-        .panel-section.active {
-            display: block;
-        }
-
-        h2 {
-            color: var(--primary-color);
             margin-bottom: 20px;
-            border-left: 5px solid var(--secondary-color);
-            padding-left: 10px;
-            font-size: 20px;
         }
-
+        .academic-info {
+            font-weight: bold;
+            color: #16a085;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .tab-button.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+        .tab-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-top: -1px;
+            border-radius: 0 4px 4px 4px;
+        }
         .form-group {
             margin-bottom: 15px;
         }
-
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 15px;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
+            margin-bottom: 5px;
             font-weight: bold;
+        }
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s;
+            font-weight: bold;
         }
-
-        .btn:hover { background-color: #1d4ed8; }
-        .btn-secondary { background-color: var(--secondary-color); }
-        .btn-secondary:hover { background-color: #0f766e; }
-
-        .controls-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+        .btn:hover {
+            background-color: #34495e;
         }
-
-        .table-container {
-            overflow-x: auto;
-            margin-top: 15px;
+        .btn-secondary {
+            background-color: #16a085;
         }
-
+        .btn-secondary:hover {
+            background-color: #1abc9c;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
-            font-size: 14px;
+            margin-top: 15px;
         }
-
+        table, th, td {
+            border: 1px solid #ccc;
+        }
         th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
         }
-
         th {
-            background-color: #f1f5f9;
-            color: var(--text-main);
-            font-weight: bold;
+            background-color: #f2f2f2;
         }
-
-        tr:hover { background-color: #f8fafc; }
-
-        .student-profile-card {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 20px;
-            background: #fafafa;
+        .profile-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            background-color: #fdfdfd;
+            border-radius: 4px;
+            margin-top: 15px;
         }
-
-        .profile-header {
-            background: #f1f5f9;
-            padding: 20px;
+        .profile-flex {
             display: flex;
-            align-items: center;
             gap: 20px;
-            border-bottom: 1px solid var(--border-color);
+            align-items: center;
         }
-
-        .profile-img-container {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: #cbd5e1;
+        .photo-space {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ccc;
+            background-color: #eee;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            border: 3px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 11px;
+            color: #777;
         }
-
-        .profile-img-container img {
+        .photo-space img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        .profile-info-grid {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .info-item {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .info-label { font-size: 12px; color: var(--text-muted); font-weight: bold; }
-        .info-value { font-size: 15px; font-weight: 600; color: var(--text-main); margin-top: 2px; }
-        .disabled-info { background-color: #f1f5f9; color: #64748b; }
-
-        .item-box {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .badge {
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-            color: white;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .badge-pending { background-color: #f59e0b; }
-        .badge-replied { background-color: #10b981; }
-
-        .reply-box {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--border-color);
-            background: #ffffff;
+        .notice-box, .complaint-box {
+            background-color: #fcf8e3;
+            border: 1px solid #faebcc;
             padding: 10px;
-            border-radius: 6px;
+            margin-bottom: 10px;
+            border-radius: 4px;
         }
-
+        .disabled-field {
+            background-color: #f5f5f5;
+            color: #777;
+        }
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            padding: 15px;
         }
-
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
         }
-
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>മമ്പഉൽ ഉലൂം മദ്രസ സ്റ്റുഡന്റ് മാനേജ്മെന്റ് സിസ്റ്റം</h1>
-        <p>കൊരക്കോടുകൂട്</p>
-        <div class="academic-year">അക്കാദമിക് വർഷം: 2026-2027</div>
-    </header>
+    <h1>മമ്പഉൽ ഉലൂം മദ്രസ സ്റ്റുഡന്റ് മാനേജ്മെന്റ് സിസ്റ്റം</h1>
+    <div class="subtitle">കൊരക്കോടുകൂട്</div>
+    <div class="academic-info">അക്കാദമിക് വർഷം: 2026-2027</div>
 
-    <div class="container">
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="switchTab('parent-tab')">രക്ഷിതാക്കളുടെ പോർട്ടൽ (Parent Portal)</button>
-            <button class="tab-btn" onclick="switchTab('sadar-tab')">സദർ/മാനേജ്‌മെന്റ് പാനൽ (Sadar Control)</button>
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'parent-panel')">രക്ഷിതാക്കളുടെ പോർട്ടൽ (Parent Portal)</button>
+        <button class="tab-button" onclick="openTab(event, 'sadar-panel')">Sadar/Management കൺട്രോൾ പാനൽ</button>
+    </div>
+
+    <div id="parent-panel" class="tab-content" style="display: block;">
+        <h3>രക്ഷിതാക്കളുടെ ലോഗിൻ</h3>
+        <div class="form-group" style="display: flex; gap: 10px; margin-top: 10px;">
+            <input type="text" id="parentRegSearch" placeholder="കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ നൽകുക">
+            <button class="btn" onclick="searchStudentParent()">തിരയുക</button>
         </div>
 
-        <div id="parent-tab" class="panel-section active">
-            <h2>രക്ഷിതാക്കളുടെ ലോഗിൻ</h2>
-            <div class="form-group" style="max-width: 400px; display: flex; gap: 10px; margin-top: 15px;">
-                <input type="text" id="parentRegNo" placeholder="കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ അടിക്കുക (ഉദാ: 201, 301)">
-                <button class="btn" onclick="loginParent()">തിരയുക</button>
-            </div>
-
-            <div id="parentViewContainer" style="display: none;">
-                <div class="student-profile-card">
-                    <div class="profile-header">
-                        <div class="profile-img-container">
-                            <img id="pViewPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z'/></svg>">
-                        </div>
-                        <div>
-                            <h3 id="pViewTitleName" style="color: var(--primary-color);"></h3>
-                            <p id="pViewClass" style="color: var(--text-muted); font-weight: bold;"></p>
-                        </div>
+        <div id="parentView" style="display: none;">
+            <div class="profile-box">
+                <div class="profile-flex">
+                    <div class="photo-space" id="pPhotoContainer">ഫോട്ടോ ഇല്ല</div>
+                    <div>
+                        <h4 id="pNameTitle" style="margin: 0; color: #2c3e50;"></h4>
+                        <p id="pClassTitle" style="margin: 5px 0 0 0; font-weight: bold; color: #16a085;"></p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>കുട്ടിയുടെ പേര് (സദറിന് മാത്രം മാറ്റാം):</label>
+                        <input type="text" id="pNameDisp" class="disabled-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>രക്ഷിതാവിന്റെ പേര് (സദറിന് മാത്രം മാറ്റാം):</label>
+                        <input type="text" id="pParentDisp" class="disabled-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>ജനനതീയതി (സദറിന് മാത്രം മാറ്റാം):</label>
+                        <input type="text" id="pDobDisp" class="disabled-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>രജിസ്റ്റർ നമ്പർ:</label>
+                        <input type="text" id="pRegDisp" class="disabled-field" disabled>
                     </div>
                     
-                    <div class="profile-info-grid">
-                        <div class="info-item disabled-info">
-                            <div class="info-label">കുട്ടിയുടെ പേര് (സദറിന് മാത്രം മാറ്റാം)</div>
-                            <div class="info-value" id="pViewName"></div>
-                        </div>
-                        <div class="info-item disabled-info">
-                            <div class="info-label">രക്ഷിതാവിന്റെ പേര് (സദറിന് മാത്രം മാറ്റാം)</div>
-                            <div class="info-value" id="pViewParent"></div>
-                        </div>
-                        <div class="info-item disabled-info">
-                            <div class="info-label">ജനനതീയതി (സദറിന് മാത്രം മാറ്റാം)</div>
-                            <div class="info-value" id="pViewDob"></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">രജിസ്റ്റർ നമ്പർ</div>
-                            <div class="info-value" id="pViewRegNo"></div>
-                        </div>
-                    </div>
-
-                    <div style="padding: 20px; border-top: 1px solid var(--border-color); background: #fff;">
-                        <h4 style="margin-bottom: 15px; color: var(--secondary-color);">വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക</h4>
-                        <div class="form-group">
-                            <label>മൊബൈൽ നമ്പർ:</label>
-                            <input type="text" id="pInputPhone" placeholder="മൊബൈൽ നമ്പർ നൽകുക">
-                        </div>
-                        <div class="form-group">
-                            <label>കുട്ടിയുടെ ഫോട്ടോ ലിങ്ക് / URL:</label>
-                            <input type="text" id="pInputPhoto" placeholder="ഫോട്ടോ ലിങ്ക് നൽകുക">
-                        </div>
-                        <button class="btn btn-secondary" onclick="saveParentUpdates()">വിവരങ്ങൾ സേവ് ചെയ്യുക</button>
-                    </div>
-                </div>
-
-                <div style="margin-top: 30px;">
-                    <h3>മദ്രസ അറിയിപ്പുകൾ (Notifications)</h3>
-                    <div id="parentNoticesContainer" style="margin-top: 10px;"></div>
-                </div>
-
-                <div style="margin-top: 30px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <h3>പരാതികളും അഭിപ്രായങ്ങളും രേഖപ്പെടുത്തുക</h3>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
+                    <h4>വിവരങ്ങൾ പുതുക്കുക</h4>
                     <div class="form-group">
-                        <textarea id="complaintText" rows="3" placeholder="നിങ്ങളുടെ പരാതിയോ അഭിപ്രായമോ ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+                        <label>മൊബൈൽ നമ്പർ:</label>
+                        <input type="text" id="pPhoneInput">
                     </div>
-                    <button class="btn" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
-                    <h4 style="margin-top: 20px; margin-bottom: 10px;">നിങ്ങളുടെ പരാതികളുടെ അവസ്ഥ:</h4>
-                    <div id="myComplaintsList"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="sadar-tab" class="panel-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>സദർ / മാനേജ്‌മെന്റ് കൺട്രോൾ പാനൽ</h2>
-                <button class="btn btn-secondary" onclick="openAddModal()">+ പുതിയ കുട്ടിയെ ചേർക്കുക</button>
-            </div>
-
-            <div class="controls-row">
-                <div style="flex: 1;">
-                    <label>ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക:</label>
-                    <select id="classFilter" onchange="renderSadarTable()">
-                        <option value="All">എല്ലാ ക്ലാസ്സുകളും</option>
-                        <option value="Class 2">Class 2</option>
-                        <option value="Class 3">Class 3</option>
-                        <option value="Class 4">Class 4</option>
-                        <option value="Class 5">Class 5</option>
-                        <option value="Class 6">Class 6</option>
-                        <option value="Class 7">Class 7</option>
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
-                        <option value="Plus One">Plus One</option>
-                        <option value="Plus Two">Plus Two</option>
-                    </select>
-                </div>
-                <div style="flex: 2;">
-                    <label>പേര് അല്ലെങ്കിൽ രജിസ്റ്റർ നമ്പർ ഉപയോഗിച്ച് തിരയുക:</label>
-                    <input type="text" id="searchBar" onkeyup="renderSadarTable()" placeholder="പേര് ടൈപ്പ് ചെയ്യുക...">
+                    <div class="form-group">
+                        <label>കുട്ടിയുടെ ഫോട്ടോ ലിങ്ക് (URL):</label>
+                        <input type="text" id="pPhotoInput">
+                    </div>
+                    <button class="btn btn-secondary" onclick="updateParentData()">സേവ് ചെയ്യുക</button>
                 </div>
             </div>
 
-            <div class="table-container">
-                <table id="sadarTable">
-                    <thead>
-                        <tr>
-                            <th>രജി. നമ്പർ</th>
-                            <th>കുട്ടിയുടെ പേര്</th>
-                            <th>രക്ഷിതാവിന്റെ പേര്</th>
-                            <th>ജനനതീയതി</th>
-                            <th>ക്ലാസ്സ്</th>
-                            <th>മൊബൈൽ</th>
-                            <th>നടപടികൾ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sadarTableBody"></tbody>
-                </table>
+            <div style="margin-top: 25px;">
+                <h4>മദ്രസ അറിയിപ്പുകൾ</h4>
+                <div id="parentNoticeList" style="margin-top: 10px;"></div>
             </div>
 
-            <div style="margin-top: 40px; border-top: 2px solid var(--border-color); padding-top: 25px;">
-                <h3>പുതിയ അറിയിപ്പുകൾ ഇറക്കുക (Post Notice)</h3>
-                <div class="form-group" style="margin-top: 15px;">
-                    <textarea id="newNoticeText" rows="2" placeholder="രക്ഷിതാക്കൾക്ക് നൽകാനുള്ള അറിയിപ്പ്..."></textarea>
+            <div style="margin-top: 25px; border-top: 1px solid #ccc; padding-top: 20px;">
+                <h4>പരാതികളും അഭിപ്രായങ്ങളും രേഖപ്പെടുത്തുക</h4>
+                <div class="form-group" style="margin-top: 10px;">
+                    <textarea id="complaintInput" rows="3" placeholder="നിങ്ങളുടെ പരാതി ഇവിടെ എഴുതുക..."></textarea>
                 </div>
-                <button class="btn" onclick="postNotice()">അറിയിപ്പ് പബ്ലിഷ് ചെയ്യുക</button>
-            </div>
-
-            <div style="margin-top: 40px; border-top: 2px solid var(--border-color); padding-top: 25px;">
-                <h3>രക്ഷിതാക്കളുടെ പരാതികളും മറുപടികളും (Grievance Workspace)</h3>
-                <div id="sadarComplaintsContainer" style="margin-top: 15px;"></div>
+                <button class="btn" onclick="submitParentComplaint()">പരാതി അയക്കുക</button>
+                
+                <h5 style="margin-top: 15px;">നിങ്ങളുടെ പരാതികളുടെ അവസ്ഥ:</h5>
+                <div id="myComplaints" style="margin-top: 5px;"></div>
             </div>
         </div>
     </div>
 
-    <div id="studentModal" class="modal">
+    <div id="sadar-panel" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>സദർ / മാനേജ്‌മെന്റ് കൺട്രോൾ പാനൽ</h3>
+            <button class="btn btn-secondary" onclick="openAddStudentModal()">+ പുതിയ കുട്ടിയെ ചേർക്കുക</button>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">ക്ലാസ്സ് ഫിൽട്ടർ:</label>
+                <select id="classFilter" onchange="showSadarList()">
+                    <option value="All">എല്ലാ ക്ലാസ്സുകളും</option>
+                    <option value="Class 2">Class 2</option>
+                    <option value="Class 3">Class 3</option>
+                    <option value="Class 4">Class 4</option>
+                    <option value="Class 5">Class 5</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Plus One">Plus One</option>
+                    <option value="Plus Two">Plus Two</option>
+                </select>
+            </div>
+            <div style="flex: 2;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">തിരയുക (പേര്/രജിസ്റ്റർ നമ്പർ):</label>
+                <input type="text" id="sadarSearch" onkeyup="showSadarList()" placeholder="ടൈപ്പ് ചെയ്യുക...">
+            </div>
+        </div>
+
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>രജി. നമ്പർ</th>
+                    <th>കുട്ടിയുടെ പേര്</th>
+                    <th>രക്ഷിതാവിന്റെ പേര്</th>
+                    <th>ജനനതീയതി</th>
+                    <th>ക്ലാസ്സ്</th>
+                    <th>മൊബൈൽ</th>
+                    <th>നടപടി</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+        </table>
+
+        <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <h4>പുതിയ അറിയിപ്പുകൾ പബ്ലിഷ് ചെയ്യുക</h4>
+            <div class="form-group" style="margin-top: 10px;">
+                <textarea id="noticeInput" rows="2" placeholder="അറിയിപ്പ് വിവരം ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+            </div>
+            <button class="btn" onclick="publishNotice()">അറിയിപ്പ് പ്രസിദ്ധീകരിക്കുക</button>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <h4>രക്ഷിതാക്കളുടെ പരാതികളും മറുപടികളും</h4>
+            <div id="sadarComplaintsList" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitle" style="margin-bottom: 15px; color: var(--primary-color);">വിവരങ്ങൾ തിരുത്തുക</h3>
-            <input type="hidden" id="modalIndex">
-            <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="mRegNo"></div>
+            <h4 id="modalHeading" style="margin-top: 0; color: #2c3e50;">വിവരങ്ങൾ തിരുത്തുക</h4>
+            <input type="hidden" id="editIndex">
+            <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="mReg"></div>
             <div class="form-group"><label>കുട്ടിയുടെ പേര്:</label><input type="text" id="mName"></div>
             <div class="form-group"><label>രക്ഷിതാവിന്റെ പേര്:</label><input type="text" id="mParent"></div>
-            <div class="form-group"><label>ജനനതീയതി (DOB):</label><input type="date" id="mDob"></div>
+            <div class="form-group"><label>ജനനതീയതി:</label><input type="date" id="mDob"></div>
             <div class="form-group">
                 <label>ക്ലാസ്സ്:</label>
                 <select id="mClass">
@@ -452,15 +313,15 @@
                     <option value="Plus Two">Plus Two</option>
                 </select>
             </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" style="background:#64748b;" onclick="closeModal()">ക്ലോസ് ചെയ്യുക</button>
-                <button class="btn" onclick="saveStudentModal()">സേവ് ചെയ്യുക</button>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                <button class="btn" style="background-color: #7f8c8d;" onclick="closeEditModal()">ക്ലോസ്</button>
+                <button class="btn btn-secondary" onclick="saveStudentFromModal()">സേവ് ചെയ്യുക</button>
             </div>
         </div>
     </div>
 
     <script>
-        let defaultStudents = [
+        let initialData = [
             {"reg_no": "201", "name": "Shan Abdul Razak", "parent": "Shamsudheen", "dob": "2019-01-04", "class": "Class 2"},
             {"reg_no": "202", "name": "Ahad Muhiyudheen", "parent": "Shanavas", "dob": "2019-12-07", "class": "Class 2"},
             {"reg_no": "203", "name": "Muhammad Rafeeq", "parent": "Ashiq", "dob": "2019-06-18", "class": "Class 2"},
@@ -590,15 +451,13 @@
             {"reg_no": "1205", "name": "Ayesha Naja", "parent": "Navas", "dob": "2009-07-24", "class": "Plus Two"}
         ];
 
-        if (!localStorage.getItem('students')) localStorage.setItem('students', JSON.stringify(defaultStudents));
-        if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([{ id: 1, date: "2026-06-09", text: "അടുത്ത തിങ്കളാഴ്ച മദ്രസയിൽ ഒന്നാം പാദ പരീക്ഷ ആരംഭിക്കുന്നതാണ്. എല്ലാ കുട്ടികളും കൃത്യസമയത്ത് ഹാജരാകണം." }]));
+        if (!localStorage.getItem('students')) localStorage.setItem('students', JSON.stringify(initialData));
+        if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([{ id: 1, date: "2026-06-09", text: "മദ്രസയിൽ ഒന്നാം പാദ പരീക്ഷ അടുത്ത ആഴ്ച ആരംഭിക്കും." }]));
         if (!localStorage.getItem('complaints')) localStorage.setItem('complaints', JSON.stringify([]));
 
-        let currentParentStudent = null;
-
         window.onload = function() {
-            renderSadarTable();
-            renderNotices();
+            showSadarList();
+            displayNotices();
         };
 
         function getStudents() { return JSON.parse(localStorage.getItem('students')); }
@@ -608,22 +467,29 @@
         function getComplaints() { return JSON.parse(localStorage.getItem('complaints')); }
         function saveComplaints(data) { localStorage.setItem('complaints', JSON.stringify(data)); }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.panel-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            if(tabId === 'sadar-tab') {
-                renderSadarTable();
-                renderSadarComplaints();
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+            if (tabName === 'sadar-panel') {
+                showSadarList();
+                showSadarComplaints();
             }
         }
 
-        function renderSadarTable() {
+        function showSadarList() {
             const students = getStudents();
             const filter = document.getElementById('classFilter').value;
-            const search = document.getElementById('searchBar').value.toLowerCase();
-            const tbody = document.getElementById('sadarTableBody');
+            const search = document.getElementById('sadarSearch').value.toLowerCase();
+            const tbody = document.getElementById('studentTableBody');
             tbody.innerHTML = '';
 
             students.forEach((student, index) => {
@@ -632,96 +498,93 @@
 
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${student.reg_no}</strong></td>
+                    <td>${student.reg_no}</td>
                     <td>${student.name}</td>
                     <td>${student.parent}</td>
                     <td>${student.dob}</td>
-                    <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold;">${student.class}</span></td>
+                    <td>${student.class}</td>
                     <td>${student.phone || '-'}</td>
-                    <td>
-                        <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditModal(${index})">എഡിറ്റ്</button>
-                    </td>
+                    <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditModal(${index})">എഡിറ്റ്</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function loginParent() {
-            const regNo = document.getElementById('parentRegNo').value.trim();
+        function searchStudentParent() {
+            const regNo = document.getElementById('parentRegSearch').value.trim();
             const students = getStudents();
-            const student = students.find(s => s.reg_no === regNo);
+            currentParentStudent = students.find(s => s.reg_no === regNo);
 
-            if (!student) {
-                alert('ഈ രജിസ്റ്റർ നമ്പറിൽ ഒരു കുട്ടിയെയും കണ്ടെത്താൻ സാധിച്ചില്ല.');
-                document.getElementById('parentViewContainer').style.display = 'none';
+            if (!currentParentStudent) {
+                alert('വിദ്യാർത്ഥിയെ കണ്ടെത്താൻ കഴിഞ്ഞില്ല.');
+                document.getElementById('parentView').style.display = 'none';
                 return;
             }
 
-            currentParentStudent = student;
-            document.getElementById('parentViewContainer').style.display = 'block';
+            document.getElementById('parentView').style.display = 'block';
+            document.getElementById('pNameTitle').innerText = currentParentStudent.name;
+            document.getElementById('pClassTitle').innerText = currentParentStudent.class;
             
-            document.getElementById('pViewTitleName').innerText = student.name;
-            document.getElementById('pViewClass').innerText = student.class;
-            document.getElementById('pViewName').innerText = student.name;
-            document.getElementById('pViewParent').innerText = student.parent;
-            document.getElementById('pViewDob').innerText = student.dob;
-            document.getElementById('pViewRegNo').innerText = student.reg_no;
+            document.getElementById('pNameDisp').value = currentParentStudent.name;
+            document.getElementById('pParentDisp').value = currentParentStudent.parent;
+            document.getElementById('pDobDisp').value = currentParentStudent.dob;
+            document.getElementById('pRegDisp').value = currentParentStudent.reg_no;
             
-            document.getElementById('pInputPhone').value = student.phone || '';
-            document.getElementById('pInputPhoto').value = student.photo || '';
-            if (student.photo) {
-                document.getElementById('pViewPhoto').src = student.photo;
+            document.getElementById('pPhoneInput').value = currentParentStudent.phone || '';
+            document.getElementById('pPhotoInput').value = currentParentStudent.photo || '';
+            
+            const photoCont = document.getElementById('pPhotoContainer');
+            if (currentParentStudent.photo) {
+                photoCont.innerHTML = `<img src="${currentParentStudent.photo}">`;
             } else {
-                document.getElementById('pViewPhoto').src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z'/></svg>";
+                photoCont.innerHTML = "ഫോട്ടോ ഇല്ല";
             }
-
-            renderParentComplaints();
+            displayParentComplaints();
         }
 
-        function saveParentUpdates() {
+        function updateParentData() {
             if (!currentParentStudent) return;
             let students = getStudents();
             let idx = students.findIndex(s => s.reg_no === currentParentStudent.reg_no);
-            
-            if(idx !== -1) {
-                students[idx].phone = document.getElementById('pInputPhone').value.trim();
-                students[idx].photo = document.getElementById('pInputPhoto').value.trim();
+            if (idx !== -1) {
+                students[idx].phone = document.getElementById('pPhoneInput').value.trim();
+                students[idx].photo = document.getElementById('pPhotoInput').value.trim();
                 saveStudents(students);
-                alert('വിവരങ്ങൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു.');
-                loginParent();
+                alert('വിവരങ്ങൾ വിജയകരമായി സേവ് ചെയ്തു.');
+                searchStudentParent();
             }
         }
 
-        function renderNotices() {
+        function displayNotices() {
             const notices = getNotices();
-            const container = document.getElementById('parentNoticesContainer');
+            const container = document.getElementById('parentNoticeList');
             container.innerHTML = '';
-            if(notices.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);">അറിയിപ്പുകൾ ഒന്നും നിലവിലില്ല.</p>';
+            if (notices.length === 0) {
+                container.innerHTML = '<p style="color:#777; font-size:13px;">അറിയിപ്പുകൾ ലഭ്യമല്ല.</p>';
                 return;
             }
-            notices.forEach(notice => {
+            notices.forEach(n => {
                 let div = document.createElement('div');
-                div.className = 'item-box';
-                div.innerHTML = `<strong>തിയതി: ${notice.date}</strong><p style="margin-top:5px;">${notice.text}</p>`;
+                div.className = 'notice-box';
+                div.innerHTML = `<strong>തിയതി: ${n.date}</strong><p style="margin:4px 0 0 0;">${n.text}</p>`;
                 container.appendChild(div);
             });
         }
 
-        function postNotice() {
-            const text = document.getElementById('newNoticeText').value.trim();
-            if(!text) return alert('അറിയിപ്പ് വിവരങ്ങൾ ടൈപ്പ് ചെയ്യുക.');
+        function publishNotice() {
+            const text = document.getElementById('noticeInput').value.trim();
+            if (!text) return alert('വിവരങ്ങൾ ടൈപ്പ് ചെയ്യുക.');
             let notices = getNotices();
             notices.unshift({ id: Date.now(), date: new Date().toISOString().split('T')[0], text: text });
             saveNotices(notices);
-            document.getElementById('newNoticeText').value = '';
+            document.getElementById('noticeInput').value = '';
             alert('അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു.');
-            renderNotices();
+            displayNotices();
         }
 
-        function submitComplaint() {
-            const text = document.getElementById('complaintText').value.trim();
-            if(!text) return alert('പരാതി ടൈപ്പ് ചെയ്യുക.');
+        function submitParentComplaint() {
+            const text = document.getElementById('complaintInput').value.trim();
+            if (!text) return alert('പരാതി ടൈപ്പ് ചെയ്യുക.');
             let complaints = getComplaints();
             complaints.push({
                 id: Date.now(),
@@ -732,116 +595,109 @@
                 status: 'Pending'
             });
             saveComplaints(complaints);
-            document.getElementById('complaintText').value = '';
-            alert('നിങ്ങളുടെ പരാതി സമർപ്പിച്ചു.');
-            renderParentComplaints();
+            document.getElementById('complaintInput').value = '';
+            alert('പരാതി സമർപ്പിച്ചു.');
+            displayParentComplaints();
         }
 
-        function renderParentComplaints() {
+        function displayParentComplaints() {
             const complaints = getComplaints().filter(c => c.reg_no === currentParentStudent.reg_no);
-            const container = document.getElementById('myComplaintsList');
+            const container = document.getElementById('myComplaints');
             container.innerHTML = '';
-            if(complaints.length === 0) { container.innerHTML = '<p style="font-size:13px; color:var(--text-muted);">പരാതികൾ ഒന്നും സമർപ്പിച്ചിട്ടില്ല.</p>'; return; }
-            
+            if (complaints.length === 0) { container.innerHTML = '<p style="color:#777; font-size:12px;">പരാതികൾ ഇല്ല.</p>'; return; }
             complaints.forEach(c => {
                 let div = document.createElement('div');
-                div.className = 'item-box';
+                div.className = 'complaint-box';
                 div.innerHTML = `
-                    <p><strong>പരാതി:</strong> ${c.text}</p>
-                    <span class="badge ${c.status === 'Pending' ? 'badge-pending' : 'badge-replied'}">${c.status === 'Pending' ? 'മറുപടി ലഭ്യമല്ല' : 'മറുപടി നൽകി'}</span>
-                    ${c.reply ? `<div class="reply-box"><strong>മറുപടി (സദർ/മാനേജ്മെന്റ്):</strong> ${c.reply}</div>` : ''}
+                    <p style="margin:0;"><strong>പരാതി:</strong> ${c.text}</p>
+                    <span style="font-size:11px; padding:2px 5px; background:${c.status === 'Pending'?'#f0ad4e':'#5cb85c'}; color:white; border-radius:3px; display:inline-block; margin-top:4px;">
+                        ${c.status === 'Pending' ? 'മറുപടി ലഭിച്ചിട്ടില്ല' : 'മറുപടി നൽകി'}
+                    </span>
+                    ${c.reply ? `<div class="reply-box"><strong>മറുപടി:</strong> ${c.reply}</div>` : ''}
                 `;
                 container.appendChild(div);
             });
         }
 
-        function renderSadarComplaints() {
+        function showSadarComplaints() {
             const complaints = getComplaints();
-            const container = document.getElementById('sadarComplaintsContainer');
+            const container = document.getElementById('sadarComplaintsList');
             container.innerHTML = '';
-            if(complaints.length === 0) { container.innerHTML = '<p style="color:var(--text-muted);">പരാതികൾ ഒന്നും വന്നിട്ടില്ല.</p>'; return; }
-
+            if (complaints.length === 0) { container.innerHTML = '<p style="color:#777; font-size:13px;">പരാതികൾ വന്നിട്ടില്ല.</p>'; return; }
             complaints.forEach((c, index) => {
                 let div = document.createElement('div');
-                div.className = 'item-box';
+                div.className = 'complaint-box';
                 div.innerHTML = `
-                    <h4>കുട്ടി: ${c.studentName} (Reg No: ${c.reg_no})</h4>
-                    <p><strong>പരാതി:</strong> ${c.text}</p>
-                    ${c.reply ? `<div class="reply-box"><strong>നിലവിലെ മറുപടി:</strong> ${c.reply}</div>` : ''}
-                    <div style="margin-top:10px; display:flex; gap:10px;">
-                        <input type="text" id="replyInput-${index}" placeholder="ഇവിടെ മറുപടി ടൈപ്പ് ചെയ്യുക..." style="padding:6px;">
-                        <button class="btn btn-secondary" style="padding:6px 12px; font-size:13px;" onclick="submitSadarReply(${index})">മറുപടി അയക്കുക</button>
+                    <strong>കുട്ടി: ${c.studentName} (Reg: ${c.reg_no})</strong>
+                    <p style="margin:4px 0;"><strong>പരാതി:</strong> ${c.text}</p>
+                    ${c.reply ? `<div class="reply-box" style="background:#f9f9f9;"><strong>മറുപടി:</strong> ${c.reply}</div>` : ''}
+                    <div style="margin-top:8px; display:flex; gap:10px;">
+                        <input type="text" id="repInp-${index}" placeholder="മറുപടി ഇവിടെ എഴുതുക" style="padding:5px;">
+                        <button class="btn btn-secondary" style="padding:5px 10px; font-size:12px;" onclick="replyFromSadar(${index})">അയക്കുക</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function submitSadarReply(index) {
-            const replyText = document.getElementById(`replyInput-${index}`).value.trim();
-            if(!replyText) return alert('മറുപടി ടൈപ്പ് ചെയ്യുക.');
+        function replyFromSadar(index) {
+            const replyText = document.getElementById(`repInp-${index}`).value.trim();
+            if (!replyText) return alert('മറുപടി ടൈപ്പ് ചെയ്യുക.');
             let complaints = getComplaints();
             complaints[index].reply = replyText;
             complaints[index].status = 'Replied';
             saveComplaints(complaints);
             alert('മറുപടി രേഖപ്പെടുത്തി.');
-            renderSadarComplaints();
+            showSadarComplaints();
         }
 
         function openEditModal(index) {
             const students = getStudents();
             const s = students[index];
-            document.getElementById('modalTitle').innerText = "വിവരങ്ങൾ തിരുത്തുക (Sadar Access)";
-            document.getElementById('modalIndex').value = index;
-            document.getElementById('mRegNo').value = s.reg_no;
+            document.getElementById('modalHeading').innerText = "വിവരങ്ങൾ തിരുത്തുക (Sadar Control)";
+            document.getElementById('editIndex').value = index;
+            document.getElementById('mReg').value = s.reg_no;
             document.getElementById('mName').value = s.name;
             document.getElementById('mParent').value = s.parent;
             document.getElementById('mDob').value = s.dob;
             document.getElementById('mClass').value = s.class;
-            document.getElementById('studentModal').style.display = 'flex';
+            document.getElementById('editModal').style.display = 'flex';
         }
 
-        function openAddModal() {
-            document.getElementById('modalTitle').innerText = "പുതിയ കുട്ടിയെ ചേർക്കുക";
-            document.getElementById('modalIndex').value = "-1";
-            document.getElementById('mRegNo').value = "";
+        function openAddStudentModal() {
+            document.getElementById('modalHeading').innerText = "പുതിയ കുട്ടിയെ ചേർക്കുക";
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('mReg').value = "";
             document.getElementById('mName').value = "";
             document.getElementById('mParent').value = "";
             document.getElementById('mDob').value = "";
-            document.getElementById('studentModal').style.display = 'flex';
+            document.getElementById('editModal').style.display = 'flex';
         }
 
-        function closeModal() { document.getElementById('studentModal').style.display = 'none'; }
+        function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
 
-        function saveStudentModal() {
-            const index = parseInt(document.getElementById('modalIndex').value);
+        function saveStudentFromModal() {
+            const idx = parseInt(document.getElementById('editIndex').value);
             let students = getStudents();
-
-            let targetStudent = {
-                reg_no: document.getElementById('mRegNo').value.trim(),
+            let studentObj = {
+                reg_no: document.getElementById('mReg').value.trim(),
                 name: document.getElementById('mName').value.trim(),
                 parent: document.getElementById('mParent').value.trim(),
                 dob: document.getElementById('mDob').value,
                 class: document.getElementById('mClass').value
             };
 
-            if(!targetStudent.reg_no || !targetStudent.name) return alert('രജിസ്റ്റർ നമ്പരും പേരും നിർബന്ധമാണ്.');
+            if (!studentObj.reg_no || !studentObj.name) return alert('വിവരങ്ങൾ അപ്പൂർണ്ണമാണ്.');
 
-            if(index === -1) {
-                students.push(targetStudent);
-                alert('പുതിയ കുട്ടിയെ വിജയകരമായി ചേർത്തു.');
+            if (idx === -1) {
+                students.push(studentObj);
             } else {
-                students[index].reg_no = targetStudent.reg_no;
-                students[index].name = targetStudent.name;
-                students[index].parent = targetStudent.parent;
-                students[index].dob = targetStudent.dob;
-                students[index].class = targetStudent.class;
-                alert('വിവരങ്ങൾ വിജയകരമായി പുതുക്കി.');
+                students[idx] = { ...students[idx], ...studentObj };
             }
-
             saveStudents(students);
-            closeModal();
-            renderSadarTable();
+            closeEditModal();
+            showSadarList();
+            alert('വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു.');
         }
     </script>
 </body>
