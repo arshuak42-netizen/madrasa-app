@@ -3,153 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>മമ്പഉൽ ഉലൂം മദ്രസ സ്റ്റുഡന്റ് മാനേജ്മെന്റ്</title>
+    <title>മമ്പഉൽ ഉലൂം മദ്രസ - പൂർണ്ണ സിസ്റ്റം</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        h1 {
-            color: #2c3e50;
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        .academic-info {
-            font-weight: bold;
-            color: #16a085;
-            margin-bottom: 20px;
-        }
-        .tabs {
-            margin-bottom: 20px;
-        }
-        .tab-button {
-            padding: 10px 20px;
-            background-color: #eee;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .tab-button.active {
-            background-color: #fff;
-            border-bottom: 1px solid #fff;
-        }
-        .tab-content {
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ccc;
-            margin-top: -1px;
-            border-radius: 0 4px 4px 4px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .btn {
-            padding: 10px 15px;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn:hover {
-            background-color: #34495e;
-        }
-        .btn-secondary {
-            background-color: #16a085;
-        }
-        .btn-secondary:hover {
-            background-color: #1abc9c;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .profile-box {
-            border: 1px solid #ccc;
-            padding: 15px;
-            background-color: #fdfdfd;
-            border-radius: 4px;
-            margin-top: 15px;
-        }
-        .profile-flex {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .photo-space {
-            width: 80px;
-            height: 80px;
-            border: 1px solid #ccc;
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: #777;
-        }
-        .photo-space img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .notice-box, .complaint-box {
-            background-color: #fcf8e3;
-            border: 1px solid #faebcc;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-        .disabled-field {
-            background-color: #f5f5f5;
-            color: #777;
-        }
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            width: 400px;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; color: #333; }
+        h1 { color: #2c3e50; font-size: 22px; margin-bottom: 5px; }
+        .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+        .academic-info { font-weight: bold; color: #16a085; margin-bottom: 20px; }
+        .tabs { margin-bottom: 20px; display: flex; gap: 5px; overflow-x: auto; }
+        .tab-button { padding: 10px 15px; background-color: #eee; border: 1px solid #ccc; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap; }
+        .tab-button.active { background-color: #fff; border-bottom: 1px solid #fff; color: #2c3e50; }
+        .tab-content { background-color: #fff; padding: 20px; border: 1px solid #ccc; margin-top: -1px; border-radius: 0 4px 4px 4px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="date"], select, textarea, input[type="number"] { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .btn { padding: 10px 15px; background-color: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #34495e; }
+        .btn-secondary { background-color: #16a085; }
+        .btn-danger { background-color: #e74c3c; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .profile-box { border: 1px solid #ccc; padding: 15px; background-color: #fdfdfd; border-radius: 4px; margin-top: 15px; }
+        .notice-box, .complaint-box { background-color: #fcf8e3; border: 1px solid #faebcc; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .disabled-field { background-color: #f5f5f5; color: #777; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 5px; width: 400px; }
+        .att-btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .att-present { background-color: #2ecc71; color: white; }
+        .att-absent { background-color: #e74c3c; color: white; }
     </style>
 </head>
 <body>
@@ -159,7 +41,8 @@
     <div class="academic-info">അക്കാദമിക് വർഷം: 2026-2027</div>
 
     <div class="tabs">
-        <button class="tab-button active" onclick="openTab(event, 'parent-panel')">രക്ഷിതാക്കളുടെ പോർട്ടൽ (Parent Portal)</button>
+        <button class="tab-button active" onclick="openTab(event, 'parent-panel')">രക്ഷിതാക്കളുടെ പോർട്ടൽ</button>
+        <button class="tab-button" onclick="openTab(event, 'usthad-panel')">ഉസ്താദുമാരുടെ പാനൽ (Attendance/Exam)</button>
         <button class="tab-button" onclick="openTab(event, 'sadar-panel')">Sadar/Management കൺട്രോൾ പാനൽ</button>
     </div>
 
@@ -172,60 +55,83 @@
 
         <div id="parentView" style="display: none;">
             <div class="profile-box">
-                <div class="profile-flex">
-                    <div class="photo-space" id="pPhotoContainer">ഫോട്ടോ ഇല്ല</div>
-                    <div>
-                        <h4 id="pNameTitle" style="margin: 0; color: #2c3e50;"></h4>
-                        <p id="pClassTitle" style="margin: 5px 0 0 0; font-weight: bold; color: #16a085;"></p>
-                    </div>
-                </div>
+                <h4 id="pNameTitle" style="margin: 0; color: #2c3e50; font-size:18px;"></h4>
+                <p id="pClassTitle" style="margin: 5px 0; font-weight: bold; color: #16a085;"></p>
                 
-                <div style="margin-top: 15px;">
-                    <div class="form-group">
-                        <label>കുട്ടിയുടെ പേര് (സദറിന് മാത്രം മാറ്റാം):</label>
-                        <input type="text" id="pNameDisp" class="disabled-field" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>രക്ഷിതാവിന്റെ പേര് (സദറിന് മാത്രം മാറ്റാം):</label>
-                        <input type="text" id="pParentDisp" class="disabled-field" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>ജനനതീയതി (സദറിന് മാത്രം മാറ്റാം):</label>
-                        <input type="text" id="pDobDisp" class="disabled-field" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>രജിസ്റ്റർ നമ്പർ:</label>
-                        <input type="text" id="pRegDisp" class="disabled-field" disabled>
-                    </div>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
-                    <h4>വിവരങ്ങൾ പുതുക്കുക</h4>
-                    <div class="form-group">
-                        <label>മൊബൈൽ നമ്പർ:</label>
-                        <input type="text" id="pPhoneInput">
-                    </div>
-                    <div class="form-group">
-                        <label>കുട്ടിയുടെ ഫോട്ടോ ലിങ്ക് (URL):</label>
-                        <input type="text" id="pPhotoInput">
-                    </div>
-                    <button class="btn btn-secondary" onclick="updateParentData()">സേവ് ചെയ്യുക</button>
-                </div>
+                <table style="margin-top:15px; background:#fff;">
+                    <tr><th>രജിസ്റ്റർ നമ്പർ</th><td id="pRegDisp"></td></tr>
+                    <tr><th>രക്ഷിതാവ്</th><td id="pParentDisp"></td></tr>
+                    <tr><th>ജനനതീയതി</th><td id="pDobDisp"></td></tr>
+                    <tr><th>മൊബൈൽ നമ്പർ</th><td id="pPhoneDisp"></td></tr>
+                    <tr><th>ഹാജർ നില (Attendance)</th><td id="pAttDisp" style="font-weight:bold; color:#2c3e50;">0%</td></tr>
+                    <tr><th>പരീക്ഷാ മാർക്ക് (Exam Score)</th><td id="pMarkDisp" style="font-weight:bold; color:#16a085;">ലഭ്യമല്ല</td></tr>
+                </table>
+
+                <h4 style="margin-top: 20px; color:#16a085;">ഫോൺ നമ്പറും ഫോട്ടോയും അപ്ഡേറ്റ് ചെയ്യുക</h4>
+                <div class="form-group"><label>മൊബൈൽ നമ്പർ:</label><input type="text" id="pPhoneInput"></div>
+                <div class="form-group"><label>ഫോട്ടോ ലിങ്ക് (URL):</label><input type="text" id="pPhotoInput"></div>
+                <button class="btn btn-secondary" onclick="updateParentData()">സേവ് ചെയ്യുക</button>
             </div>
 
             <div style="margin-top: 25px;">
-                <h4>മദ്രസ അറിയിപ്പുകൾ</h4>
+                <h4>മദ്രസ അറിയിപ്പുകൾ (Notices)</h4>
                 <div id="parentNoticeList" style="margin-top: 10px;"></div>
             </div>
 
             <div style="margin-top: 25px; border-top: 1px solid #ccc; padding-top: 20px;">
-                <h4>പരാതികളും അഭിപ്രായങ്ങളും രേഖപ്പെടുത്തുക</h4>
-                <div class="form-group" style="margin-top: 10px;">
-                    <textarea id="complaintInput" rows="3" placeholder="നിങ്ങളുടെ പരാതി ഇവിടെ എഴുതുക..."></textarea>
+                <h4>പരാതികളും അഭിപ്രായങ്ങളും അയക്കുക</h4>
+                <div class="form-group"><textarea id="complaintInput" rows="3" placeholder="ഇവിടെ എഴുതുക..."></textarea></div>
+                <button class="btn" onclick="submitParentComplaint()">പരാതി സമർപ്പിക്കുക</button>
+                <div id="myComplaints" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="usthad-panel" class="tab-content" style="display: none;">
+        <h3>ഉസ്താദുമാരുടെ വർക്ക് സ്പേസ്</h3>
+        <div class="form-group" style="margin-top: 15px;">
+            <label>താങ്കളുടെ ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക:</label>
+            <select id="usthadClassSelect" onchange="loadUsthadClassWorkspace()">
+                <option value="">--തിരഞ്ഞെടുക്കുക--</option>
+                <option value="Class 2">Class 2</option>
+                <option value="Class 3">Class 3</option>
+                <option value="Class 4">Class 4</option>
+                <option value="Class 5">Class 5</option>
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7">Class 7</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 10">Class 10</option>
+                <option value="Plus One">Plus One</option>
+                <option value="Plus Two">Plus Two</option>
+            </select>
+        </div>
+
+        <div id="usthadWorkspace" style="display:none; margin-top:20px;">
+            <div style="border: 1px solid #ccc; padding:15px; background:#fcfcfc; margin-bottom:20px;">
+                <h4>1. ദിവസേനയുള്ള ഹാജർ രേഖപ്പെടുത്തൽ (Daily Attendance)</h4>
+                <div class="form-group" style="width:200px; margin-top:10px;">
+                    <label>തീയതി:</label>
+                    <input type="date" id="attDate" onchange="loadAttendanceStatus()">
                 </div>
-                <button class="btn" onclick="submitParentComplaint()">പരാതി അയക്കുക</button>
-                
-                <h5 style="margin-top: 15px;">നിങ്ങളുടെ പരാതികളുടെ അവസ്ഥ:</h5>
-                <div id="myComplaints" style="margin-top: 5px;"></div>
+                <table>
+                    <thead>
+                        <tr><th>രജി. നമ്പർ</th><th>വിദ്യാർത്ഥി</th><th>ഹാജർ നില (Present/Absent ക്ലിക്ക് ചെയ്യുക)</th></tr>
+                    </thead>
+                    <tbody id="attendanceTableBody"></tbody>
+                </table>
+                <button class="btn btn-secondary" style="margin-top:15px;" onclick="saveDailyAttendance()">Attendance സേവ് ചെയ്യുക</button>
+            </div>
+
+            <div style="border: 1px solid #ccc; padding:15px; background:#fcfcfc;">
+                <h4>2. പരീക്ഷാ മാർക്കുകൾ എന്റർ ചെയ്യുക (Exam Marks Entry)</h4>
+                <table>
+                    <thead>
+                        <tr><th>രജി. നമ്പർ</th><th>വിദ്യാർത്ഥി</th><th>മാർക്ക് / ഗ്രേഡ് (Max: 100)</th></tr>
+                    </thead>
+                    <tbody id="examTableBody"></tbody>
+                </table>
+                <button class="btn" style="margin-top:15px;" onclick="saveExamMarks()">Marks സേവ് ചെയ്യുക</button>
             </div>
         </div>
     </div>
@@ -238,7 +144,7 @@
 
         <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 15px;">
             <div style="flex: 1;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">ക്ലാസ്സ് ഫിൽട്ടർ:</label>
+                <label>ക്ലാസ്സ് ഫിൽട്ടർ:</label>
                 <select id="classFilter" onchange="showSadarList()">
                     <option value="All">എല്ലാ ക്ലാസ്സുകളും</option>
                     <option value="Class 2">Class 2</option>
@@ -255,7 +161,7 @@
                 </select>
             </div>
             <div style="flex: 2;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">തിരയുക (പേര്/രജിസ്റ്റർ നമ്പർ):</label>
+                <label>തിരയുക (പേര്/രജിസ്റ്റർ നമ്പർ):</label>
                 <input type="text" id="sadarSearch" onkeyup="showSadarList()" placeholder="ടൈപ്പ് ചെയ്യുക...">
             </div>
         </div>
@@ -276,22 +182,20 @@
         </table>
 
         <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <h4>പുതിയ അറിയിപ്പുകൾ പബ്ലിഷ് ചെയ്യുക</h4>
-            <div class="form-group" style="margin-top: 10px;">
-                <textarea id="noticeInput" rows="2" placeholder="അറിയിപ്പ് വിവരം ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
-            </div>
-            <button class="btn" onclick="publishNotice()">അറിയിപ്പ് പ്രസിദ്ധീകരിക്കുക</button>
+            <h4>പുതിയ അറിയിപ്പുകൾ പബ്ലിഷ് ചെയ്യുക (Notices)</h4>
+            <div class="form-group"><textarea id="noticeInput" rows="2" placeholder="അറിയിപ്പ് വിവരം..."></textarea></div>
+            <button class="btn" onclick="publishNotice()">പ്രസിദ്ധീകരിക്കുക</button>
         </div>
 
         <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
             <h4>രക്ഷിതാക്കളുടെ പരാതികളും മറുപടികളും</h4>
-            <div id="sadarComplaintsList" style="margin-top: 10px;"></div>
+            <div id="sadarComplaintsList"></div>
         </div>
     </div>
 
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h4 id="modalHeading" style="margin-top: 0; color: #2c3e50;">വിവരങ്ങൾ തിരുത്തുക</h4>
+            <h4 id="modalHeading">വിവരങ്ങൾ തിരുത്തുക</h4>
             <input type="hidden" id="editIndex">
             <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="mReg"></div>
             <div class="form-group"><label>കുട്ടിയുടെ പേര്:</label><input type="text" id="mName"></div>
@@ -321,6 +225,7 @@
     </div>
 
     <script>
+        // ഡാറ്റാബേസ് സുരക്ഷിതമായി ഇൻജക്ട് ചെയ്തിരിക്കുന്നു 
         let initialData = [
             {"reg_no": "201", "name": "Shan Abdul Razak", "parent": "Shamsudheen", "dob": "2019-01-04", "class": "Class 2"},
             {"reg_no": "202", "name": "Ahad Muhiyudheen", "parent": "Shanavas", "dob": "2019-12-07", "class": "Class 2"},
@@ -451,11 +356,18 @@
             {"reg_no": "1205", "name": "Ayesha Naja", "parent": "Navas", "dob": "2009-07-24", "class": "Plus Two"}
         ];
 
+        // LocalStorage initialization safely
         if (!localStorage.getItem('students')) localStorage.setItem('students', JSON.stringify(initialData));
-        if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([{ id: 1, date: "2026-06-09", text: "മദ്രസയിൽ ഒന്നാം പാദ പരീക്ഷ അടുത്ത ആഴ്ച ആരംഭിക്കും." }]));
+        if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([{ id: 1, date: "2026-06-09", text: "മദ്രസ ഒന്നാം പാദ പരീക്ഷ അടുത്ത ആഴ്ച ആരംഭിക്കും." }]));
         if (!localStorage.getItem('complaints')) localStorage.setItem('complaints', JSON.stringify([]));
+        if (!localStorage.getItem('attendanceDB')) localStorage.setItem('attendanceDB', JSON.stringify({}));
+        if (!localStorage.getItem('examDB')) localStorage.setItem('examDB', JSON.stringify({}));
+
+        let currentParentStudent = null;
+        let currentAttendanceState = {}; 
 
         window.onload = function() {
+            document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
             showSadarList();
             displayNotices();
         };
@@ -466,25 +378,174 @@
         function saveNotices(data) { localStorage.setItem('notices', JSON.stringify(data)); }
         function getComplaints() { return JSON.parse(localStorage.getItem('complaints')); }
         function saveComplaints(data) { localStorage.setItem('complaints', JSON.stringify(data)); }
+        function getAttendanceDB() { return JSON.parse(localStorage.getItem('attendanceDB')); }
+        function saveAttendanceDB(data) { localStorage.setItem('attendanceDB', JSON.stringify(data)); }
+        function getExamDB() { return JSON.parse(localStorage.getItem('examDB')); }
+        function saveExamDB(data) { localStorage.setItem('examDB', JSON.stringify(data)); }
 
         function openTab(evt, tabName) {
             let i, tabcontent, tabbuttons;
             tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
+            for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
             tabbuttons = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tabbuttons.length; i++) {
-                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-            }
+            for (i = 0; i < tabbuttons.length; i++) tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
-            if (tabName === 'sadar-panel') {
-                showSadarList();
-                showSadarComplaints();
+            if (tabName === 'sadar-panel') { showSadarList(); showSadarComplaints(); }
+        }
+
+        // ================= USTHAD LOGIC =================
+        function loadUsthadClassWorkspace() {
+            const cls = document.getElementById('usthadClassSelect').value;
+            if(!cls) { document.getElementById('usthadWorkspace').style.display = 'none'; return; }
+            document.getElementById('usthadWorkspace').style.display = 'block';
+            
+            loadAttendanceStatus();
+            renderExamWorkspace();
+        }
+
+        function loadAttendanceStatus() {
+            const cls = document.getElementById('usthadClassSelect').value;
+            const date = document.getElementById('attDate').value;
+            const students = getStudents().filter(s => s.class === cls);
+            const attDB = getAttendanceDB();
+            
+            const tbody = document.getElementById('attendanceTableBody');
+            tbody.innerHTML = '';
+            
+            currentAttendanceState = attDB[date] && attDB[date][cls] ? attDB[date][cls] : {};
+
+            students.forEach(s => {
+                if(!currentAttendanceState[s.reg_no]) currentAttendanceState[s.reg_no] = 'Present'; 
+                
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.reg_no}</td>
+                    <td>${s.name}</td>
+                    <td>
+                        <button id="attBtn-${s.reg_no}" class="att-btn ${currentAttendanceState[s.reg_no]==='Present'?'att-present':'att-absent'}" onclick="toggleAttendance('${s.reg_no}')">
+                            ${currentAttendanceState[s.reg_no]}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleAttendance(regNo) {
+            const btn = document.getElementById(`attBtn-${regNo}`);
+            if(currentAttendanceState[regNo] === 'Present') {
+                currentAttendanceState[regNo] = 'Absent';
+                btn.innerText = 'Absent';
+                btn.className = 'att-btn att-absent';
+            } else {
+                currentAttendanceState[regNo] = 'Present';
+                btn.innerText = 'Present';
+                btn.className = 'att-btn att-present';
             }
         }
 
+        function saveDailyAttendance() {
+            const cls = document.getElementById('usthadClassSelect').value;
+            const date = document.getElementById('attDate').value;
+            let attDB = getAttendanceDB();
+            
+            if(!attDB[date]) attDB[date] = {};
+            attDB[date][cls] = currentAttendanceState;
+            
+            saveAttendanceDB(attDB);
+            alert(`${cls} ഹാജർ വിവരങ്ങൾ വിജയകരമായി സേവ് ചെയ്തു.`);
+        }
+
+        function renderExamWorkspace() {
+            const cls = document.getElementById('usthadClassSelect').value;
+            const students = getStudents().filter(s => s.class === cls);
+            const examDB = getExamDB();
+            const tbody = document.getElementById('examTableBody');
+            tbody.innerHTML = '';
+
+            students.forEach(s => {
+                let currentMark = examDB[s.reg_no] || '';
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.reg_no}</td>
+                    <td>${s.name}</td>
+                    <td><input type="text" id="examMark-${s.reg_no}" value="${currentMark}" placeholder="ഉദാ: 85, A+"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveExamMarks() {
+            const cls = document.getElementById('usthadClassSelect').value;
+            const students = getStudents().filter(s => s.class === cls);
+            let examDB = getExamDB();
+
+            students.forEach(s => {
+                const markVal = document.getElementById(`examMark-${s.reg_no}`).value.trim();
+                examDB[s.reg_no] = markVal;
+            });
+
+            saveExamDB(examDB);
+            alert('പരീക്ഷാ മാർക്കുകൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു.');
+        }
+
+        // ================= PARENT LOGIC =================
+        function searchStudentParent() {
+            const regNo = document.getElementById('parentRegSearch').value.trim();
+            const students = getStudents();
+            currentParentStudent = students.find(s => s.reg_no === regNo);
+
+            if (!currentParentStudent) {
+                alert('കുട്ടിയെ കണ്ടെത്താൻ കഴിഞ്ഞില്ല.');
+                document.getElementById('parentView').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('parentView').style.display = 'block';
+            document.getElementById('pNameTitle').innerText = currentParentStudent.name;
+            document.getElementById('pClassTitle').innerText = currentParentStudent.class;
+            document.getElementById('pRegDisp').innerText = currentParentStudent.reg_no;
+            document.getElementById('pParentDisp').innerText = currentParentStudent.parent;
+            document.getElementById('pDobDisp').innerText = currentParentStudent.dob;
+            document.getElementById('pPhoneDisp').innerText = currentParentStudent.phone || '-';
+            
+            document.getElementById('pPhoneInput').value = currentParentStudent.phone || '';
+            document.getElementById('pPhotoInput').value = currentParentStudent.photo || '';
+
+            // Calculate Attendance Percentage
+            const attDB = getAttendanceDB();
+            let totalDays = 0, presentDays = 0;
+            for (let date in attDB) {
+                if(attDB[date][currentParentStudent.class] && attDB[date][currentParentStudent.class][regNo]) {
+                    totalDays++;
+                    if(attDB[date][currentParentStudent.class][regNo] === 'Present') presentDays++;
+                }
+            }
+            const percentage = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 100;
+            document.getElementById('pAttDisp').innerText = `${percentage}% (${totalDays} ദിവസങ്ങളിൽ ${presentDays} ഹാജർ)`;
+
+            // Fetch Exam Score
+            const examDB = getExamDB();
+            document.getElementById('pMarkDisp').innerText = examDB[regNo] || 'മാർക്കുകൾ ലഭ്യമാക്കിയിട്ടില്ല';
+
+            displayParentComplaints();
+        }
+
+        function updateParentData() {
+            if (!currentParentStudent) return;
+            let students = getStudents();
+            let idx = students.findIndex(s => s.reg_no === currentParentStudent.reg_no);
+            if (idx !== -1) {
+                students[idx].phone = document.getElementById('pPhoneInput').value.trim();
+                students[idx].photo = document.getElementById('pPhotoInput').value.trim();
+                saveStudents(students);
+                alert('വിവരങ്ങൾ സേവ് ചെയ്തു.');
+                searchStudentParent();
+            }
+        }
+
+        // ================= SADAR / MANAGEMENT LOGIC =================
         function showSadarList() {
             const students = getStudents();
             const filter = document.getElementById('classFilter').value;
@@ -510,59 +571,11 @@
             });
         }
 
-        function searchStudentParent() {
-            const regNo = document.getElementById('parentRegSearch').value.trim();
-            const students = getStudents();
-            currentParentStudent = students.find(s => s.reg_no === regNo);
-
-            if (!currentParentStudent) {
-                alert('വിദ്യാർത്ഥിയെ കണ്ടെത്താൻ കഴിഞ്ഞില്ല.');
-                document.getElementById('parentView').style.display = 'none';
-                return;
-            }
-
-            document.getElementById('parentView').style.display = 'block';
-            document.getElementById('pNameTitle').innerText = currentParentStudent.name;
-            document.getElementById('pClassTitle').innerText = currentParentStudent.class;
-            
-            document.getElementById('pNameDisp').value = currentParentStudent.name;
-            document.getElementById('pParentDisp').value = currentParentStudent.parent;
-            document.getElementById('pDobDisp').value = currentParentStudent.dob;
-            document.getElementById('pRegDisp').value = currentParentStudent.reg_no;
-            
-            document.getElementById('pPhoneInput').value = currentParentStudent.phone || '';
-            document.getElementById('pPhotoInput').value = currentParentStudent.photo || '';
-            
-            const photoCont = document.getElementById('pPhotoContainer');
-            if (currentParentStudent.photo) {
-                photoCont.innerHTML = `<img src="${currentParentStudent.photo}">`;
-            } else {
-                photoCont.innerHTML = "ഫോട്ടോ ഇല്ല";
-            }
-            displayParentComplaints();
-        }
-
-        function updateParentData() {
-            if (!currentParentStudent) return;
-            let students = getStudents();
-            let idx = students.findIndex(s => s.reg_no === currentParentStudent.reg_no);
-            if (idx !== -1) {
-                students[idx].phone = document.getElementById('pPhoneInput').value.trim();
-                students[idx].photo = document.getElementById('pPhotoInput').value.trim();
-                saveStudents(students);
-                alert('വിവരങ്ങൾ വിജയകരമായി സേവ് ചെയ്തു.');
-                searchStudentParent();
-            }
-        }
-
         function displayNotices() {
             const notices = getNotices();
             const container = document.getElementById('parentNoticeList');
             container.innerHTML = '';
-            if (notices.length === 0) {
-                container.innerHTML = '<p style="color:#777; font-size:13px;">അറിയിപ്പുകൾ ലഭ്യമല്ല.</p>';
-                return;
-            }
+            if (notices.length === 0) { container.innerHTML = '<p style="color:#777; font-size:13px;">അറിയിപ്പുകൾ ലഭ്യമല്ല.</p>'; return; }
             notices.forEach(n => {
                 let div = document.createElement('div');
                 div.className = 'notice-box';
@@ -586,14 +599,7 @@
             const text = document.getElementById('complaintInput').value.trim();
             if (!text) return alert('പരാതി ടൈപ്പ് ചെയ്യുക.');
             let complaints = getComplaints();
-            complaints.push({
-                id: Date.now(),
-                reg_no: currentParentStudent.reg_no,
-                studentName: currentParentStudent.name,
-                text: text,
-                reply: null,
-                status: 'Pending'
-            });
+            complaints.push({ id: Date.now(), reg_no: currentParentStudent.reg_no, studentName: currentParentStudent.name, text: text, reply: null, status: 'Pending' });
             saveComplaints(complaints);
             document.getElementById('complaintInput').value = '';
             alert('പരാതി സമർപ്പിച്ചു.');
@@ -604,17 +610,11 @@
             const complaints = getComplaints().filter(c => c.reg_no === currentParentStudent.reg_no);
             const container = document.getElementById('myComplaints');
             container.innerHTML = '';
-            if (complaints.length === 0) { container.innerHTML = '<p style="color:#777; font-size:12px;">പരാതികൾ ഇല്ല.</p>'; return; }
+            if (complaints.length === 0) return;
             complaints.forEach(c => {
                 let div = document.createElement('div');
                 div.className = 'complaint-box';
-                div.innerHTML = `
-                    <p style="margin:0;"><strong>പരാതി:</strong> ${c.text}</p>
-                    <span style="font-size:11px; padding:2px 5px; background:${c.status === 'Pending'?'#f0ad4e':'#5cb85c'}; color:white; border-radius:3px; display:inline-block; margin-top:4px;">
-                        ${c.status === 'Pending' ? 'മറുപടി ലഭിച്ചിട്ടില്ല' : 'മറുപടി നൽകി'}
-                    </span>
-                    ${c.reply ? `<div class="reply-box"><strong>മറുപടി:</strong> ${c.reply}</div>` : ''}
-                `;
+                div.innerHTML = `<p style="margin:0;"><strong>പരാതി:</strong> ${c.text}</p>${c.reply ? `<div class="reply-box"><strong>മറുപടി:</strong> ${c.reply}</div>` : '<em>മറുപടി ലഭ്യമല്ല</em>'}`;
                 container.appendChild(div);
             });
         }
@@ -630,10 +630,9 @@
                 div.innerHTML = `
                     <strong>കുട്ടി: ${c.studentName} (Reg: ${c.reg_no})</strong>
                     <p style="margin:4px 0;"><strong>പരാതി:</strong> ${c.text}</p>
-                    ${c.reply ? `<div class="reply-box" style="background:#f9f9f9;"><strong>മറുപടി:</strong> ${c.reply}</div>` : ''}
                     <div style="margin-top:8px; display:flex; gap:10px;">
-                        <input type="text" id="repInp-${index}" placeholder="മറുപടി ഇവിടെ എഴുതുക" style="padding:5px;">
-                        <button class="btn btn-secondary" style="padding:5px 10px; font-size:12px;" onclick="replyFromSadar(${index})">അയക്കുക</button>
+                        <input type="text" id="repInp-${index}" value="${c.reply||''}" placeholder="മറുപടി ഇവിടെ എഴുതുക" style="padding:5px;">
+                        <button class="btn btn-secondary" style="padding:5px 10px; font-size:12px;" onclick="replyFromSadar(${index})">മറുപടി അയക്കുക</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -686,14 +685,9 @@
                 dob: document.getElementById('mDob').value,
                 class: document.getElementById('mClass').value
             };
-
-            if (!studentObj.reg_no || !studentObj.name) return alert('വിവരങ്ങൾ അപ്പൂർണ്ണമാണ്.');
-
-            if (idx === -1) {
-                students.push(studentObj);
-            } else {
-                students[idx] = { ...students[idx], ...studentObj };
-            }
+            if (!studentObj.reg_no || !studentObj.name) return alert('വിവരങ്ങൾ അപൂർണ്ണമാണ്.');
+            if (idx === -1) students.push(studentObj);
+            else students[idx] = { ...students[idx], ...studentObj };
             saveStudents(students);
             closeEditModal();
             showSadarList();
