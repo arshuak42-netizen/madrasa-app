@@ -227,23 +227,9 @@
             border: 1px solid #e2e8f0;
         }
 
-        .info-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: bold;
-        }
-
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-top: 2px;
-        }
-
-        .disabled-info {
-            background-color: #f1f5f9;
-            color: #64748b;
-        }
+        .info-label { font-size: 12px; color: var(--text-muted); font-weight: bold; }
+        .info-value { font-size: 15px; font-weight: 600; color: var(--text-main); margin-top: 2px; }
+        .disabled-info { background-color: #f1f5f9; color: #64748b; }
 
         .item-box {
             background: #f8fafc;
@@ -262,7 +248,6 @@
             display: inline-block;
             margin-top: 5px;
         }
-
         .badge-pending { background-color: #f59e0b; }
         .badge-replied { background-color: #10b981; }
 
@@ -295,12 +280,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -328,7 +308,7 @@
                 <div class="student-profile-card">
                     <div class="profile-header">
                         <div class="profile-img-container">
-                            <img id="pViewPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z'/></svg>" alt="Student Photo">
+                            <img id="pViewPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z'/></svg>">
                         </div>
                         <div>
                             <h3 id="pViewTitleName" style="color: var(--primary-color);"></h3>
@@ -356,7 +336,7 @@
                     </div>
 
                     <div style="padding: 20px; border-top: 1px solid var(--border-color); background: #fff;">
-                        <h4 style="margin-bottom: 15px; color: var(--secondary-color);">വിವರങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക</h4>
+                        <h4 style="margin-bottom: 15px; color: var(--secondary-color);">വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക</h4>
                         <div class="form-group">
                             <label>മൊബൈൽ നമ്പർ:</label>
                             <input type="text" id="pInputPhone" placeholder="മൊബൈൽ നമ്പർ നൽകുക">
@@ -376,13 +356,11 @@
 
                 <div style="margin-top: 30px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
                     <h3>പരാതികളും അഭിപ്രായങ്ങളും രേഖപ്പെടുത്തുക</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">ഇവിടെ സമർപ്പിക്കുന്ന പരാതികൾ സദറിനും മാനേജ്മെന്റിനും കാണാനും മറുപടി നൽകാനും സാധിക്കും.</p>
                     <div class="form-group">
                         <textarea id="complaintText" rows="3" placeholder="നിങ്ങളുടെ പരാതിയോ അഭിപ്രായമോ ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
                     </div>
                     <button class="btn" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
-
-                    <h4 style="margin-top: 20px; margin-bottom: 10px;">നിങ്ങളുടെ പരാതികളുടെ നിലവിലെ അവസ്ഥ:</h4>
+                    <h4 style="margin-top: 20px; margin-bottom: 10px;">നിങ്ങളുടെ പരാതികളുടെ അവസ്ഥ:</h4>
                     <div id="myComplaintsList"></div>
                 </div>
             </div>
@@ -413,8 +391,8 @@
                     </select>
                 </div>
                 <div style="flex: 2;">
-                    <label>തിരയുക (പേര്/രജിസ്റ്റർ നമ്പർ):</label>
-                    <input type="text" id="searchBar" onkeyup="renderSadarTable()" placeholder="ടൈപ്പ് ചെയ്യുക...">
+                    <label>പേര് അല്ലെങ്കിൽ രജിസ്റ്റർ നമ്പർ ഉപയോഗിച്ച് തിരയുക:</label>
+                    <input type="text" id="searchBar" onkeyup="renderSadarTable()" placeholder="പേര് ടൈപ്പ് ചെയ്യുക...">
                 </div>
             </div>
 
@@ -438,7 +416,7 @@
             <div style="margin-top: 40px; border-top: 2px solid var(--border-color); padding-top: 25px;">
                 <h3>പുതിയ അറിയിപ്പുകൾ ഇറക്കുക (Post Notice)</h3>
                 <div class="form-group" style="margin-top: 15px;">
-                    <textarea id="newNoticeText" rows="2" placeholder="രക്ഷിതാക്കൾക്ക് നൽകാനുള്ള അറിയിപ്പ് ഇവിടെ എഴുതുക..."></textarea>
+                    <textarea id="newNoticeText" rows="2" placeholder="രക്ഷിതാക്കൾക്ക് നൽകാനുള്ള അറിയിപ്പ്..."></textarea>
                 </div>
                 <button class="btn" onclick="postNotice()">അറിയിപ്പ് പബ്ലിഷ് ചെയ്യുക</button>
             </div>
@@ -454,22 +432,10 @@
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom: 15px; color: var(--primary-color);">വിവരങ്ങൾ തിരുത്തുക</h3>
             <input type="hidden" id="modalIndex">
-            <div class="form-group">
-                <label>രജിസ്റ്റർ നമ്പർ:</label>
-                <input type="text" id="mRegNo">
-            </div>
-            <div class="form-group">
-                <label>കുട്ടിയുടെ പേര്:</label>
-                <input type="text" id="mName">
-            </div>
-            <div class="form-group">
-                <label>രക്ഷിതാവിന്റെ പേര്:</label>
-                <input type="text" id="mParent">
-            </div>
-            <div class="form-group">
-                <label>ജനനതീയതി (DOB):</label>
-                <input type="date" id="mDob">
-            </div>
+            <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ:</label><input type="text" id="mRegNo"></div>
+            <div class="form-group"><label>കുട്ടിയുടെ പേര്:</label><input type="text" id="mName"></div>
+            <div class="form-group"><label>രക്ഷിതാവിന്റെ പേര്:</label><input type="text" id="mParent"></div>
+            <div class="form-group"><label>ജനനതീയതി (DOB):</label><input type="date" id="mDob"></div>
             <div class="form-group">
                 <label>ക്ലാസ്സ്:</label>
                 <select id="mClass">
@@ -494,7 +460,6 @@
     </div>
 
     <script>
-        // തന്നിട്ടുള്ള മുഴുവൻ വിദ്യാർത്ഥികളുടെയും വിവരങ്ങൾ ഉൾക്കൊള്ളിച്ചിരിക്കുന്നു (Removed Duplications)
         let defaultStudents = [
             {"reg_no": "201", "name": "Shan Abdul Razak", "parent": "Shamsudheen", "dob": "2019-01-04", "class": "Class 2"},
             {"reg_no": "202", "name": "Ahad Muhiyudheen", "parent": "Shanavas", "dob": "2019-12-07", "class": "Class 2"},
@@ -625,17 +590,9 @@
             {"reg_no": "1205", "name": "Ayesha Naja", "parent": "Navas", "dob": "2009-07-24", "class": "Plus Two"}
         ];
 
-        if (!localStorage.getItem('students')) {
-            localStorage.setItem('students', JSON.stringify(defaultStudents));
-        }
-        if (!localStorage.getItem('notices')) {
-            localStorage.setItem('notices', JSON.stringify([
-                { id: 1, date: "2026-06-09", text: "അടുത്ത തിങ്കളാഴ്ച മദ്രസയിൽ ഒന്നാം പാദ പരീക്ഷ ആരംഭിക്കുന്നതാണ്. എല്ലാ കുട്ടികളും കൃത്യസമയത്ത് ഹാജരാകണം." }
-            ]));
-        }
-        if (!localStorage.getItem('complaints')) {
-            localStorage.setItem('complaints', JSON.stringify([]));
-        }
+        if (!localStorage.getItem('students')) localStorage.setItem('students', JSON.stringify(defaultStudents));
+        if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([{ id: 1, date: "2026-06-09", text: "അടുത്ത തിങ്കളാഴ്ച മദ്രസയിൽ ഒന്നാം പാദ പരീക്ഷ ആരംഭിക്കുന്നതാണ്. എല്ലാ കുട്ടികളും കൃത്യസമയത്ത് ഹാജരാകണം." }]));
+        if (!localStorage.getItem('complaints')) localStorage.setItem('complaints', JSON.stringify([]));
 
         let currentParentStudent = null;
 
@@ -755,11 +712,7 @@
             const text = document.getElementById('newNoticeText').value.trim();
             if(!text) return alert('അറിയിപ്പ് വിവരങ്ങൾ ടൈപ്പ് ചെയ്യുക.');
             let notices = getNotices();
-            notices.unshift({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                text: text
-            });
+            notices.unshift({ id: Date.now(), date: new Date().toISOString().split('T')[0], text: text });
             saveNotices(notices);
             document.getElementById('newNoticeText').value = '';
             alert('അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു.');
@@ -838,7 +791,7 @@
         function openEditModal(index) {
             const students = getStudents();
             const s = students[index];
-            document.getElementById('modalTitle').innerText = "വിവരങ്ങൾ തിരുത്തുക (Sadar Control)";
+            document.getElementById('modalTitle').innerText = "വിവരങ്ങൾ തിരുത്തുക (Sadar Access)";
             document.getElementById('modalIndex').value = index;
             document.getElementById('mRegNo').value = s.reg_no;
             document.getElementById('mName').value = s.name;
@@ -858,9 +811,7 @@
             document.getElementById('studentModal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('studentModal').style.display = 'none';
-        }
+        function closeModal() { document.getElementById('studentModal').style.display = 'none'; }
 
         function saveStudentModal() {
             const index = parseInt(document.getElementById('modalIndex').value);
