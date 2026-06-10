@@ -15,222 +15,241 @@
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         body { background-color: var(--bg); color: var(--text); padding: 15px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         header { text-align: center; padding-bottom: 15px; border-bottom: 3px solid var(--primary); margin-bottom: 20px; }
-        header h1 { color: var(--primary); font-size: 24px; }
-        header p { color: #6b7280; font-size: 14px; margin-top: 5px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; }
+        header h1 { color: var(--primary); font-size: 22px; }
+        header p { color: #6b7280; font-size: 13px; margin-top: 5px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--secondary); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-warning { background: var(--warning); color: white; }
         .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
         .form-control { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; font-size: 14px; }
-        .form-control:focus { border-color: var(--primary); }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
         th { background: var(--primary); color: white; }
         tr:nth-child(even) { background: #f9fafb; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
-        .badge-success { background: var(--secondary); }
-        .badge-danger { background: var(--danger); }
         .hidden { display: none !important; }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; overflow-x: auto; }
-        .tab-btn { padding: 8px 12px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 8px 12px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; flex: 1; }
         .tab-btn.active { background: var(--primary); color: white; }
+        .accordion-btn { width: 100%; text-align: left; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
+        .student-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); display: block; margin: 0 auto 10px auto; }
+        .staff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .staff-card { border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center; font-size: 12px; position: relative; }
+        .staff-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>മമ്പഉൽ ഉലൂം മദ്റസ, കൊറക്കോട്</h1>
-        <p>സ്മാർട്ട് പോർട്ടൽ (Sadar, Muallim, Committee & Parents Dashboard)</p>
+        <h1>മമ്പഉൽ ഉലൂം മദ്റസ</h1>
+        <p>Reg No: 6682 | കൊറക്കോട്, കാസർഗോഡ്</p>
+        <p style="font-weight: bold; color: var(--secondary);">അക്കാദമിക് വർഷം: 2026-2027</p>
         <div id="logoutArea" class="hidden" style="text-align: right; margin-top: 10px;">
-            <span id="userBadge" style="font-weight: bold; margin-right: 10px;"></span>
-            <button class="btn btn-danger" onclick="logout()">ലോഗ് ഔട്ട്</button>
+            <span id="userDisplayBadge" style="font-weight: bold; font-size: 13px; margin-right: 10px; color: var(--primary);"></span>
+            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
         </div>
     </header>
 
     <div id="loginScreen" class="card">
-        <h3 style="margin-bottom: 15px; color: var(--primary); text-align: center;">പോർട്ടൽ പ്രവേശനം</h3>
-        <div class="nav-tabs" style="justify-content: center;">
-            <button class="tab-btn active" onclick="switchLoginTab('parent')">രക്ഷിതാവ് (Parent)</button>
-            <button class="tab-btn" onclick="switchLoginTab('staff')">ഉദ്യോഗസ്ഥർ (Staff)</button>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchLoginTab('parent')">രക്ഷിതാവ്</button>
+            <button class="tab-btn" onclick="switchLoginTab('staff')">ഉദ്യോഗസ്ഥർ</button>
         </div>
 
         <div id="parentLoginForm">
             <div class="form-group">
                 <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ നൽകുക:</label>
-                <input type="number" id="parentRegNo" class="form-control" placeholder="ഉദാഹരണത്തിന്: 680">
+                <input type="number" id="parentRegNo" class="form-control" placeholder="ഉദാ: 713">
             </div>
-            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="loginAsParent()">പ്രവേശിക്കുക</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="loginAsParent()">പ്രവേശിക്കുക</button>
         </div>
 
         <div id="staffLoginForm" class="hidden">
             <div class="form-group">
                 <label>യൂസർനെയിം (Username):</label>
-                <input type="text" id="staffUser" class="form-control" placeholder="sadhar / committee / muallim">
+                <input type="text" id="staffUser" class="form-control" placeholder="sadhar / committee_username / usthad_username">
             </div>
             <div class="form-group">
                 <label>പാസ്‌വേഡ് (Password):</label>
                 <input type="password" id="staffPass" class="form-control" placeholder="••••••••">
             </div>
-            <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="loginAsStaff()">ലോഗിൻ ചെയ്യുക</button>
-        </div>
-        
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-        <h4 style="color: var(--primary); margin-bottom: 10px;">📢 പബ്ലിക് പരീക്ഷാ ഫലം ബോർഡ്</h4>
-        <div class="form-group">
-            <select id="publicClassFilter" class="form-control" onchange="showPublicRankList()">
-                <option value="">ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക...</option>
-                <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-            </select>
-        </div>
-        <div id="publicRankBoard" class="hidden">
-            <table id="publicRankTable">
-                <thead><tr><th>റാങ്ക്</th><th>റെജി. നമ്പർ</th><th>പേര്</th><th>ആകെ മാർക്ക്</th></tr></thead>
-                <tbody></tbody>
-            </table>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="loginAsStaff()">ലോഗിൻ ചെയ്യുക</button>
         </div>
     </div>
 
     <div id="parentDashboard" class="hidden">
-        <div class="card" style="background: #eff6ff;">
-            <h3 style="color: var(--primary); margin-bottom: 10px;">വിദ്യാർത്ഥി പ്രൊഫൈൽ</h3>
-            <div class="grid-2" id="parentProfileDetails"></div>
+        <div class="card" style="background: #f8fafc;">
+            <img id="viewStudentPhoto" class="student-photo" src="https://via.placeholder.com/80" alt="Student Photo">
+            <table id="parentProfileTable"></table>
         </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>📊 ഹാജർ നില (Live Attendance)</h4>
-                <h2 id="parentAttendancePer" style="color: var(--secondary); margin: 10px 0;">100%</h2>
-                <div id="parentMonthlyAttendance"></div>
-            </div>
-            <div class="card">
-                <h4>💰 മദ്രസ ഫീസ് വിവരങ്ങൾ</h4>
-                <div id="parentFeeStatus" style="margin-top: 10px; font-weight: 500;"></div>
-            </div>
-        </div>
+
         <div class="card">
-            <h4>📝 പരീക്ഷാ മാർക്ക് / ഗ്രേഡ്</h4>
-            <table id="parentMarkTable">
-                <thead><tr><th>വിഷയം</th><th>മാർക്ക്</th><th>ഫലം</th></tr></thead>
-                <tbody></tbody>
-            </table>
+            <h4>📊 മുൻ മാസങ്ങളിലെ ഹാജർ ശതമാനം (Monthly Attendance)</h4>
+            <p style="font-size: 13px; color: #6b7280; margin-top: 5px;" id="parentMonthlyNotice">ഹാജർ വിവരങ്ങൾ ലഭ്യമാണ്.</p>
+            <div id="holidayDisplayBox" style="color: var(--danger); font-weight: bold; font-size: 13px; margin-top: 5px;"></div>
+        </div>
+
+        <div class="card" style="background: #fff7ed;">
+            <h4>🖼️ സ്വന്തം കുട്ടിയുടെ ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്യുക</h4>
+            <div class="form-group" style="margin-top: 10px;">
+                <label>മൊബൈൽ നമ്പർ തിരുത്തുക:</label>
+                <input type="text" id="parentPhoneEdit" class="form-control" value="9744123987">
+            </div>
+            <div class="form-group">
+                <label>ഗാലറിയിൽ നിന്ന് ഫോട്ടോ സെലക്ട് ചെയ്യുക:</label>
+                <input type="file" id="studentPhotoFile" accept="image/*" class="form-control">
+            </div>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="saveStudentPhoto()">ഫോട്ടോ സേവ് ചെയ്യുക</button>
+        </div>
+
+        <div class="card">
+            <h4>📅 പരീക്ഷാ ടൈംടേബിൾ (Exam Timetable)</h4>
+            <p style="font-size: 13px; color: #6b7280; margin-top: 5px;" id="parentTimetableBox">ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല.</p>
+        </div>
+
+        <div class="card">
+            <h4>മദ്രസ അറിയിപ്പുകൾ (Notices)</h4>
+            <p style="font-size: 13px; padding: 10px; background: #f1f5f9; border-radius: 6px; margin-top: 5px;">ഹാജർ വിവരങ്ങളും അറിയിപ്പുകളും ലൈവായി ലഭ്യമാണ്.</p>
+        </div>
+
+        <div class="card">
+            <h4>പരാതികളും അഭിപ്രായങ്ങളും അയക്കുക</h4>
+            <textarea id="parentComplaintInput" class="form-control" rows="3" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
+            <div style="margin-top: 10px; font-size: 13px;">
+                <b>നിങ്ങൾ നൽകിയ പരാതികളും മറുപടികളും:</b>
+                <div id="parentComplaintStatus" style="color: var(--warning); margin-top: 5px;">പരാതികൾ ഇല്ല</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>🕌 മദ്രസ ഭാരവാഹികൾ & ഉസ്താടുമാർ</h4>
+            <h5 style="margin-top: 10px; color: var(--primary);">ഭാരവാഹികൾ (Committee)</h5>
+            <div class="staff-grid" id="committeeGrid"></div>
+            <h5 style="margin-top: 10px; color: var(--primary);">ഉസ്താടുമാർ (Teachers)</h5>
+            <div class="staff-grid" id="teachersGrid"></div>
         </div>
     </div>
 
     <div id="sadarDashboard" class="hidden">
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchSadarTab('manage-students')">കുട്ടികളെ നിയന്ത്രിക്കുക</button>
-            <button class="tab-btn" onclick="switchSadarTab('fee-update')">ഫീസ് കുടിശ്ശിക അപ്ഡേറ്റ്</button>
-            <button class="tab-btn" onclick="switchSadarTab('staff-attendance')">ഉസ്താദുമാരുടെ ഹാജർ</button>
-        </div>
-
-        <div id="sadarStudentsTab">
-            <button class="btn btn-secondary" onclick="toggleAddStudentForm()" style="margin-bottom: 15px;">+ പുതിയ കുട്ടിയെ ചേർക്കുക</button>
-            <div id="addStudentBox" class="card hidden">
-                <h4>പുതിയ വിദ്യാർത്ഥി രജിസ്ട്രേഷൻ</h4>
-                <div class="grid-3" style="margin-top: 10px;">
-                    <input type="text" id="newStudentName" class="form-control" placeholder="കുട്ടിയുടെ പേര്">
-                    <input type="number" id="newStudentReg" class="form-control" placeholder="രജിസ്റ്റർ നമ്പർ">
-                    <input type="text" id="newStudentFather" class="form-control" placeholder="വാപ്പാന്റെ പേര്">
-                    <input type="text" id="newStudentDob" class="form-control" placeholder="ജനന തീയതി (DD/MM/YYYY)">
-                    <select id="newStudentClass" class="form-control">
-                        <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                        <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                        <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" style="margin-top: 10px;" onclick="saveNewStudent()">ലിസ്റ്റിലേക്ക് ചേർക്കുക</button>
+        <h3 style="color: var(--primary); margin-bottom: 15px; text-align: center;">സദർ കൺട്രോൾ പാനൽ (Sadar Only)</h3>
+        
+        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ / പുതിയ കുട്ടികളെ ചേർക്കൽ <span>▼</span></button>
+        <div id="s1" class="card hidden">
+            <div class="grid-3">
+                <input type="text" id="addName" class="form-control" placeholder="പേര്">
+                <input type="number" id="addReg" class="form-control" placeholder="റെജി. നമ്പർ">
+                <input type="text" id="addFather" class="form-control" placeholder="വാപ്പായുടെ പേര്">
+                <input type="text" id="addDob" class="form-control" placeholder="ജനനതീയതി">
+                <select id="addClass" class="form-control">
+                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
+                    <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
+                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
+                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
+                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option>
+                    <option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
+                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option>
+                    <option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
+                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option>
+                    <option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
+                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option>
+                    <option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
+                </select>
             </div>
-            <table id="sadarTable">
-                <thead><tr><th>റെജി. നമ്പർ</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>വാപ്പാന്റെ പേര്</th><th>നടപടി</th></tr></thead>
+            <button class="btn btn-primary" style="margin-top:10px; width:100%;" onclick="sadarAddStudent()">Add Student</button>
+            <table id="sadarManageTable" style="margin-top:15px;">
+                <thead><tr><th>റെജി</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>നടപടി</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
 
-        <div id="sadarFeeTab" class="hidden">
-            <h4>💰 ഫീസ് അപ്ഡേറ്റ് സംവിധാനം</h4>
-            <div class="grid-3" style="margin-top: 10px; align-items: flex-end;">
-                <div class="form-group" style="margin:0;">
-                    <label>കുട്ടിയുടെ റെജി. നമ്പർ:</label>
-                    <input type="number" id="feeSearchReg" class="form-control">
-                </div>
-                <div class="form-group" style="margin:0;">
-                    <label>അടച്ച തുക (രൂപ):</label>
-                    <input type="number" id="feeAmountInput" class="form-control" placeholder="1000">
-                </div>
-                <button class="btn btn-primary" onclick="updateStudentFee()">അപ്ഡേറ്റ് & WhatsApp റെസീപ്റ്റ്</button>
-            </div>
+        <button class="accordion-btn" onclick="toggleSadarSection('s2')">💰 മദ്രസ ഫീസ് കുടിശ്ശിക അപ്ഡേറ്റ് & വാട്സാപ്പ് രസീത് <span>▼</span></button>
+        <div id="s2" class="card hidden">
+            <input type="number" id="feeReg" class="form-control" placeholder="കുട്ടിയുടെ റെജി നമ്പർ"><br>
+            <input type="number" id="feeAmt" class="form-control" placeholder="തുക (₹)"><br>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="sadarUpdateFee()">Update Fee & Send WhatsApp</button>
         </div>
 
-        <div id="sadarStaffTab" class="hidden">
-            <h4>👨‍🏫 ഉസ്താദുമാരുടെ തത്സമയ ഹാജർ പുസ്തകം</h4>
-            <table style="margin-top: 15px;">
-                <thead><tr><th>ഉസ്താദ്</th><th>പദവി</th><th>ഹാജർ</th></tr></thead>
-                <tbody>
-                    <tr><td>അർഷദ് ഉസ്താദ്</td><td>സദർ മുഅല്ലിം</td><td><input type="checkbox" checked> Present</td></tr>
-                    <tr><td>ഖലീൽ ഉസ്താദ്</td><td>മുഅല്ലിം</td><td><input type="checkbox" checked> Present</td></tr>
-                </tbody>
-            </table>
-            <button class="btn btn-primary" style="margin-top: 15px;" onclick="alert('ഹാജർ നില വിജയകരമായി സേവ് ചെയ്തു!')">സേവ് ചെയ്യുക</button>
+        <button class="accordion-btn" onclick="toggleSadarSection('s3')">📅 പരീക്ഷാ ടൈംടേബിൾ ഒന്നിച്ച് പബ്ലിഷ് ചെയ്യൽ <span>▼</span></button>
+        <div id="s3" class="card hidden">
+            <textarea id="timetableInput" class="form-control" rows="3" placeholder="ടൈംടേബിൾ വിവരങ്ങൾ ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="publishTimetable()">Publish Timetable</button>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s4')">👨‍🏫 ഉസ്താടുമാർ & ഭാരവാഹികൾ പാനൽ ആഡ് ചെയ്യൽ <span>▼</span></button>
+        <div id="s4" class="card hidden">
+            <div class="grid-3">
+                <input type="text" id="staffName" class="form-control" placeholder="പേര്">
+                <input type="text" id="staffUsername" class="form-control" placeholder="യൂസർനെയിം">
+                <input type="text" id="staffPassword" class="form-control" placeholder="പാസ്‌വേഡ് (ഉദാ: 123)">
+                <input type="text" id="staffPhone" class="form-control" placeholder="ഫോൺ നമ്പർ">
+                <select id="staffType" class="form-control">
+                    <option value="teacher">ഉസ്താദ് (Teacher)</option>
+                    <option value="committee">കമ്മിറ്റി ഭാരവാഹി (Committee)</option>
+                </select>
+                <select id="staffChargeClass" class="form-control">
+                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ് ചാർജ്ജ്</option>
+                    <option value="2-ാം ക്ലാസ്" selected>2-ാം ക്ലാസ് ചാർജ്ജ്</option>
+                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ് ചാർജ്ജ്</option>
+                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ് ചാർജ്ജ്</option>
+                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ് ചാർജ്ജ്</option>
+                    <option value="none">ക്ലാസ് ചാർജ്ജ് ഇല്ല</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 10px; width: 100%;" onclick="sadarAddStaff()">Add Official (ഉദ്യോഗസ്ഥനെ ചേർക്കുക)</button>
+            <div id="sadarStaffViewArea" style="margin-top:15px;"></div>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s5')">📝 ഉസ്താടുമാരുടെ ഹാജർ രേഖപ്പെടുത്തൽ <span>▼</span></button>
+        <div id="s5" class="card hidden">
+            <div id="sadarStaffAttendanceList"></div>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="alert('ഹാജർ രേഖപ്പെടുത്തി!')">Save Attendance</button>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s6')">📥 രക്ഷിതാക്കളുടെ പരാതികളും മറുപടിയും <span>▼</span></button>
+        <div id="s6" class="card hidden">
+            <div id="sadarComplaintBox" style="font-size:13px; margin-bottom:10px; color: var(--warning); font-weight: bold;">പരാതികൾ ഇല്ല</div>
+            <input type="text" id="sadarReplyInput" class="form-control" placeholder="മറുപടി ഇവിടെ എഴുതുക...">
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="replyComplaint()">മറുപടി അയക്കുക</button>
         </div>
     </div>
 
     <div id="muallimDashboard" class="hidden">
+        <h3 style="color: var(--primary); margin-bottom: 15px;">മുഅല്ലിം പാനൽ</h3>
         <div class="card">
-            <h4>ക്ലാസ്സ് ഡയറി</h4>
-            <div class="grid-3" style="margin-top: 10px;">
-                <select id="muallimClassFilter" class="form-control" onchange="loadMuallimStudents()">
-                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                    <option value="2-ാം ക്ലാസ്" selected>2-ാം ക്ലാസ്</option>
-                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-                </select>
-                <input type="date" class="form-control" value="2026-06-10">
-            </div>
-            <div style="margin-top: 15px;">
+            <p id="muallimAssignedClassLabel" style="font-weight: bold; color: var(--primary); margin-bottom: 10px;"></p>
+            <div style="margin-top: 10px;">
                 <input type="checkbox" id="holidayMode" onchange="toggleHolidayReason()"> ഇന്ന് മദ്റസ അവധിയാണ് (Holiday Mode)
-                <input type="text" id="holidayReason" class="form-control hidden" style="margin-top: 5px;" placeholder="അവധിയുടെ കാരണം എഴുതുക (ഉദാ: ശക്തമായ മഴ)">
+                <input type="text" id="holidayReason" class="form-control hidden" style="margin-top: 5px;" placeholder="അവധിയുടെ കാരണം എഴുതുക...">
+                <button class="btn btn-danger" style="margin-top: 5px; width: 100%; font-size: 12px;" onclick="saveHolidayState()">അവധി വിവരം സേവ് ചെയ്യുക</button>
             </div>
         </div>
-        <h4>വിദ്യാർത്ഥികളുടെ വിവരങ്ങൾ എന്റർ ചെയ്യുക</h4>
-        <table id="muallimTable">
-            <thead><tr><th>റെജി. നമ്പർ</th><th>പേര്</th><th>ഹാജർ</th><th>മാർക്ക് (ഖുർആൻ / ദീനിയാത്)</th><th>നടപടി</th></tr></thead>
+        <table id="muallimAttendanceTable">
+            <thead><tr><th>പേര്</th><th>ഹാജർ</th><th>നടപടി</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
 
     <div id="committeeDashboard" class="hidden">
-        <div class="grid-3">
-            <div class="card" style="background: #e0f2fe; text-align: center;">
-                <h4>ഇന്നത്തെ ഹാജർ നില</h4>
-                <h2 style="color: var(--primary); margin-top: 5px;">94%</h2>
-            </div>
-            <div class="card" style="background: #dcfce7; text-align: center;">
-                <h4>ആകെ ലഭിച്ച ഫീസ്</h4>
-                <h2 style="color: var(--secondary); margin-top: 5px;">₹45,500</h2>
-            </div>
-            <div class="card" style="background: #fee2e2; text-align: center;">
-                <h4>ആകെ കുടിശ്ശിക</h4>
-                <h2 style="color: var(--danger); margin-top: 5px;">₹12,000</h2>
-            </div>
+        <h3 style="color: var(--primary); margin-bottom: 15px;">കമ്മിറ്റി മാനേജ്മെന്റ് പാനൽ</h3>
+        <div class="card" style="background:#e0f2fe; margin-bottom: 10px;">
+            <h4>തത്സമയ ആകെ ഹാജർ പരിശോധന: 96%</h4>
         </div>
-        <div class="card" style="margin-top: 15px;">
-            <h4>📌 കമ്മിറ്റി ധനകാര്യ റിപ്പോർട്ട്</h4>
-            <table style="margin-top: 10px;">
-                <thead><tr><th>ക്ലാസ്സ്</th><th>ആകെ കുട്ടികൾ</th><th>ഫീസ് ലഭിച്ചവർ</th><th>കുടിശ്ശികക്കാർ</th></tr></thead>
-                <tbody>
-                    <tr><td>1-ാം ക്ലാസ്</td><td>6</td><td>4</td><td>2</td></tr>
-                    <tr><td>2-ാം ക്ലാസ്</td><td>11</td><td>9</td><td>2</td></tr>
-                    <tr><td>3-ാം ക്ലാസ്</td><td>16</td><td>12</td><td>4</td></tr>
-                </tbody>
+        <div class="card" style="background:#dcfce7; margin-bottom: 10px;">
+            <h4>ഫീസ് വരുമാന റിപ്പോർട്ട്: ₹85,000</h4>
+        </div>
+        <div class="card">
+            <h4>📌 വിദ്യാർത്ഥി ലിസ്റ്റ് പരിശോധന</h4>
+            <select id="committeeClassFilter" class="form-control" onchange="loadCommitteeStudentView()" style="margin-top: 5px;"></select>
+            <table id="committeeStudentTable" style="margin-top: 10px;">
+                <thead><tr><th>റെജി</th><th>പേര്</th><th>വാപ്പ</th></tr></thead>
+                <tbody></tbody>
             </table>
         </div>
     </div>
@@ -238,55 +257,157 @@
 </div>
 
 <script>
-    // 124 കുട്ടികളുടെ മാസ്റ്റർ ലിസ്റ്റ് (തിരുത്തലുകൾ സഹിതം)
     let defaultStudents = [
         // 1-ാം ക്ലാസ്
-        { reg: "691", name: "അത്വാഉറഹ്മാൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", fee: "ലഭിച്ചു", attendance: 95 },
-        { reg: "708", name: "മുഹമ്മദ് ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", fee: "കുടിശ്ശിക", attendance: 90 },
-        { reg: "707", name: "മുഹമ്മദ് രിഫ്ദ്", class: "1-ാം ക്ലാസ്", father: "Sakeer", dob: "28/06/2019", fee: "ലഭിച്ചു", attendance: 100 },
-        { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", fee: "ലഭിച്ചു", attendance: 98 },
-        { reg: "706", name: "സൈനബ മറിയം മെഹ്‌വിഷ്", class: "1-ാം ക്ലാസ്", father: "Shameer Abdullah", dob: "26/09/2020", fee: "ലഭിച്ചു", attendance: 92 },
-        { reg: "711", name: "റുഖയ്യ സിദ", class: "1-ാം ക്ലാസ്", father: "Muhammed Haris", dob: "26/09/2020", fee: "കുടിശ്ശിക", attendance: 85 },
-
+        { reg: "691", name: "അത്വാഉറഹ്മാൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "708", name: "മുحمد ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "707", name: "മുഹമ്മദ് രിഫ്ദ്", class: "1-ാം ക്ലാസ്", father: "Sakeer", dob: "28/06/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "706", name: "സൈനബ മറിയം മെഹ്‌വിഷ്", class: "1-ാം ക്ലാസ്", father: "Shameer Abdullah", dob: "26/09/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "711", name: "റുഖയ്യ സിദ", class: "1-ാം ക്ലാസ്", father: "Muhammed Haris", dob: "26/09/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         // 2-ാം ക്ലാസ്
-        { reg: "680", name: "അബ്ദുൽ ബാസിത്", class: "2-ാം ക്ലാസ്", father: "നൂറുദ്ദീൻ അബ്ദുള്ള", dob: "14/03/2018", fee: "ലഭിച്ചു", attendance: 100 },
-        { reg: "681", name: "ഷാൻ അബ്ദുൽ റസാഖ്", class: "2-ാം ക്ലാസ്", father: "ഷംസുദ്ദീൻ", dob: "04/01/2019", fee: "ലഭിച്ചു", attendance: 96 },
-        { reg: "693", name: "അഹദ് മുഹ്‌യിദ്ദീൻ", class: "2-ാം ക്ലാസ്", father: "ഷാനവാസ്", dob: "07/12/2019", fee: "കുടിശ്ശിക", attendance: 91 },
-        { reg: "694", name: "മുഹമ്മദ് റബീഹ്", class: "2-ാം ക്ലാസ്", father: "ആഷിഖ്", dob: "18/06/2019", fee: "ലഭിച്ചു", attendance: 94 },
-        { reg: "695", name: "നസീഹ് ഇബ്രാഹിം", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", fee: "ലഭിച്ചു", attendance: 95 },
-        { reg: "700", name: "മുഹമ്മദ് അമൻ സാഹിദ്", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", fee: "കുടിശ്ശിക", attendance: 89 },
-        { reg: "687", name: "ആയിഷ ലൈബ", class: "2-ാം ക്ലാസ്", father: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", fee: "ലഭിച്ചു", attendance: 97 },
-        { reg: "689", name: "സൻഹ റുഖയ്യ", class: "2-ാം ക്ലാസ്", father: "ഹിദായത്ത് അലി", dob: "23/05/2019", fee: "ലഭിച്ചു", attendance: 100 },
-        { reg: "690", name: "സൈനബ ഇശൽ", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", fee: "ലഭിച്ചു", attendance: 93 },
-        { reg: "692", name: "ഖദീജ ലിബ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", fee: "കുടിശ്ശിക", attendance: 88 },
-        { reg: "696", name: "റുഖയ്യ നദ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", fee: "ലഭിച്ചു", attendance: 95 },
-
+        { reg: "680", name: "അബ്ദുൽ ബാസിത്", class: "2-ാം ക്ലാസ്", father: "നൂറുദ്ദീൻ അബ്ദുള്ള", dob: "14/03/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "681", name: "ഷാൻ അബ്ദുൽ റസാഖ്", class: "2-ാം ക്ലാസ്", father: "ഷംസുദ്ദീൻ", dob: "04/01/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "693", name: "അഹദ് മുഹ്‌യിദ്ദീൻ", class: "2-ാം ക്ലാസ്", father: "ഷാനവാസ്", dob: "07/12/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "694", name: "മുഹമ്മദ് റബീഹ്", class: "2-ാം ക്ലാസ്", father: "ആഷിഖ്", dob: "18/06/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "695", name: "നസീഹ് ഇബ്രാഹിം", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "700", name: "മുഹമ്മദ് അമൻ സാഹിദ്", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "687", name: "ആയിഷ ലൈബ", class: "2-ാം ക്ലാസ്", father: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "689", name: "സൻഹ റുഖയ്യ", class: "2-ാം ക്ലാസ്", father: "ഹിദായത്ത് അലി", dob: "23/05/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "690", name: "സൈനബ ഇശൽ", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "692", name: "ഖദീജ ലിബ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "696", name: "റുഖയ്യ നദ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         // 3-ാം ക്ലാസ്
-        { reg: "620", name: "അദ്നാൻ", class: "3-ാം ക്ലാസ്", father: "അസ്ഹർ അലി", dob: "17/12/2014", fee: "ലഭിച്ചു", attendance: 90 },
-        { reg: "628", name: "അബ്ദുൽ നാഫിഹ്", class: "3-ാം ക്ലാസ്", father: "രാജുദ്ദീൻ", dob: "05/09/2016", fee: "ലഭിച്ചു", attendance: 95 },
-        { reg: "657", name: "രെഹാൻ ശൈഖ്", class: "3-ാം ക്ലാസ്", father: "സക്കരിയ്യ", dob: "23/04/2018", fee: "കുടിശ്ശിക", attendance: 92 },
-        { reg: "658", name: "മുഹമ്മദ് ലബീബ്", class: "3-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "21/11/2017", fee: "ലഭിച്ചു", attendance: 87 },
-        { reg: "656", name: "അحمد നസ്ആൻ", class: "3-ാം ക്ലാസ്", father: "അബ്ദുൽ ലത്തീഫ്", dob: "03/04/2017", fee: "ലഭിച്ചു", attendance: 96 },
-        { reg: "653", name: "ഇസഹാഖ് ഇസ്മായിൽ", class: "3-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "04/09/2016", fee: "കുടിശ്ശിക", attendance: 84 },
-        { reg: "661", name: "ഷംആൻ", class: "3-ാം ക്ലാസ്", father: "സുലൈമാൻ", dob: "11/02/2016", fee: "ലഭിച്ചു", attendance: 93 },
-        { reg: "676", name: "അബ്ദുല്ലാഹ് ആമിർ", class: "3-ാം ക്ലാസ്", father: "ആഷിഖ്", dob: "11/06/2018", fee: "ലഭിച്ചു", attendance: 99 },
-        { reg: "677", name: "മുഹ്സിൽ മിശാൽ", class: "3-ാം ക്ലാസ്", father: "മുഹമ്മദ് മുആദ്", dob: "07/11/2017", fee: "ലഭിച്ചു", attendance: 91 },
-        { reg: "679", name: "മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", class: "3-ാം ക്ലാസ്", father: "ആസിഫ് റഹ്മാൻ", dob: "05/05/2018", fee: "കുടിശ്ശിക", attendance: 88 },
-        { reg: "710", name: "മുഹമ്മദ് ഹയാൻ", class: "3-ാം ക്ലാസ്", father: "മുഹമ്മദ് ഇഖ്ബാൽ", dob: "27/09/2017", fee: "ലഭിച്ചു", attendance: 95 },
-        { reg: "714", name: "സിംസാറുൽ ഹഖ്", class: "3-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "17/04/2016", fee: "ലഭിച്ചു", attendance: 94 },
-        { reg: "664", name: "അഫ്രാ അഷ്റഫ്", class: "3-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "18/10/2017", fee: "കുടിശ്ശിക", attendance: 86 },
-        { reg: "669", name: "നഫീസ സഫ", class: "3-ാം ക്ലാസ്", father: "ഇബ്രാഹിം", dob: "08/01/2018", fee: "ലഭിച്ചു", attendance: 92 },
-        { reg: "675", name: "ファティマ ഫാത്തിമ ഇശൽ", class: "3-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "15/02/2018", fee: "ലഭിച്ചു", attendance: 97 },
-        { reg: "701", name: "റിംസ", class: "3-ാം ക്ലാസ്", father: "സക്കീർ", dob: "15/06/2017", fee: "ലഭിച്ചു", attendance: 90 }
+        { reg: "620", name: "അദ്നാൻ", class: "3-ാം ക്ലാസ്", father: "അസ്ഹർ അലി", dob: "17/12/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "628", name: "അബ്ദുൽ നാഫിഹ്", class: "3-ാം ക്ലാസ്", father: "രാജുദ്ദീൻ", dob: "05/09/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "657", name: "രെഹാൻ ശൈഖ്", class: "3-ാം ക്ലാസ്", father: "സക്കരിയ്യ", dob: "23/04/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "658", name: "മുഹമ്മദ് ലബീബ്", class: "3-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "21/11/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "656", name: "അحمد നസ്ആൻ", class: "3-ാം ക്ലാസ്", father: "അബ്ദുൽ ലത്തീഫ്", dob: "03/04/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "653", name: "ഇസഹാഖ് ഇസ്മായിൽ", class: "3-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "04/09/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "661", name: "ഷംആൻ", class: "3-ാം ക്ലാസ്", father: "സുലൈമാൻ", dob: "11/02/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "676", name: "അബ്ദുല്ലാഹ് ആമിർ", class: "3-ാം ക്ലാസ്", father: "ആഷിഖ്", dob: "11/06/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "677", name: "മുഹ്സിൽ മിശാൽ", class: "3-ാം ക്ലാസ്", father: "മുഹമ്മദ് മുആദ്", dob: "07/11/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "679", name: "മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", class: "3-ാം ക്ലാസ്", father: "ആസിഫ് റഹ്മാൻ", dob: "05/05/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "710", name: "മുഹമ്മദ് ഹയാൻ", class: "3-ാം ക്ലാസ്", father: "മുഹമ്മദ് ഇഖ്ബാൽ", dob: "27/09/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "714", name: "സിംസാറുൽ ഹഖ്", class: "3-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "17/04/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "664", name: "അഫ്രാ അഷ്റഫ്", class: "3-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "18/10/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "669", name: "നഫീസ സഫ", class: "3-ാം ക്ലാസ്", father: "ഇബ്രാഹിം", dob: "08/01/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "675", name: "ഫാത്തിമ ഇശൽ", class: "3-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "15/02/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "701", name: "റിംസ", class: "3-ാം ക്ലാസ്", father: "സക്കീർ", dob: "15/06/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 4-ാം ക്ലാസ്
+        { reg: "685", name: "അബ്ദുൽ ഹയൻ", class: "4-ാം ക്ലാസ്", father: "മാഹിൻ", dob: "14/12/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "599", name: "നസ്‌വാൻ", class: "4-ാം ക്ലാസ്", father: "അബ്ദുൽ ഹാരിസ്", dob: "18/08/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "633", name: "ഇബ്രാഹിം ഖലീൽ", class: "4-ാം ക്ലാസ്", father: "അബ്ദുൽ ലത്തീഫ്", dob: "04/01/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "634", name: "അയാസ് അബൂബക്കർ", class: "4-ാം ക്ലാസ്", father: "ഹമീദ്", dob: "09/06/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "652", name: "മുഹമ്മദ് രിഫാൽ", class: "4-ാം ക്ലാസ്", father: "റഷാദ്", dob: "23/02/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "654", name: "ആസിം മുഹാസ്", class: "4-ാം ക്ലാസ്", father: "അബ്ദുൽ ഖാദർ ഷാഹ്", dob: "02/04/2018", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "659", name: "മുഹമ്മദ് ഹാഫിസ്", class: "4-ാം ക്ലാസ്", father: "ഹംസ മുഹമ്മദ്", dob: "28/06/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "660", name: "മുഹമ്മദ് നഹ്‌യാൻ", class: "4-ാം ക്ലാസ്", father: "സാജിദ്", dob: "08/11/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "663", name: "മുഹമ്മദ് മിഷ്ഹദ്", class: "4-ാം ക്ലാസ്", father: "അഹ്മദ് മുസമ്മിൽ", dob: "05/12/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "655", name: "യൂസഫ് സാഹി", class: "4-ാം ക്ലാസ്", father: "മുഹമ്മദ് ഷംസീർ", dob: "26/04/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "662", name: "അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", class: "4-ാം ക്ലാസ്", father: "അബ്ദുറഹ്മാൻ അബ്ദുറഹീം", dob: "26/11/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "686", name: "അലാ ബിൻ ബിലാൽ", class: "4-ാം ക്ലാസ്", father: "ബിലാൽ", dob: "27/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "698", name: "മുഹമ്മദ് അമ്മാർ", class: "4-ാം ക്ലാസ്", father: "മുഹമ്മദ് ഹനീഫ്", dob: "10/12/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "703", name: "അബ്ദുറഹ്മാൻ ഇസാൻ", class: "4-ാം ക്ലാസ്", father: "മുഹമ്മദ് അഫ്താബ്", dob: "14/05/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "665", name: "അസാ മറിയം", class: "4-ാം ക്ലാസ്", father: "മുജീബ്", dob: "21/01/2017", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 5-ാം ക്ലാസ്
+        { reg: "611", name: "അബ്ദുല്ലാഹ്", class: "5-ാം ക്ലാസ്", father: "Navas", dob: "24/11/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "630", name: "മുഈനുദ്ദീൻ", class: "5-ാം ക്ലാസ്", father: "Habeeb", dob: "16/07/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "631", name: "അദ്നാൻ", class: "5-ാം ക്ലാസ്", father: "Noushad", dob: "04/12/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "632", name: "മുഹമ്മദ് മിൻഹാജ്", class: "5-ാം ക്ലാസ്", father: "Abdul Nasar", dob: "12/09/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "649", name: "വാഹിദ് സമാൻ", class: "5-ാം ക്ലാസ്", father: "Mahmood Inayath", dob: "09/12/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "604", name: "ഷൈമ മറിയം", class: "5-ാം ക്ലാസ്", father: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "640", name: "മറിയം സഫ", class: "5-ാം ക്ലാസ്", father: "ഹാരിസ്", dob: "21/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "641", name: "ファティマ ഫാത്തിമ TK", class: "5-ാം ക്ലാസ്", father: "അഹ്മദ്", dob: "14/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "642", name: "ആയിഷ അബ്ദുല്ലാഹ്", class: "5-ാം ക്ലാസ്", father: "അബ്ദുള്ള", dob: "15/04/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "643", name: "ഫാത്തിമ ജുമാന", class: "5-ാം ക്ലാസ്", father: "ഹാലിത്", dob: "22/02/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "667", name: "ആയിഷ മെഹ്സിൻ", class: "5-ാം ക്ലാസ്", father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 6-ാം ക്ലാസ്
+        { reg: "586", name: "അബൂ താഹിർ", class: "6-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "29/09/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "600", name: "അബ്ദുൽ ഖാദർ ഷെഹാൻ", class: "6-ാം ക്ലാസ്", father: "അബ്ദുൽ ഖാദർ", dob: "25/04/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "601", name: "മഹ്മൂദ് അസാൻ", class: "6-ാം ക്ലാസ്", father: "നിയാസ്", dob: "07/10/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "602", name: "മാലിക് ഹസൻ", class: "6-ാം ക്ലാസ്", father: "ഖലീൽ", dob: "26/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "603", name: "അഹമ്മദ് നസൽ", class: "6-ാം ക്ലാസ്", father: "സത്താർ", dob: "25/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "646", name: "ഫിസാൻ", class: "6-ാം ക്ലാസ്", father: "അർഷാദ്", dob: "19/04/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "668", name: "ഇബ്രാഹിം ഇസ്മാഈൽ", class: "6-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "04/09/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "684", name: "മുഹമ്മദ് സിനാൻ", class: "6-ാം ക്ലാസ്", father: "മാഹിൻ", dob: "28/05/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "699", name: "മുഹമ്മദ് ഷിബ്‌ലി", class: "6-ാം ക്ലാസ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "05/09/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "606", name: "ആയിഷ ഐഫ", class: "6-ാം ക്ലാസ്", father: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "607", name: "ഷഹാന ഷെറിൻ", class: "6-ാം ക്ലാസ്", father: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "608", name: "ലിയ്യാ ഫാത്തിമ", class: "6-ാം ക്ലാസ്", father: "ഖലീൽ", dob: "27/10/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "609", name: "ആയിഷ മെഹ്‌റ", class: "6-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "17/02/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "613", name: "ആയിഷ ഹിബ", class: "6-ാം ക്ലാസ്", father: "ഹംസ", dob: "18/12/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 7-ാം ക്ലാസ്
+        { reg: "563", name: "മുഹമ്മദ് സ്വബാഹ്", class: "7-ാം ക്ലാസ്", father: "Shahnawaz", dob: "04/10/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "584", name: "അബ്ദുല്ലാഹ് സെയ്ഫ്", class: "7-ാം ക്ലാസ്", father: "Zubair", dob: "24/12/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "565", name: "മറിയം സുഹാ", class: "7-ാം ക്ലാസ്", father: "Haris", dob: "09/10/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "570", name: "ഫാത്തിമ ഹമീദ്", class: "7-ാം ക്ലാസ്", father: "Hameed", dob: "18/10/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "571", name: "ആയിഷ തമന്ന", class: "7-ാം ക്ലാസ്", father: "Sirajuddin", dob: "16/09/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "587", name: "മറിയം ഫൈഹ", class: "7-ാം ക്ലാസ്", father: "Muhammad Kunhi", dob: "19/05/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "588", name: "അംന  ഫാത്തിമ", class: "7-ാം ക്ലാസ്", father: "Sherif", dob: "27/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "589", name: "സെബ മറിയം", class: "7-ാം ക്ലാസ്", father: "Zameel", dob: "30/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "590", name: "സെല്ലാ ഷംസീർ", class: "7-ാം ക്ലാസ്", father: "Shamsir", dob: "26/03/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "639", name: "മെഹ്റ മുംതാസ്", class: "7-ാം ക്ലാസ്", father: "Muaaz", dob: "16/12/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "672", name: "മിൻഹാ ഫാത്തിമ", class: "7-ാം ക്ലാസ്", father: "Nooruddin", dob: "23/04/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "697", name: "ഹാസിയ ഹംന", class: "7-ാം ക്ലാസ്", father: "Muhammad Hanif", dob: "09/08/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 8-ാം ക്ലാസ്
+        { reg: "360", name: "മുഹമ്മദ് ഷെഹ്‌സാദ്", class: "8-ാം ക്ലാസ്", father: "Abdullah", dob: "04/06/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "361", name: "അബ്ദുല്ലാഹ് അഷ്റഫ്", class: "8-ാം ക്ലാസ്", father: "Ashraf", dob: "10/10/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "347", name: "മുഹമ്മദ് നസ്മിൽ", class: "8-ാം ക്ലാസ്", father: "Haris", dob: "20/07/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "355", name: "ആയിഷ അഷ്റഫ്", class: "8-ാം ക്ലാസ്", father: "Muhammad Ashraf", dob: "16/07/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "367", name: "സഹ്റ ബത്തുൽ", class: "8-ാം ക്ലാസ്", father: "Ibrahim Khalil", dob: "17/06/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "368", name: "ഫാത്തിമ മിസ്ന", class: "8-ാം ക്ലാസ്", father: "Abdul Nasar", dob: "02/06/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "369", name: "ആയിഷ നുവൈറ", class: "8-ാം ക്ലാസ്", father: "Abdul Latif", dob: "21/02/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "683", name: "ആമിന ഷുസൈന", class: "8-ാം ക്ലാസ്", father: "Haris", dob: "12/10/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 9-ാം ക്ലാസ്
+        { reg: "528", name: "അഹ്സിം മിശാൽ", class: "9-ാം ക്ലാസ്", father: "Abdul Khader", dob: "11/05/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "538", name: "അബ്ദുല്ലാഹ് സഈം", class: "9-ാം ക്ലാസ്", father: "Mohammed Jameel", dob: "11/06/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "539", name: "അഹ്സൻ ഷാസിൽ", class: "9-ാം ക്ലാസ്", father: "Ashraf", dob: "30/12/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "540", name: "മുഹമ്മദ് ഷഹീൻ", class: "9-ാം ക്ലാസ്", father: "Shameer Abdullah", dob: "05/05/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "541", name: "മുഹ്‌യിദ്ദീൻ നിഹാല", class: "9-ാം ക്ലാസ്", father: "Mohammed Habeeb", dob: "13/12/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "715", name: "മുഹമ്മദ് മിദ്ലാജ്", class: "9-ാം ക്ലാസ്", father: "Abdul Karim", dob: "14/08/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "526", name: "ഹിബ മിഫന്ന", class: "9-ാം ക്ലാസ്", father: "Mahmood", dob: "17/11/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "537", name: "ഫാത്തിമ ഷാഹിയ", class: "9-ാം ക്ലാസ്", father: "Sirajuddin", dob: "16/06/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "543", name: "ഫാത്തിമ KS", class: "9-ാം ക്ലാസ്", father: "Sajid", dob: "20/10/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "545", name: "ഖദീജ മിൻഹ", class: "9-ാം ക്ലാസ്", father: "Ahmad Muzammil", dob: "07/06/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "705", name: "അഖീല", class: "9-ാം ക്ലാസ്", father: "Abu Nawaz", dob: "07/02/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // 10-ാം ക്ലാസ്
+        { reg: "513", name: "നബീൽ ഇബ്രാഹിം", class: "10-ാം ക്ലാസ്", father: "Shahnavaz", dob: "28/11/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "704", name: "മുഹമ്മദ് ഷംനാദ്", class: "10-ാം ക്ലാസ്", father: "Mohammed Sherif", dob: "05/03/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "525", name: "സനൂബിയ", class: "10-ാം ക്ലാസ്", father: "Zakariya", dob: "21/03/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "529", name: "ഷെസാ ഫാത്തിമ", class: "10-ാം ക്ലാസ്", father: "Shafi", dob: "19/03/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "615", name: "ഫാത്തിമ ഷാഹില", class: "10-ാം ക്ലാസ്", father: "Abdul Khader", dob: "24/07/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "637", name: "ആയിഷ നജ", class: "10-ാം ക്ലാസ്", father: "Inayat", dob: "03/02/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // പ്ലസ് വൺ
+        { reg: "486", name: "മുഹമ്മദ് നിഹാല", class: "പ്ലസ് വൺ", father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "487", name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", class: "പ്ലസ് വൺ", father: "ഷാഫി", dob: "17/01/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "514", name: "ജാസിം", class: "പ്ലസ് വൺ", father: "ഖാലിദ്", dob: "02/02/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "542", name: "ഷെസിൻ KS", class: "പ്ലസ് വൺ", father: "സാജിദ്", dob: "09/10/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "650", name: "മഹ്ഫൂസ്", class: "പ്ലസ് വൺ", father: "ഇബ്രാഹിം", dob: "01/09/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "712", name: "മുഹമ്മദ് സ്വഫ്വാൻ", class: "പ്ലസ് വൺ", father: "മുസമ്മിൽ", dob: "16/03/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "499", name: "ഫാത്തിമ", class: "പ്ലസ് വൺ", father: "ഇബ്രാഹിം", dob: "23/04/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "518", name: "ഖദീജ TA", class: "പ്ലസ് വൺ", father: "Ibrahim Khalil", dob: "05/10/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "626", name: "ആയിഷ മുൻദിറ", class: "പ്ലസ് വൺ", father: "ഇബ്രാഹിം", dob: "07/01/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        // പ്ലസ് ടു
+        { reg: "574", name: "മുഹമ്മദ് ലുബൈബ്", class: "പ്ലസ് ടു", father: "Muhyiddin", dob: "26/10/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "489", name: "മുഹമ്മദ് മിസാജ്", class: "പ്ലസ് ടു", father: "അഹമ്മദ് മുസമ്മിൽ", dob: "18/07/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "492", name: "ഹുദാ ഫാത്തിമ", class: "പ്ലസ് ടു", father: "ഹാരിസ്", dob: "10/11/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "493", name: "ലൈല നസ്രിൻ", class: "പ്ലസ് ടു", father: "അബ്ദുള്ള മുനീർ", dob: "19/06/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "494", name: "ആയിഷ നജ", class: "പ്ലസ് ടു", father: "നവാസ്", dob: "24/07/2008", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" }
     ];
 
-    // ലോക്കൽ ഡാറ്റ ലോഡ് ചെയ്യുന്നു
-    if(!localStorage.getItem('madrasaStudents')) {
-        localStorage.setItem('madrasaStudents', JSON.stringify(defaultStudents));
-    }
-    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents'));
+    let defaultStaff = [
+        { name: "അർഷദ് അൽ ഹാദി", user: "sadhar", pass: "sadhar123", type: "teacher", role: "സദർ മുഅല്ലിം", phone: "9744123987", img: "https://via.placeholder.com/50", classCharge: "2-ാം ക്ലാസ്" }
+    ];
 
-    // ടാബുകൾ മാറ്റാൻ
+    if(!localStorage.getItem('madrasaStudents')) localStorage.setItem('madrasaStudents', JSON.stringify(defaultStudents));
+    if(!localStorage.getItem('madrasaStaff')) localStorage.setItem('madrasaStaff', JSON.stringify(defaultStaff));
+    
+    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents'));
+    let staffList = JSON.parse(localStorage.getItem('madrasaStaff'));
+    let currentLoggedKid = null;
+    let activeStaffUser = null;
+
     function switchLoginTab(type) {
         document.querySelectorAll('#loginScreen .tab-btn').forEach(b => b.classList.remove('active'));
         if(type === 'parent') {
@@ -300,165 +421,275 @@
         }
     }
 
-    // പാരന്റ് ലോഗിൻ
     function loginAsParent() {
         let rNo = document.getElementById('parentRegNo').value;
         let kid = studentsList.find(s => s.reg == rNo);
         if(kid) {
-            document.getElementById('loginScreen').classAdd = 'hidden';
+            currentLoggedKid = kid;
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('parentDashboard').classList.remove('hidden');
             document.getElementById('logoutArea').classList.remove('hidden');
-            document.getElementById('userBadge').textContent = `രക്ഷിതാവ്: ${kid.name}`;
+            document.getElementById('userDisplayBadge').textContent = `രക്ഷിതാവ് പ്രവേശിച്ചു`;
             
-            // ലോഡ് പ്രൊഫൈൽ
-            document.getElementById('parentProfileDetails').innerHTML = `
-                <div><b>പേര്:</b> ${kid.name}</div>
-                <div><b>ക്ലാസ്സ്:</b> ${kid.class}</div>
-                <div><b>രജിസ്റ്റർ നമ്പർ:</b> ${kid.reg}</div>
-                <div><b>വാപ്പായുടെ പേര്:</b> ${kid.father}</div>
-                <div><b>ജനന തീയതി:</b> ${kid.dob}</div>
+            if(kid.photo) document.getElementById('viewStudentPhoto').src = kid.photo;
+            document.getElementById('parentPhoneEdit').value = kid.phone || "9744123987";
+
+            document.getElementById('parentProfileTable').innerHTML = `
+                <tr><td><b>രജിസ്റ്റർ നമ്പർ</b></td><td>${kid.reg}</td></tr>
+                <tr><td><b>രക്ഷിതാവ്</b></td><td>${kid.father}</td></tr>
+                <tr><td><b>ജനനതീയതി</b></td><td>${kid.dob}</td></tr>
+                <tr><td><b>മൊബൈൽ നമ്പർ</b></td><td>${kid.phone}</td></tr>
+                <tr><td><b>ആകെ ഹാജർ നില</b></td><td><span style="color:blue; font-weight:bold;">${kid.attendance}</span></td></tr>
+                <tr><td><b>മദ്രസ ഫീസ് വിവരങ്ങൾ</b></td><td><span style="color:red; font-weight:bold;">ബാക്കി കുടിശ്ശിക: ${kid.fee} രൂപ</span></td></tr>
             `;
-            document.getElementById('parentAttendancePer').textContent = kid.attendance + "%";
-            document.getElementById('parentMonthlyAttendance').innerHTML = `June: ${kid.attendance}%, July: 95% <br><small style="color:red">* ജൂൺ 2: ശക്തമായ മഴ കാരണം അവധി</small>`;
-            document.getElementById('parentFeeStatus').innerHTML = `ഫീസ് നിലവാരം: <span class="badge ${kid.fee==='ലഭിച്ചു'?'badge-success':'badge-danger'}">${kid.fee}</span><br>${kid.fee==='കുടിശ്ശിക'?'ബാക്കി അടയ്ക്കാനുള്ളത്: ₹1000':'കുടിശ്ശികകൾ ഇല്ല'}`;
             
-            let mBody = document.querySelector('#parentMarkTable tbody');
-            mBody.innerHTML = `<tr><td>ഖുർആൻ ഓത്ത്</td><td>48/50</td><td>A+</td></tr><tr><td>ദീനിയാത്</td><td>45/50</td><td>A</td></tr>`;
+            loadStaffGrid();
+            let savedComplaint = localStorage.getItem('complaint_' + kid.reg);
+            if(savedComplaint) document.getElementById('parentComplaintStatus').innerHTML = savedComplaint;
+            let currentHoliday = localStorage.getItem('madrasa_holiday_reason');
+            if(currentHoliday) document.getElementById('holidayDisplayBox').innerHTML = `🔴 * ${currentHoliday}`;
+            let globalTimetable = localStorage.getItem('global_timetable');
+            if(globalTimetable) document.getElementById('parentTimetableBox').innerHTML = globalTimetable;
+        } else { alert('രജിസ്റ്റർ നമ്പർ തെറ്റാണ്!'); }
+    }
+
+    function saveStudentPhoto() {
+        let fileInput = document.getElementById('studentPhotoFile');
+        let editedPhone = document.getElementById('parentPhoneEdit').value;
+        let masterKid = studentsList.find(s => s.reg == currentLoggedKid.reg);
+        masterKid.phone = editedPhone;
+        currentLoggedKid.phone = editedPhone;
+
+        if(fileInput.files && fileInput.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                masterKid.photo = e.target.result;
+                currentLoggedKid.photo = e.target.result;
+                localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+                document.getElementById('viewStudentPhoto').src = e.target.result;
+                alert('ഫോട്ടോയും നമ്പറും അപ്ഡേറ്റ് ചെയ്തു!');
+            }
+            reader.readAsDataURL(fileInput.files[0]);
         } else {
-            alert('ഈ രജിസ്റ്റർ നമ്പർ നിലവിലില്ല!');
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            alert('ഫോൺ നമ്പർ വിജയകരമായി തിരുത്തി!');
         }
     }
 
-    // സ്റ്റാഫ് ലോഗിൻ
+    function loadStaffGrid() {
+        let cGrid = document.getElementById('committeeGrid');
+        let tGrid = document.getElementById('teachersGrid');
+        cGrid.innerHTML = ''; tGrid.innerHTML = '';
+        staffList.forEach(s => {
+            let layout = `<div class="staff-card"><img class="staff-img" src="${s.img}"><br><b>${s.name}</b><br>${s.role}<br><a href="https://wa.me/${s.phone}" class="btn btn-secondary" style="padding:2px 5px; font-size:10px; margin-top:5px;">WhatsApp</a></div>`;
+            if(s.type === 'committee') cGrid.innerHTML += layout;
+            else tGrid.innerHTML += layout;
+        });
+    }
+
+    function submitComplaint() {
+        let text = document.getElementById('parentComplaintInput').value;
+        if(text) {
+            let statusText = `പരാതി: "${text}" <br><span style="color:orange;">(സദറിന്റെ മറുപടിക്കായി കാത്തിരിക്കുന്നു)</span>`;
+            localStorage.setItem('complaint_' + currentLoggedKid.reg, statusText);
+            document.getElementById('parentComplaintStatus').innerHTML = statusText;
+            alert('പരാതി സമർപ്പിച്ചു!');
+        }
+    }
+
     function loginAsStaff() {
         let u = document.getElementById('staffUser').value;
         let p = document.getElementById('staffPass').value;
         
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('logoutArea').classList.remove('hidden');
-        
         if(u === 'sadhar' && p === 'sadhar123') {
+            document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('sadarDashboard').classList.remove('hidden');
-            document.getElementById('userBadge').textContent = "പദവി: സദർ ഉസ്താദ്";
-            loadSadarStudents();
-        } else if(u === 'muallim') {
-            document.getElementById('muallimDashboard').classList.remove('hidden');
-            document.getElementById('userBadge').textContent = "പദവി: മുഅല്ലിം (ഉസ്താദ്)";
-            loadMuallimStudents();
-        } else if(u === 'committee' && p === 'cm786') {
-            document.getElementById('committeeDashboard').classList.remove('hidden');
-            document.getElementById('userBadge').textContent = "പദവി: കമ്മിറ്റി ഭാരവാഹി";
-        } else {
-            alert('തെറ്റായ യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേഡ്!');
-            logout();
+            document.getElementById('logoutArea').classList.remove('hidden');
+            document.getElementById('userDisplayBadge').textContent = "പദവി: സദർ ഉസ്താദ്";
+            loadSadarManageList();
+            checkSadarComplaints();
+            loadSadarStaffSection();
+            return;
         }
+
+        let dynamicStaff = staffList.find(s => s.user === u && s.pass === p);
+        if(dynamicStaff) {
+            activeStaffUser = dynamicStaff;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('logoutArea').classList.remove('hidden');
+            
+            if(dynamicStaff.type === 'teacher') {
+                document.getElementById('muallimDashboard').classList.remove('hidden');
+                document.getElementById('userDisplayBadge').textContent = `മുഅല്ലിം: ${dynamicStaff.name}`;
+                document.getElementById('muallimAssignedClassLabel').textContent = `താങ്കൾക്ക് ചാർജ്ജുള്ള ക്ലാസ്സ്: ${dynamicStaff.classCharge}`;
+                loadMuallimStudents();
+            } else {
+                document.getElementById('committeeDashboard').classList.remove('hidden');
+                document.getElementById('userDisplayBadge').textContent = `കമ്മിറ്റി: ${dynamicStaff.name}`;
+                buildCommitteeDropdown();
+            }
+        } else { alert('യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റാണ്!'); }
     }
 
-    function logout() {
-        location.reload();
-    }
+    function toggleSadarSection(id) { document.getElementById(id).classList.toggle('hidden'); }
 
-    // സദർ ടാബുകൾ
-    function switchSadarTab(tab) {
-        document.getElementById('sadarStudentsTab').classList.add('hidden');
-        document.getElementById('sadarFeeTab').classList.add('hidden');
-        document.getElementById('sadarStaffTab').classList.add('hidden');
-        if(tab === 'manage-students') document.getElementById('sadarStudentsTab').classList.remove('hidden');
-        if(tab === 'fee-update') document.getElementById('sadarFeeTab').classList.remove('hidden');
-        if(tab === 'staff-attendance') document.getElementById('sadarStaffTab').classList.remove('hidden');
-    }
-
-    function loadSadarStudents() {
-        let tbody = document.querySelector('#sadarTable tbody');
+    function loadSadarManageList() {
+        let tbody = document.querySelector('#sadarManageTable tbody');
         tbody.innerHTML = '';
-        studentsList.forEach((s, idx) => {
-            let tr = document.createElement('tr');
-            tr.innerHTML = `<td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td>${s.father}</td>
-            <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="removeStudent(${idx})">Remove</button></td>`;
-            tbody.appendChild(tr);
+        studentsList.forEach((s, i) => {
+            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td><button class="btn btn-danger" style="padding:2px 5px; font-size:11px;" onclick="removeStudent(${i})">Remove</button></td></tr>`;
         });
     }
 
-    function toggleAddStudentForm() {
-        document.getElementById('addStudentBox').classList.toggle('hidden');
+    function removeStudent(idx) {
+        if(confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യട്ടേ?')) {
+            studentsList.splice(idx, 1);
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            loadSadarManageList();
+        }
     }
 
-    function saveNewStudent() {
-        let name = document.getElementById('newStudentName').value;
-        let reg = document.getElementById('newStudentReg').value;
-        let father = document.getElementById('newStudentFather').value;
-        let dob = document.getElementById('newStudentDob').value;
-        let sClass = document.getElementById('newStudentClass').value;
-        
+    function sadarAddStudent() {
+        let name = document.getElementById('addName').value;
+        let reg = document.getElementById('addReg').value;
+        let father = document.getElementById('addFather').value;
+        let dob = document.getElementById('addDob').value;
+        let cls = document.getElementById('addClass').value;
         if(name && reg) {
-            studentsList.push({ reg: reg, name: name, class: sClass, father: father, dob: dob, fee: "ലഭിച്ചു", attendance: 100 });
+            studentsList.push({ reg: reg, name: name, class: cls, father: father, dob: dob, phone: "9744123987", fee: "1000", attendance: "100%", photo: "" });
             localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            loadSadarStudents();
-            toggleAddStudentForm();
-            alert('പുതിയ കുട്ടിയെ ചേർത്തു!');
+            loadSadarManageList();
+            alert('കുട്ടിയെ ചേർത്തു!');
         }
     }
 
-    function removeStudent(index) {
-        if(confirm('ഈ കുട്ടിയെ ലിസ്റ്റിൽ നിന്നും നീക്കം ചെയ്യട്ടെ?')) {
-            studentsList.splice(index, 1);
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            loadSadarStudents();
+    function sadarAddStaff() {
+        let name = document.getElementById('staffName').value;
+        let user = document.getElementById('staffUsername').value;
+        let pass = document.getElementById('staffPassword').value;
+        let phone = document.getElementById('staffPhone').value;
+        let type = document.getElementById('staffType').value;
+        let cls = document.getElementById('staffChargeClass').value;
+
+        if(name && user && pass) {
+            staffList.push({
+                name: name, user: user, pass: pass, type: type,
+                role: type === 'teacher' ? 'മുഅല്ലിം' : 'കമ്മിറ്റി ഭാരവാഹി',
+                phone: phone || "9744123987", img: "https://via.placeholder.com/50", classCharge: cls
+            });
+            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+            loadSadarStaffSection();
+            alert('പുതിയ ഉദ്യോഗസ്ഥനെ വിജയകരമായി ആഡ് ചെയ്തു!');
         }
     }
 
-    function updateStudentFee() {
-        let r = document.getElementById('feeSearchReg').value;
-        let amt = document.getElementById('feeAmountInput').value;
-        let s = studentsList.find(st => st.reg == r);
-        if(s) {
-            s.fee = "ലഭിച്ചു";
+    function loadSadarStaffSection() {
+        let area = document.getElementById('sadarStaffViewArea');
+        let attList = document.getElementById('sadarStaffAttendanceList');
+        area.innerHTML = '<h5>നിലവിലുള്ള ഉദ്യോഗസ്ഥർ:</h5>';
+        attList.innerHTML = '';
+        staffList.forEach((s, idx) => {
+            area.innerHTML += `<div style="font-size:13px; margin-top:5px;">• ${s.name} (${s.role}) - User: <b>${s.user}</b> <button onclick="removeStaff(${idx})" style="color:red; background:none; border:none; cursor:pointer; margin-left:10px;">[Delete]</button></div>`;
+            attList.innerHTML += `<label><input type="checkbox" checked> ${s.name} (${s.role})</label><br>`;
+        });
+    }
+
+    function removeStaff(idx) {
+        if(confirm('ഈ സ്റ്റാഫിനെ നീക്കം ചെയ്യട്ടേ?')) {
+            staffList.splice(idx, 1);
+            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+            loadSadarStaffSection();
+        }
+    }
+
+    function sadarUpdateFee() {
+        let r = document.getElementById('feeReg').value;
+        let amt = document.getElementById('feeAmt').value;
+        let kid = studentsList.find(s => s.reg == r);
+        if(kid) {
+            kid.fee = (parseInt(kid.fee) - parseInt(amt)).toString();
             localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            let msg = encodeURIComponent(`ബഹുമാനപ്പെട്ട രക്ഷിതാവ് അറിയുന്നതിന്, മമ്പഉൽ ഉലൂം മദ്റസയിൽ നിന്നും താങ്കളുടെ മകൻ ${s.name} (Reg No: ${s.reg}) ഫീസ് തുകയായ ${amt} രൂപ കൃത്യമായി ലഭിച്ചിരിക്കുന്നു. നന്ദി.`);
+            let msg = encodeURIComponent(`മമ്പഉൽ ഉലൂം മദ്റസ: താങ്കളുടെ മകൻ ${kid.name} ഫീസ് തുകയായ ${amt} രൂപ ലഭിച്ചിരിക്കുന്നു. ബാക്കി കുടിശ്ശിക: ${kid.fee} രൂപ.`);
             window.open(`https://wa.me/?text=${msg}`, '_blank');
-        } else {
-            alert('കുട്ടിയെ കണ്ടെത്തിയില്ല!');
         }
     }
 
-    // മുഅല്ലിം പാനൽ ലോഡിങ്
+    function checkSadarComplaints() {
+        let compBox = document.getElementById('sadarComplaintBox');
+        compBox.innerHTML = '';
+        let found = false;
+        studentsList.forEach(s => {
+            let c = localStorage.getItem('complaint_' + s.reg);
+            if(c && !c.includes('സദറിന്റെ മറുപടി:')) {
+                found = true;
+                compBox.innerHTML += `<div id="comp-block-${s.reg}"><input type="radio" name="selectComp" value="${s.reg}"> <b>Reg ${s.reg} (${s.name}):</b> ${c}</div><br>`;
+            }
+        });
+        if(!found) compBox.innerHTML = 'പുതിയ പരാതികൾ ഒന്നും ലഭ്യമല്ല.';
+    }
+
+    function replyComplaint() {
+        let selected = document.querySelector('input[name="selectComp"]:checked');
+        let replyText = document.getElementById('sadarReplyInput').value;
+        if(selected && replyText) {
+            let rNo = selected.value;
+            let currentComp = localStorage.getItem('complaint_' + rNo).split('<br>')[0];
+            let finalStatus = `${currentComp} <br><span style="color:green; font-weight:bold;">സദറിന്റെ മറുപടി: "${replyText}"</span>`;
+            localStorage.setItem('complaint_' + rNo, finalStatus);
+            alert('മറുപടി അയച്ചു!');
+            checkSadarComplaints();
+            document.getElementById('sadarReplyInput').value = '';
+        }
+    }
+
+    function publishTimetable() {
+        localStorage.setItem('global_timetable', document.getElementById('timetableInput').value);
+        alert('ടൈംടേബിൾ പബ്ലിഷ് ചെയ്തു!');
+    }
+
+    function toggleHolidayReason() { document.getElementById('holidayReason').classList.toggle('hidden'); }
+    function saveHolidayState() {
+        let isHoliday = document.getElementById('holidayMode').checked;
+        if(isHoliday) localStorage.setItem('madrasa_holiday_reason', document.getElementById('holidayReason').value);
+        else localStorage.removeItem('madrasa_holiday_reason');
+        alert('അവധി വിവരം അപ്ഡേറ്റ് ചെയ്തു!');
+    }
+
     function loadMuallimStudents() {
-        let cls = document.getElementById('muallimClassFilter').value;
+        let cls = activeStaffUser.classCharge;
         let filtered = studentsList.filter(s => s.class === cls);
-        let tbody = document.querySelector('#muallimTable tbody');
+        let tbody = document.querySelector('#muallimAttendanceTable tbody');
         tbody.innerHTML = '';
         filtered.forEach(s => {
-            let tr = document.createElement('tr');
-            tr.innerHTML = `<td>${s.reg}</td><td>${s.name}</td>
-            <td><input type="checkbox" checked id="att-${s.reg}"> Present</td>
-            <td><input type="text" style="width:60px;" placeholder="45" id="mk-${s.reg}"></td>
-            <td><button class="btn btn-warning" style="padding:4px 8px;" onclick="sendAbsentAlert('${s.reg}', '${s.name}')">Absent Alert</button></td>`;
-            tbody.appendChild(tr);
+            tbody.innerHTML += `<tr><td>${s.name}</td>
+            <td><input type="checkbox" checked> Present</td>
+            <td><button class="btn btn-warning" style="padding:4px 8px; font-size:11px;" onclick="sendAbsentAlert('${s.reg}', '${s.name}')">Absent Alert</button></td></tr>`;
         });
     }
 
     function sendAbsentAlert(reg, name) {
-        let msg = encodeURIComponent(`അസ്സലാമു അലൈക്കും, മമ്പഉൽ ഉലൂം മദ്റസയിൽ നിന്നും അറിയിക്കുന്നത്: താങ്കളുടെ മകൻ ${name} (Reg No: ${reg}) ഇന്ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല.`);
+        let msg = encodeURIComponent(`മമ്പഉൽ ഉലൂം മദ്റസ: താങ്കളുടെ മകൻ ${name} (Reg No: ${reg}) ഇന്ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല.`);
         window.open(`https://wa.me/?text=${msg}`, '_blank');
     }
 
-    function toggleHolidayReason() {
-        document.getElementById('holidayReason').classList.toggle('hidden');
+    function buildCommitteeDropdown() {
+        let filter = document.getElementById('committeeClassFilter');
+        filter.innerHTML = '<option value="">ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക...</option>';
+        let classes = [...new Set(studentsList.map(s => s.class))];
+        classes.forEach(c => filter.innerHTML += `<option value="${c}">${c}</option>`);
     }
 
-    function showPublicRankList() {
-        let cls = document.getElementById('publicClassFilter').value;
-        let board = document.getElementById('publicRankBoard');
-        let tbody = document.querySelector('#publicRankTable tbody');
-        if(!cls) { board.classList.add('hidden'); return; }
-        board.classList.remove('hidden');
+    function loadCommitteeStudentView() {
+        let cls = document.getElementById('committeeClassFilter').value;
+        let tbody = document.querySelector('#committeeStudentTable tbody');
         tbody.innerHTML = '';
         let filtered = studentsList.filter(s => s.class === cls);
-        filtered.forEach((s, i) => {
-            tbody.innerHTML += `<tr><td>${i+1}</td><td>${s.reg}</td><td>${s.name}</td><td>92/100</td></tr>`;
+        filtered.forEach(s => {
+            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.father}</td></tr>`;
         });
     }
+
+    function logout() { location.reload(); }
 </script>
 </body>
 </html>
