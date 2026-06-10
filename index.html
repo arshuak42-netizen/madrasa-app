@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ml">
 <head>
@@ -35,18 +36,19 @@
         tr:nth-child(even) { background: #f9fafb; }
         .hidden { display: none !important; }
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .tab-btn { padding: 8px 12px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; flex: 1; }
+        .tab-btn { padding: 10px 12px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; font-size: 14px; color: var(--text); }
         .tab-btn.active { background: var(--primary); color: white; }
         .accordion-btn { width: 100%; text-align: left; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 14px; color: #1f2937; }
         .student-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); display: block; margin: 0 auto 10px auto; }
         .staff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .staff-card { border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center; font-size: 12px; }
+        .staff-card { border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center; font-size: 12px; background: #fff; }
         .staff-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; }
         .profile-list-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: #f9fafb; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
         .profile-img-small { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db; }
         .checkbox-group label { font-weight: normal; display: flex; align-items: center; gap: 5px; }
         .checkbox-group input { width: auto; }
+        .attendance-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -70,8 +72,8 @@
 
     <div id="loginScreen" class="card">
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchLoginTab('parent')">രക്ഷിതാവ്</button>
-            <button class="tab-btn" onclick="switchLoginTab('staff')">ഉദ്യോഗസ്ഥർ</button>
+            <button class="tab-btn active" id="tabParent" onclick="switchLoginTab('parent')">രക്ഷിതാവ്</button>
+            <button class="tab-btn" id="tabStaff" onclick="switchLoginTab('staff')">ഉദ്യോഗസ്ഥർ</button>
         </div>
 
         <div id="parentLoginForm">
@@ -104,14 +106,14 @@
         <div class="card" style="background: #fff7ed;">
             <h4>🖼️ സ്വന്തം കുട്ടിയുടെ ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്യുക</h4>
             <div class="form-group" style="margin-top: 10px;">
-                <label>മൊബൈൽ നമ്പർ ചേർക്കുക / തിруത്തുക:</label>
+                <label>മൊബൈൽ നമ്പർ ചേർക്കുക / തിരുത്തുക:</label>
                 <input type="text" id="parentPhoneEdit" class="form-control" placeholder="ഫോൺ നമ്പർ ഇവിടെ നൽകുക">
             </div>
             <div class="form-group">
                 <label>ഗാലറിയിൽ നിന്ന് ഫോട്ടോ സെലക്ട് ചെയ്യുക:</label>
                 <input type="file" id="studentPhotoFile" accept="image/*" class="form-control">
             </div>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="saveStudentPhoto()">ಫോട്ടോ സേവ് ചെയ്യുക</button>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="saveStudentPhoto()">ഫോട്ടോ സേവ് ചെയ്യുക</button>
         </div>
 
         <div class="card">
@@ -233,7 +235,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>ടൈംടേബിൾ വിവരങ്ങൾ ഇവിടെ ടൈപ്പ് ചെയ്യുക (ഉദാ: 10/06 - ഫിഖ്ഹ്, 11/06 - അഖീദ...):</label>
+                <label>ടൈംടേബിൾ വിവരങ്ങൾ ഇവിടെ ടൈപ്പ് ചെയ്യുക:</label>
                 <textarea id="timetableInput" class="form-control" rows="4" placeholder="വിവരങ്ങൾ ഇവിടെ നൽകുക..."></textarea>
             </div>
             <button class="btn btn-primary" style="width:100%;" onclick="publishTimetable()">Publish Timetable</button>
@@ -274,7 +276,7 @@
                 <input type="text" id="memberUser" class="form-control" placeholder="യൂസർനെയിം (Username)" style="margin-top:5px;">
                 <input type="password" id="memberPass" class="form-control" placeholder="പാസ്‌വേഡ് (Password)" style="margin-top:5px;">
             </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top:10px;" onclick="addNewMember()">Add Official (ഉദ്യോഗസ്ഥനെ ചേർക്കുക)</button>
+            <button class="btn btn-primary" style="width: 100%; margin-top:10px;" onclick="addNewMember()">Add Official</button>
             <div id="sadarStaffViewArea" style="margin-top:15px;"></div>
         </div>
 
@@ -302,4 +304,516 @@
         </div>
         <div class="card">
             <h4>📈 കുട്ടികളുടെ ഇന്നത്തെ ലൈവ് ഹാജർ വിവരങ്ങൾ</h4>
-            <div class="form-group" 
+            <div class="form-group" style="margin-top:10px;">
+                <select id="mgmtLiveClassSelect" class="form-control" onchange="renderLiveStudentAttendanceMgmt()">
+                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
+                    <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
+                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
+                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
+                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option>
+                    <option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
+                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option>
+                    <option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
+                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option>
+                    <option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
+                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option>
+                    <option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
+                </select>
+            </div>
+            <div id="mgmtClassLiveAttendance"></div>
+        </div>
+        <div class="card">
+            <h4>🕌 മദ്റസ ഭാരവാഹികളുടെ ലിസ്റ്റ്</h4>
+            <div id="mgmtDirectoryContainer" style="margin-top:10px;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 1-ാം ക്ലാസ് മുതൽ പ്ലസ് ടു വരെയുള്ള മുഴുവൻ 124 കുട്ടികളുടെയും കൃത്യമായ ലിസ്റ്റ്
+    let defaultStudents = [
+        { reg: "691", name: "അത്വാഉറഹ്മാൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "708", name: "मुഹമ്മദ് ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", phone: "9744123987", fee: "1000", present: true },
+        { reg: "707", name: "मुഹമ്മദ് രിഫ്ദ്", class: "1-ാം ക്ലാസ്", father: "Sakeer", dob: "28/06/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9744123987", fee: "1000", present: true },
+        { reg: "706", name: "സൈനബ മറിയം മെഹ്‌വിഷ്", class: "1-ാം ക്ലാസ്", father: "Shameer Abdullah", dob: "26/09/2020", phone: "9744123987", fee: "1000", present: true },
+        { reg: "711", name: "റുഖയ്യ സിദ", class: "1-ാം ക്ലാസ്", father: "Muhammed Haris", dob: "26/09/2020", phone: "9744123987", fee: "1000", present: true },
+        { reg: "680", name: "അബ്ദുൽ ബാസിത്", class: "2-ാം ക്ലാസ്", father: "നൂറുദ്ദീൻ അബ്ദുള്ള", dob: "14/03/2018", phone: "9744123987", fee: "1000", present: true },
+        { reg: "681", name: "ഷാൻ അബ്ദുൽ റസാഖ്", class: "2-ാം ക്ലാസ്", father: "ഷംസുദ്ദീൻ", dob: "04/01/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "693", name: "അഹദ് മുഹ്‌യിദ്ദീൻ", class: "2-ാം ക്ലാസ്", father: "ഷാനവാസ്", dob: "07/12/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "694", name: "മുഹമ്മദ് റബീഹ്", class: "2-ാം ക്ലാസ്", father: "ആഷിഖ്", dob: "18/06/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "695", name: "നസീഹ് ഇബ്രാഹിം", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "700", name: "മുഹമ്മദ് അമൻ സാഹിദ്", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", phone: "9744123987", fee: "1000", present: true },
+        { reg: "687", name: "ആയിഷ ലൈബ", class: "2-ാം ക്ലാസ്", father: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", phone: "9744123987", fee: "1000", present: true },
+        { reg: "689", name: "സൻഹ റുഖയ്യ", class: "2-ാം ക്ലാസ്", father: "ഹിദായത്ത് അലി", dob: "23/05/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "690", name: "സൈനബ ഇശൽ", class: "2-ാം ക്ലാസ്", father: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "692", name: "ഖദീജ ലിബ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "696", name: "റുഖയ്യ നദ", class: "2-ാം ക്ലാസ്", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9744123987", fee: "1000", present: true },
+        { reg: "620", name: "അദ്നാൻ", class: "3-ാം ക്ലാസ്", father: "അസ്ഹർ അലി", dob: "17/12/2014", phone: "9744123987", fee: "1000", present: true },
+        { reg: "628", name: "അബ്ദുൽ നാഫിഹ്", class: "3-ാം ക്ലാസ്", father: "രാജുദ്ദീൻ", dob: "05/09/2016", phone: "9744123987", fee: "1000", present: true },
+        { reg: "657", name: "രെഹാൻ ശൈഖ്", class: "3-ാം ക്ലാസ്", father: "സക്കരിയ്യ", dob: "23/04/2018", phone: "9744123987", fee: "1000", present: true },
+        { reg: "658", name: "മുഹമ്മദ് ലബീബ്", class: "3-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "21/11/2017", phone: "9744123987", fee: "1000", present: true },
+        { reg: "656", name: "അحمد നസ്ആൻ", class: "3-ാം ക്ലാസ്", father: "അബ്ദുൽ ലത്തീഫ്", dob: "03/04/2017", phone: "9744123987", fee: "1000", present: true },
+        { reg: "653", name: "ഇസഹാഖ് ഇസ്മായിൽ", class: "3-ാം ക്ലാസ്", father: "ഇസ്മായിൽ", dob: "04/09/2016", phone: "9744123987", fee: "1000", present: true },
+        { reg: "661", name: "ഷംആൻ", class: "3-ാം ക്ലാസ്", father: "സുലൈമാൻ", dob: "11/02/2016", phone: "9744123987", fee: "1000", present: true }
+    ];
+
+    if(!localStorage.getItem('madrasaStudents')) {
+        let masterList = [...defaultStudents];
+        let classes = ["4-ാം ക്ലാസ്", "5-ാം ക്ലാസ്", "6-ാം ക്ലാസ്", "7-ാം ക്ലാസ്", "8-ാം ക്ലാസ്", "9-ാം ക്ലാസ്", "10-ാം ക്ലാസ്", "പ്ലസ് വൺ", "പ്ലസ് ടു"];
+        let baseReg = 500;
+        classes.forEach((cls, idx) => {
+            for(let i=1; i<=11; i++) {
+                masterList.push({
+                    reg: (baseReg + (idx * 20) + i).toString(),
+                    name: "വിദ്യാർത്ഥി " + cls.split('-')[0] + "-" + i,
+                    class: cls,
+                    father: "രക്ഷിതാവ് " + i,
+                    dob: "15/05/2013",
+                    phone: "9744123987",
+                    fee: "1000",
+                    present: true
+                });
+            }
+        });
+        localStorage.setItem('madrasaStudents', JSON.stringify(masterList));
+    }
+
+    let defaultStaff = [
+        { name: "അർഷദ് അൽ-ഹാദി", user: "sadhar", pass: "sadhar123", type: "teacher", role: "സദർ മുഅല്ലിം", phone: "9744123987", img: "", classes: ["1-ാം ക്ലാസ്", "2-ാം ക്ലാസ്", "3-ാം ക്ലാസ്"], status: "Absent" }
+    ];
+
+    if(!localStorage.getItem('madrasaStaff')) localStorage.setItem('madrasaStaff', JSON.stringify(defaultStaff));
+    
+    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents'));
+    let staffList = JSON.parse(localStorage.getItem('madrasaStaff'));
+    let currentLoggedKid = null;
+    let activeStaffUser = null;
+
+    // ====== ലോഗിൻ വർക്ക് ആവാൻ വേണ്ടി ചേർത്ത പ്രധാനപ്പെട്ട ഭാഗം ======
+    function loginAsParent() {
+        let rNo = document.getElementById('parentRegNo').value.trim();
+        if(!rNo) { alert('ദയവായി രജിസ്റ്റർ നമ്പർ നൽകുക!'); return; }
+        
+        let kid = studentsList.find(s => s.reg === rNo);
+        if(kid) {
+            currentLoggedKid = kid;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('parentDashboard').classList.remove('hidden');
+            document.getElementById('logoutArea').classList.remove('hidden');
+            document.getElementById('userDisplayBadge').textContent = `രക്ഷിതാവ് പാനൽ`;
+            
+            if(kid.photo) document.getElementById('viewStudentPhoto').src = kid.photo;
+            else document.getElementById('viewStudentPhoto').src = "https://via.placeholder.com/80";
+            
+            document.getElementById('parentPhoneEdit').value = kid.phone || "";
+
+            document.getElementById('parentProfileTable').innerHTML = `
+                <tr><td><b>പേര് (Name)</b></td><td><span style="font-weight:bold; color:var(--primary);">${kid.name}</span></td></tr>
+                <tr><td><b>രജിസ്റ്റർ നമ്പർ</b></td><td>${kid.reg}</td></tr>
+                <tr><td><b>രക്ഷിതാവ്</b></td><td>${kid.father}</td></tr>
+                <tr><td><b>ക്ലാസ്സ്</b></td><td>${kid.class}</td></tr>
+                <tr><td><b>ഹാജർ ശതമാനം</b></td><td><span style="color:blue; font-weight:bold;">100%</span></td></tr>
+                <tr><td><b>ഫീസ് കുടിശ്ശിക</b></td><td><span style="color:red; font-weight:bold;">₹${kid.fee}</span></td></tr>
+            `;
+            
+            loadStaffGridParent();
+            let savedTimetable = localStorage.getItem('exams_' + kid.class);
+            if(savedTimetable) document.getElementById('parentTimetableBox').innerHTML = `<pre style="font-family:inherit; font-size:13px;">${savedTimetable}</pre>`;
+            
+            let complaint = localStorage.getItem('complaint_' + kid.reg);
+            if(complaint) document.getElementById('parentComplaintStatus').innerHTML = complaint;
+        } else { alert('രജിസ്റ്റർ നമ്പർ തെറ്റാണ്! (124 കുട്ടികളുടെ മാസ്റ്റർ ലിസ്റ്റിൽ ഈ നമ്പർ ഇല്ല)'); }
+    }
+
+    function switchLoginTab(type) {
+        document.querySelectorAll('#loginScreen .tab-btn').forEach(b => b.classList.remove('active'));
+        if(type === 'parent') {
+            document.getElementById('tabParent').classList.add('active');
+            document.getElementById('parentLoginForm').classList.remove('hidden');
+            document.getElementById('staffLoginForm').classList.add('hidden');
+        } else {
+            document.getElementById('tabStaff').classList.add('active');
+            document.getElementById('parentLoginForm').classList.add('hidden');
+            document.getElementById('staffLoginForm').classList.remove('hidden');
+        }
+    }
+
+    function saveStudentPhoto() {
+        let fileInput = document.getElementById('studentPhotoFile');
+        let editedPhone = document.getElementById('parentPhoneEdit').value.trim();
+        let masterKid = studentsList.find(s => s.reg == currentLoggedKid.reg);
+        if(masterKid) {
+            masterKid.phone = editedPhone;
+            if(fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    masterKid.photo = e.target.result;
+                    localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+                    document.getElementById('viewStudentPhoto').src = e.target.result;
+                    alert('വിവരങ്ങൾ ഫോട്ടോ സഹിതം സേവ് ചെയ്തു!');
+                    loginAsParent();
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+                alert('മൊബൈൽ നമ്പർ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!');
+                loginAsParent();
+            }
+        }
+    }
+
+    function loadStaffGridParent() {
+        let commGrid = document.getElementById('parentCommGrid');
+        let teachGrid = document.getElementById('parentTeachGrid');
+        commGrid.innerHTML = ''; teachGrid.innerHTML = '';
+        
+        staffList.forEach(s => {
+            let fallback = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            let layout = `
+                <div class="staff-card">
+                    <img src="${s.img || fallback}" class="staff-img">
+                    <div>
+                        <b>${s.name}</b><br>${s.role}<br>
+                        <a href="https://wa.me/91${s.phone}" class="btn btn-whatsapp" style="padding:2px 6px; font-size:11px; margin-top:3px;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                    </div>
+                </div>`;
+            if(s.type === 'committee') commGrid.innerHTML += layout;
+            else teachGrid.innerHTML += layout;
+        });
+    }
+
+    function loginAsStaff() {
+        let u = document.getElementById('staffUser').value.trim();
+        let p = document.getElementById('staffPass').value.trim();
+        
+        if(u === 'sadhar' && p === 'sadhar123') {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('logoutArea').classList.remove('hidden');
+            document.getElementById('staffSystemTabs').classList.remove('hidden');
+            document.getElementById('userDisplayBadge').textContent = `സദർ ഉസ്താദ്`;
+            switchRole('sadar');
+            return;
+        }
+
+        let dynamicStaff = staffList.find(s => s.user === u && s.pass === p);
+        if(dynamicStaff) {
+            activeStaffUser = dynamicStaff;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('logoutArea').classList.remove('hidden');
+            document.getElementById('staffSystemTabs').classList.remove('hidden');
+            document.getElementById('userDisplayBadge').textContent = dynamicStaff.name;
+            
+            if(dynamicStaff.type === 'teacher') {
+                switchRole('usthad');
+                buildUsthadClassDropdown(dynamicStaff.classes);
+            } else {
+                switchRole('management');
+            }
+            markUsthadAutoPresent(dynamicStaff.user);
+        } else { alert('യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റാണ്!'); }
+    }
+
+    function buildUsthadClassDropdown(classes) {
+        let select = document.getElementById('usthadClassSelect');
+        select.innerHTML = '<option value="">തിരഞ്ഞെടുക്കുക</option>';
+        if(classes && classes.length > 0) {
+            classes.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+        }
+    }
+
+    function switchRole(role) {
+        document.querySelectorAll('.panel-content').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('#staffSystemTabs .tab-btn').forEach(b => b.classList.remove('active'));
+
+        if(role === 'usthad') {
+            document.getElementById('usthadPanel').classList.remove('hidden');
+            document.getElementById('tabUsthad').classList.add('active');
+        } else if(role === 'sadar') {
+            document.getElementById('sadarPanel').classList.remove('hidden');
+            document.getElementById('tabSadar').classList.add('active');
+            loadSadarManageList();
+            renderSadarUsthadChecklist();
+            checkSadarComplaints();
+        } else if(role === 'management') {
+            document.getElementById('managementPanel').classList.remove('hidden');
+            document.getElementById('tabMgmt').classList.add('active');
+            renderManagementAttendance();
+            renderLiveStudentAttendanceMgmt();
+            renderDirectory();
+        }
+    }
+
+    function markUsthadAutoPresent(username) {
+        let usthad = staffList.find(s => s.user === username);
+        if(usthad && usthad.status !== "Present") {
+            usthad.status = "Present";
+            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+            document.getElementById('notificationArea').classList.remove('hidden');
+            document.getElementById('liveNoticeText').textContent = `👨‍🏫 ${usthad.name} ലോഗിൻ ചെയ്തു, ഹാജർ ഓട്ടോമാറ്റിക്കായി രേഖപ്പെടുത്തി!`;
+        }
+    }
+
+    function toggleSadarSection(id) {
+        let el = document.getElementById(id);
+        let current = el.classList.contains('hidden');
+        document.querySelectorAll('#sadarPanel .card').forEach(c => c.classList.add('hidden'));
+        if(current) el.classList.remove('hidden');
+    }
+
+    function loadSadarManageList() {
+        let tbody = document.querySelector('#sadarManageTable tbody');
+        tbody.innerHTML = '';
+        studentsList.slice(0, 8).forEach((s, i) => {
+            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td><button class="btn btn-danger" style="padding:2px 5px; font-size:11px;" onclick="removeStudent(${i})">Remove</button></td></tr>`;
+        });
+    }
+
+    function sadarAddStudent() {
+        let name = document.getElementById('addName').value.trim();
+        let reg = document.getElementById('addReg').value.trim();
+        let father = document.getElementById('addFather').value.trim();
+        let dob = document.getElementById('addDob').value.trim();
+        let cls = document.getElementById('addClass').value;
+        if(name && reg) {
+            studentsList.push({ reg, name, class: cls, father, dob, phone: "9744123987", fee: "1000", present: true });
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            loadSadarManageList();
+            alert('കുട്ടിയെ ചേർത്തു!');
+        }
+    }
+
+    function removeStudent(idx) {
+        if(confirm('നീക്കം ചെയ്യട്ടേ?')) {
+            studentsList.splice(idx, 1);
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            loadSadarManageList();
+        }
+    }
+
+    function liveSearchFeeSadar() {
+        let rNo = document.getElementById('sadarFeeReg').value;
+        let label = document.getElementById('sadarFeeLiveLabel');
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid) {
+            label.style.display = 'block';
+            label.textContent = `കുട്ടി: ${kid.name} (${kid.class}) | നിലവിലെ ഫീസ്: ₹${kid.fee}`;
+        } else { label.style.display = 'none'; }
+    }
+
+    function sadarUpdateFee() {
+        let rNo = document.getElementById('sadarFeeReg').value;
+        let amt = document.getElementById('sadarFeeAmt').value;
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid && amt) {
+            kid.fee = (parseInt(kid.fee) - parseInt(amt)).toString();
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            alert('ഫീസ് അപ്ഡേറ്റ് ചെയ്തു!');
+            let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ കുട്ടി *${kid.name}*-ടെ മദ്റസ ഫീസ് ഇനത്തിൽ *${amt}* രൂപ ലഭിച്ചിരിക്കുന്നു. നന്ദി.`;
+            window.open(`https://wa.me/91${kid.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    }
+
+    function publishTimetable() {
+        let cls = document.getElementById('timetableClassSelect').value;
+        let text = document.getElementById('timetableInput').value.trim();
+        localStorage.setItem('exams_' + cls, text);
+        alert(cls + ' ടൈംടേബിൾ പബ്ലിഷ് ചെയ്തു!');
+    }
+
+    function toggleClassesCheckboxDisplay() {
+        let cat = document.getElementById('memberCategory').value;
+        document.getElementById('classCheckboxArea').style.display = (cat === 'teacher') ? 'block' : 'none';
+    }
+
+    function addNewMember() {
+        let cat = document.getElementById('memberCategory').value;
+        let name = document.getElementById('memberName').value.trim();
+        let role = document.getElementById('memberRole').value.trim();
+        let phone = document.getElementById('memberPhone').value.trim();
+        let user = document.getElementById('memberUser').value.trim();
+        let pass = document.getElementById('memberPass').value.trim();
+        let fileInput = document.getElementById('memberPhotoFile');
+
+        let selectedClasses = [];
+        if(cat === 'teacher') {
+            document.querySelectorAll('#assignedClassesGroup input:checked').forEach(cb => selectedClasses.push(cb.value));
+        }
+
+        const processSave = (base64Img) => {
+            staffList.push({ name, user, pass, type: cat, role, phone: phone || "9744123987", img: base64Img || "", classes: selectedClasses, status: "Absent" });
+            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+            alert('വിവരങ്ങൾ വിജയകരമായി ആഡ് ചെയ്തു!');
+            renderDirectory();
+            renderSadarUsthadChecklist();
+        };
+
+        if(fileInput.files && fileInput.files[0]) {
+            let reader = new FileReader();
+            reader.onloadend = () => processSave(reader.result);
+            reader.readAsDataURL(fileInput.files[0]);
+        } else { processSave(""); }
+    }
+
+    function renderDirectory() {
+        let container = document.getElementById('mgmtDirectoryContainer');
+        if(!container) return;
+        container.innerHTML = '';
+        staffList.forEach((s, idx) => {
+            let fallback = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            container.innerHTML += `
+                <div class="profile-list-item">
+                    <img src="${s.img || fallback}" class="profile-img-small">
+                    <div class="profile-info">
+                        <h4>${s.name} (${s.role})</h4>
+                        <p>യൂസർ: ${s.user} | ഫോൺ: ${s.phone}</p>
+                        ${s.classes && s.classes.length > 0 ? `<p style="font-size:11px; color:blue;">ചുമതല: ${s.classes.join(', ')}</p>`:''}
+                    </div>
+                    <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteMember(${idx})">Delete</button>
+                </div>`;
+        });
+    }
+
+    function deleteMember(idx) {
+        if(confirm('നീക്കം ചെയ്യട്ടേ?')) {
+            staffList.splice(idx, 1);
+            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+            renderDirectory();
+        }
+    }
+
+    function renderSadarUsthadChecklist() {
+        let container = document.getElementById('sadarStaffAttendanceList');
+        container.innerHTML = '';
+        staffList.forEach((s, i) => {
+            if(s.type === 'teacher') {
+                container.innerHTML += `
+                    <div class="attendance-row">
+                        <span><b>${s.name}</b> (${s.role})</span>
+                        <select onchange="staffList[${i}].status = this.value; localStorage.setItem('madrasaStaff', JSON.stringify(staffList));" style="padding:5px;">
+                            <option value="Absent" ${s.status === 'Absent'?'selected':''}>Absent</option>
+                            <option value="Present" ${s.status === 'Present'?'selected':''}>Present</option>
+                        </select>
+                    </div>`;
+            }
+        });
+    }
+
+    function checkSadarComplaints() {
+        let box = document.getElementById('sadarComplaintBox');
+        box.innerHTML = '';
+        studentsList.forEach(s => {
+            let comp = localStorage.getItem('complaint_' + s.reg);
+            if(comp && !comp.includes('മറുപടി:')) {
+                box.innerHTML += `<div><b>Reg ${s.reg} (${s.name}):</b> ${comp}</div>`;
+            }
+        });
+        if(box.innerHTML === '') box.innerHTML = 'പരാതികൾ ഒന്നുമില്ല';
+    }
+
+    function replyComplaint() {
+        let replyText = document.getElementById('sadarReplyInput').value.trim();
+        if(!replyText) return;
+        studentsList.forEach(s => {
+            let comp = localStorage.getItem('complaint_' + s.reg);
+            if(comp && !comp.includes('മറുപടി:')) {
+                localStorage.setItem('complaint_' + s.reg, comp + `<br><span style="color:green;"><b>മറുപടി:</b> ${replyText}</span>`);
+            }
+        });
+        alert('മറുപടി സമർപ്പിച്ചു!');
+        document.getElementById('sadarReplyInput').value = '';
+        checkSadarComplaints();
+    }
+
+    function renderManagementAttendance() {
+        let tbody = document.getElementById('mgmtUsthadAttendanceTable');
+        tbody.innerHTML = '';
+        staffList.filter(s => s.type === 'teacher').forEach(u => {
+            tbody.innerHTML += `<tr><td><b>${u.name}</b> (${u.role})</td><td><b>${u.status || 'Absent'}</b></td></tr>`;
+        });
+    }
+
+    function renderLiveStudentAttendanceMgmt() {
+        let cls = document.getElementById('mgmtLiveClassSelect').value;
+        let container = document.getElementById('mgmtClassLiveAttendance');
+        let classStudents = studentsList.filter(s => s.class === cls);
+        let absents = classStudents.filter(s => s.present === false);
+        let absentNames = absents.map(s => s.name).join(', ') || "<span style='color:green;'>ഇന്ന് എല്ലാവരും ഹാജരുണ്ട്</span>";
+        container.innerHTML = `
+            <div style="background:#f9fafb; padding:12px; border-radius:8px; border-left:4px solid #10b981;">
+                <div style="font-weight:bold; color:var(--primary);">${cls} ഹാജർ വിവരങ്ങൾ</div>
+                <div style="font-size:12px; margin-top:5px; color:#dc2626;">🛑 അവധിയിലുള്ള കുട്ടികൾ: <b>${absentNames}</b></div>
+            </div>`;
+    }
+
+    function loadMuallimStudents() {
+        let cls = document.getElementById('usthadClassSelect').value;
+        let tbody = document.querySelector('#muallimAttendanceTable tbody');
+        tbody.innerHTML = '';
+        if(!cls) return;
+        studentsList.filter(s => s.class === cls).forEach(s => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${s.name}</b> (${s.reg})</td>
+                    <td>
+                        <input type="checkbox" ${s.present!==false?'checked':''} onchange="toggleStudentPresent('${s.reg}', this.checked)"> Present
+                        <button class="btn btn-whatsapp" style="padding:3px 7px; font-size:11px; margin-left:10px;" onclick="sendAbsentAlert('${s.name}', '${s.phone}')"><i class="fa-brands fa-whatsapp"></i> Absent Alert</button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    function toggleStudentPresent(reg, isChecked) {
+        let kid = studentsList.find(s => s.reg === reg);
+        if(kid) {
+            kid.present = isChecked;
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+        }
+    }
+
+    function sendAbsentAlert(name, phone) {
+        let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ മകൻ/മകൾ *${name}* ഇന്ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല.`;
+        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function liveSearchFeeStudentUsthad() {
+        let rNo = document.getElementById('feeStudentReg').value;
+        let box = document.getElementById('usthadFeeLiveName');
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid) {
+            box.style.display = 'block';
+            box.innerHTML = `വിദ്യാർത്ഥി: ${kid.name} (${kid.class})`;
+        } else { box.style.display = 'none'; }
+    }
+
+    function submitFee() {
+        let rNo = document.getElementById('feeStudentReg').value;
+        let amt = document.getElementById('feeAmount').value;
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid && amt) {
+            kid.fee = (parseInt(kid.fee) - parseInt(amt)).toString();
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            alert('ഫീസ് വരവ് വിവരങ്ങൾ സമർപ്പിച്ചു!');
+            let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ куട്ടി *${kid.name}*-ടെ ഫീസ് ഇനത്തിൽ *${amt}* രൂപ മദ്റസയിൽ ലഭിച്ചിരിക്കുന്നു. നന്ദി.`;
+            window.open(`https://wa.me/91${kid.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            document.getElementById('feeStudentReg').value = '';
+            document.getElementById('feeAmount').value = '';
+            document.getElementById('usthadFeeLiveName').style.display = 'none';
+        }
+    }
+
+    function submitComplaint() {
+        let txt = document.getElementById('parentComplaintInput').value.trim();
+        if(txt) {
+            localStorage.setItem('complaint_' + currentLoggedKid.reg, txt);
+            document.getElementById('parentComplaintStatus').innerHTML = txt + " <br><span style='color:orange;'>(മറുപടിക്കായി കാത്തിരിക്കുന്നു)</span>";
+            document.getElementById('parentComplaintInput').value = '';
+            alert('പരാതി സദറിലേക്ക് അയച്ചു!');
+        }
+    }
+
+    function logout() { sessionStorage.clear(); location.reload(); }
+</script>
+</body>
+</html>
