@@ -140,7 +140,7 @@
     <div id="sadarDashboard" class="hidden">
         <h3 style="color: var(--primary); margin-bottom: 15px; text-align: center;">സദർ കൺട്രോൾ പാനൽ (Sadar Only)</h3>
         
-        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ / പുതിയ കുട്ടികളെ ചേർക്കൽ <span>▼</span></button>
+        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടίων വിവരങ്ങൾ തിരുത്തൽ / പുതിയ കുട്ടികളെ ചേർക്കൽ <span>▼</span></button>
         <div id="s1" class="card hidden">
             <div class="grid-3">
                 <input type="text" id="addName" class="form-control" placeholder="പേര്">
@@ -202,7 +202,7 @@
                     <option value="none">ക്ലാസ് ചാർജ്ജ് ഇല്ല</option>
                 </select>
             </div>
-            <button class="btn btn-primary" style="margin-top: 10px; width: 100%;" onclick="sadarAddStaff()">Add Official (ഉദ്യോഗസ്ഥനെ ചേർക്കുക)</button>
+            <button class="btn btn-primary" style="margin-top: 10px; width: 100%;" onclick="sadarAddStaff()">Add Official</button>
             <div id="sadarStaffViewArea" style="margin-top:15px;"></div>
         </div>
 
@@ -260,7 +260,7 @@
     let defaultStudents = [
         // 1-ാം ക്ലാസ്
         { reg: "691", name: "അത്വാഉറഹ്മാൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "708", name: "മുحمد ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "708", name: "മുഹമ്മദ് ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "707", name: "മുഹമ്മദ് രിഫ്ദ്", class: "1-ാം ക്ലാസ്", father: "Sakeer", dob: "28/06/2019", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "706", name: "സൈനബ മറിയം മെഹ്‌വിഷ്", class: "1-ാം ക്ലാസ്", father: "Shameer Abdullah", dob: "26/09/2020", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
@@ -317,8 +317,8 @@
         { reg: "632", name: "മുഹമ്മദ് മിൻഹാജ്", class: "5-ാം ക്ലാസ്", father: "Abdul Nasar", dob: "12/09/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "649", name: "വാഹിദ് സമാൻ", class: "5-ാം ക്ലാസ്", father: "Mahmood Inayath", dob: "09/12/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "604", name: "ഷൈമ മറിയം", class: "5-ാം ക്ലാസ്", father: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "640", name: "മറിയം സഫ", class: "5-ാം ക്ലാസ്", father: "ഹാരിസ്", dob: "21/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "641", name: "ファティマ ഫാത്തിമ TK", class: "5-ാം ക്ലാസ്", father: "അഹ്മദ്", dob: "14/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "640", name: "മറിയം സഫ", class: "5-ാം ക്ലാസ്", father: "हारीस", dob: "21/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "641", name: "ഫാത്തിമ TK", class: "5-ാം ക്ലാസ്", father: "അഹ്മദ്", dob: "14/08/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "642", name: "ആയിഷ അബ്ദുല്ലാഹ്", class: "5-ാം ക്ലാസ്", father: "അബ്ദുള്ള", dob: "15/04/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "643", name: "ഫാത്തിമ ജുമാന", class: "5-ാം ക്ലാസ്", father: "ഹാലിത്", dob: "22/02/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "667", name: "ആയിഷ മെഹ്സിൻ", class: "5-ാം ക്ലാസ്", father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
@@ -334,7 +334,7 @@
         { reg: "699", name: "മുഹമ്മദ് ഷിബ്‌ലി", class: "6-ാം ക്ലാസ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "05/09/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "606", name: "ആയിഷ ഐഫ", class: "6-ാം ക്ലാസ്", father: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "607", name: "ഷഹാന ഷെറിൻ", class: "6-ാം ക്ലാസ്", father: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "608", name: "ലിയ്യാ ഫാത്തിമ", class: "6-ാം ക്ലാസ്", father: "ഖലീൽ", dob: "27/10/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "608", name: "ലിയ്യാ  ഫാത്തിമ", class: "6-ാം ക്ലാസ്", father: "ഖലീൽ", dob: "27/10/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "609", name: "ആയിഷ മെഹ്‌റ", class: "6-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "17/02/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "613", name: "ആയിഷ ഹിബ", class: "6-ാം ക്ലാസ്", father: "ഹംസ", dob: "18/12/2015", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         // 7-ാം ക്ലാസ്
@@ -344,7 +344,7 @@
         { reg: "570", name: "ഫാത്തിമ ഹമീദ്", class: "7-ാം ക്ലാസ്", father: "Hameed", dob: "18/10/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "571", name: "ആയിഷ തമന്ന", class: "7-ാം ക്ലാസ്", father: "Sirajuddin", dob: "16/09/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "587", name: "മറിയം ഫൈഹ", class: "7-ാം ക്ലാസ്", father: "Muhammad Kunhi", dob: "19/05/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "588", name: "അംന  ഫാത്തിമ", class: "7-ാം ക്ലാസ്", father: "Sherif", dob: "27/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "588", name: "അംന ഫാത്തിമ", class: "7-ാം ക്ലാസ്", father: "Sherif", dob: "27/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "589", name: "സെബ മറിയം", class: "7-ാം ക്ലാസ്", father: "Zameel", dob: "30/08/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "590", name: "സെല്ലാ ഷംസീർ", class: "7-ാം ക്ലാസ്", father: "Shamsir", dob: "26/03/2014", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "639", name: "മെഹ്റ മുംതാസ്", class: "7-ാം ക്ലാസ്", father: "Muaaz", dob: "16/12/2013", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
@@ -379,7 +379,7 @@
         { reg: "615", name: "ഫാത്തിമ ഷാഹില", class: "10-ാം ക്ലാസ്", father: "Abdul Khader", dob: "24/07/2012", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "637", name: "ആയിഷ നജ", class: "10-ാം ക്ലാസ്", father: "Inayat", dob: "03/02/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         // പ്ലസ് വൺ
-        { reg: "486", name: "മുഹമ്മദ് നിഹാല", class: "പ്ലസ് വൺ", father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "486", name: "മുഹമ്മദ് നിഹาล", class: "പ്ലസ് വൺ", father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "487", name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", class: "പ്ലസ് വൺ", father: "ഷാഫി", dob: "17/01/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "514", name: "ജാസിം", class: "പ്ലസ് വൺ", father: "ഖാലിദ്", dob: "02/02/2011", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "542", name: "ഷെസിൻ KS", class: "പ്ലസ് വൺ", father: "സാജിദ്", dob: "09/10/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
@@ -391,7 +391,7 @@
         // പ്ലസ് ടു
         { reg: "574", name: "മുഹമ്മദ് ലുബൈബ്", class: "പ്ലസ് ടു", father: "Muhyiddin", dob: "26/10/2010", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "489", name: "മുഹമ്മദ് മിസാജ്", class: "പ്ലസ് ടു", father: "അഹമ്മദ് മുസമ്മിൽ", dob: "18/07/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
-        { reg: "492", name: "ഹുദാ ഫാത്തിമ", class: "പ്ലസ് ടു", father: "ഹാരിസ്", dob: "10/11/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
+        { reg: "492", name: "HUDA FATIMA ഹുദാ ഫാത്തിമ", class: "പ്ലസ് ടു", father: "ഹാരിസ്", dob: "10/11/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "493", name: "ലൈല നസ്രിൻ", class: "പ്ലസ് ടു", father: "അബ്ദുള്ള മുനീർ", dob: "19/06/2009", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" },
         { reg: "494", name: "ആയിഷ നജ", class: "പ്ലസ് ടു", father: "നവാസ്", dob: "24/07/2008", phone: "9744123987", fee: "1000", attendance: "100%", photo: "" }
     ];
@@ -435,6 +435,7 @@
             document.getElementById('parentPhoneEdit').value = kid.phone || "9744123987";
 
             document.getElementById('parentProfileTable').innerHTML = `
+                <tr><td><b>പേര് (Name)</b></td><td><span style="font-weight:bold; color:var(--primary);">${kid.name}</span></td></tr>
                 <tr><td><b>രജിസ്റ്റർ നമ്പർ</b></td><td>${kid.reg}</td></tr>
                 <tr><td><b>രക്ഷിതാവ്</b></td><td>${kid.father}</td></tr>
                 <tr><td><b>ജനനതീയതി</b></td><td>${kid.dob}</td></tr>
