@@ -6,14 +6,13 @@
 <title>മമ്പഉൽ ഉലൂം മദ്രസ - കൊറക്കോട്</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Malayalam',sans-serif}
-:root{--primary:#0d6efd;--success:#198754;--danger:#dc3545;--dark:#212529;--light:#f8f9fa;--warning:#ffc107}
+:root{--primary:#0d6efd;--success:#198754;--danger:#dc3545;--dark:#212529;--light:#f8f9fa}
 body{background:#e9ecef;color:var(--dark)}
 .container{max-width:1400px;margin:0 auto;padding:10px}
-.header{background:linear-gradient(135deg,#0d6efd,#0a58ca);color:white;padding:15px;border-radius:8px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,0.1)}
-.header h1{font-size:18px;line-height:1.4}
-.header .reg{font-size:12px;opacity:0.9}
-.btn{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:600;transition:0.3s}
-.btn:hover{opacity:0.9;transform:translateY(-1px)}
+.header{background:linear-gradient(135deg,#0d6efd,#0a58ca);color:white;padding:15px;border-radius:8px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:16px;line-height:1.4}
+.header .reg{font-size:11px;opacity:0.9}
+.btn{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:600}
 .btn-primary{background:var(--primary);color:white}
 .btn-success{background:var(--success);color:white}
 .btn-danger{background:var(--danger);color:white}
@@ -23,54 +22,43 @@ body{background:#e9ecef;color:var(--dark)}
 .card h3{margin-bottom:12px;color:var(--primary);font-size:16px;border-bottom:2px solid var(--primary);padding-bottom:5px}
 .form-group{margin-bottom:12px}
 .form-group label{display:block;margin-bottom:5px;font-weight:600;font-size:13px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:14px}
+.form-group input,.form-group select{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:14px}
 .grid{display:grid;gap:15px}
 .grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-.grid-3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
 .tabs{display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap}
 .tab{padding:8px 15px;background:#ddd;border:none;border-radius:5px 5px 0 0;cursor:pointer;font-size:13px}
 .tab.active{background:white;border-bottom:3px solid var(--primary);font-weight:600}
 .hidden{display:none}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #eee}
-th{background:var(--light);font-weight:600;position:sticky;top:0}
+th{background:var(--light);font-weight:600}
 .badge{padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;display:inline-block}
 .badge-success{background:#d1e7dd;color:#0a3622}
 .badge-danger{background:#f8d7da;color:#58151c}
-.badge-warning{background:#fff3cd;color:#664d03}
 .login-box{max-width:450px;margin:30px auto}
-.student-list{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #eee;transition:0.2s}
-.student-list:hover{background:var(--light)}
-.student-info{display:flex;align-items:center;gap:10px}
-.student-info img{width:45px;height:45px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)}
+.student-list{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #eee}
 .checkbox{width:22px;height:22px;cursor:pointer}
 .attendance-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--light);margin-bottom:8px;border-radius:5px}
 .stats{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;margin-top:10px}
 .stats span{background:white;padding:6px 12px;border-radius:5px;border:1px solid #ddd;font-weight:600}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999}
-.modal-content{background:white;padding:20px;border-radius:8px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto}
-.search-box{margin-bottom:10px}
-.search-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px}
-@media(max-width:768px){.header h1{font-size:14px}.grid-2,.grid-3{grid-template-columns:1fr}table{font-size:11px}}
+@media(max-width:768px){.header h1{font-size:14px}.grid-2{grid-template-columns:1fr}table{font-size:11px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
-// ===== FULL DATABASE WITH ALL 124 STUDENTS =====
 const DB = {
   init(){
-    if(!localStorage.getItem('madrasaDB_v2')){
+    if(!localStorage.getItem('madrasaDB_final')){
       const data = {
         settings:{
           madrasaName:'മമ്പഉൽ ഉലൂം മദ്രസ',
           regNo:'6682',
           place:'കൊറക്കോട്, കാസറഗോഡ്',
           shifts:{
-            first:{name:'ഫസ്റ്റ് ഷിഫ്റ്റ്',time:'6:30-8:30 AM',classes:['+2','+1','9']},
-            second:{name:'സെക്കൻഡ് ഷിഫ്റ്റ്',time:'8:30-10:30 AM',classes:['10','8','7','6','5','4']},
-            third:{name:'മൂന്നാം ഷിഫ്റ്റ്',time:'7:00-9:00 PM',classes:['3','2','1']}
+            first:{name:'ഫസ്റ്റ് ഷിഫ്റ്റ്',time:'6:30-8:30 AM'},
+            second:{name:'സെക്കൻഡ് ഷിഫ്റ്റ്',time:'8:30-10:30 AM'},
+            third:{name:'മൂന്നാം ഷിഫ്റ്റ്',time:'7:00-9:00 PM'}
           }
         },
         users:{
@@ -189,4 +177,294 @@ const DB = {
           615:{id:615,regNo:'615',name:'ഫാത്തിമ ഷാഹില',class:'10',shift:'second',dob:'2012-07-24',parentName:'Abdul Khader',phone:'',photo:''},
           637:{id:637,regNo:'637',name:'ആയിഷ നജ',class:'10',shift:'second',dob:'2010-02-03',parentName:'Inayat',phone:'',photo:''},
           486:{id:486,regNo:'486',name:'മുഹമ്മദ് നിഹാൽ',class:'+1',shift:'first',dob:'2009-01-06',parentName:'അബ്ദുൽ ലത്തീഫ്',phone:'',photo:''},
-          487:{id:487,regNo:'487',name:'അബ്ദുല്ലാഹ് ഷാഹിസ്',
+          487:{id:487,regNo:'487',name:'അബ്ദുല്ലാഹ് ഷാഹിസ്',class:'+1',shift:'first',dob:'2009-01-17',parentName:'ഷാഫി',phone:'',photo:''},
+          514:{id:514,regNo:'514',name:'ജാസിം',class:'+1',shift:'first',dob:'2011-02-02',parentName:'ഖാലിദ്',phone:'',photo:''},
+          542:{id:542,regNo:'542',name:'ഷെസിൻ KS',class:'+1',shift:'first',dob:'2010-10-09',parentName:'സാജിദ്',phone:'',photo:''},
+          650:{id:650,regNo:'650',name:'മഹ്ഫൂസ്',class:'+1',shift:'first',dob:'2010-09-01',parentName:'ഇബ്രാഹിം',phone:'',photo:''},
+          712:{id:712,regNo:'712',name:'മുഹമ്മദ് സ്വഫ്വാൻ',class:'+1',shift:'first',dob:'2011-03-16',parentName:'മുസമ്മിൽ',phone:'',photo:''},
+          499:{id:499,regNo:'499',name:'ഫാത്തിമ',class:'+1',shift:'first',dob:'2009-04-23',parentName:'ഇബ്രാഹിം',phone:'',photo:''},
+          518:{id:518,regNo:'518',name:'ഖദീജ TA',class:'+1',shift          518:{id:518,regNo:'518',name:'ഖദീജ TA',class:'+1',shift:'first',dob:'2011-10-05',parentName:'Ibrahim Khalil',phone:'',photo:''},
+          626:{id:626,regNo:'626',name:'ആയിഷ മുൻദിറ',class:'+1',shift:'first',dob:'2011-01-07',parentName:'ഇബ്രാഹിം',phone:'',photo:''},
+          574:{id:574,regNo:'574',name:'മുഹമ്മദ് ലുബൈബ്',class:'+2',shift:'first',dob:'2010-10-26',parentName:'Muhyiddin',phone:'',photo:''},
+          489:{id:489,regNo:'489',name:'മുഹമ്മദ് മിസാജ്',class:'+2',shift:'first',dob:'2009-07-18',parentName:'അഹമ്മദ് മുസമ്മിൽ',phone:'',photo:''},
+          492:{id:492,regNo:'492',name:'ഹുദാ ഫാത്തിമ',class:'+2',shift:'first',dob:'2009-11-10',parentName:'ഹാരിസ്',phone:'',photo:''},
+          493:{id:493,regNo:'493',name:'ലൈല നസ്രിൻ',class:'+2',shift:'first',dob:'2009-06-19',parentName:'അബ്ദുള്ള മുനീർ',phone:'',photo:''},
+          494:{id:494,regNo:'494',name:'ആയിഷ നജ',class:'+2',shift:'first',dob:'2008-07-24',parentName:'നവാസ്',phone:'',photo:''}
+        },
+        attendance:{},
+        fees:{},
+        marks:{},
+        results:{}
+      };
+      localStorage.setItem('madrasaDB_final',JSON.stringify(data));
+    }
+    return JSON.parse(localStorage.getItem('madrasaDB_final'));
+  },
+  save(data){localStorage.setItem('madrasaDB_final',JSON.stringify(data))},
+  get(){return JSON.parse(localStorage.getItem('madrasaDB_final'))}
+};
+
+const Session = {
+  get(){return JSON.parse(sessionStorage.getItem('session')||'null')},
+  set(user){sessionStorage.setItem('session',JSON.stringify(user))},
+  clear(){sessionStorage.removeItem('session')},
+  remember(user){localStorage.setItem('rememberUser',user)},
+  getRemembered(){return localStorage.getItem('rememberUser')||''}
+};
+
+const App = {
+  data:null,
+  init(){
+    this.data = DB.init();
+    this.checkSession();
+  },
+  checkSession(){
+    const session = Session.get();
+    if(session) this.render(session.role);
+    else this.renderLogin();
+  },
+  renderLogin(){
+    const remembered = Session.getRemembered();
+    const s = this.data.settings;
+    document.getElementById('app').innerHTML = `
+    <div class="container login-box">
+      <div class="card">
+        <h3 style="text-align:center">${s.madrasaName}</h3>
+        <p style="text-align:center;font-size:13px;margin-bottom:15px">${s.place} | Reg: ${s.regNo}</p>
+        <div class="tabs">
+          <button class="tab active" onclick="App.switchLoginTab('parent')">രക്ഷിതാവ്</button>
+          <button class="tab" onclick="App.switchLoginTab('staff')">ഉസ്താദ്/സ്റ്റാഫ്</button>
+        </div>
+        <div id="loginParent">
+          <div class="form-group"><label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ</label><input type="text" id="regNo" placeholder="ഉദാ: 715"></div>
+          <button class="btn btn-primary" style="width:100%" onclick="App.loginParent()">പ്രവേശിക്കുക</button>
+        </div>
+        <div id="loginStaff" class="hidden">
+          <div class="form-group"><label>Username</label><input type="text" id="username" value="${remembered}"></div>
+          <div class="form-group"><label>Password</label><input type="password" id="password"></div>
+          <div class="form-group"><label><input type="checkbox" id="remember" checked> Remember Me</label></div>
+          <button class="btn btn-primary" style="width:100%" onclick="App.loginStaff()">പ്രവേശിക്കുക</button>
+        </div>
+      </div>
+    </div>`;
+  },
+  switchLoginTab(tab){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('loginParent').classList.toggle('hidden',tab!=='parent');
+    document.getElementById('loginStaff').classList.toggle('hidden',tab!=='staff');
+  },
+  loginParent(){
+    const regNo = document.getElementById('regNo').value;
+    const student = Object.values(this.data.students).find(s=>s.regNo===regNo);
+    if(student){Session.set({role:'parent',id:student.id});this.render('parent')}
+    else alert('രജിസ്റ്റർ നമ്പർ തെറ്റാണ്');
+  },
+  loginStaff(){
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const remember = document.getElementById('remember').checked;
+    let user = null;
+    if(this.data.users[username]?.password===password) user = {role:this.data.users[username].role,username};
+    else if(this.data.ustads[username]?.password===password) user = {role:'ustad',username};
+    if(user){
+      if(remember) Session.remember(username);
+      Session.set(user);this.render(user.role);
+    }else alert('Username അല്ലെങ്കിൽ Password തെറ്റാണ്');
+  },
+  logout(){Session.clear();this.renderLogin()},
+  render(role){
+    const session = Session.get();
+    if(role==='parent') this.renderParent(session.id);
+    else if(role==='ustad') this.renderUstad(session.username);
+    else if(role==='sadar') this.renderSadar();
+    else if(role==='management') this.renderManagement();
+  },
+  renderParent(id){
+    const s = this.data.students[id];
+    const shift = this.data.settings.shifts[s.shift];
+    const today = new Date().toISOString().split('T')[0];
+    const attToday = this.data.attendance[today]?.[s.shift]?.[id]?'✅ Present':'❌ Absent';
+    const monthStats = this.getStudentStats(id,s.shift);
+    document.getElementById('app').innerHTML = `
+    <div class="container">
+      <div class="header"><div><h1>${this.data.settings.madrasaName}</h1><div class="reg">Reg: ${this.data.settings.regNo} | ${this.data.settings.place}</div></div><button class="btn btn-light" onclick="App.logout()">Logout</button></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>കുട്ടിയുടെ വിവരങ്ങൾ</h3>
+          <p><b>പേര്:</b> ${s.name}</p>
+          <p><b>ക്ലാസ്:</b> ${s.class} - ${shift.name}</p>
+          <p><b>Reg No:</b> ${s.regNo}</p>
+          <p><b>DOB:</b> ${s.dob}</p>
+          <p><b>രക്ഷിതാവ്:</b> ${s.parentName}</p>
+        </div>
+        <div class="card">
+          <h3>ഇന്നത്തെ ഹാജർ - ${today}</h3>
+          <div class="attendance-row"><span>${shift.name}</span><span class="badge ${attToday.includes('✅')?'badge-success':'badge-danger'}">${attToday}</span></div>
+          <h3 style="margin-top:15px">ഈ മാസത്തെ ഹാജർ</h3>
+          <div class="stats">
+            <span>ക്ലാസ്: ${monthStats.total}</span>
+            <span>Present: ${monthStats.present}</span>
+            <span>Absent: ${monthStats.absent}</span>
+            <span><b>${monthStats.percent}%</b></span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  },
+  renderUstad(username){
+    const ustad = this.data.ustads[username] || {name:username};
+    document.getElementById('app').innerHTML = `
+    <div class="container">
+      <div class="header"><div><h1>ഉസ്താദ് പാനൽ - ${ustad.name}</h1><div class="reg">${this.data.settings.madrasaName}</div></div><button class="btn btn-light" onclick="App.logout()">Logout</button></div>
+      <div class="card">
+        <h3>ഹാജർ എടുക്കുക</h3>
+        <div class="form-group">
+          <label>ഷിഫ്റ്റ് + ക്ലാസ് സെലക്ട് ചെയ്യുക</label>
+          <select id="ustadShift">
+            <option value="first-+2">ഫസ്റ്റ് ഷിഫ്റ്റ് - +2</option>
+            <option value="first-+1">ഫസ്റ്റ് ഷിഫ്റ്റ് - +1</option>
+            <option value="first-9">ഫസ്റ്റ് ഷിഫ്റ്റ് - 9</option>
+            <option value="second-10">സെക്കൻഡ് ഷിഫ്റ്റ് - 10</option>
+            <option value="second-8">സെക്കൻഡ് ഷിഫ്റ്റ് - 8</option>
+            <option value="second-7">സെക്കൻഡ് ഷിഫ്റ്റ് - 7</option>
+            <option value="second-6">സെക്കൻഡ് ഷിഫ്റ്റ് - 6</option>
+            <option value="second-5">സെക്കൻഡ് ഷിഫ്റ്റ് - 5</option>
+            <option value="second-4">സെക്കൻഡ് ഷിഫ്റ്റ് - 4</option>
+            <option value="third-3">മൂന്നാം ഷിഫ്റ്റ് - 3</option>
+            <option value="third-2">മൂന്നാം ഷിഫ്റ്റ് - 2</option>
+            <option value="third-1">മൂന്നാം ഷിഫ്റ്റ് - 1</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="App.loadStudentsForAttendance()">കുട്ടികളെ കാണിക്കുക</button>
+        <div id="studentList"></div>
+      </div>
+    </div>`;
+  },
+  loadStudentsForAttendance(){
+    const val = document.getElementById('ustadShift').value.split('-');
+    const shift = val[0],cls = val[1];
+    const students = Object.values(this.data.students).filter(s=>s.shift===shift&&s.class===cls);
+    const today = new Date().toISOString().split('T')[0];
+    let html = '<div style="margin-top:15px">';
+    if(students.length===0) html += '<p>ഈ ക്ലാസിൽ കുട്ടികൾ ഇല്ല</p>';
+    students.forEach(s=>{
+      const checked = this.data.attendance[today]?.[shift]?.[s.id]?'checked':'';
+      html += `<div class="student-list"><div><b>${s.name}</b> - ${s.regNo}</div><input type="checkbox" class="checkbox" data-id="${s.id}" ${checked}></div>`;
+    });
+    html += `<button class="btn btn-success" style="width:100%;margin-top:10px" onclick="App.submitAttendance('${shift}')">Submit ഹാജർ</button></div>`;
+    document.getElementById('studentList').innerHTML = html;
+  },
+  submitAttendance(shift){
+    const today = new Date().toISOString().split('T')[0];
+    if(!this.data.attendance[today]) this.data.attendance[today]={};
+    if(!this.data.attendance[today][shift]) this.data.attendance[today][shift]={};
+    document.querySelectorAll('#studentList input').forEach(cb=>{
+      if(cb.checked) this.data.attendance[today][shift][cb.dataset.id]=true;
+      else delete this.data.attendance[today][shift][cb.dataset.id];
+    });
+    DB.save(this.data);
+    alert('ഹാജർ സേവ് ചെയ്തു');
+  },
+  renderSadar(){
+    document.getElementById('app').innerHTML = `
+    <div class="container">
+      <div class="header"><div><h1>സ്വദർ പാനൽ</h1><div class="reg">${this.data.settings.madrasaName}</div></div><button class="btn btn-light" onclick="App.logout()">Logout</button></div>
+      <div class="tabs">
+        <button class="tab active" onclick="App.sadarTab('students')">കുട്ടികൾ (${Object.keys(this.data.students).length})</button>
+        <button class="tab" onclick="App.sadarTab('ustads')">ഉസ്താദുമാർ</button>
+        <button class="tab" onclick="App.sadarTab('users')">ഭാരവാഹികൾ</button>
+      </div>
+      <div id="sadarContent"></div>
+    </div>`;
+    this.sadarTab('students');
+  },
+  sadarTab(tab){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    event.target.classList.add('active');
+    if(tab==='students') this.renderSadarStudents();
+    else if(tab==='ustads') this.renderSadarUstads();
+    else if(tab==='users') this.renderSadarUsers();
+  },
+  renderSadarStudents(){
+    let html = `<div class="card"><h3>കുട്ടികൾ <button class="btn btn-primary btn-sm" style="float:right" onclick="App.addStudent()">+ പുതിയ കുട്ടി</button></h3><div class="search-box"><input type="text" placeholder="Search..." onkeyup="App.filterTable(this)"></div><table><tr><th>Reg No</th><th>പേര്</th><th>ക്ലാസ്</th><th>ഷിഫ്റ്റ്</th><th>രക്ഷിതാവ്</th></tr>`;
+    Object.values(this.data.students).sort((a,b)=>a.class-b.class||a.regNo-b.regNo).forEach(s=>{
+      html += `<tr><td>${s.regNo}</td><td>${s.name}</td><td>${s.class}</td><td>${this.data.settings.shifts[s.shift].name}</td><td>${s.parentName}</td></tr>`;
+    });
+    html += '</table></div>';
+    document.getElementById('sadarContent').innerHTML = html;
+  },
+  addStudent(){
+    const name = prompt('കുട്ടിയുടെ പേര്:');if(!name)return;
+    const regNo = prompt('Reg No:');if(!regNo)return;
+    const cls = prompt('ക്ലാസ്:');if(!cls)return;
+    const shift = prompt('ഷിഫ്റ്റ് (first/second/third):');if(!shift)return;
+    const parentName = prompt('രക്ഷിതാവിന്റെ പേര്:');if(!parentName)return;
+    const id = Date.now();
+    this.data.students[id]={id,regNo,name,class:cls,shift,dob:'',parentName,phone:'',photo:''};
+    DB.save(this.data);this.sadarTab('students');
+  },
+  renderSadarUstads(){
+    let html = `<div class="card"><h3>ഉസ്താദുമാർ <button class="btn btn-primary btn-sm" style="float:right" onclick="App.addUstad()">+ പുതിയ ഉസ്താദ്</button></h3><table><tr><th>Username</th><th>പേര്</th><th>Action</th></tr>`;
+    Object.entries(this.data.ustads).forEach(([u,d])=>{
+      html += `<tr><td>${u}</td><td>${d.name}</td><td><button class="btn btn-danger btn-sm" onclick="App.deleteUstad('${u}')">Delete</button></td></tr>`;
+    });
+    html += '</table></div>';
+    document.getElementById('sadarContent').innerHTML = html;
+  },
+  addUstad(){
+    const username = prompt('Username:');if(!username)return;
+    const password = prompt('Password:');if(!password)return;
+    const name = prompt('പേര്:');if(!name)return;
+    this.data.ustads[username]={username,password,name,classes:[]};
+    DB.save(this.data);this.sadarTab('ustads');
+  },
+  deleteUstad(u){if(confirm('Delete?')){delete this.data.ustads[u];DB.save(this.data);this.sadarTab('ustads')}},
+  renderSadarUsers(){
+    let html = `<div class="card"><h3>ഭാരവാഹികൾ <button class="btn btn-primary btn-sm" style="float:right" onclick="App.addUser()">+ പുതിയ ഭാരവാഹി</button></h3><table><tr><th>Username</th><th>സ്ഥാനം</th><th>Action</th></tr>`;
+    Object.entries(this.data.users).forEach(([u,d])=>{
+      if(d.role==='management')html += `<tr><td>${u}</td><td>${d.position||''}</td><td><button class="btn btn-danger btn-sm" onclick="App.deleteUser('${u}')">Delete</button></td></tr>`;
+    });
+    html += '</table></div>';
+    document.getElementById('sadarContent').innerHTML = html;
+  },
+  addUser(){
+    const username = prompt('Username:');if(!username)return;
+    const password = prompt('Password:');if(!password)return;
+    const position = prompt('സ്ഥാനം:');if(!position)return;
+    this.data.users[username]={username,password,role:'management',position};
+    DB.save(this.data);this.sadarTab('users');
+  },
+  deleteUser(u){if(confirm('Delete?')){delete this.data.users[u];DB.save(this.data);this.sadarTab('users')}},
+  renderManagement(){
+    document.getElementById('app').innerHTML = `
+    <div class="container">
+      <div class="header"><div><h1>മാനേജ്മെന്റ് പാനൽ</h1><div class="reg">${this.data.settings.madrasaName}</div></div><button class="btn btn-light" onclick="App.logout()">Logout</button></div>
+      <div class="card"><h3>ഡാഷ്‌ബോർഡ്</h3><p>മൊത്തം കുട്ടികൾ: ${Object.keys(this.data.students).length}</p></div>
+    </div>`;
+  },
+  getStudentStats(id,shift){
+    const month = new Date().toISOString().slice(0,7);
+    let total=0,present=0;
+    Object.entries(this.data.attendance).forEach(([date,shifts])=>{
+      if(date.startsWith(month)&&shifts[shift]){
+        total++;
+        if(shifts[shift][id])present++;
+      }
+    });
+    return{total,present,absent:total-present,percent:total?Math.round(present/total*100):0}
+  },
+  filterTable(input){
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll('table tr');
+    rows.forEach((row,i)=>{
+      if(i===0) return;
+      row.style.display = row.textContent.toLowerCase().includes(filter)?'':'none';
+    });
+  }
+};
+
+App.init();
+</script>
+</body>
+</html>
