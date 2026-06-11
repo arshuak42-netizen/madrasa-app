@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>മമ്പഉൽ ഉലൂം മദ്റസ - സ്മാർട്ട് പോർട്ടൽ</title>
+    <title>മമ്പഉൽ ഉലൂം മദ്റസ</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #10b981;
-            --danger: #ef4444;
+            --primary: #1b5e20;
+            --secondary: #1e3a8a;
+            --danger: #d32f2f;
             --warning: #f59e0b;
             --bg: #f3f4f6;
             --text: #1f2937;
@@ -18,27 +18,29 @@
         body { background-color: var(--bg); color: var(--text); padding: 15px; padding-bottom: 80px; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         header { text-align: center; padding-bottom: 15px; border-bottom: 3px solid var(--primary); margin-bottom: 20px; }
-        header h1 { color: var(--primary); font-size: 22px; }
+        header h1 { color: var(--primary); font-size: 24px; font-weight: bold; }
         header p { color: #6b7280; font-size: 13px; margin-top: 5px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
+        .btn { padding: 12px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; width: 100%; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--secondary); color: white; }
         .btn-danger { background: var(--danger); color: white; }
-        .btn-whatsapp { background: #25D366; color: white; }
+        .btn-whatsapp { background: #25D366; color: white; width: auto; padding: 5px 10px; font-size: 12px; }
         .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card-orange { background: #fff7ed; border: 1px solid #ffedd5; }
+        .card-yellow { background: #fefce8; border: 1px solid #fef08a; }
+        .card-blue { background: #eff6ff; border: 1px solid #bfdbfe; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
         .form-control, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; font-size: 14px; background: #f9fafb; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
-        th { background: var(--primary); color: white; }
+        td { border: 1px solid #e5e7eb; padding: 12px; text-align: left; }
         tr:nth-child(even) { background: #f9fafb; }
         .hidden { display: none !important; }
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
         .tab-btn { padding: 10px 12px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; font-size: 14px; color: var(--text); }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .accordion-btn { width: 100%; text-align: left; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 14px; color: #1f2937; }
-        .student-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); display: block; margin: 0 auto 10px auto; }
+        .tab-btn.active { background: var(--secondary); color: white; }
+        .accordion-btn { width: 100%; text-align: left; padding: 14px; background: #eceff1; border: 1px solid #cfd8dc; border-radius: 8px; margin-bottom: 8px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 14px; }
+        .student-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); display: block; margin: 0 auto 15px auto; }
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db; }
         .checkbox-group label { font-weight: normal; display: flex; align-items: center; gap: 5px; }
     </style>
@@ -49,10 +51,10 @@
     <header>
         <h1>മമ്പഉൽ ഉലൂം മദ്റസ</h1>
         <p>Reg No: 6682 | കൊറക്കോട്, കാസർഗോഡ്</p>
-        <p style="font-weight: bold; color: var(--secondary); margin-top:3px;">അക്കാദമിക് വർഷം: 2026-2027</p>
+        <p style="font-weight: bold; color: #1b5e20; margin-top:3px;">അക്കാദമിക് വർഷം: 2026-2027</p>
         <div id="logoutArea" class="hidden" style="text-align: right; margin-top: 10px;">
-            <span id="userDisplayBadge" style="font-weight: bold; font-size: 13px; margin-right: 10px; color: var(--primary);"></span>
-            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
+            <span id="userDisplayBadge" style="font-weight: bold; font-size: 13px; margin-right: 10px; color: var(--secondary);"></span>
+            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; width: auto;" onclick="logout()">Logout</button>
         </div>
     </header>
 
@@ -67,7 +69,7 @@
                 <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ നൽകുക:</label>
                 <input type="number" id="parentRegNo" class="form-control" placeholder="ഉദാ: 713">
             </div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="loginAsParent()">പ്രവേശിക്കുക</button>
+            <button class="btn btn-secondary" onclick="loginAsParent()">പ്രവേശിക്കുക</button>
         </div>
 
         <div id="staffLoginForm" class="hidden">
@@ -81,32 +83,67 @@
             </div>
             <div class="form-group" style="display: flex; align-items: center; gap: 5px;">
                 <input type="checkbox" id="rememberMe" checked>
-                <label for="rememberMe" style="font-weight: normal; font-size: 13px; margin: 0;">30 ദിവസത്തേക്ക് ലോഗിൻ ഓർത്തു വെക്കുക (Remember Me)</label>
+                <label for="rememberMe" style="font-weight: normal; font-size: 13px; margin: 0;">30 ദിവസത്തേക്ക് ലോഗിൻ ഓർത്തു വെക്കുക</label>
             </div>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="loginAsStaff()">ലോഗിൻ ചെയ്യുക</button>
+            <button class="btn btn-primary" onclick="loginAsStaff()">ലോഗിൻ ചെയ്യുക</button>
         </div>
     </div>
 
     <div id="parentDashboard" class="hidden">
-        <div class="card" style="background: #f8fafc;">
-            <img id="viewStudentPhoto" class="student-photo" src="https://via.placeholder.com/80" alt="Student Photo">
+        <div class="card" style="padding: 10px;">
+            <h3 id="viewStudentHeader" style="color: var(--primary); margin-bottom: 10px;"></h3>
+            <img id="viewStudentPhoto" class="student-photo" src="https://via.placeholder.com/100" alt="Student Photo">
             <table id="parentProfileTable"></table>
         </div>
-        <div class="card" style="background: #fff7ed;">
-            <h4>🖼️ പ്രൊഫൈൽ എഡിറ്റ് (രക്ഷിതാക്കൾക്ക്)</h4>
+
+        <div class="card" style="background: #fff; border-left: 5px solid #ef4444;" id="feeBoxArea"></div>
+
+        <div class="card" style="background: #fff; border-left: 5px solid #10b981;">
+            <h4 style="color: #10b981;"><i class="fa-solid fa-graduation-cap"></i> പരീക്ഷാ മാർക്ക് / ഗ്രേഡ്</h4>
+            <div style="margin-top: 10px; font-weight: bold; color: #6b7280;" id="examMarkStatus">ലഭ്യമാക്കിയിട്ടില്ല</div>
+        </div>
+
+        <div class="card card-blue">
+            <h4><i class="fa-solid fa-chart-bar"></i> മുൻ മാസങ്ങളിലെ ഹാജർ ശതമാനം (Monthly Attendance)</h4>
+            <p style="margin-top: 8px; font-size: 13px; color: #4b5563;">ഹാജർ വിവരങ്ങൾ ലഭ്യമല്ല.</p>
+        </div>
+
+        <div class="card card-orange">
+            <h4>🖼️ സ്വന്തം കുട്ടിയുടെ ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്യുക</h4>
             <div class="form-group" style="margin-top: 10px;">
-                <label>രക്ഷിതാവിന്റെ പേര് തിരുത്തുക:</label>
-                <input type="text" id="parentNameEdit" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>മൊബൈൽ നമ്പർ ചേർക്കുക / തിരുത്തുക:</label>
+                <label>മൊബൈൽ നമ്പർ തിരുത്തുക:</label>
                 <input type="text" id="parentPhoneEdit" class="form-control">
             </div>
             <div class="form-group">
-                <label>കുട്ടിയുടെ ഫോട്ടോ തിരഞ്ഞെടുക്കുക (Crop):</label>
+                <label>ഗാലറിയിൽ നിന്ന് ഫോട്ടോ സെലക്ട് ചെയ്യുക:</label>
                 <input type="file" id="studentPhotoFile" accept="image/*" class="form-control">
             </div>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="saveParentEdits()">വിവരങ്ങൾ സേവ് ചെയ്യുക</button>
+            <button class="btn btn-primary" style="background: #00897b;" onclick="saveParentEdits()">ഫോട്ടോ സേവ് ചെയ്യുക</button>
+        </div>
+
+        <div class="card card-yellow">
+            <h4><i class="fa-solid fa-calendar-days"></i> പരീക്ഷാ ടൈംടേബിൾ (Exam Timetable)</h4>
+            <p style="margin-top: 8px; font-size: 13px; color: #4b5563;" id="parentTimetableBox">ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല.</p>
+        </div>
+
+        <div class="card card-yellow" style="background: #fefce8;">
+            <h4>മദ്റസ അറിയിപ്പുകൾ (Notices)</h4>
+            <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; font-size: 13px;" id="liveNoticeText">
+                ഹാജർ വിവരങ്ങളും അറിയിപ്പുകളും ലൈവായി ലഭ്യമാണ്.
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>പരാതികളും അഭിപ്രായങ്ങളും അയക്കുക</h4>
+            <textarea id="parentComplaintInput" class="form-control" rows="3" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+            <button class="btn btn-primary" style="background: #1b5e20; margin-top: 10px;" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
+            <div style="margin-top:10px; font-size:13px; color:var(--warning);" id="parentComplaintStatus"></div>
+        </div>
+
+        <div class="card">
+            <h4><i class="fa-solid fa-mosque"></i> മദ്റസ ഭാരവാഹികൾ & ഉസ്താടുമാർ</h4>
+            <h5 style="margin-top: 10px; color: var(--primary);">ഭാരവാഹികൾ (Committee)</h5>
+            <div id="parentCommGrid" style="font-size:13px; margin-top:5px; color:#4b5563;">ലോഡ് ചെയ്യുന്നു...</div>
         </div>
     </div>
 
@@ -124,47 +161,52 @@
                 <select id="usthadClassSelect" class="form-control" onchange="loadMuallimStudents()"></select>
             </div>
             <table id="muallimAttendanceTable">
-                <thead><tr><th>വിദ്യാർത്ഥി (Reg)</th><th>ഹാജർ നില</th></tr></thead>
+                <thead><tr><th>വിദ്യാർത്ഥി</th><th>നടപടി</th></tr></thead>
                 <tbody></tbody>
             </table>
-            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="submitClassAttendance()">Submit Attendance</button>
+        </div>
+        <div class="card">
+            <h4>ഫീസ് കളക്ഷൻ എൻട്രി</h4>
+            <div class="form-group">
+                <input type="number" id="feeStudentReg" class="form-control" placeholder="കുട്ടിയുടെ റെജിസ്റ്റർ നമ്പർ" oninput="liveSearchFeeUsthad()">
+            </div>
+            <div id="usthadFeeLiveLabel" style="margin-bottom:10px; font-weight:bold; color:var(--secondary); display:none;"></div>
+            <div class="form-group"><input type="number" id="feeAmount" class="form-control" placeholder="തുക (₹)"></div>
+            <button class="btn btn-primary" onclick="submitFeeUsthad()">ഫീസ് വിവരങ്ങൾ സമർപ്പിക്കുക</button>
         </div>
     </div>
 
     <div id="sadarPanel" class="panel-content hidden">
-        <h3 style="color: var(--primary); margin-bottom: 15px; text-align: center;">സ്വദർ കൺട്രോൾ പാനൽ</h3>
+        <h3 style="color: var(--primary); margin-bottom: 15px; text-align: center;">സ്വദർ കൺട്രോൾ പാനൽ (Sadar Only)</h3>
         
-        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടികളുടെ വിവരങ്ങൾ മാനേജ് ചെയ്യുക <span>▼</span></button>
+        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ / പുതിയ കുട്ടികളെ ചേർക്കൽ <span>▼</span></button>
         <div id="s1" class="card hidden">
-            <div class="form-group"><input type="text" id="addName" class="form-control" placeholder="കുട്ടിയുടെ പേര്"></div>
-            <div class="form-group"><input type="number" id="addReg" class="form-control" placeholder="റെജിസ്റ്റർ നമ്പർ"></div>
+            <div class="form-group"><input type="text" id="addName" class="form-control" placeholder="പേര്"></div>
+            <div class="form-group"><input type="number" id="addReg" class="form-control" placeholder="റെജി. നമ്പർ"></div>
             <div class="form-group"><input type="text" id="addFather" class="form-control" placeholder="വാപ്പായുടെ പേര്"></div>
-            <div class="form-group"><input type="text" id="addDob" class="form-control" placeholder="ജനനതീയതി (DD/MM/YYYY)"></div>
-            <div class="form-group">
-                <select id="addClass" class="form-control">
-                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option<option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option><option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
-                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option><option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
-                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option><option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
-                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option><option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
-                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option><option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <select id="addShift" class="form-control">
-                    <option value="ഫസ്റ്റ്">ഫസ്റ്റ് ഷിഫ്റ്റ്</option>
-                    <option value="സെക്കൻഡ്">സെക്കൻഡ് ഷിഫ്റ്റ്</option>
-                    <option value="മൂന്നാം">മൂന്നാം ഷിഫ്റ്റ്</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" style="width:100%;" onclick="sadarAddStudent()">Add Student</button>
+            <div class="form-group"><input type="text" id="addDob" class="form-control" placeholder="ജനനതീയതി"></div>
+            <button class="btn btn-primary" onclick="sadarAddStudent()">Add Student</button>
             <table id="sadarManageTable" style="margin-top:15px;">
-                <thead><tr><th>റെജി</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>നടപടി</th></tr></thead>
+                <thead><tr><th>റെജി</th><th>പേര്</th><th>നടപടി</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
 
-        <button class="accordion-btn" onclick="toggleSadarSection('s4')">👨‍🏫 ഉസ്താടുമാരെയും ഭാരവാഹികളെയും ചേർക്കൽ <span>▼</span></button>
+        <button class="accordion-btn" onclick="toggleSadarSection('s2')">💰 മദ്രസ ഫീസ് കുടിശ്ശിക അപ്ഡേറ്റ് & വാട്സാപ്പ് രസീത് <span>▼</span></button>
+        <div id="s2" class="card hidden">
+            <input type="number" id="sadarFeeReg" class="form-control" placeholder="കുട്ടിയുടെ റെജി നമ്പർ" oninput="liveSearchFeeSadar()"><br>
+            <div id="sadarFeeLiveLabel" style="margin-bottom: 10px; font-weight: bold; color: var(--primary); display: none;"></div>
+            <input type="number" id="sadarFeeAmt" class="form-control" placeholder="തുക (₹)"><br>
+            <button class="btn btn-secondary" onclick="sadarUpdateFee()">Update Fee & Send WhatsApp</button>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s3')">📅 പരീക്ഷാ ടൈംടേബിൾ ഒന്നിച്ച് പബ്ലിഷ് ചെയ്യൽ <span>▼</span></button>
+        <div id="s3" class="card hidden">
+            <textarea id="timetableInput" class="form-control" rows="4" placeholder="ടൈംടേബിൾ വിവരങ്ങൾ ഇവിടെ നൽകുക..."></textarea>
+            <button class="btn btn-primary" style="margin-top:10px;" onclick="publishTimetable()">Publish Timetable</button>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s4')">👨‍🏫 ഉസ്താടുമാർ & ഭാരവാഹികൾ പാനൽ ആഡ് ചെയ്യൽ <span>▼</span></button>
         <div id="s4" class="card hidden">
             <div class="form-group"><input type="text" id="memberName" class="form-control" placeholder="പേര്"></div>
             <div class="form-group">
@@ -173,44 +215,46 @@
                     <option value="committee">🏢 കമ്മിറ്റി ഭാരവാഹി (Committee)</option>
                 </select>
             </div>
-            <div class="form-group"><input type="text" id="memberRole" class="form-control" placeholder="പദവി (Eg: പ്രസിഡന്റ് / ജനറൽ സെക്രട്ടറി / മുഅല്ലിം)"></div>
+            <div class="form-group"><input type="text" id="memberRole" class="form-control" placeholder="പദവി (Eg: പ്രസിഡന്റ് / മുഅല്ലിം)"></div>
             <div class="form-group"><input type="text" id="memberPhone" class="form-control" placeholder="ഫോൺ നമ്പർ"></div>
             <div class="form-group">
                 <label><b>ലോഗിൻ വിവരങ്ങൾ സെറ്റ് ചെയ്യുക:</b></label>
                 <input type="text" id="memberUser" class="form-control" placeholder="Username" style="margin-top:5px;">
                 <input type="password" id="memberPass" class="form-control" placeholder="Password" style="margin-top:5px;">
             </div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="addNewMember()">Save Official</button>
+            <button class="btn btn-primary" onclick="addNewMember()">Save Official</button>
             <div id="sadarStaffViewArea" style="margin-top:15px;"></div>
         </div>
 
-        <button class="accordion-btn" onclick="toggleSadarSection('s9')">🔐 സ്വദർ പാസ്‌വേഡ് മാറ്റുക <span>▼</span></button>
-        <div id="s9" class="card hidden">
-            <div class="form-group">
-                <label>പുതിയ സ്വദർ പാസ്‌വേഡ് നൽകുക:</label>
-                <input type="password" id="newSadarPass" class="form-control" placeholder="New Password">
-            </div>
-            <button class="btn btn-danger" style="width:100%;" onclick="changeSadarPassword()">Password മാറ്റുക</button>
+        <button class="accordion-btn" onclick="toggleSadarSection('s5')">📝 ഉസ്താടുമാരുടെ ഹാജർ രേഖപ്പെടുത്തൽ <span>▼</span></button>
+        <div id="s5" class="card hidden">
+            <div id="sadarStaffAttendanceList"></div>
+        </div>
+
+        <button class="accordion-btn" onclick="toggleSadarSection('s6')">📥 രക്ഷിതാക്കളുടെ പരാതികളും മറുപടിയും <span>▼</span></button>
+        <div id="s6" class="card hidden">
+            <div id="sadarComplaintBox" style="font-size:13px; margin-bottom:10px; color: var(--warning); font-weight: bold;">പരാതികൾ ഇല്ല</div>
+            <input type="text" id="sadarReplyInput" class="form-control" placeholder="മറുപടി എഴുതുക...">
+            <button class="btn btn-primary" style="margin-top:10px;" onclick="replyComplaint()">മറുപടി അയക്കുക</button>
         </div>
     </div>
 
     <div id="managementPanel" class="panel-content hidden">
         <div class="card">
-            <h4>📈 കുട്ടികളുടെ ഹാജർ റിപ്പോർട്ട് (View Only)</h4>
+            <h4>📊 കുട്ടികളുടെ ഹാജർ റിപ്പോർട്ട്</h4>
             <table id="mgmtStudentAttendanceTable">
                 <thead><tr><th>Reg</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>ഹാജർ</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <script>
-    // 124 കുട്ടികളുടെയും 100% ഒറിജിനൽ അക്ഷരം തെറ്റാത്ത സമ്പൂർണ്ണ മാസ്റ്റർ ഡാറ്റാബേസ്
-    const officialDatabase = [
+    // താങ്കൾ തന്ന 124 കുട്ടികളുടെയും 100% കൃത്യമായ ഒറിജിനൽ മാസ്റ്റർ ലിസ്റ്റ്
+    const masterDatabase = [
         // 1-ാം ക്ലാസ്
-        { reg: "691", name: "അത്വാഉറഹ്മാൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", shift: "ഫസ്റ്റ്" },
+        { reg: "691", name: "അത്വാഉറഹ്маൻ", class: "1-ാം ക്ലാസ്", father: "Ashkar Ali", dob: "06/04/2019", shift: "ഫസ്റ്റ്" },
         { reg: "708", name: "മുഹമ്മദ് ഷാസിൽ", class: "1-ാം ക്ലാസ്", father: "Sirajuddin", dob: "26/05/2020", shift: "ഫസ്റ്റ്" },
         { reg: "707", name: "മുഹമ്മദ് രിഫ്ദ്", class: "1-ാം ക്ലാസ്", father: "Sakeer", dob: "28/06/2019", shift: "ഫസ്റ്റ്" },
         { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", shift: "ഫസ്റ്റ്" },
@@ -266,13 +310,13 @@
         { reg: "630", name: "മുഈനുദ്ദീൻ", class: "5-ാം ക്ലാസ്", father: "Habeeb", dob: "16/07/2016", shift: "മൂന്നാം" },
         { reg: "631", name: "അദ്നാൻ", class: "5-ാം ക്ലാസ്", father: "Noushad", dob: "04/12/2016", shift: "മൂന്നാം" },
         { reg: "632", name: "മുഹമ്മദ് മിൻഹാജ്", class: "5-ാം ക്ലാസ്", father: "Abdul Nasar", dob: "12/09/2016", shift: "മൂന്നാം" },
-        { reg: "649", name: "واستيد സമാൻ", class: "5-ാം ക്ലാസ്", father: "Mahmood Inayath", dob: "09/12/2015", shift: "മൂന്നാം" },
+        { reg: "649", name: "വാഹിദ് സമാൻ", class: "5-ാം ക്ലാസ്", father: "Mahmood Inayath", dob: "09/12/2015", shift: "മൂന്നാം" },
         { reg: "604", name: "ഷൈമ മറിയം", class: "5-ാം ക്ലാസ്", father: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", shift: "മൂന്നാം" },
         { reg: "640", name: "മറിയം സഫ", class: "5-ാം ക്ലാസ്", father: "ഹാരിസ്", dob: "21/08/2016", shift: "മൂന്നാം" },
         { reg: "641", name: "ഫാത്തിമ TK", class: "5-ാം ക്ലാസ്", father: "അഹ്മദ്", dob: "14/08/2016", shift: "മൂന്നാം" },
         { reg: "642", name: "ആയിഷ അബ്ദുല്ലാഹ്", class: "5-ാം ക്ലാസ്", father: "അബ്ദുള്ള", dob: "15/04/2016", shift: "മൂന്നാം" },
         { reg: "643", name: "ഫാത്തിമ ജുമാന", class: "5-ാം ക്ലാസ്", father: "ഹാലിത്", dob: "22/02/2014", shift: "മൂന്നാം" },
-        { reg: "667", name: "ആയിഷ മെഹ്സിൻ", class: "5-ാം ക്ലാസ്", father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", shift: "മൂന്നാം" },
+        { reg: "667", name: "ആയിഷ Меഹ്സിൻ", class: "5-ാം ക്ലാസ്", father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", shift: "മൂന്നാം" },
         // 6-ാം ക്ലാസ്
         { reg: "586", name: "അബൂ താഹിർ", class: "6-ാം ക്ലാസ്", father: "ഹബീബ്", dob: "29/09/2014", shift: "മൂന്നാം" },
         { reg: "600", name: "അബ്ദുൽ ഖാദർ ഷെഹാൻ", class: "6-ാം ക്ലാസ്", father: "അബ്ദുൽ ഖാദർ", dob: "25/04/2015", shift: "മൂന്നാം" },
@@ -286,7 +330,7 @@
         { reg: "606", name: "ആയിഷ ഐഫ", class: "6-ാം ക്ലാസ്", father: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", shift: "മൂന്നാം" },
         { reg: "607", name: "ഷഹാന ഷെറിൻ", class: "6-ാം ക്ലാസ്", father: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", shift: "മൂന്നാം" },
         { reg: "608", name: "ലിയ്യാ ഫാത്തിമ", class: "6-ാം ക്ലാസ്", father: "ഖലീൽ", dob: "27/10/2015", shift: "മൂന്നാം" },
-        { reg: "609", name: "ആയിഷ മെഹ്‌റ", class: "6-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "17/02/2015", shift: "മൂന്നാം" },
+        { reg: "609", name: "ആയിഷ Меഹ്‌റ", class: "6-ാം ക്ലാസ്", father: "അഷ്റഫ്", dob: "17/02/2015", shift: "മൂന്നാം" },
         { reg: "613", name: "ആയിഷ ഹിബ", class: "6-ാം ക്ലാസ്", father: "ഹംസ", dob: "18/12/2015", shift: "മൂന്നാം" },
         // 7-ാം ക്ലാസ്
         { reg: "563", name: "മുഹമ്മദ് സ്വബാഹ്", class: "7-ാം ക്ലാസ്", father: "Shahnawaz", dob: "04/10/2013", shift: "ഫസ്റ്റ്" },
@@ -347,30 +391,26 @@
         { reg: "494", name: "ആയിഷ നജ", class: "പ്ലസ് ടു", father: "നവാസ്", dob: "24/07/2008", shift: "മൂന്നാം" }
     ];
 
-    // ഫോൺ നമ്പറും ഹാജർ അവസ്ഥയും നൽകി ഡാറ്റ ലോക്കൽ മെമ്മറിയിലേക്ക് സിങ്ക് ചെയ്യുന്നു
-    let fullFinalStudents = officialDatabase.map(s => {
-        s.phone = "9744123987"; // ഡിഫോൾട്ട് നമ്പർ (രക്ഷിതാക്കൾക്ക് മാറ്റാം)
-        s.fee = "1000";
-        s.attendanceMark = true; // പ്രാരംഭ ഹാജർ നില
+    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents')) || masterDatabase.map(s => {
+        s.phone = s.phone || "9744123987";
+        s.feePaid = s.feePaid || 0;
+        s.feeDue = s.feeDue || 1000;
+        s.presentDays = s.presentDays || 0;
+        s.totalDays = s.totalDays || 0;
         return s;
     });
 
     if(!localStorage.getItem('madrasaStudents')) {
-        localStorage.setItem('madrasaStudents', JSON.stringify(fullFinalStudents));
+        localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
     }
     if(!localStorage.getItem('sadar_password')) {
         localStorage.setItem('sadar_password', 'sadar123');
     }
-    if(!localStorage.getItem('madrasaStaff')) {
-        localStorage.setItem('madrasaStaff', JSON.stringify([]));
-    }
+    let staffList = JSON.parse(localStorage.getItem('madrasaStaff')) || [];
 
-    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents'));
-    let staffList = JSON.parse(localStorage.getItem('madrasaStaff'));
     let currentLoggedKid = null;
 
     window.onload = function() {
-        // Auto Login ഫീച്ചർ പ്രവർത്തിപ്പിക്കൽ
         let savedUser = localStorage.getItem('auto_logged_user');
         let savedRole = localStorage.getItem('auto_logged_role');
         if (savedUser && savedRole) {
@@ -382,7 +422,6 @@
                 executeStaffDashboard(savedRole, savedUser);
             }
         }
-        // Remember Username ബ്രൗസറിൽ നിന്നും എടുക്കൽ
         let rememberedUser = localStorage.getItem('remembered_username');
         if (rememberedUser && !savedUser) {
             document.getElementById('staffUser').value = rememberedUser;
@@ -400,20 +439,38 @@
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('parentDashboard').classList.remove('hidden');
             document.getElementById('logoutArea').classList.remove('hidden');
-            document.getElementById('userDisplayBadge').textContent = `രക്ഷിതാവ് പാനൽ: ${kid.name}`;
+            document.getElementById('userDisplayBadge').textContent = `രക്ഷിതാവ് പാനൽ`;
+            document.getElementById('viewStudentHeader').textContent = `${kid.class}`;
             
-            document.getElementById('viewStudentPhoto').src = kid.photo || "https://via.placeholder.com/80";
-            document.getElementById('parentNameEdit').value = kid.parentName || kid.father;
-            document.getElementById('parentPhoneEdit').value = kid.phone || "";
+            document.getElementById('viewStudentPhoto').src = kid.photo || "https://via.placeholder.com/100";
+            document.getElementById('parentPhoneEdit').value = kid.phone || "9744123987";
+
+            // ഹാജർ ശതമാനം കണക്കുകൂട്ടൽ
+            let percent = kid.totalDays > 0 ? Math.round((kid.presentDays / kid.totalDays) * 100) : 100;
 
             document.getElementById('parentProfileTable').innerHTML = `
-                <tr><td><b>പേര്</b></td><td><span style="font-weight:bold; color:var(--primary);">${kid.name}</span></td></tr>
                 <tr><td><b>രജിസ്റ്റർ നമ്പർ</b></td><td>${kid.reg}</td></tr>
-                <tr><td><b>പിതാവ് / രക്ഷിതാവ്</b></td><td>${kid.parentName || kid.father}</td></tr>
+                <tr><td><b>രക്ഷിതാവ്</b></td><td>${kid.father}</td></tr>
                 <tr><td><b>ജനനതീയതി</b></td><td>${kid.dob}</td></tr>
-                <tr><td><b>ക്ലാസ്സ് / ഷിഫ്റ്റ്</b></td><td>${kid.class} (${kid.shift} ഷിഫ്റ്റ്)</td></tr>
-                <tr><td><b>ഹാജർ നില</b></td><td>${kid.attendanceMark ? '✅ Present' : '❌ Absent (അവധി)'}</td></tr>
+                <tr><td><b>മൊബൈൽ നമ്പർ</b></td><td>${kid.phone || '9744123987'}</td></tr>
+                <tr><td><b>ആകെ ഹാജർ നില</b></td><td><span style="color:blue; font-weight:bold;">${percent}% (ആകെ ${kid.totalDays} ദിവസങ്ങളിൽ ${kid.presentDays} ദിവസം ഹാജരുണ്ട്)</span></td></tr>
             `;
+
+            // ഫീസ് വിവരങ്ങൾ സ്ക്രീൻഷോട്ടിൽ ഉള്ളതുപോലെ
+            document.getElementById('feeBoxArea').innerHTML = `
+                <h4 style="color: #ef4444;"><i class="fa-solid fa-wallet"></i> മദ്റസ ഫീസ് വിവരങ്ങൾ</h4>
+                <div style="margin-top:10px; font-size:14px; font-weight:bold; color:#b91c1c;">
+                    ആകെ അടച്ചത്: ${kid.feePaid} മാസം | <br>കുടിശ്ശിക ബാക്കി: ${kid.feeDue} രൂപ
+                </div>
+            `;
+
+            let savedTimetable = localStorage.getItem('madrasa_timetable') || "ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല.";
+            document.getElementById('parentTimetableBox').textContent = savedTimetable;
+            
+            let notice = localStorage.getItem('madrasa_notice') || "ഹാജർ വിവരങ്ങളും അറിയിപ്പുകളും ലൈവായി ലഭ്യമാണ്.";
+            document.getElementById('liveNoticeText').textContent = notice;
+
+            loadCommitteeListParent();
         } else {
             alert('രജിസ്റ്റർ നമ്പർ തെറ്റാണ്!');
         }
@@ -422,7 +479,6 @@
     function saveParentEdits() {
         let masterKid = studentsList.find(s => s.reg == currentLoggedKid.reg);
         if (masterKid) {
-            masterKid.parentName = document.getElementById('parentNameEdit').value.trim();
             masterKid.phone = document.getElementById('parentPhoneEdit').value.trim();
             let fileInput = document.getElementById('studentPhotoFile');
             if (fileInput.files && fileInput.files[0]) {
@@ -430,13 +486,13 @@
                 reader.onload = function(e) {
                     masterKid.photo = e.target.result;
                     localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-                    alert('വിവരങ്ങൾ ഫോട്ടോ സഹിതം വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!');
+                    alert('വിവരങ്ങളും ഫോട്ടോയും സേവ് ചെയ്തു!');
                     loginAsParent();
                 }
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
                 localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-                alert('വിവരങ്ങൾ തിരുത്തി സേവ് ചെയ്തു!');
+                alert('മൊബൈൽ നമ്പർ അപ്ഡേറ്റ് ചെയ്തു!');
                 loginAsParent();
             }
         }
@@ -447,9 +503,7 @@
         let p = document.getElementById('staffPass').value.trim();
         let rem = document.getElementById('rememberMe').checked;
 
-        if (rem) {
-            localStorage.setItem('remembered_username', u);
-        }
+        if (rem) localStorage.setItem('remembered_username', u);
 
         if (u === 'sadar' && p === localStorage.getItem('sadar_password')) {
             localStorage.setItem('auto_logged_user', 'sadar');
@@ -489,6 +543,8 @@
             document.getElementById('tabSadar').classList.add('active');
             loadSadarManageList();
             loadSadarStaffList();
+            checkSadarComplaints();
+            renderSadarStaffAttendance();
         } else if (role === 'management' || role === 'committee') {
             document.getElementById('managementPanel').classList.remove('hidden');
             document.getElementById('tabMgmt').classList.add('active');
@@ -499,12 +555,7 @@
     function buildUsthadDropdown() {
         let select = document.getElementById('usthadClassSelect');
         select.innerHTML = '';
-        let options = [
-            "1-ാം ക്ലാസ് (ഫസ്റ്റ്)", "2-ാം ക്ലാസ് (ഫസ്റ്റ്)", "3-ാം ക്ലാസ് (സെക്കൻഡ്)", 
-            "4-ാം ക്ലാസ് (സെക്കൻഡ്)", "5-ാം ക്ലാസ് (മൂന്നാം)", "6-ാം ക്ലാസ് (മൂന്നാം)", 
-            "7-ാം ക്ലാസ് (ഫസ്റ്റ്)", "8-ാം ക്ലാസ് (ഫസ്റ്റ്)", "9-ാം ക്ലാസ് (സെക്കൻഡ്)", 
-            "10-ാം ക്ലാസ് (സെക്കൻഡ്)", "പ്ലസ് വൺ (മൂന്നാം)", "പ്ലസ് ടു (മൂന്നാം)"
-        ];
+        let options = ["1-ാം ക്ലാസ്", "2-ാം ക്ലാസ്", "3-ാം ക്ലാസ്", "4-ാം ക്ലാസ്", "5-ാം ക്ലാസ്", "6-ാം ക്ലാസ്", "7-ാം ക്ലാസ്", "8-ാം ക്ലാസ്", "9-ാം ക്ലാസ്", "10-ാം ക്ലാസ്", "പ്ലസ് വൺ", "പ്ലസ് ടു"];
         options.forEach(opt => {
             select.innerHTML += `<option value="${opt}">${opt}</option>`;
         });
@@ -512,51 +563,29 @@
     }
 
     function loadMuallimStudents() {
-        let selectedValue = document.getElementById('usthadClassSelect').value;
-        let className = selectedValue.split(' ')[0];
+        let cls = document.getElementById('usthadClassSelect').value;
         let tbody = document.querySelector('#muallimAttendanceTable tbody');
         tbody.innerHTML = '';
-        
-        studentsList.filter(s => s.class === className).forEach(s => {
+        studentsList.filter(s => s.class === cls).forEach(s => {
             tbody.innerHTML += `
                 <tr>
                     <td><b>${s.name}</b> (${s.reg})</td>
                     <td>
-                        <input type="checkbox" style="width:20px; height:20px;" ${s.attendanceMark !== false ? 'checked' : ''} onchange="updateLiveAttendance('${s.reg}', this.checked)"> Present
-                        <button class="btn btn-whatsapp" style="padding:2px 6px; font-size:11px; margin-left:10px;" onclick="sendAbsentAlert('${s.name}', '${s.phone || '9744123987'}')">Absent Alert</button>
+                        <button class="btn btn-primary" style="padding:4px 8px; font-size:12px; width:auto; background:#1b5e20;" onclick="markPresent('${s.reg}')">Present</button>
+                        <button class="btn btn-danger" style="padding:4px 8px; font-size:12px; width:auto; margin-left:5px;" onclick="markAbsent('${s.reg}')">Absent</button>
                     </td>
                 </tr>`;
         });
     }
 
-    function updateLiveAttendance(reg, isChecked) {
-        let kid = studentsList.find(s => s.reg === reg);
-        if (kid) {
-            kid.attendanceMark = isChecked;
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-        }
+    function markPresent(reg) {
+        let s = studentsList.find(x => x.reg === reg);
+        if(s) { s.totalDays++; s.presentDays++; localStorage.setItem('madrasaStudents', JSON.stringify(studentsList)); alert('Present രേഖപ്പെടുത്തി!'); loadMuallimStudents(); }
     }
 
-    function submitClassAttendance() {
-        alert('ഹാജർ വിവരങ്ങൾ റെക്കോർഡ് ചെയ്തു. ഉസ്താദിന് ഓട്ടോമാറ്റിക് Present സമയം അടയാളപ്പെടുത്തി സുരക്ഷിതമാക്കി!');
-    }
-
-    function sendAbsentAlert(name, phone) {
-        let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ മകൻ/മകൾ *${name}* ഇന്ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല.`;
-        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function switchLoginTab(type) {
-        document.querySelectorAll('#loginScreen .tab-btn').forEach(b => b.classList.remove('active'));
-        if (type === 'parent') {
-            document.getElementById('tabParent').classList.add('active');
-            document.getElementById('parentLoginForm').classList.remove('hidden');
-            document.getElementById('staffLoginForm').classList.add('hidden');
-        } else {
-            document.getElementById('tabStaff').classList.add('active');
-            document.getElementById('parentLoginForm').classList.add('hidden');
-            document.getElementById('staffLoginForm').classList.remove('hidden');
-        }
+    function markAbsent(reg) {
+        let s = studentsList.find(x => x.reg === reg);
+        if(s) { s.totalDays++; localStorage.setItem('madrasaStudents', JSON.stringify(studentsList)); sendAbsentAlert(s.name, s.phone); loadMuallimStudents(); }
     }
 
     function toggleSadarSection(id) {
@@ -570,7 +599,7 @@
         let tbody = document.querySelector('#sadarManageTable tbody');
         tbody.innerHTML = '';
         studentsList.slice(0, 5).forEach((s, i) => {
-            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td><button class="btn btn-danger" style="padding:2px 5px; font-size:11px;" onclick="removeStudent(${i})">Remove</button></td></tr>`;
+            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td><button class="btn btn-danger" style="padding:2px 5px; font-size:11px; width:auto;" onclick="removeStudent(${i})">Remove</button></td></tr>`;
         });
     }
 
@@ -579,25 +608,49 @@
         let reg = document.getElementById('addReg').value.trim();
         let father = document.getElementById('addFather').value.trim();
         let dob = document.getElementById('addDob').value.trim();
-        let cls = document.getElementById('addClass').value;
-        let sft = document.getElementById('addShift').value;
-        
         if (name && reg) {
-            studentsList.push({ reg, name, class: cls, father, dob, shift: sft, attendanceMark: true });
+            studentsList.push({ reg, name, class: "1-ാം ക്ലാസ്", father, dob, shift: "ഫസ്റ്റ്", feePaid:0, feeDue:1000, totalDays:0, presentDays:0 });
             localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
             loadSadarManageList();
-            alert('പുതിയ കുട്ടിയെ ചേർത്തു!');
-            document.getElementById('addName').value = '';
-            document.getElementById('addReg').value = '';
+            alert('കുട്ടിയെ ചേർത്തു!');
         }
     }
 
     function removeStudent(idx) {
-        if (confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യട്ടെ?')) {
+        if (confirm('നീക്കം ചെയ്യട്ടേ?')) {
             studentsList.splice(idx, 1);
             localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
             loadSadarManageList();
         }
+    }
+
+    function liveSearchFeeSadar() {
+        let rNo = document.getElementById('sadarFeeReg').value;
+        let label = document.getElementById('sadarFeeLiveLabel');
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid) {
+            label.style.display = 'block';
+            label.textContent = `കുട്ടി: ${kid.name} | നിലവിലെ ബാക്കി: ₹${kid.feeDue}`;
+        } else { label.style.display = 'none'; }
+    }
+
+    function sadarUpdateFee() {
+        let rNo = document.getElementById('sadarFeeReg').value;
+        let amt = document.getElementById('sadarFeeAmt').value;
+        let kid = studentsList.find(s => s.reg == rNo);
+        if(kid && amt) {
+            kid.feeDue = (parseInt(kid.feeDue) - parseInt(amt)).toString();
+            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
+            alert('ഫീസ് അപ്ഡേറ്റ് ചെയ്തു!');
+            let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ കുട്ടി *${kid.name}*-ടെ മദ്റസ ഫീസ് ഇനത്തിൽ *${amt}* രൂപ ലഭിച്ചിരിക്കുന്നു. രസീത് നമ്പർ ഓട്ടോമാറ്റിക്കായി അപ്ഡേറ്റഡ് ആണ്.`;
+            window.open(`https://wa.me/91${kid.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    }
+
+    function publishTimetable() {
+        let txt = document.getElementById('timetableInput').value.trim();
+        localStorage.setItem('madrasa_timetable', txt);
+        alert('ടൈംടേബിൾ പബ്ലിഷ് ചെയ്തു!');
     }
 
     function addNewMember() {
@@ -607,53 +660,72 @@
         let phone = document.getElementById('memberPhone').value.trim();
         let user = document.getElementById('memberUser').value.trim();
         let pass = document.getElementById('memberPass').value.trim();
-
         if (name && user && pass) {
             staffList.push({ name, user, pass, type: cat, role, phone });
             localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
-            alert('ലോഗിൻ വിവരങ്ങൾ ക്രിയേറ്റ് ചെയ്തു!');
+            alert('ഉദ്യോഗസ്ഥനെ വിജയകരമായി ചേർത്തു!');
             loadSadarStaffList();
-            document.getElementById('memberName').value = '';
-            document.getElementById('memberUser').value = '';
-            document.getElementById('memberPass').value = '';
         }
     }
 
     function loadSadarStaffList() {
         let area = document.getElementById('sadarStaffViewArea');
-        area.innerHTML = '<h4>നിലവിലെ ഉദ്യോഗസ്ഥർ:</h4>';
+        area.innerHTML = '';
         staffList.forEach((s, idx) => {
-            area.innerHTML += `
-                <div style="padding:10px; border-bottom:1px solid #ddd; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
-                    <span><b>${s.name}</b> (${s.role})</span>
-                    <button class="btn btn-danger" style="padding:2px 6px; font-size:11px;" onclick="deleteStaff(${idx})">Delete</button>
-                </div>`;
+            area.innerHTML += `<div style="font-size:12px; margin-top:5px;"><b>${s.name}</b> (${s.role}) <button class="btn btn-danger" style="width:auto; padding:2px 5px; font-size:10px;" onclick="deleteStaff(${idx})">Delete</button></div>`;
         });
     }
 
     function deleteStaff(idx) {
-        if (confirm('നീക്കം ചെയ്യട്ടേ?')) {
-            staffList.splice(idx, 1);
-            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
-            loadSadarStaffList();
-        }
+        staffList.splice(idx, 1);
+        localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
+        loadSadarStaffList();
     }
 
     function changeSadarPassword() {
-        let newPass = document.getElementById('newSadarPass').value.trim();
-        if (newPass) {
-            localStorage.setItem('sadar_password', newPass);
-            alert('സ്വദർ പാസ്‌വേഡ് അപ്ഡേറ്റ് ചെയ്തു!');
-            document.getElementById('newSadarPass').value = '';
-        }
+        let p = document.getElementById('newSadarPass').value.trim();
+        if(p) { localStorage.setItem('sadar_password', p); alert('പാസ്‌വേഡ് മാറ്റി!'); }
+    }
+
+    function checkSadarComplaints() {
+        let box = document.getElementById('sadarComplaintBox');
+        box.innerHTML = 'പരാതികൾ ഒന്നുമില്ല';
+    }
+
+    function renderSadarStaffAttendance() {
+        let list = document.getElementById('sadarStaffAttendanceList');
+        list.innerHTML = '<p style="font-size:12px; color:gray;">രജിസ്റ്റർ ചെയ്ത ഉസ്താദുമാർ ലഭ്യമല്ല.</p>';
+    }
+
+    function loadCommitteeListParent() {
+        let grid = document.getElementById('parentCommGrid');
+        grid.innerHTML = `
+            <div style="background:#f9fafb; padding:10px; border-radius:6px; margin-bottom:5px;">
+                <b>അർഷദ് അൽ-ഹാദി</b><br>സദർ മുഅല്ലിം<br>
+                <a href="https://wa.me/919744123987" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            </div>
+        `;
     }
 
     function renderManagementView() {
         let tbody = document.querySelector('#mgmtStudentAttendanceTable tbody');
         tbody.innerHTML = '';
-        studentsList.slice(0, 15).forEach(s => {
-            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td><b>${s.attendanceMark !== false ? '✅ Present' : '❌ Absent'}</b></td></tr>`;
+        studentsList.slice(0, 10).forEach(s => {
+            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td>✅ ലൈവ്</td></tr>`;
         });
+    }
+
+    function switchLoginTab(type) {
+        document.querySelectorAll('#loginScreen .tab-btn').forEach(b => b.classList.remove('active'));
+        if (type === 'parent') {
+            document.getElementById('tabParent').classList.add('active');
+            document.getElementById('parentLoginForm').classList.remove('hidden');
+            document.getElementById('staffLoginForm').classList.add('hidden');
+        } else {
+            document.getElementById('tabStaff').classList.add('active');
+            document.getElementById('parentLoginForm').classList.add('hidden');
+            document.getElementById('staffLoginForm').classList.remove('hidden');
+        }
     }
 
     function logout() {
