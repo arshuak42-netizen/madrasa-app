@@ -1,779 +1,192 @@
 <!DOCTYPE html>
 <html lang="ml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>മമ്പഉൽ ഉലൂം മദ്റസ - സ്മാർっと പോർട്ടൽ</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg: #f3f4f6;
-            --text: #1f2937;
-        }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--text); padding: 15px; padding-bottom: 80px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        header { text-align: center; padding-bottom: 15px; border-bottom: 3px solid var(--primary); margin-bottom: 20px; }
-        header h1 { color: var(--primary); font-size: 22px; }
-        header p { color: #6b7280; font-size: 13px; margin-top: 5px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-whatsapp { background: #25D366; color: white; }
-        .card { background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        .form-control, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; font-size: 14px; background: #f9fafb; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
-        th { background: var(--primary); color: white; }
-        tr:nth-child(even) { background: #f9fafb; }
-        .hidden { display: none !important; }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .tab-btn { padding: 10px 12px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; font-size: 14px; color: var(--text); }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .accordion-btn { width: 100%; text-align: left; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 14px; color: #1f2937; }
-        .student-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); display: block; margin: 0 auto 10px auto; }
-        .staff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .staff-card { border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; text-align: center; font-size: 12px; background: #fff; }
-        .staff-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; }
-        .profile-list-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: #f9fafb; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
-        .profile-img-small { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db; }
-        .checkbox-group label { font-weight: normal; display: flex; align-items: center; gap: 5px; }
-        .checkbox-group input { width: auto; }
-        .attendance-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>മമ്പഉൽ ഉലൂം മദ്രസ - കൊറക്കോട്</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Malayalam',sans-serif}
+:root{--primary:#0d6efd;--success:#198754;--danger:#dc3545;--dark:#212529;--light:#f8f9fa;--warning:#ffc107}
+body{background:#e9ecef;color:var(--dark)}
+.container{max-width:1400px;margin:0 auto;padding:10px}
+.header{background:linear-gradient(135deg,#0d6efd,#0a58ca);color:white;padding:15px;border-radius:8px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+.header h1{font-size:18px;line-height:1.4}
+.header .reg{font-size:12px;opacity:0.9}
+.btn{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:600;transition:0.3s}
+.btn:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-primary{background:var(--primary);color:white}
+.btn-success{background:var(--success);color:white}
+.btn-danger{background:var(--danger);color:white}
+.btn-light{background:white;color:var(--dark);border:1px solid #ccc}
+.btn-sm{padding:5px 10px;font-size:12px}
+.card{background:white;padding:15px;border-radius:8px;margin-bottom:15px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.card h3{margin-bottom:12px;color:var(--primary);font-size:16px;border-bottom:2px solid var(--primary);padding-bottom:5px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;margin-bottom:5px;font-weight:600;font-size:13px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:14px}
+.grid{display:grid;gap:15px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.tabs{display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap}
+.tab{padding:8px 15px;background:#ddd;border:none;border-radius:5px 5px 0 0;cursor:pointer;font-size:13px}
+.tab.active{background:white;border-bottom:3px solid var(--primary);font-weight:600}
+.hidden{display:none}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #eee}
+th{background:var(--light);font-weight:600;position:sticky;top:0}
+.badge{padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;display:inline-block}
+.badge-success{background:#d1e7dd;color:#0a3622}
+.badge-danger{background:#f8d7da;color:#58151c}
+.badge-warning{background:#fff3cd;color:#664d03}
+.login-box{max-width:450px;margin:30px auto}
+.student-list{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #eee;transition:0.2s}
+.student-list:hover{background:var(--light)}
+.student-info{display:flex;align-items:center;gap:10px}
+.student-info img{width:45px;height:45px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)}
+.checkbox{width:22px;height:22px;cursor:pointer}
+.attendance-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--light);margin-bottom:8px;border-radius:5px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;margin-top:10px}
+.stats span{background:white;padding:6px 12px;border-radius:5px;border:1px solid #ddd;font-weight:600}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999}
+.modal-content{background:white;padding:20px;border-radius:8px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto}
+.search-box{margin-bottom:10px}
+.search-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px}
+@media(max-width:768px){.header h1{font-size:14px}.grid-2,.grid-3{grid-template-columns:1fr}table{font-size:11px}}
+</style>
 </head>
 <body>
-
-<div class="container">
-    <header>
-        <h1>മമ്പഉൽ ഉലൂം മദ്റസ</h1>
-        <p>Reg No: 6682 | കൊറക്കോട്, കാസർഗോഡ്</p>
-        <p style="font-weight: bold; color: var(--secondary); margin-top:3px;">അക്കാദമിക് വർഷം: 2026-2027</p>
-        <div id="logoutArea" class="hidden" style="text-align: right; margin-top: 10px;">
-            <span id="userDisplayBadge" style="font-weight: bold; font-size: 13px; margin-right: 10px; color: var(--primary);"></span>
-            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
-        </div>
-    </header>
-
-    <div id="notificationArea" class="hidden">
-        <div class="card" style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; font-size: 13px;">
-            <i class="fa-solid fa-bell text-blue-500"></i> <span id="liveNoticeText"></span>
-        </div>
-    </div>
-
-    <div id="loginScreen" class="card">
-        <div class="nav-tabs">
-            <button class="tab-btn active" id="tabParent" onclick="switchLoginTab('parent')">രക്ഷിതാവ്</button>
-            <button class="tab-btn" id="tabStaff" onclick="switchLoginTab('staff')">ഉദ്യോഗസ്ഥർ</button>
-        </div>
-
-        <div id="parentLoginForm">
-            <div class="form-group">
-                <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ നൽകുക:</label>
-                <input type="number" id="parentRegNo" class="form-control" placeholder="ഉദാ: 713">
-            </div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="loginAsParent()">പ്രവേശിക്കുക</button>
-        </div>
-
-        <div id="staffLoginForm" class="hidden">
-            <div class="form-group">
-                <label>യൂസർനെയിം (Username):</label>
-                <input type="text" id="staffUser" class="form-control" placeholder="sadhar / custom_username">
-            </div>
-            <div class="form-group">
-                <label>പാസ്‌വേഡ് (Password):</label>
-                <input type="password" id="staffPass" class="form-control" placeholder="••••••••">
-            </div>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="loginAsStaff()">ലോഗിൻ ചെയ്യുക</button>
-        </div>
-    </div>
-
-    <div id="parentDashboard" class="hidden">
-        <div class="card" style="background: #f8fafc;">
-            <img id="viewStudentPhoto" class="student-photo" src="https://via.placeholder.com/80" alt="Student Photo">
-            <table id="parentProfileTable"></table>
-        </div>
-
-        <div class="card" style="background: #fff7ed;">
-            <h4>🖼️ സ്വന്തം കുട്ടിയുടെ ഫോട്ടോ / നമ്പറുകൾ പുതുക്കുക</h4>
-            <div class="form-group" style="margin-top: 10px;">
-                <label>മൊബൈൽ നമ്പർ ചേർക്കുക / തിരുത്തുക:</label>
-                <input type="text" id="parentPhoneEdit" class="form-control" placeholder="ഫോൺ നമ്പർ ഇവിടെ നൽകുക">
-            </div>
-            <div class="form-group">
-                <label>...ഗാലറിയിൽ നിന്ന് കുട്ടിയുടെ ഫോട്ടോ സെലക്ട് ചെയ്യുക:</label>
-                <input type="file" id="studentPhotoFile" accept="image/*" class="form-control">
-            </div>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="saveStudentPhoto()">വിവരങ്ങൾ സേവ് ചെയ്യുക</button>
-        </div>
-
-        <div class="card">
-            <h4>📅 പരീക്ഷാ ടൈംടേബിൾ (Exam Timetable)</h4>
-            <div id="parentTimetableBox" style="font-size: 13px; color: #6b7280; margin-top: 5px;">ഈ ക്ലാസ്സിലേക്ക് പരീക്ഷാ ടൈംടേബിൾ ലഭ്യമാക്കിയിട്ടില്ല.</div>
-        </div>
-
-        <div class="card">
-            <h4>പരാതികളും അഭിപ്രായങ്ങളും അയക്കുക</h4>
-            <textarea id="parentComplaintInput" class="form-control" rows="3" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitComplaint()">പരാതി സമർപ്പിക്കുക</button>
-            <div style="margin-top: 10px; font-size: 13px;">
-                <b>നിങ്ങൾ നൽകിയ പരാതികളും മറുപടികളും:</b>
-                <div id="parentComplaintStatus" style="color: var(--warning); margin-top: 5px; font-weight: bold;">പരാതികൾ ഇല്ല</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h4>🕌 മദ്രസ ഭാരവാഹികൾ & ഉസ്താടുമാർ</h4>
-            <h5 style="margin-top: 10px; color: var(--primary);">ഭാരവാഹികൾ (Committee)</h5>
-            <div class="staff-grid" id="parentCommGrid"></div>
-            <h5 style="margin-top: 10px; color: var(--primary);">ഉസ്താടുമാർ (Teachers)</h5>
-            <div class="staff-grid" id="parentTeachGrid"></div>
-        </div>
-    </div>
-
-    <div id="staffSystemTabs" class="nav-tabs hidden">
-        <button class="tab-btn active" id="tabUsthad" onclick="switchRole('usthad')">👨‍🏫 ഉസ്താദ്</button>
-        <button class="tab-btn" id="tabSadar" onclick="switchRole('sadar')">🕌 സദർ</button>
-        <button class="tab-btn" id="tabMgmt" onclick="switchRole('management')">🏢 കമ്മിറ്റി</button>
-    </div>
-
-    <div id="usthadPanel" class="panel-content hidden">
-        <div class="card">
-            <h4>കുട്ടികളുടെ ഹാജർ രേഖപ്പെടുത്തൽ</h4>
-            <div class="form-group" style="margin-top:10px;">
-                <label>ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക</label>
-                <select id="usthadClassSelect" class="form-control" onchange="loadMuallimStudents()">
-                </select>
-            </div>
-            <table id="muallimAttendanceTable">
-                <thead><tr><th>പേര് (Reg)</th><th>നടപടി</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h4>ഫീസ് കളക്ഷൻ ഇൻപുട്ട്</h4>
-            <div class="form-group" style="margin-top:10px;">
-                <label>കുട്ടിയുടെ റെജിസ്റ്റർ നമ്പർ നൽകുക</label>
-                <input type="number" id="feeStudentReg" class="form-control" placeholder="ഉദാ: 713" oninput="liveSearchFeeStudentUsthad()">
-            </div>
-            <div id="usthadFeeLiveName" style="margin-bottom: 15px; font-weight: bold; color: var(--primary); padding: 5px; background: #e0f2fe; border-radius: 4px; display: none;"></div>
-            <div class="form-group">
-                <label>തുക (₹)</label>
-                <input type="number" id="feeAmount" class="form-control" placeholder="തുക രേഖപ്പെടുത്തുക">
-            </div>
-            <button class="btn btn-success" style="width: 100%;" onclick="submitFee()">ഫീസ് വിവരങ്ങൾ സമർപ്പിക്കുക</button>
-        </div>
-    </div>
-
-    <div id="sadarPanel" class="panel-content hidden">
-        <h3 style="color: var(--primary); margin-bottom: 15px; text-align: center;">സദർ കൺട്രോൾ പാനൽ (Sadar Only)</h3>
-        
-        <button class="accordion-btn" onclick="toggleSadarSection('s1')">⚙️ കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ / പുതിയ കുട്ടികളെ ചേർക്കൽ <span>▼</span></button>
-        <div id="s1" class="card hidden">
-            <div class="form-group"><input type="text" id="addName" class="form-control" placeholder="പേര്"></div>
-            <div class="form-group"><input type="number" id="addReg" class="form-control" placeholder="റെജി. നമ്പർ"></div>
-            <div class="form-group"><input type="text" id="addFather" class="form-control" placeholder="വാപ്പായുടെ പേര്"></div>
-            <div class="form-group"><input type="text" id="addDob" class="form-control" placeholder="ജനനതീയതി"></div>
-            <div class="form-group">
-                <select id="addClass" class="form-control">
-                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                    <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
-                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option>
-                    <option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
-                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option>
-                    <option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
-                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option>
-                    <option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
-                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option>
-                    <option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" style="width:100%;" onclick="sadarAddStudent()">Add Student</button>
-            <table id="sadarManageTable" style="margin-top:15px;">
-                <thead><tr><th>റെജി</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>നടപടി</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <button class="accordion-btn" onclick="toggleSadarSection('s2')">💰 മദ്രസ ഫീസ് കുടിശ്ശിക അപ്ഡേറ്റ് & വാട്സാപ്പ് രസീത് <span>▼</span></button>
-        <div id="s2" class="card hidden">
-            <input type="number" id="sadarFeeReg" class="form-control" placeholder="കുട്ടിയുടെ റെജി നമ്പർ" oninput="liveSearchFeeSadar()"><br>
-            <div id="sadarFeeLiveLabel" style="margin-bottom: 10px; font-weight: bold; color: var(--primary); display: none;"></div>
-            <input type="number" id="sadarFeeAmt" class="form-control" placeholder="തുക (₹)"><br>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="sadarUpdateFee()">Update Fee & Send WhatsApp</button>
-        </div>
-
-        <button class="accordion-btn" onclick="toggleSadarSection('s3')">📅 പരീക്ഷാ ടൈംടേബിൾ ഒന്നിച്ച് പബ്ലിഷ് ചെയ്യൽ <span>▼</span></button>
-        <div id="s3" class="card hidden">
-            <div class="form-group">
-                <select id="timetableClassSelect" class="form-control">
-                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                    <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
-                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option>
-                    <option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
-                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option>
-                    <option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
-                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option>
-                    <option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
-                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option>
-                    <option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
-                </select>
-            </div>
-            <textarea id="timetableInput" class="form-control" rows="4" placeholder="വിവരങ്ങൾ ഇവിടെ നൽകുക..."></textarea>
-            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="publishTimetable()">Publish Timetable</button>
-        </div>
-
-        <button class="accordion-btn" onclick="toggleSadarSection('s4')">👨‍🏫 ഉസ്താടുമാർ & ഭാരവാഹികൾ പാനൽ ആഡ് ചെയ്യൽ <span>▼</span></button>
-        <div id="s4" class="card hidden">
-            <div class="form-group"><input type="text" id="memberName" class="form-control" placeholder="പേര്"></div>
-            <div class="form-group">
-                <select id="memberCategory" class="form-control" onchange="toggleClassesCheckboxDisplay()">
-                    <option value="teacher">📚 ഉസ്താദ് (Teacher)</option>
-                    <option value="committee">🏢 കമ്മിറ്റി ഭാരവാഹി (Committee)</option>
-                </select>
-            </div>
-            <div class="form-group"><input type="text" id="memberRole" class="form-control" placeholder="പദവി (Eg: മുഅല്ലിം / പ്രസിഡന്റ് / സെക്രട്ടറി)"></div>
-            <div class="form-group"><input type="text" id="memberPhone" class="form-control" placeholder="ഫോൺ നമ്പർ"></div>
-            
-            <div class="form-group" id="classCheckboxArea">
-                <label><b>ചുമതലയുള്ള ക്ലാസ്സുകൾ:</b></label>
-                <div class="checkbox-group" id="assignedClassesGroup">
-                    <label><input type="checkbox" value="1-ാം ക്ലാസ്"> 1-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="2-ാം ക്ലാസ്"> 2-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="3-ാം ക്ലാസ്"> 3-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="4-ാം ക്ലാസ്"> 4-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="5-ാം ക്ലാസ്"> 5-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="6-ാം ക്ലാസ്"> 6-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="7-ാം ക്ലാസ്"> 7-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="8-ാം ക്ലാസ്"> 8-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="9-ാം ക്ലാസ്"> 9-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="10-ാം ക്ലാസ്"> 10-ാം ക്ലാസ്</label>
-                    <label><input type="checkbox" value="പ്ലസ് വൺ"> പ്ലസ് വൺ</label>
-                    <label><input type="checkbox" value="പ്ലസ് ടു"> പ്ലസ് ടു</label>
-                </div>
-            </div>
-            
-            <div class="form-group"><label>ഫോട്ടോ അപ്‌ലോഡ്</label><input type="file" id="memberPhotoFile" class="form-control" accept="image/*"></div>
-            <div class="form-group" style="background: #e8f5e9; padding: 10px; border-radius: 6px;">
-                <label style="font-weight:bold; color:var(--primary);">ലോഗിൻ വിവരങ്ങൾ സെറ്റ് ചെയ്യുക (User name & Password):</label>
-                <input type="text" id="memberUser" class="form-control" placeholder="Username" style="margin-top:5px;">
-                <input type="password" id="memberPass" class="form-control" placeholder="Password" style="margin-top:5px;">
-            </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top:10px;" onclick="addNewMember()">Add Official</button>
-            <div id="sadarStaffViewArea" style="margin-top:15px;"></div>
-        </div>
-
-        <button class="accordion-btn" onclick="toggleSadarSection('s5')">📝 ഉസ്താടുമാരുടെ ഹാജർ രേഖപ്പെടുത്തൽ <span>▼</span></button>
-        <div id="s5" class="card hidden">
-            <div id="sadarStaffAttendanceList"></div>
-            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="alert('ഹാജർ നില വിജയകരമായി സേവ് ചെയ്തു!')">Save Attendance</button>
-        </div>
-
-        <button class="accordion-btn" onclick="toggleSadarSection('s6')">📥 രക്ഷിതാക്കളുടെ പരാതികളും മറുപടിയും <span>▼</span></button>
-        <div id="s6" class="card hidden">
-            <div id="sadarComplaintBox" style="font-size:13px; margin-bottom:10px; color: var(--warning); font-weight: bold;">പരാതികൾ ഇല്ല</div>
-            <input type="text" id="sadarReplyInput" class="form-control" placeholder="മറുപടി ഇവിടെ എഴുതുക...">
-            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="replyComplaint()">മറുപടി അയക്കുക</button>
-        </div>
-    </div>
-
-    <div id="managementPanel" class="panel-content hidden">
-        <div class="card" style="background:#e0f2fe; margin-bottom: 10px;">
-            <h4>👨‍🏫 ഉസ്താടുമാരുടെ ഇന്നത്തെ ഹാജർ നില (Live)</h4>
-            <table id="mgmtUsthadAttendanceTable" style="background: white; margin-top:10px;">
-                <thead><tr><th>ഉസ്താദിന്റെ പേര്</th><th>ഹാജർ നില</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <div class="card">
-            <h4>📈 കുട്ടികളുടെ ഇന്നത്തെ ലൈവ് ഹാജർ വിവരങ്ങൾ</h4>
-            <div class="form-group" style="margin-top:10px;">
-                <select id="mgmtLiveClassSelect" class="form-control" onchange="renderLiveStudentAttendanceMgmt()">
-                    <option value="1-ാം ക്ലാസ്">1-ാം ക്ലാസ്</option>
-                    <option value="2-ാം ക്ലാസ്">2-ാം ക്ലാസ്</option>
-                    <option value="3-ാം ക്ലാസ്">3-ാം ക്ലാസ്</option>
-                    <option value="4-ാം ക്ലാസ്">4-ാം ക്ലാസ്</option>
-                    <option value="5-ാം ക്ലാസ്">5-ാം ക്ലാസ്</option>
-                    <option value="6-ാം ക്ലാസ്">6-ാം ക്ലാസ്</option>
-                    <option value="7-ാം ക്ലാസ്">7-ാം ക്ലാസ്</option>
-                    <option value="8-ാം ക്ലാസ്">8-ാം ക്ലാസ്</option>
-                    <option value="9-ാം ക്ലാസ്">9-ാം ക്ലാസ്</option>
-                    <option value="10-ാം ക്ലാസ്">10-ാം ക്ലാസ്</option>
-                    <option value="പ്ലസ് വൺ">പ്ലസ് വൺ</option>
-                    <option value="പ്ലസ് ടു">പ്ലസ് ടു</option>
-                </select>
-            </div>
-            <div id="mgmtClassLiveAttendance"></div>
-        </div>
-        <div class="card">
-            <h4>💰 ഫീസ് കുടിശ്ശിക വിവരങ്ങൾ (Fee Status)</h4>
-            <table id="mgmtFeeTrackTable" style="background: white;">
-                <thead><tr><th>Reg</th><th>പേര്</th><th>ക്ലാസ്സ്</th><th>ബാക്കി തുക</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
+<div id="app"></div>
 
 <script>
-    // ആദ്യ തവണ ഓപ്പൺ ചെയ്യുമ്പോൾ സിസ്റ്റം ക്രാഷ് ആവാതിരിക്കാൻ ഒരു കുട്ടി വെച്ചു ലോഡ് ചെയ്യുന്നു
-    let initialSetupData = [
-        { reg: "713", name: "ഇബ്രാഹിം AR", class: "1-ാം ക്ലാസ്", father: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9744123987", fee: "1000", present: true }
-    ];
-
-    if(!localStorage.getItem('madrasaStudents')) {
-        localStorage.setItem('madrasaStudents', JSON.stringify(initialSetupData));
-    }
-
-    let defaultStaff = [
-        { name: "അർഷദ് അൽ-ഹാദി", user: "sadhar", pass: "sadhar123", type: "teacher", role: "സദർ മുഅല്ലിം", phone: "9744123987", img: "", classes: ["1-ാം ക്ലാസ്", "2-ാം ക്ലാസ്", "3-ാം ക്ലാസ്", "4-ാം ക്ലാസ്", "5-ാം ക്ലാസ്", "6-ാം ക്ലാസ്", "7-ാം ക്ലാസ്", "8-ാം ക്ലാസ്", "9-ാം ക്ലാസ്", "10-ാം ക്ലാസ്", "പ്ലസ് വൺ", "പ്ലസ് ടു"], status: "Absent" }
-    ];
-
-    if(!localStorage.getItem('madrasaStaff')) localStorage.setItem('madrasaStaff', JSON.stringify(defaultStaff));
-    
-    let studentsList = JSON.parse(localStorage.getItem('madrasaStudents'));
-    let staffList = JSON.parse(localStorage.getItem('madrasaStaff'));
-    let currentLoggedKid = null;
-    let activeStaffUser = null;
-
-    function loginAsParent() {
-        let rNo = document.getElementById('parentRegNo').value.trim();
-        if(!rNo) { alert('ദയവായി രജിസ്റ്റർ നമ്പർ നൽകുക!'); return; }
-        
-        let kid = studentsList.find(s => s.reg === rNo);
-        if(kid) {
-            currentLoggedKid = kid;
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('parentDashboard').classList.remove('hidden');
-            document.getElementById('logoutArea').classList.remove('hidden');
-            document.getElementById('userDisplayBadge').textContent = `രക്ഷിതാവ് പാനൽ`;
-            
-            if(kid.photo) document.getElementById('viewStudentPhoto').src = kid.photo;
-            else document.getElementById('viewStudentPhoto').src = "https://via.placeholder.com/80";
-            
-            document.getElementById('parentPhoneEdit').value = kid.phone || "";
-
-            document.getElementById('parentProfileTable').innerHTML = `
-                <tr><td><b>പേര് (Name)</b></td><td><span style="font-weight:bold; color:var(--primary);">${kid.name}</span></td></tr>
-                <tr><td><b>രജിസ്റ്റർ നമ്പർ</b></td><td>${kid.reg}</td></tr>
-                <tr><td><b>പിതാവിന്റെ പേര്</b></td><td>${kid.father}</td></tr>
-                <tr><td><b>ജനനതീയതി</b></td><td>${kid.dob}</td></tr>
-                <tr><td><b>ക്ലാസ്സ്</b></td><td>${kid.class}</td></tr>
-                <tr><td><b>ഹാജർ ശതമാനം</b></td><td><span style="color:blue; font-weight:bold;">100%</span></td></tr>
-                <tr><td><b>ഫീസ് കുടിശ്ശിക</b></td><td><span style="color:red; font-weight:bold;">₹${kid.fee}</span></td></tr>
-            `;
-            
-            loadStaffGridParent();
-            let savedTimetable = localStorage.getItem('exams_' + kid.class);
-            if(savedTimetable) document.getElementById('parentTimetableBox').innerHTML = `<pre style="font-family:inherit; font-size:13px;">${savedTimetable}</pre>`;
-        } else { 
-            alert('ഈ രജിസ്റ്റർ നമ്പർ സിസ്റ്റത്തിൽ ലഭ്യമല്ല. സദർ പാനലിൽ കയറി ഈ കുട്ടി ആഡ് ചെയ്യപ്പെട്ടിട്ടുണ്ടോ എന്ന് ഉറപ്പുവരുത്തുക.'); 
-        }
-    }
-
-    function switchLoginTab(type) {
-        document.querySelectorAll('#loginScreen .tab-btn').forEach(b => b.classList.remove('active'));
-        if(type === 'parent') {
-            document.getElementById('tabParent').classList.add('active');
-            document.getElementById('parentLoginForm').classList.remove('hidden');
-            document.getElementById('staffLoginForm').classList.add('hidden');
-        } else {
-            document.getElementById('tabStaff').classList.add('active');
-            document.getElementById('parentLoginForm').classList.add('hidden');
-            document.getElementById('staffLoginForm').classList.remove('hidden');
-        }
-    }
-
-    function saveStudentPhoto() {
-        let fileInput = document.getElementById('studentPhotoFile');
-        let editedPhone = document.getElementById('parentPhoneEdit').value.trim();
-        let masterKid = studentsList.find(s => s.reg == currentLoggedKid.reg);
-        if(masterKid) {
-            masterKid.phone = editedPhone;
-            if(fileInput.files && fileInput.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    masterKid.photo = e.target.result;
-                    localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-                    document.getElementById('viewStudentPhoto').src = e.target.result;
-                    alert('വിവരങ്ങൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!');
-                    loginAsParent();
-                }
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-                alert('മൊബൈൽ നമ്പർ അപ്ഡേറ്റ് ചെയ്തു!');
-                loginAsParent();
-            }
-        }
-    }
-
-    function loadStaffGridParent() {
-        let commGrid = document.getElementById('parentCommGrid');
-        let teachGrid = document.getElementById('parentTeachGrid');
-        commGrid.innerHTML = ''; teachGrid.innerHTML = '';
-        
-        staffList.forEach(s => {
-            let fallback = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-            let layout = `
-                <div class="staff-card">
-                    <img src="${s.img || fallback}" class="staff-img">
-                    <div>
-                        <b>${s.name}</b><br>${s.role}<br>
-                        <a href="https://wa.me/91${s.phone}" class="btn btn-whatsapp" style="padding:2px 6px; font-size:11px; margin-top:3px;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-                    </div>
-                </div>`;
-            if(s.type === 'committee') commGrid.innerHTML += layout;
-            else teachGrid.innerHTML += layout;
-        });
-    }
-
-    function loginAsStaff() {
-        let u = document.getElementById('staffUser').value.trim();
-        let p = document.getElementById('staffPass').value.trim();
-        
-        if(u === 'sadhar' && p === 'sadhar123') {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('logoutArea').classList.remove('hidden');
-            document.getElementById('staffSystemTabs').classList.remove('hidden');
-            document.getElementById('userDisplayBadge').textContent = `സദർ ഉസ്താദ്`;
-            switchRole('sadar');
-            return;
-        }
-
-        let dynamicStaff = staffList.find(s => s.user === u && s.pass === p);
-        if(dynamicStaff) {
-            activeStaffUser = dynamicStaff;
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('logoutArea').classList.remove('hidden');
-            document.getElementById('staffSystemTabs').classList.remove('hidden');
-            document.getElementById('userDisplayBadge').textContent = dynamicStaff.name;
-            
-            if(dynamicStaff.type === 'teacher') {
-                switchRole('usthad');
-                buildUsthadClassDropdown(dynamicStaff.classes);
-            } else {
-                switchRole('management');
-            }
-            markUsthadAutoPresent(dynamicStaff.user);
-        } else { alert('യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റാണ്!'); }
-    }
-
-    function buildUsthadClassDropdown(classes) {
-        let select = document.getElementById('usthadClassSelect');
-        select.innerHTML = '<option value="">തിരഞ്ഞെടുക്കുക</option>';
-        if(classes && classes.length > 0) {
-            classes.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
-        }
-    }
-
-    function switchRole(role) {
-        document.querySelectorAll('.panel-content').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll('#staffSystemTabs .tab-btn').forEach(b => b.classList.remove('active'));
-
-        if(role === 'usthad') {
-            document.getElementById('usthadPanel').classList.remove('hidden');
-            document.getElementById('tabUsthad').classList.add('active');
-        } else if(role === 'sadar') {
-            document.getElementById('sadarPanel').classList.remove('hidden');
-            document.getElementById('tabSadar').classList.add('active');
-            loadSadarManageList();
-            renderSadarUsthadChecklist();
-            checkSadarComplaints();
-        } else if(role === 'management') {
-            document.getElementById('managementPanel').classList.remove('hidden');
-            document.getElementById('tabMgmt').classList.add('active');
-            renderManagementAttendance();
-            renderLiveStudentAttendanceMgmt();
-            renderDirectory();
-            trackManagementFees();
-        }
-    }
-
-    function toggleSadarSection(id) {
-        let el = document.getElementById(id);
-        let current = el.classList.contains('hidden');
-        document.querySelectorAll('#sadarPanel .card').forEach(c => c.classList.add('hidden'));
-        if(current) el.classList.remove('hidden');
-    }
-
-    function loadSadarManageList() {
-        let tbody = document.querySelector('#sadarManageTable tbody');
-        tbody.innerHTML = '';
-        studentsList.slice(0, 5).forEach((s, i) => {
-            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td><button class="btn btn-danger" style="padding:2px 5px; font-size:11px;" onclick="removeStudent(${i})">Remove</button></td></tr>`;
-        });
-    }
-
-    function sadarAddStudent() {
-        let name = document.getElementById('addName').value.trim();
-        let reg = document.getElementById('addReg').value.trim();
-        let father = document.getElementById('addFather').value.trim();
-        let dob = document.getElementById('addDob').value.trim();
-        let cls = document.getElementById('addClass').value;
-        if(name && reg) {
-            studentsList.push({ reg, name, class: cls, father, dob, phone: "9744123987", fee: "1000", present: true });
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            loadSadarManageList();
-            alert('കുട്ടിയെ ചേർത്തു!');
-            document.getElementById('addName').value = '';
-            document.getElementById('addReg').value = '';
-            document.getElementById('addFather').value = '';
-            document.getElementById('addDob').value = '';
-        }
-    }
-
-    function removeStudent(idx) {
-        if(confirm('നീക്കം ചെയ്യട്ടേ?')) {
-            studentsList.splice(idx, 1);
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            loadSadarManageList();
-        }
-    }
-
-    function liveSearchFeeSadar() {
-        let rNo = document.getElementById('sadarFeeReg').value;
-        let label = document.getElementById('sadarFeeLiveLabel');
-        let kid = studentsList.find(s => s.reg == rNo);
-        if(kid) {
-            label.style.display = 'block';
-            label.textContent = `കുട്ടി: ${kid.name} | ഫീസ്: ₹${kid.fee}`;
-        } else { label.style.display = 'none'; }
-    }
-
-    function sadarUpdateFee() {
-        let rNo = document.getElementById('sadarFeeReg').value;
-        let amt = document.getElementById('sadarFeeAmt').value;
-        let kid = studentsList.find(s => s.reg == rNo);
-        if(kid && amt) {
-            kid.fee = (parseInt(kid.fee) - parseInt(amt)).toString();
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            alert('ഫീസ് വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!');
-            let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ കുട്ടി *${kid.name}*-ടെ മദ്റസ ഫീസ് ഇനത്തിൽ *${amt}* രൂപ ലഭിച്ചിരിക്കുന്നു. നന്ദി.`;
-            window.open(`https://wa.me/91${kid.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-    }
-
-    function publishTimetable() {
-        let cls = document.getElementById('timetableClassSelect').value;
-        let text = document.getElementById('timetableInput').value.trim();
-        localStorage.setItem('exams_' + cls, text);
-        alert(cls + ' ടൈംടേബിൾ പബ്ലിഷ് ചെയ്തു!');
-    }
-
-    function toggleClassesCheckboxDisplay() {
-        let cat = document.getElementById('memberCategory').value;
-        document.getElementById('classCheckboxArea').style.display = (cat === 'teacher') ? 'block' : 'none';
-    }
-
-    function addNewMember() {
-        let cat = document.getElementById('memberCategory').value;
-        let name = document.getElementById('memberName').value.trim();
-        let role = document.getElementById('memberRole').value.trim();
-        let phone = document.getElementById('memberPhone').value.trim();
-        let user = document.getElementById('memberUser').value.trim();
-        let pass = document.getElementById('memberPass').value.trim();
-        let fileInput = document.getElementById('memberPhotoFile');
-
-        let selectedClasses = [];
-        if(cat === 'teacher') {
-            document.querySelectorAll('#assignedClassesGroup input:checked').forEach(cb => selectedClasses.push(cb.value));
-        }
-
-        const processSave = (base64Img) => {
-            staffList.push({ name, user, pass, type: cat, role, phone: phone || "9744123987", img: base64Img || "", classes: selectedClasses, status: "Absent" });
-            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
-            alert('വിവരങ്ങൾ വിജയകരമായി ആഡ് ചെയ്തു!');
-            renderDirectory();
-            renderSadarUsthadChecklist();
-        };
-
-        if(fileInput.files && fileInput.files[0]) {
-            let reader = new FileReader();
-            reader.onloadend = () => processSave(reader.result);
-            reader.readAsDataURL(fileInput.files[0]);
-        } else { processSave(""); }
-    }
-
-    function renderDirectory() {
-        let container = document.getElementById('mgmtDirectoryContainer');
-        if(!container) return;
-        container.innerHTML = '';
-        staffList.forEach((s, idx) => {
-            let fallback = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-            container.innerHTML += `
-                <div class="profile-list-item">
-                    <img src="${s.img || fallback}" class="profile-img-small">
-                    <div class="profile-info">
-                        <h4>${s.name} (${s.role})</h4>
-                        <p>യൂസർ: ${s.user} | ഫോൺ: ${s.phone}</p>
-                    </div>
-                    <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteMember(${idx})">Delete</button>
-                </div>`;
-        });
-    }
-
-    function deleteMember(idx) {
-        if(confirm('നീക്കം ചെയ്യട്ടേ?')) {
-            staffList.splice(idx, 1);
-            localStorage.setItem('madrasaStaff', JSON.stringify(staffList));
-            renderDirectory();
-        }
-    }
-
-    function renderSadarUsthadChecklist() {
-        let container = document.getElementById('sadarStaffAttendanceList');
-        container.innerHTML = '';
-        staffList.forEach((s, i) => {
-            if(s.type === 'teacher') {
-                container.innerHTML += `
-                    <div class="attendance-row">
-                        <span><b>${s.name}</b> (${s.role})</span>
-                        <select onchange="staffList[${i}].status = this.value; localStorage.setItem('madrasaStaff', JSON.stringify(staffList));" style="padding:5px;">
-                            <option value="Absent" ${s.status === 'Absent'?'selected':''}>Absent</option>
-                            <option value="Present" ${s.status === 'Present'?'selected':''}>Present</option>
-                        </select>
-                    </div>`;
-            }
-        });
-    }
-
-    function checkSadarComplaints() {
-        let box = document.getElementById('sadarComplaintBox');
-        box.innerHTML = '';
-        studentsList.forEach(s => {
-            let comp = localStorage.getItem('complaint_' + s.reg);
-            if(comp && !comp.includes('മറുപടി:')) {
-                box.innerHTML += `<div><b>Reg ${s.reg} (${s.name}):</b> ${comp}</div>`;
-            }
-        });
-        if(box.innerHTML === '') box.innerHTML = 'പരാതികൾ ഒന്നുമില്ല';
-    }
-
-    function replyComplaint() {
-        let replyText = document.getElementById('sadarReplyInput').value.trim();
-        if(!replyText) return;
-        studentsList.forEach(s => {
-            let comp = localStorage.getItem('complaint_' + s.reg);
-            if(comp && !comp.includes('മറുപടി:')) {
-                localStorage.setItem('complaint_' + s.reg, comp + `<br><span style="color:green;"><b>മറുപടി:</b> ${replyText}</span>`);
-            }
-        });
-        alert('മറുപടി സമർപ്പിച്ചു!');
-        document.getElementById('sadarReplyInput').value = '';
-        checkSadarComplaints();
-    }
-
-    function renderManagementAttendance() {
-        let tbody = document.getElementById('mgmtUsthadAttendanceTable');
-        tbody.innerHTML = '';
-        staffList.filter(s => s.type === 'teacher').forEach(u => {
-            tbody.innerHTML += `<tr><td><b>${u.name}</b> (${u.role})</td><td><b style="color:${u.status==='Present'?'green':'red'};">${u.status || 'Absent'}</b></td></tr>`;
-        });
-    }
-
-    function renderLiveStudentAttendanceMgmt() {
-        let cls = document.getElementById('mgmtLiveClassSelect').value;
-        let container = document.getElementById('mgmtClassLiveAttendance');
-        let classStudents = studentsList.filter(s => s.class === cls);
-        let absents = classStudents.filter(s => s.present === false);
-        let absentNames = absents.map(s => s.name).join(', ') || "<span style='color:green;'>ഇന്ന് എല്ലാവരും ഹാജരുണ്ട്</span>";
-        container.innerHTML = `
-            <div style="background:#f9fafb; padding:12px; border-radius:8px; border-left:4px solid #10b981;">
-                <div style="font-weight:bold; color:var(--primary);">${cls} ഹാജർ വിവരങ്ങൾ</div>
-                <div style="font-size:12px; margin-top:5px; color:#dc2626;">🛑 അവധിയിലുള്ള കുട്ടികൾ: <b>${absentNames}</b></div>
-            </div>`;
-    }
-
-    function trackManagementFees() {
-        let tbody = document.getElementById('mgmtFeeTrackTable').querySelector('tbody');
-        tbody.innerHTML = '';
-        studentsList.forEach(s => {
-            tbody.innerHTML += `<tr><td>${s.reg}</td><td>${s.name}</td><td>${s.class}</td><td style="color:${parseInt(s.fee)>0?'red':'green'}; font-weight:bold;">₹${s.fee}</td></tr>`;
-        });
-    }
-
-    function loadMuallimStudents() {
-        let cls = document.getElementById('usthadClassSelect').value;
-        let tbody = document.querySelector('#muallimAttendanceTable tbody');
-        tbody.innerHTML = '';
-        if(!cls) return;
-        studentsList.filter(s => s.class === cls).forEach(s => {
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${s.name}</b> (${s.reg})</td>
-                    <td>
-                        <input type="checkbox" ${s.present!==false?'checked':''} onchange="toggleStudentPresent('${s.reg}', this.checked)"> Present
-                        <button class="btn btn-whatsapp" style="padding:3px 7px; font-size:11px; margin-left:10px;" onclick="sendAbsentAlert('${s.name}', '${s.phone}')"><i class="fa-brands fa-whatsapp"></i> Absent Alert</button>
-                    </td>
-                </tr>`;
-        });
-    }
-
-    function toggleStudentPresent(reg, isChecked) {
-        let kid = studentsList.find(s => s.reg === reg);
-        if(kid) {
-            kid.present = isChecked;
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-        }
-    }
-
-    function sendAbsentAlert(name, phone) {
-        let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ മകൻ/മകൾ *${name}* ഇന്ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല.`;
-        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function liveSearchFeeStudentUsthad() {
-        let rNo = document.getElementById('feeStudentReg').value;
-        let box = document.getElementById('usthadFeeLiveName');
-        let kid = studentsList.find(s => s.reg == rNo);
-        if(kid) {
-            box.style.display = 'block';
-            box.innerHTML = `വിദ്യാർത്ഥി: ${kid.name} (${kid.class})`;
-        } else { box.style.display = 'none'; }
-    }
-
-    function submitFee() {
-        let rNo = document.getElementById('feeStudentReg').value;
-        let amt = document.getElementById('feeAmount').value;
-        let kid = studentsList.find(s => s.reg == rNo);
-        if(kid && amt) {
-            kid.fee = (parseInt(kid.fee) - parseInt(amt)).toString();
-            localStorage.setItem('madrasaStudents', JSON.stringify(studentsList));
-            alert('ഫീസ് സിസ്റ്റത്തിൽ വിജയകരമായി സമർപ്പിച്ചു!');
-            let msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ കുട്ടി *${kid.name}*-ടെ ഫീസ് ഇനത്തിൽ *${amt}* രൂപ മദ്റസയിൽ ലഭിച്ചിരിക്കുന്നു. നന്ദി.`;
-            window.open(`https://wa.me/91${kid.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-            document.getElementById('feeStudentReg').value = '';
-            document.getElementById('feeAmount').value = '';
-            document.getElementById('usthadFeeLiveName').style.display = 'none';
-        }
-    }
-
-    function submitComplaint() {
-        let txt = document.getElementById('parentComplaintInput').value.trim();
-        if(txt) {
-            localStorage.setItem('complaint_' + currentLoggedKid.reg, txt);
-            document.getElementById('parentComplaintStatus').innerHTML = txt + " <br><span style='color:orange;'>(മറുപടിക്കായി കാത്തിരിക്കുന്നു)</span>";
-            document.getElementById('parentComplaintInput').value = '';
-            alert('പരാതി സദറിലേക്ക് അയച്ചു!');
-        }
-    }
-
-    function logout() { sessionStorage.clear(); location.reload(); }
-</script>
-</body>
-</html>
+// ===== FULL DATABASE WITH ALL 124 STUDENTS =====
+const DB = {
+  init(){
+    if(!localStorage.getItem('madrasaDB_v2')){
+      const data = {
+        settings:{
+          madrasaName:'മമ്പഉൽ ഉലൂം മദ്രസ',
+          regNo:'6682',
+          place:'കൊറക്കോട്, കാസറഗോഡ്',
+          shifts:{
+            first:{name:'ഫസ്റ്റ് ഷിഫ്റ്റ്',time:'6:30-8:30 AM',classes:['+2','+1','9']},
+            second:{name:'സെക്കൻഡ് ഷിഫ്റ്റ്',time:'8:30-10:30 AM',classes:['10','8','7','6','5','4']},
+            third:{name:'മൂന്നാം ഷിഫ്റ്റ്',time:'7:00-9:00 PM',classes:['3','2','1']}
+          }
+        },
+        users:{
+          sadar:{username:'sadar',password:'sadar123',role:'sadar',name:'സ്വദർ'}
+        },
+        ustads:{},
+        students:{
+          691:{id:691,regNo:'691',name:'അത്വാഉറഹ്മാൻ',class:'1',shift:'third',dob:'2019-04-06',parentName:'Ashkar Ali',phone:'',photo:''},
+          708:{id:708,regNo:'708',name:'മുഹമ്മദ് ഷാസിൽ',class:'1',shift:'third',dob:'2020-05-26',parentName:'Sirajuddin',phone:'',photo:''},
+          707:{id:707,regNo:'707',name:'മുഹമ്മദ് രിഫ്ദ്',class:'1',shift:'third',dob:'2019-06-28',parentName:'Sakeer',phone:'',photo:''},
+          713:{id:713,regNo:'713',name:'ഇബ്രാഹിം AR',class:'1',shift:'third',dob:'2020-01-09',parentName:'Abdurrahman K. M.',phone:'',photo:''},
+          706:{id:706,regNo:'706',name:'സൈനബ മറിയം മെഹ്‌വിഷ്',class:'1',shift:'third',dob:'2020-09-26',parentName:'Shameer Abdullah',phone:'',photo:''},
+          711:{id:711,regNo:'711',name:'റുഖയ്യ സിദ',class:'1',shift:'third',dob:'2020-09-26',parentName:'Muhammed Haris',phone:'',photo:''},
+          680:{id:680,regNo:'680',name:'അബ്ദുൽ ബാസിത്',class:'2',shift:'third',dob:'2018-03-14',parentName:'നൂറുദ്ദീൻ അബ്ദുള്ള',phone:'',photo:''},
+          681:{id:681,regNo:'681',name:'ഷാൻ അബ്ദുൽ റസാഖ്',class:'2',shift:'third',dob:'2019-01-04',parentName:'ഷംസുദ്ദീൻ',phone:'',photo:''},
+          693:{id:693,regNo:'693',name:'അഹദ് മുഹ്‌യിദ്ദീൻ',class:'2',shift:'third',dob:'2019-12-07',parentName:'ഷാനവാസ്',phone:'',photo:''},
+          694:{id:694,regNo:'694',name:'മുഹമ്മദ് റബീഹ്',class:'2',shift:'third',dob:'2019-06-18',parentName:'ആഷിഖ്',phone:'',photo:''},
+          695:{id:695,regNo:'695',name:'നസീഹ് ഇബ്രാഹിം',class:'2',shift:'third',dob:'2019-08-23',parentName:'അബ്ദുൽ നാസർ',phone:'',photo:''},
+          700:{id:700,regNo:'700',name:'മുഹമ്മദ് അമൻ സാഹിദ്',class:'2',shift:'third',dob:'2018-03-16',parentName:'മുഹമ്മദ് റാഷിദ്',phone:'',photo:''},
+          687:{id:687,regNo:'687',name:'ആയിഷ ലൈബ',class:'2',shift:'third',dob:'2018-12-16',parentName:'ഇബ്രാഹിം ഖലീൽ',phone:'',photo:''},
+          689:{id:689,regNo:'689',name:'സൻഹ റുഖയ്യ',class:'2',shift:'third',dob:'2019-05-23',parentName:'ഹിദായത്ത് അലി',phone:'',photo:''},
+          690:{id:690,regNo:'690',name:'സൈനബ ഇശൽ',class:'2',shift:'third',dob:'2019-05-19',parentName:'മുഹമ്മദ് അഷ്റഫ്',phone:'',photo:''},
+          692:{id:692,regNo:'692',name:'ഖദീജ ലിബ',class:'2',shift:'third',dob:'2019-08-28',parentName:'അബ്ദുൽ മുനീർ',phone:'',photo:''},
+          696:{id:696,regNo:'696',name:'റുഖയ്യ നദ',class:'2',shift:'third',dob:'2019-08-23',parentName:'അബ്ദുൽ നാസർ',phone:'',photo:''},
+          620:{id:620,regNo:'620',name:'അദ്നാൻ',class:'3',shift:'third',dob:'2014-12-17',parentName:'അസ്ഹർ അലി',phone:'',photo:''},
+          628:{id:628,regNo:'628',name:'അബ്ദുൽ നാഫിഹ്',class:'3',shift:'third',dob:'2016-09-05',parentName:'രാജുദ്ദീൻ',phone:'',photo:''},
+          657:{id:657,regNo:'657',name:'രെഹാൻ ശൈഖ്',class:'3',shift:'third',dob:'2018-04-23',parentName:'സക്കരിയ്യ',phone:'',photo:''},
+          658:{id:658,regNo:'658',name:'മുഹമ്മദ് ലബീബ്',class:'3',shift:'third',dob:'2017-11-21',parentName:'ഹബീബ്',phone:'',photo:''},
+          656:{id:656,regNo:'656',name:'അഹ്മദ് നസ്ആൻ',class:'3',shift:'third',dob:'2017-04-03',parentName:'അബ്ദുൽ ലത്തീഫ്',phone:'',photo:''},
+          653:{id:653,regNo:'653',name:'ഇസഹാഖ് ഇസ്മായിൽ',class:'3',shift:'third',dob:'2016-09-04',parentName:'ഇസ്മായിൽ',phone:'',photo:''},
+          661:{id:661,regNo:'661',name:'ഷംആൻ',class:'3',shift:'third',dob:'2016-02-11',parentName:'സുലൈമാൻ',phone:'',photo:''},
+          676:{id:676,regNo:'676',name:'അബ്ദുല്ലാഹ് ആമിർ',class:'3',shift:'third',dob:'2018-06-11',parentName:'ആഷിഖ്',phone:'',photo:''},
+          677:{id:677,regNo:'677',name:'മുഹ്സിൽ മിശാൽ',class:'3',shift:'third',dob:'2017-11-07',parentName:'മുഹമ്മദ് മുആദ്',phone:'',photo:''},
+          679:{id:679,regNo:'679',name:'മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ',class:'3',shift:'third',dob:'2018-05-05',parentName:'ആസിഫ് റഹ്മാൻ',phone:'',photo:''},
+          710:{id:710,regNo:'710',name:'മുഹമ്മദ് ഹയാൻ',class:'3',shift:'third',dob:'2017-09-27',parentName:'മുഹമ്മദ് ഇഖ്ബാൽ',phone:'',photo:''},
+          714:{id:714,regNo:'714',name:'സിംസാറുൽ ഹഖ്',class:'3',shift:'third',dob:'2016-04-17',parentName:'ഹബീബ്',phone:'',photo:''},
+          664:{id:664,regNo:'664',name:'അഫ്രാ അഷ്റഫ്',class:'3',shift:'third',dob:'2017-10-18',parentName:'അഷ്റഫ്',phone:'',photo:''},
+          669:{id:669,regNo:'669',name:'നഫീസ സഫ',class:'3',shift:'third',dob:'2018-01-08',parentName:'ഇബ്രാഹിം',phone:'',photo:''},
+          675:{id:675,regNo:'675',name:'ഫാത്തിമ ഇശൽ',class:'3',shift:'third',dob:'2018-02-15',parentName:'ഇസ്മായിൽ',phone:'',photo:''},
+          701:{id:701,regNo:'701',name:'റിംസ',class:'3',shift:'third',dob:'2017-06-15',parentName:'സക്കീർ',phone:'',photo:''},
+          685:{id:685,regNo:'685',name:'അബ്ദുൽ ഹയൻ',class:'4',shift:'second',dob:'2015-12-14',parentName:'മാഹിൻ',phone:'',photo:''},
+          599:{id:599,regNo:'599',name:'നസ്‌വാൻ',class:'4',shift:'second',dob:'2015-08-18',parentName:'അബ്ദുൽ ഹാരിസ്',phone:'',photo:''},
+          633:{id:633,regNo:'633',name:'ഇബ്രാഹിം ഖലീൽ',class:'4',shift:'second',dob:'2017-01-04',parentName:'അബ്ദുൽ ലത്തീഫ്',phone:'',photo:''},
+          634:{id:634,regNo:'634',name:'അയാസ് അബൂബക്കർ',class:'4',shift:'second',dob:'2016-06-09',parentName:'ഹമീദ്',phone:'',photo:''},
+          652:{id:652,regNo:'652',name:'മുഹമ്മദ് രിഫാൽ',class:'4',shift:'second',dob:'2017-02-23',parentName:'റഷാദ്',phone:'',photo:''},
+          654:{id:654,regNo:'654',name:'ആസിം മുഹാസ്',class:'4',shift:'second',dob:'2018-04-02',parentName:'അബ്ദുൽ ഖാദർ ഷാഹ്',phone:'',photo:''},
+          659:{id:659,regNo:'659',name:'മുഹമ്മദ് ഹാഫിസ്',class:'4',shift:'second',dob:'2016-06-28',parentName:'ഹംസ മുഹമ്മദ്',phone:'',photo:''},
+          660:{id:660,regNo:'660',name:'മുഹമ്മദ് നഹ്‌യാൻ',class:'4',shift:'second',dob:'2017-11-08',parentName:'സാജിദ്',phone:'',photo:''},
+          663:{id:663,regNo:'663',name:'മുഹമ്മദ് മിഷ്ഹദ്',class:'4',shift:'second',dob:'2017-12-05',parentName:'അഹ്മദ് മുസമ്മിൽ',phone:'',photo:''},
+          655:{id:655,regNo:'655',name:'യൂസഫ് സാഹി',class:'4',shift:'second',dob:'2017-04-26',parentName:'മുഹമ്മദ് ഷംസീർ',phone:'',photo:''},
+          662:{id:662,regNo:'662',name:'അബ്ദുല്ലാഹ് ഷെയാൻ സലാം',class:'4',shift:'second',dob:'2016-11-26',parentName:'അബ്ദുറഹ്മാൻ അബ്ദുറഹീം',phone:'',photo:''},
+          686:{id:686,regNo:'686',name:'അലാ ബിൻ ബിലാൽ',class:'4',shift:'second',dob:'2014-08-27',parentName:'ബിലാൽ',phone:'',photo:''},
+          698:{id:698,regNo:'698',name:'മുഹമ്മദ് അമ്മാർ',class:'4',shift:'second',dob:'2014-12-10',parentName:'മുഹമ്മദ് ഹനീഫ്',phone:'',photo:''},
+          703:{id:703,regNo:'703',name:'അബ്ദുറഹ്മാൻ ഇസാൻ',class:'4',shift:'second',dob:'2016-05-14',parentName:'മുഹമ്മദ് അഫ്താബ്',phone:'',photo:''},
+          665:{id:665,regNo:'665',name:'അസാ മറിയം',class:'4',shift:'second',dob:'2017-01-21',parentName:'മുജീബ്',phone:'',photo:''},
+          611:{id:611,regNo:'611',name:'അബ്ദുല്ലാഹ്',class:'5',shift:'second',dob:'2015-11-24',parentName:'Navas',phone:'',photo:''},
+          630:{id:630,regNo:'630',name:'മുഈനുദ്ദീൻ',class:'5',shift:'second',dob:'2016-07-16',parentName:'Habeeb',phone:'',photo:''},
+          631:{id:631,regNo:'631',name:'അദ്നാൻ',class:'5',shift:'second',dob:'2016-12-04',parentName:'Noushad',phone:'',photo:''},
+          632:{id:632,regNo:'632',name:'മുഹമ്മദ് മിൻഹാജ്',class:'5',shift:'second',dob:'2016-09-12',parentName:'Abdul Nasar',phone:'',photo:''},
+          649:{id:649,regNo:'649',name:'വാഹിദ് സമാൻ',class:'5',shift:'second',dob:'2015-12-09',parentName:'Mahmood Inayath',phone:'',photo:''},
+          604:{id:604,regNo:'604',name:'ഷൈമ മറിയം',class:'5',shift:'second',dob:'2015-10-02',parentName:'അബ്ദുൽ ബഷീർ',phone:'',photo:''},
+          640:{id:640,regNo:'640',name:'മറിയം സഫ',class:'5',shift:'second',dob:'2016-08-21',parentName:'ഹാരിസ്',phone:'',photo:''},
+          641:{id:641,regNo:'641',name:'ഫാത്തിമ TK',class:'5',shift:'second',dob:'2016-08-14',parentName:'അഹ്മദ്',phone:'',photo:''},
+          642:{id:642,regNo:'642',name:'ആയിഷ അബ്ദുല്ലാഹ്',class:'5',shift:'second',dob:'2016-04-15',parentName:'അബ്ദുള്ള',phone:'',photo:''},
+          643:{id:643,regNo:'643',name:'ഫാത്തിമ ജുമാന',class:'5',shift:'second',dob:'2014-02-22',parentName:'ഹാലിത്',phone:'',photo:''},
+          667:{id:667,regNo:'667',name:'ആയിഷ മെഹ്സിൻ',class:'5',shift:'second',dob:'2015-05-21',parentName:'മുഹമ്മദ് സ്വാദിഖ്',phone:'',photo:''},
+          586:{id:586,regNo:'586',name:'അബൂ താഹിർ',class:'6',shift:'second',dob:'2014-09-29',parentName:'ഹബീബ്',phone:'',photo:''},
+          600:{id:600,regNo:'600',name:'അബ്ദുൽ ഖാദർ ഷെഹാൻ',class:'6',shift:'second',dob:'2015-04-25',parentName:'അബ്ദുൽ ഖാദർ',phone:'',photo:''},
+          601:{id:601,regNo:'601',name:'മഹ്മൂദ് അസാൻ',class:'6',shift:'second',dob:'2014-10-07',parentName:'നിയാസ്',phone:'',photo:''},
+          602:{id:602,regNo:'602',name:'മാലിക് ഹസൻ',class:'6',shift:'second',dob:'2015-05-26',parentName:'ഖലീൽ',phone:'',photo:''},
+          603:{id:603,regNo:'603',name:'അഹമ്മദ് നസൽ',class:'6',shift:'second',dob:'2015-05-25',parentName:'സത്താർ',phone:'',photo:''},
+          646:{id:646,regNo:'646',name:'ഫിസാൻ',class:'6',shift:'second',dob:'2016-04-19',parentName:'അർഷാദ്',phone:'',photo:''},
+          668:{id:668,regNo:'668',name:'ഇബ്രാഹിം ഇസ്മാഈൽ',class:'6',shift:'second',dob:'2014-09-04',parentName:'ഇസ്മായിൽ',phone:'',photo:''},
+          684:{id:684,regNo:'684',name:'മുഹമ്മദ് സിനാൻ',class:'6',shift:'second',dob:'2012-05-28',parentName:'മാഹിൻ',phone:'',photo:''},
+          699:{id:699,regNo:'699',name:'മുഹമ്മദ് ഷിബ്‌ലി',class:'6',shift:'second',dob:'2013-09-05',parentName:'മുഹമ്മദ് റാഷിദ്',phone:'',photo:''},
+          606:{id:606,regNo:'606',name:'ആയിഷ ഐഫ',class:'6',shift:'second',dob:'2015-05-18',parentName:'ആസിഫ് റഹ്മാൻ',phone:'',photo:''},
+          607:{id:607,regNo:'607',name:'ഷഹാന ഷെറിൻ',class:'6',shift:'second',dob:'2016-01-23',parentName:'ഷമീർ അബ്ദുള്ള',phone:'',photo:''},
+          608:{id:608,regNo:'608',name:'ലിയ്യാ ഫാത്തിമ',class:'6',shift:'second',dob:'2015-10-27',parentName:'ഖലീൽ',phone:'',photo:''},
+          609:{id:609,regNo:'609',name:'ആയിഷ മെഹ്‌റ',class:'6',shift:'second',dob:'2015-02-17',parentName:'അഷ്റഫ്',phone:'',photo:''},
+          613:{id:613,regNo:'613',name:'ആയിഷ ഹിബ',class:'6',shift:'second',dob:'2015-12-18',parentName:'ഹംസ',phone:'',photo:''},
+          563:{id:563,regNo:'563',name:'മുഹമ്മദ് സ്വബാഹ്',class:'7',shift:'second',dob:'2013-10-04',parentName:'Shahnawaz',phone:'',photo:''},
+          584:{id:584,regNo:'584',name:'അബ്ദുല്ലാഹ് സെയ്ഫ്',class:'7',shift:'second',dob:'2013-12-24',parentName:'Zubair',phone:'',photo:''},
+          565:{id:565,regNo:'565',name:'മറിയം സുഹാ',class:'7',shift:'second',dob:'2013-10-09',parentName:'Haris',phone:'',photo:''},
+          570:{id:570,regNo:'570',name:'ഫാത്തിമ ഹമീദ്',class:'7',shift:'second',dob:'2013-10-18',parentName:'Hameed',phone:'',photo:''},
+          571:{id:571,regNo:'571',name:'ആയിഷ തമന്ന',class:'7',shift:'second',dob:'2013-09-16',parentName:'Sirajuddin',phone:'',photo:''},
+          587:{id:587,regNo:'587',name:'മറിയം ഫൈഹ',class:'7',shift:'second',dob:'2014-05-19',parentName:'Muhammad Kunhi',phone:'',photo:''},
+          588:{id:588,regNo:'588',name:'അംന ഫാത്തിമ',class:'7',shift:'second',dob:'2014-08-27',parentName:'Sherif',phone:'',photo:''},
+          589:{id:589,regNo:'589',name:'സെബ മറിയം',class:'7',shift:'second',dob:'2014-08-30',parentName:'Zameel',phone:'',photo:''},
+          590:{id:590,regNo:'590',name:'സെല്ലാ ഷംസീർ',class:'7',shift:'second',dob:'2014-03-26',parentName:'Shamsir',phone:'',photo:''},
+          639:{id:639,regNo:'639',name:'മെഹ്റ മുംതാസ്',class:'7',shift:'second',dob:'2013-12-16',parentName:'Muaaz',phone:'',photo:''},
+          672:{id:672,regNo:'672',name:'മിൻഹാ ഫാത്തിമ',class:'7',shift:'second',dob:'2014-04-23',parentName:'Nooruddin',phone:'',photo:''},
+          697:{id:697,regNo:'697',name:'ഹാസിയ ഹംന',class:'7',shift:'second',dob:'2012-08-09',parentName:'Muhammad Hanif',phone:'',photo:''},
+          360:{id:360,regNo:'360',name:'മുഹമ്മദ് ഷെഹ്‌സാദ്',class:'8',shift:'second',dob:'2013-06-04',parentName:'Abdullah',phone:'',photo:''},
+          361:{id:361,regNo:'361',name:'അബ്ദുല്ലാഹ് അഷ്റഫ്',class:'8',shift:'second',dob:'2013-10-10',parentName:'Ashraf',phone:'',photo:''},
+          347:{id:347,regNo:'347',name:'മുഹമ്മദ് നസ്മിൽ',class:'8',shift:'second',dob:'2012-07-20',parentName:'Haris',phone:'',photo:''},
+          355:{id:355,regNo:'355',name:'ആയിഷ അഷ്റഫ്',class:'8',shift:'second',dob:'2012-07-16',parentName:'Muhammad Ashraf',phone:'',photo:''},
+          367:{id:367,regNo:'367',name:'സഹ്റ ബത്തുൽ',class:'8',shift:'second',dob:'2013-06-17',parentName:'Ibrahim Khalil',phone:'',photo:''},
+          368:{id:368,regNo:'368',name:'ഫാത്തിമ മിസ്ന',class:'8',shift:'second',dob:'2014-06-02',parentName:'Abdul Nasar',phone:'',photo:''},
+          369:{id:369,regNo:'369',name:'ആയിഷ നുവൈറ',class:'8',shift:'second',dob:'2013-02-21',parentName:'Abdul Latif',phone:'',photo:''},
+          683:{id:683,regNo:'683',name:'ആമിന ഷുസൈന',class:'8',shift:'second',dob:'2012-10-12',parentName:'Haris',phone:'',photo:''},
+          528:{id:528,regNo:'528',name:'അഹ്സിം മിശാൽ',class:'9',shift:'first',dob:'2012-05-11',parentName:'Abdul Khader',phone:'',photo:''},
+          538:{id:538,regNo:'538',name:'അബ്ദുല്ലാഹ് സഈം',class:'9',shift:'first',dob:'2011-06-11',parentName:'Mohammed Jameel',phone:'',photo:''},
+          539:{id:539,regNo:'539',name:'അഹ്സൻ ഷാസിൽ',class:'9',shift:'first',dob:'2012-12-30',parentName:'Ashraf',phone:'',photo:''},
+          540:{id:540,regNo:'540',name:'മുഹമ്മദ് ഷഹീൻ',class:'9',shift:'first',dob:'2012-05-05',parentName:'Shameer Abdullah',phone:'',photo:''},
+          541:{id:541,regNo:'541',name:'മുഹ്‌യിദ്ദീൻ നിഹാൽ',class:'9',shift:'first',dob:'2011-12-13',parentName:'Mohammed Habeeb',phone:'',photo:''},
+          715:{id:715,regNo:'715',name:'മുഹമ്മദ് മിദ്ലാജ്',class:'9',shift:'first',dob:'2010-08-14',parentName:'Abdul Karim',phone:'',photo:''},
+          526:{id:526,regNo:'526',name:'ഹിബ മിഫന്ന',class:'9',shift:'first',dob:'2011-11-17',parentName:'Mahmood',phone:'',photo:''},
+          537:{id:537,regNo:'537',name:'ഫാത്തിമ ഷാഹിയ',class:'9',shift:'first',dob:'2011-06-16',parentName:'Sirajuddin',phone:'',photo:''},
+          543:{id:543,regNo:'543',name:'ഫാത്തിമ KS',class:'9',shift:'first',dob:'2012-10-20',parentName:'Sajid',phone:'',photo:''},
+          545:{id:545,regNo:'545',name:'ഖദീജ മിൻഹ',class:'9',shift:'first',dob:'2012-06-07',parentName:'Ahmad Muzammil',phone:'',photo:''},
+          705:{id:705,regNo:'705',name:'അഖീല',class:'9',shift:'first',dob:'2010-02-07',parentName:'Abu Nawaz',phone:'',photo:''},
+          513:{id:513,regNo:'513',name:'നബീൽ ഇബ്രാഹിം',class:'10',shift:'second',dob:'2011-11-28',parentName:'Shahnavaz',phone:'',photo:''},
+          704:{id:704,regNo:'704',name:'മുഹമ്മദ് ഷംനാദ്',class:'10',shift:'second',dob:'2012-03-05',parentName:'Mohammed Sherif',phone:'',photo:''},
+          525:{id:525,regNo:'525',name:'സനൂബിയ',class:'10',shift:'second',dob:'2012-03-21',parentName:'Zakariya',phone:'',photo:''},
+          529:{id:529,regNo:'529',name:'ഷെസാ ഫാത്തിമ',class:'10',shift:'second',dob:'2011-03-19',parentName:'Shafi',phone:'',photo:''},
+          615:{id:615,regNo:'615',name:'ഫാത്തിമ ഷാഹില',class:'10',shift:'second',dob:'2012-07-24',parentName:'Abdul Khader',phone:'',photo:''},
+          637:{id:637,regNo:'637',name:'ആയിഷ നജ',class:'10',shift:'second',dob:'2010-02-03',parentName:'Inayat',phone:'',photo:''},
+          486:{id:486,regNo:'486',name:'മുഹമ്മദ് നിഹാൽ',class:'+1',shift:'first',dob:'2009-01-06',parentName:'അബ്ദുൽ ലത്തീഫ്',phone:'',photo:''},
+          487:{id:487,regNo:'487',name:'അബ്ദുല്ലാഹ് ഷാഹിസ്',
