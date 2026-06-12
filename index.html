@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>മമ്പഉൽ ഉലൂം മദ്‌റസ - കൊറക്കോട്</title>
+    <!-- Tailwind CSS with browser support tool -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,18 +12,20 @@
     <style>
         body { font-family: 'Manjari', 'Meera', sans-serif; }
         .accordion-content { transition: max-height 0.3s ease-out; max-height: 0; overflow: hidden; }
-        .accordion-content.open { max-height: 3000px; padding: 16px; border: 2px solid #e2e8f0; border-top: 0; border-radius: 0 0 12px 12px; bg-color: #ffffff; }
+        .accordion-content.open { max-height: 3000px; padding: 16px; border: 2px solid #e2e8f0; border-top: 0; border-radius: 0 0 12px 12px; }
         .blur-effect { filter: blur(5px); pointer-events: none; user-select: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
+    <!-- ആപ്പ് പ്രധാന നാവിഗേഷൻ ഹെഡർ ബാർ -->
     <header class="bg-emerald-700 text-white shadow-md p-4 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="text-center sm:text-left">
                 <h1 class="text-xl sm:text-2xl font-bold tracking-wide">മമ്പഉൽ ഉലൂം മദ്‌റസ, കൊറക്കോട്</h1>
                 <p class="text-xs sm:text-sm text-emerald-100 font-semibold">രജിസ്റ്റർ നമ്പർ (Reg No): 6682 | വർഷം: 2026-2027</p>
             </div>
+            <!-- ലോഗിൻ ചെയ്ത ശേഷം മാത്രം കാണിക്കുന്ന മെനു ബാർ -->
             <nav id="global-nav-bar" class="flex flex-wrap gap-1 justify-center bg-emerald-800/50 p-1 rounded-xl hidden">
                 <button onclick="showPanelViaNav('public')" id="btn-public" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-emerald-800 shadow">പൊതു ഫലം (Result)</button>
                 <button onclick="showPanelViaNav('parent')" id="btn-parent" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-600">രക്ഷിതാവ് (Parent)</button>
@@ -35,6 +38,7 @@
 
     <main class="max-w-4xl mx-auto p-4 min-h-[calc(100vh-140px)]">
 
+        <!-- =================== 🔑 പൊതുവായ ലോഗിൻ വിൻഡോ (UNIVERSAL LOGIN WINDOW) =================== -->
         <section id="panel-login" class="panel-section block py-12">
             <div class="max-w-md mx-auto bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-8 shadow-md space-y-6">
                 <div class="text-center space-y-1">
@@ -52,7 +56,7 @@
                             <label class="block text-xs font-bold text-slate-700">പാസ്‌വേർഡ് (Password)</label>
                             <span class="text-[10px] text-emerald-600 font-bold">(രക്ഷിതാക്കൾക്ക് പാസ്‌വേർഡ് ആവശ്യമില്ല)</span>
                         </div>
-                        <input type="password" id="universal-password" placeholder="•••••••• (രക്ഷിതാക്കൾ ഇത് ശൂന്യമായി ഇടുക)" class="w-full bg-white border-2 border-slate-400 rounded-xl p-3 outline-none focus:border-emerald-600 font-bold text-center text-slate-900 shadow-inner">
+                        <input type="password" id="universal-password" value="••••••••" placeholder="••••••••" class="w-full bg-white border-2 border-slate-400 rounded-xl p-3 outline-none focus:border-emerald-600 font-bold text-center text-slate-900 shadow-inner">
                     </div>
                 </div>
                 <button onclick="handleUniversalLoginTrigger()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow-md cursor-pointer transition-all transform active:scale-95">പ്രവേശിക്കുക (Login)</button>
@@ -63,6 +67,7 @@
             </div>
         </section>
 
+        <!-- =================== 🌐 പൊതു റിസൾട്ട് പേജ് (PUBLIC RESULT PAGE) =================== -->
         <section id="panel-public" class="panel-section hidden">
             <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-6 mb-6">
                 <div class="text-center max-w-xl mx-auto mb-6">
@@ -136,6 +141,7 @@
             </div>
         </section>
 
+        <!-- =================== 📱 3. രക്ഷിതാവിന്റെ പാനൽ (PARENT PANEL) =================== -->
         <section id="panel-parent" class="panel-section hidden space-y-6">
             <div class="bg-white border rounded-2xl p-5 shadow-xs relative overflow-hidden">
                 <div class="absolute top-0 right-0 left-0 h-2 bg-emerald-600"></div>
@@ -154,15 +160,17 @@
                 </div>
             </div>
 
+            <!-- സദറിന്റെ ഔദ്യോഗിക അറിയിപ്പ് ബോർഡ് -->
             <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
                 <h4 class="font-bold text-slate-900 border-b pb-2 text-sm">👑 സദർ ഉസ്താദിന്റെ ഔദ്യോഗിക അറിയിപ്പുകൾ</h4>
                 <div id="parent-holiday-big-box" class="hidden p-4 bg-red-50 border border-red-200 rounded-xl text-center text-red-900">
-                    <span class="text-2xl font-bold block">🛑 ഇന്ന് അവधിയാണ്!</span>
+                    <span class="text-2xl font-bold block">🛑 ഇന്ന് അവധിയാണ്!</span>
                     <span id="parent-holiday-reason-label" class="text-xs font-bold block mt-1">---</span>
                 </div>
                 <div id="parent-notices-container" class="space-y-2 max-h-[150px] overflow-y-auto"></div>
             </div>
 
+            <!-- പരീക്ഷാ ടൈംറ്റേബിളും മാർക്ക് ഷീറ്റും -->
             <div class="bg-white border rounded-2xl p-5 shadow-xs">
                 <h4 class="font-bold text-slate-900 border-b pb-2 mb-4 text-sm">📅 പരീക്ഷാ സമയവിവരപ്പട്ടികയും പ്രോഗ്രസ്സ് കാർഡും</h4>
                 <div class="flex gap-1.5 mb-4 bg-slate-50 p-1.5 rounded-xl border">
@@ -188,19 +196,21 @@
                     <div>ഗ്രേഡ്: <span id="parent-grade-status" class="text-emerald-700 font-extrabold text-sm">---</span></div>
                 </div>
 
+                <!-- ക്ലാസ് താരതമ്യ റാങ്ക് ലിസ്റ്റ് -->
                 <div class="border rounded-xl overflow-hidden">
                     <div class="bg-slate-100 p-2 px-3 font-bold text-xs text-slate-700 border-b">📊 ക്ലാസ് താരതമ്യ റാങ്ക് ലിസ്റ്റ് (Class Ranking)</div>
                     <div class="max-h-[180px] overflow-y-auto divide-y text-xs font-semibold" id="parent-class-ranking-comparison-box"></div>
                 </div>
             </div>
 
+            <!-- ഫീസും കുടിശ്ശികയും പ്രൊഫൈൽ എഡിറ്ററും -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
                     <h4 class="font-bold text-slate-900 border-b pb-1.5 text-sm">💰 ഫീസും കുടിശ്ശികയും (Fee Status)</h4>
                     <div class="space-y-2 text-xs font-bold">
                         <div class="flex justify-between p-2 bg-slate-50 rounded-lg"><span>നിശ്ചയിച്ച ആകെ ഫീസ്:</span><span id="parent-fee-total">₹0</span></div>
                         <div class="flex justify-between p-2 bg-emerald-50 text-emerald-900 rounded-lg"><span>ഇതുവരെ അടച്ച തുക:</span><span id="parent-fee-paid">₹0</span></div>
-                        <div class="flex justify-between p-2 bg-rose-50 text-rose-900 rounded-lg"><span>ഇни അടക്കാനുള്ള ബാക്കി തുക:</span><span id="parent-fee-balance">₹0</span></div>
+                        <div class="flex justify-between p-2 bg-rose-50 text-rose-900 rounded-lg"><span>ഇനി അടക്കാനുള്ള ബാക്കി തുക:</span><span id="parent-fee-balance">₹0</span></div>
                     </div>
                 </div>
                 <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
@@ -213,24 +223,27 @@
                 </div>
             </div>
 
+            <!-- അഭിപ്രായ പെട്ടി -->
             <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
                 <h4 class="font-bold text-slate-900 border-b pb-2 text-sm">📬 അഭിപ്രായ പെട്ടി (Parent Feedback Box)</h4>
                 <div class="space-y-2 text-xs font-bold">
-                    <select id="parent-feedback-target" class="w-full bg-white border-2 border-slate-400 p-2 rounded-lg outline-none font-bold text-slate-900">
+                    <select id="parent-feedback-target" class="w-full bg-slate-50 border-2 border-slate-400 p-2 rounded-lg outline-none font-bold text-slate-900">
                         <option value="sadhar">സദർ ഉസ്താദിന് നേരിട്ട്</option>
                         <option value="teacher">ക്ലാസ്സ് അധ്യാപകന് മാത്രം</option>
                     </select>
-                    <textarea id="parent-feedback-text" rows="2" placeholder="നിങ്ങളുടെ നിർദ്ദേശങ്ങൾ/അഭിപ്രായങ്ങൾ ഇവിടെ എഴുതുക..." class="w-full bg-white border-2 border-slate-400 p-2 rounded-lg outline-none font-bold text-slate-900"></textarea>
+                    <textarea id="parent-feedback-text" rows="2" placeholder="നിങ്ങളുടെ നിർദ്ദേശങ്ങൾ/അഭിപ്രായങ്ങൾ ഇവിടെ എഴുതുക..." class="w-full bg-slate-50 border-2 border-slate-400 p-2 rounded-lg outline-none font-bold text-slate-900"></textarea>
                     <button onclick="submitParentFeedbackDataSlot()" class="bg-emerald-600 text-white px-5 py-2 rounded-xl cursor-pointer">അഭിപ്രായം സമർപ്പിക്കുക (Submit)</button>
                 </div>
             </div>
 
+            <!-- മദ്റസ ജീവനക്കാരുടെ വിവരങ്ങൾ -->
             <div class="bg-white border rounded-2xl p-5 shadow-xs">
                 <h4 class="font-bold text-slate-900 border-b pb-3 mb-4 text-sm">📞 മദ്റസ ജീവനക്കാരുടെ വിവരങ്ങൾ (Staff Directory)</h4>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="parent-officials-directory-box"></div>
             </div>
         </section>
 
+        <!-- =================== 🧑‍🏫 2. അദ്ധ്യാപകരുടെ പാനൽ (TEACHERS PANEL) =================== -->
         <section id="panel-ustad" class="panel-section hidden space-y-6">
             <div id="ustad-holiday-alert-card" class="hidden p-6 bg-rose-50 border-2 border-rose-300 rounded-2xl text-center">
                 <span class="text-3xl">🛑</span>
@@ -260,19 +273,21 @@
                     </div>
 
                     <div class="lg:col-span-1 space-y-6">
+                        <!-- ഫീസ് കളക്ഷൻ വിൻഡോ -->
                         <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
                             <h4 class="font-bold text-slate-900 border-b pb-2 text-sm">💰 ഫീസ് കളക്ഷൻ വിൻഡോ (Live Lookup)</h4>
                             <div class="space-y-2">
                                 <input type="number" id="ustad-fee-reg-input" oninput="lookupStudentNameForFees()" placeholder="കുട്ടിയുടെ Reg No നൽകുക" class="w-full bg-white border-2 border-slate-400 rounded-xl p-2 font-bold text-xs text-center outline-none text-slate-900 shadow-sm">
                                 <div id="ustad-fee-live-name-box" class="text-xs font-extrabold text-emerald-800 bg-emerald-50 p-2 rounded-xl text-center hidden"></div>
                                 <input type="number" id="ustad-fee-amount-input" placeholder="വാങ്ങിയ തുക (Amount ₹)" class="w-full bg-white border-2 border-slate-400 rounded-xl p-2 font-bold text-xs text-center outline-none text-slate-900 shadow-sm">
-                                <button onclick="submitUstadFeeTransactionData()" class="w-full bg-slate-900 text-white font-bold text-xs py-2 rounded-xl cursor-pointer0">ഫീസ് സ്വീകരിക്കുക (Submit Fee)</button>
+                                <button onclick="submitUstadFeeTransactionData()" class="w-full bg-slate-900 text-white font-bold text-xs py-2 rounded-xl cursor-pointer">ഫീസ് സ്വീകരിക്കുക (Submit Fee)</button>
                             </div>
                             <div id="ustad-fee-whatsapp-links-box" class="pt-2 border-t space-y-2 hidden">
                                 <a id="link-wa-fee-parent" target="_blank" class="block text-center bg-emerald-600 text-white font-bold text-xs py-2 rounded-xl">രക്ഷിതാവിന് രസീത് അയക്കുക</a>
                             </div>
                         </div>
 
+                        <!-- പേഴ്‌സണൽ റിവ്യൂ ബോക്സ് -->
                         <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-3">
                             <h4 class="font-bold text-slate-900 border-b pb-2 text-sm">📝 പേഴ്‌സണൽ റിവ്യൂ ബോക്സ്</h4>
                             <div class="space-y-2">
@@ -283,6 +298,7 @@
                             </div>
                         </div>
 
+                        <!-- രക്ഷിതാക്കളുടെ നിർദ്ദേശങ്ങൾ -->
                         <div class="bg-white border rounded-2xl p-5 shadow-xs space-y-2">
                             <h4 class="font-bold text-slate-900 border-b pb-2 text-sm">📬 രക്ഷിതാക്കളുടെ നിർദ്ദേശങ്ങൾ</h4>
                             <div id="ustad-suggestions-container" class="space-y-2 max-h-[150px] overflow-y-auto text-xs font-semibold text-slate-600"></div>
@@ -292,7 +308,9 @@
             </div>
         </section>
 
+        <!-- =================== 👑 1. സദറിന്റെ പാനൽ (SADHAR PANEL) =================== -->
         <section id="panel-sadhar" class="panel-section hidden space-y-4">
+            <!-- ⚙️ 1. സ്വതന്ത്രമായ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ് സിസ്റ്റം -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-shift-setup')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>⚙️ 1. സ്വതന്ത്രമായ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ് സിസ്റ്റം (Shift & Class Setup)</span><span>▼</span>
@@ -300,17 +318,17 @@
                 <div id="acc-shift-setup" class="accordion-content space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 text-xs font-bold text-slate-700">
                         <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg">
-                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 1 время</label>
+                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 1 സമയം</label>
                             <input type="text" id="time-setup-shift-1" class="w-full bg-white border-2 border-slate-400 p-2 rounded-md mb-2 font-bold text-slate-900 shadow-inner">
                             <div class="grid grid-cols-4 gap-1 text-[9px]" id="classes-grid-shift-1"></div>
                         </div>
                         <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg">
-                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 2 время</label>
+                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 2 സമയം</label>
                             <input type="text" id="time-setup-shift-2" class="w-full bg-white border-2 border-slate-400 p-2 rounded-md mb-2 font-bold text-slate-900 shadow-inner">
                             <div class="grid grid-cols-4 gap-1 text-[9px]" id="classes-grid-shift-2"></div>
                         </div>
                         <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg">
-                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 3 время</label>
+                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Shift 3 സമയം</label>
                             <input type="text" id="time-setup-shift-3" class="w-full bg-white border-2 border-slate-400 p-2 rounded-md mb-2 font-bold text-slate-900 shadow-inner">
                             <div class="grid grid-cols-4 gap-1 text-[9px]" id="classes-grid-shift-3"></div>
                         </div>
@@ -319,6 +337,7 @@
                 </div>
             </div>
 
+            <!-- 🧑‍🏫 2. ജീവനക്കാരുടെ നിയന്ത്രണം (Live Staff Management) -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-staff-manage')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>🧑‍🏫 2. ജീവനക്കാരുടെ നിയന്ത്രണം (Live Staff Management)</span><span>▼</span>
@@ -342,12 +361,13 @@
                             <label class="block text-[10px] text-slate-400 mb-1">അസൈൻ ചെയ്യുന്ന ക്ലാസുകൾ (അധ്യാപകർക്ക് മാത്രം)</label>
                             <div class="grid grid-cols-6 gap-1 bg-white p-2 border-2 border-slate-400 rounded shadow-inner" id="add-staff-classes-grid"></div>
                         </div>
-                        <button onclick="submitNewStaffToDatabase()" class="bg-emerald-600 text-white font-bold px-5 py-2 rounded-xl cursor-pointer shadow">ജീവനക്കാരനെ ചേർക്കുക</button>
+                        <button onclick="submitNewStaffToDatabase()" class="bg-emerald-600 text-white font-bold px-5 py-2 rounded-xl cursor-pointer shadow">জীവനക്കാരനെ ചേർക്കുക</button>
                     </div>
                     <div class="divide-y border rounded-xl bg-white text-xs font-semibold shadow-xs" id="sadhar-staff-list-container"></div>
                 </div>
             </div>
 
+            <!-- 📅 3. പരീക്ഷാ സമയവിവരപ്പട്ടിക ഒന്നിച്ച് പ്രസിദ്ധീകരിക്കൽ -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-exam-timetable')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>📅 3. പരീക്ഷാ സമയവിവരപ്പട്ടിക ഒന്നിച്ച് പ്രസിദ്ധീകരിക്കൽ (1 to 12 All Classes)</span><span>▼</span>
@@ -365,7 +385,7 @@
                     <div class="border rounded-xl p-3 bg-slate-50 space-y-2 text-xs font-semibold">
                         <div class="grid grid-cols-3 gap-2">
                             <select id="sadhar-input-sub-name" class="bg-white border-2 border-slate-400 p-2 rounded-md text-slate-900 font-bold">
-                                <option value="ഖുർആൻ">ഖുർആൻ</option><option value="ഫിഖ്ഹ്">ഫിഖ്ഹ്</option><option value="അഖീദ">അഖീദ</option><option value="അഖ്‌ലാഖ്">അഖ്‌ലാഖ്</option><option value="താരീഖ്">താരീഖ്</option><option value="തഫ്സീർ">തഫ്സീർ</option><option value="लिസാൻ">ലിസാൻ</option>
+                                <option value="ഖുർആൻ">ഖുർആൻ</option><option value="ഫിഖ്ഹ്">ഫിഖ്ഹ്</option><option value="അഖീദ">അഖീദ</option><option value="അഖ്‌ലാഖ്">അഖ്‌ലാഖ്</option><option value="താരീഖ്">താരീഖ്</option><option value="തഫ്സീർ">തഫ്സീർ</option><option value="ലിസാൻ">ലിസാൻ</option>
                             </select>
                             <input type="text" id="sadhar-input-sub-date" placeholder="തീയതി (DD/MM/YYYY)" class="bg-white border-2 border-slate-400 p-2 rounded-md font-bold text-slate-900 shadow-inner">
                             <input type="text" id="sadhar-input-sub-time" placeholder="സമയം (6:30 AM)" class="bg-white border-2 border-slate-400 p-2 rounded-md font-bold text-slate-900 shadow-inner">
@@ -377,6 +397,7 @@
                 </div>
             </div>
 
+            <!-- 💰 4. ഫീസ് ഘടന നിശ്ചയിക്കൽ -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-fee-structure')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>💰 4. ഫീസ് ഘടന നിശ്ചയിക്കൽ (Manage Fee Structure)</span><span>▼</span>
@@ -390,6 +411,7 @@
                 </div>
             </div>
 
+            <!-- 🛑 5. ഷിഫ്റ്റ് തിരിച്ചുള്ള അവധി പ്രഖ്യാപന ബോർഡ് -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-holiday-manager')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>🛑 5. ഷിഫ്റ്റ് തിരിച്ചുള്ള അവധി പ്രഖ്യാപന ബോർഡ് (Holiday Manager)</span><span>▼</span>
@@ -409,6 +431,7 @@
                 </div>
             </div>
 
+            <!-- 📩 6. രക്ഷിതാക്കളുടെ പരാതികൾ -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-complaints-view')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>📩 6. രക്ഷിതാക്കളുടെ പരാതികൾ & ഫീഡ്‌ബാക്കുകൾ</span><span>▼</span>
@@ -416,6 +439,7 @@
                 <div id="acc-complaints-view" class="accordion-content text-xs font-semibold divide-y" id="sadhar-complaints-box-container"></div>
             </div>
 
+            <!-- 📊 7. കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-student-editor')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>📊 7. കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ (124 കുട്ടികൾ)</span><span>▼</span>
@@ -425,6 +449,7 @@
                 </div>
             </div>
 
+            <!-- 📢 9. പൊതു അറിയിപ്പുകൾ + സ്മാർട്ട് ബ്രോഡ്കാസ്റ്റ് -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-broadcast')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>📢 8. പൊതു അറിയിപ്പുകൾ + സ്മാർട്ട് വാട്സാപ്പ് ബ്രോഡ്കാസ്റ്റ്</span><span>▼</span>
@@ -444,6 +469,7 @@
                 </div>
             </div>
 
+            <!-- 👑 10. സദർ പ്രൊഫൈൽ എഡിറ്റർ -->
             <div class="bg-white border-2 border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 <button onclick="toggleAccordion('acc-sadhar-profile')" class="w-full text-left p-4 font-bold text-slate-800 flex justify-between bg-slate-50 cursor-pointer">
                     <span>👑 9. സദർ പ്രൊഫൈൽ എഡിറ്റർ (Sadhar Profile Editor)</span><span>▼</span>
@@ -457,6 +483,7 @@
                 </div>
             </div>
 
+            <!-- എഡിറ്റ് മോഡൽ പോപ്പ് അപ്പ് ജാലകം -->
             <div id="sadhar-student-modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
                 <div class="bg-white rounded-2xl shadow-xl border w-full max-w-sm overflow-hidden flex flex-col">
                     <div class="bg-slate-800 text-white p-4 font-bold text-xs flex justify-between items-center">
@@ -488,6 +515,7 @@
             </div>
         </section>
 
+        <!-- =================== 🏛️ 4. മാനേജ്‌മെന്റ് / കമ്മിറ്റി പാനൽ =================== -->
         <section id="panel-committee" class="panel-section hidden space-y-6">
             <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex justify-between items-center">
                 <h4 class="font-extrabold text-slate-900 text-sm">🏛️ കമ്മിറ്റി നിരീക്ഷണ പാനൽ (View Only)</h4>
@@ -510,23 +538,19 @@
     </footer>
 
     <script>
-        // മാസ്റ്റർ ഡാറ്റാബേസ് കോൺഫിഗറേഷൻ
         const MADRASA_SUBJECTS_LIST = ["ഖുർആൻ", "ഫിഖ്ഹ്", "അഖീദ", "അഖ്‌ലാഖ്", "താരീഖ്", "തഫ്സീർ", "ലിസാൻ"];
         
         const STATIC_ROSTER_SEED_DATA = [
-            // 1-ാം ക്ലാസ് (1st Class) - [ഷിഫ്റ്റ് 1]
             { name: "അത്വാഉറഹ്മാൻ", reg: 691, father: "Ashkar Ali", dob: "06/04/2019", class: 1, shift: 1, phone: "9100000001", paid_fee: 400, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 48, "ഫിഖ്ഹ്": 46 }, half: {}, annual: {} } },
-            { name: "മുഹമ്മദ് ഷാസിൽ", reg: 708, father: "Sirajuddin", dob: "26/05/2020", class: 1, shift: 1, phone: "9100000002", paid_fee: 500, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 49, "ഫിഖ്ഹ്": 47 }, half: {}, annual: {} } },
-            { name: "മുഹമ്മദ് രിഫ്ദ്", reg: 707, father: "Sakeer", dob: "28/06/2019", class: 1, shift: 1, phone: "9100000003", paid_fee: 300, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 42, "ഫിഖ്ഹ്": 40 }, half: {}, annual: {} } },
+            { name: "മുحمد ഷാസിൽ", reg: 708, father: "Sirajuddin", dob: "26/05/2020", class: 1, shift: 1, phone: "9100000002", paid_fee: 500, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 49, "ഫിഖ്ഹ്": 47 }, half: {}, annual: {} } },
+            { name: "മുحمد രിഫ്ദ്", reg: 707, father: "Sakeer", dob: "28/06/2019", class: 1, shift: 1, phone: "9100000003", paid_fee: 300, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 42, "ഫിഖ്ഹ്": 40 }, half: {}, annual: {} } },
             { name: "ഇബ്രാഹിം KM", reg: 713, father: "Abdurrahman K. M.", dob: "09/01/2020", class: 1, shift: 1, phone: "9100000004", paid_fee: 1500, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 50, "ഫിഖ്ഹ്": 49 }, half: {}, annual: {} } },
             { name: "സൈനബ മറിയം മെഹ്‌വിഷ്", reg: 706, father: "Shameer Abdullah", dob: "26/09/2020", class: 1, shift: 1, phone: "9100000005", paid_fee: 600, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 45, "ഫിഖ്ഹ്": 44 }, half: {}, annual: {} } },
             { name: "റുഖയ്യ സിദ", reg: 711, father: "Muhammed Haris", dob: "26/09/2020", class: 1, shift: 1, phone: "9100000006", paid_fee: 500, total_fee: 1500, marks: { quarter: { "ഖുർആൻ": 40, "ഫിഖ്ഹ്": 38 }, half: {}, annual: {} } },
-            
-            // 2-ാം ക്ലാസ് (2nd Class) - [ഷിഫ്റ്റ് 2]
             { name: "അബ്ദുൽ ബാസിത്", reg: 680, father: "നൂറുദ്ദീൻ അബ്ദുള്ള", dob: "14/03/2018", class: 2, shift: 2, phone: "9100000007", paid_fee: 800, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 45 }, half: {}, annual: {} } },
             { name: "ഷാൻ അബ്ദുൽ റസാഖ്", reg: 681, father: "ഷംസുദ്ദീൻ", dob: "04/01/2019", class: 2, shift: 2, phone: "9100000008", paid_fee: 500, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 40 }, half: {}, annual: {} } },
             { name: "അഹദ് മുഹ്‌യിദ്ദീൻ", reg: 693, father: "ഷാനവാസ്", dob: "07/12/2019", class: 2, shift: 2, phone: "9100000009", paid_fee: 1000, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 48 }, half: {}, annual: {} } },
-            { name: "മുഹമ്മദ് റബീഹ്", reg: 694, father: "ആഷിഖ്", dob: "18/06/2019", class: 2, shift: 2, phone: "9100000010", paid_fee: 1500, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 49 }, half: {}, annual: {} } },
+            { name: "മുحمد റബീഹ്", reg: 694, father: "ആഷിഖ്", dob: "18/06/2019", class: 2, shift: 2, phone: "9100000010", paid_fee: 1500, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 49 }, half: {}, annual: {} } },
             { name: "നസീഹ് ഇബ്രാഹിം", reg: 695, father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", class: 2, shift: 2, phone: "9100000011", paid_fee: 300, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 35 }, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് അമൻ സാഹിദ്", reg: 700, father: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", class: 2, shift: 2, phone: "9100000012", paid_fee: 900, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 42 }, half: {}, annual: {} } },
             { name: "ആയിഷ ലൈബ", reg: 687, father: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", class: 2, shift: 2, phone: "9100000013", paid_fee: 1500, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 47 }, half: {}, annual: {} } },
@@ -534,8 +558,6 @@
             { name: "സൈനബ ഇശൽ", reg: 690, father: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", class: 2, shift: 2, phone: "9100000015", paid_fee: 700, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 41 }, half: {}, annual: {} } },
             { name: "ഖദീജ ലിബ", reg: 692, father: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", class: 2, shift: 2, phone: "9100000016", paid_fee: 400, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 44 }, half: {}, annual: {} } },
             { name: "റുഖയ്യ നദ", reg: 696, father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", class: 2, shift: 2, phone: "9100000017", paid_fee: 500, total_fee: 1500, marks: { quarter: { "ഫിഖ്ഹ്": 43 }, half: {}, annual: {} } },
-
-            // 3-ാം ക്ലാസ് (3rd Class) - [ഷിഫ്റ്റ് 1]
             { name: "അദ്നാൻ", reg: 620, father: "അസ്ഹർ അലി", dob: "17/12/2014", class: 3, shift: 1, phone: "9100000018", paid_fee: 1000, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുൽ നാഫിഹ്", reg: 628, father: "രാജുദ്ദീൻ", dob: "05/09/2016", class: 3, shift: 1, phone: "9100000019", paid_fee: 1200, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "രെഹാൻ ശൈഖ്", reg: 657, father: "സക്കരിയ്യ", dob: "23/04/2018", class: 3, shift: 1, phone: "9100000020", paid_fee: 500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
@@ -552,8 +574,6 @@
             { name: "നഫീസ സഫ", reg: 669, father: "ഇബ്രാഹിം", dob: "08/01/2018", class: 3, shift: 1, phone: "9100000031", paid_fee: 1100, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഫാത്തിമ ഇശൽ", reg: 675, father: "ഇസ്മായിൽ", dob: "15/02/2018", class: 3, shift: 1, phone: "9100000032", paid_fee: 1500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "റിംസ സക്കീർ", reg: 701, father: "സക്കീർ", dob: "15/06/2017", class: 3, shift: 1, phone: "9100000033", paid_fee: 400, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 4-ാം ക്ലാസ് (4th Class) - [ഷിഫ്റ്റ് 2]
             { name: "അബ്ദുൽ ഹയൻ", reg: 685, father: "മാഹിൻ", dob: "14/12/2015", class: 4, shift: 2, phone: "9100000034", paid_fee: 500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "നസ്‌വാൻ", reg: 599, father: "അബ്ദുൽ ഹാരിസ്", dob: "18/08/2015", class: 4, shift: 2, phone: "9100000035", paid_fee: 1500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഇബ്രാഹിം ഖലീൽ", reg: 633, father: "അബ്ദുൽ ലത്തീഫ്", dob: "04/01/2017", class: 4, shift: 2, phone: "9100000036", paid_fee: 1000, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
@@ -564,26 +584,22 @@
             { name: "മുഹമ്മദ് നഹ്‌യാൻ", reg: 660, father: "സാജിദ്", dob: "08/11/2017", class: 4, shift: 2, phone: "9100000041", paid_fee: 1200, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് മിഷ്ഹദ്", reg: 663, father: "അഹ്മദ് മുസമ്മിൽ", dob: "05/12/2017", class: 4, shift: 2, phone: "9100000042", paid_fee: 1500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "യൂസഫ് സാഹി", reg: 655, father: "മുഹമ്മദ് ഷംസീർ", dob: "26/04/2017", class: 4, shift: 2, phone: "9100000043", paid_fee: 800, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
-            { name: "അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", reg: 662, father: "അബ്ദുറഹ്маൻ അബ്ദുറഹീം", dob: "26/11/2016", class: 4, shift: 2, phone: "9100000044", paid_fee: 900, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
+            { name: "അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", reg: 662, father: "അബ്ദുറഹ്മാൻ അബ്ദുറഹീം", dob: "26/11/2016", class: 4, shift: 2, phone: "9100000044", paid_fee: 900, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അലാ ബിൻ ബിലാൽ", reg: 686, father: "ബിലാൽ", dob: "27/08/2014", class: 4, shift: 2, phone: "9100000045", paid_fee: 400, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് അമ്മാർ", reg: 698, father: "മുഹമ്മദ് ഹനീഫ്", dob: "10/12/2014", class: 4, shift: 2, phone: "9100000046", paid_fee: 500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുറഹ്മാൻ ഇസാൻ", reg: 703, father: "മുഹമ്മദ് അഫ്താബ്", dob: "14/05/2016", class: 4, shift: 2, phone: "9100000047", paid_fee: 1500, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അസാ മറിയം", reg: 665, father: "മുജീബ്", dob: "21/01/2017", class: 4, shift: 2, phone: "9100000048", paid_fee: 1300, total_fee: 1500, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 5-ാം ക്ലാസ് (5th Class) - [ഷിഫ്റ്റ് 1]
             { name: "അബ്ദുല്ലാഹ്", reg: 611, father: "Navas", dob: "24/11/2015", class: 5, shift: 1, phone: "9100000049", paid_fee: 600, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഈനുദ്ദീൻ", reg: 630, father: "Habeeb", dob: "16/07/2016", class: 5, shift: 1, phone: "9100000050", paid_fee: 1200, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അദ്നാൻ", reg: 631, father: "Noushad", dob: "04/12/2016", class: 5, shift: 1, phone: "9100000051", paid_fee: 1800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് മിൻഹാജ്", reg: 632, father: "Abdul Nasar", dob: "12/09/2016", class: 5, shift: 1, phone: "9100000052", paid_fee: 1000, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
-            { name: "വാഹിദ് സമാൻ", reg: 649, father: "Mahmood Inayath", dob: "09/12/2015", class: 5, shift: 1, phone: "9100000053", paid_fee: 1500, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
+            { name: "واحد زمان", reg: 649, father: "Mahmood Inayath", dob: "09/12/2015", class: 5, shift: 1, phone: "9100000053", paid_fee: 1500, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഷൈമ മറിയം", reg: 604, father: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", class: 5, shift: 1, phone: "9100000054", paid_fee: 1800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മറിയം സഫ", reg: 640, father: "ഹാരിസ്", dob: "21/08/2016", class: 5, shift: 1, phone: "9100000055", paid_fee: 900, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഫാത്തിമ TK", reg: 641, father: "അഹ്മദ്", dob: "14/08/2016", class: 5, shift: 1, phone: "9100000056", paid_fee: 800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ അബ്ദുല്ലാഹ്", reg: 642, father: "അബ്ദുള്ള", dob: "15/04/2016", class: 5, shift: 1, phone: "9100000057", paid_fee: 1800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഫാത്തിമ ജുമാന", reg: 643, father: "ഖാലിദ്", dob: "22/02/2014", class: 5, shift: 1, phone: "9100000058", paid_fee: 1100, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
-            { name: "ആയിഷ Меഹ്സിൻ", reg: 667, father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", class: 5, shift: 1, phone: "9100000059", paid_fee: 1400, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 6-ാം ക്ലാസ് (6th Class) - [ഷിഫ്റ്റ് 2]
+            { name: "ആയിഷ മെഹ്സിൻ", reg: 667, father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", class: 5, shift: 1, phone: "9100000059", paid_fee: 1400, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബൂ താഹിർ", reg: 586, father: "ഹബീബ്", dob: "29/09/2014", class: 6, shift: 2, phone: "9100000060", paid_fee: 1000, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുൽ ഖാദർ ഷെഹാൻ", reg: 600, father: "അബ്ദുൽ ഖാദർ", dob: "25/04/2015", class: 6, shift: 2, phone: "9100000061", paid_fee: 1800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മഹ്മൂദ് അസാൻ", reg: 601, father: "നിയാസ്", dob: "07/10/2014", class: 6, shift: 2, phone: "9100000062", paid_fee: 1200, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
@@ -595,25 +611,21 @@
             { name: "മുഹമ്മദ് ഷിബ്‌ലി", reg: 699, father: "മുഹമ്മദ് റാഷിദ്", dob: "05/09/2013", class: 6, shift: 2, phone: "9100000068", paid_fee: 1400, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ ഐഫ", reg: 606, father: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", class: 6, shift: 2, phone: "9100000069", paid_fee: 1500, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഷഹാന ഷെറിൻ", reg: 607, father: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", class: 6, shift: 2, phone: "9100000070", paid_fee: 1800, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
-            { name: "ലിയ്യാ ഫാത്തിമ", reg: 608, father: "ഖലീൽ", dob: "27/10/2015", class: 6, shift: 2, phone: "9100000071", paid_fee: 1100, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
+            { name: "ലിയ്യാ  ഫാത്തിമ", reg: 608, father: "ഖലീൽ", dob: "27/10/2015", class: 6, shift: 2, phone: "9100000071", paid_fee: 1100, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ മെഹ്‌റ", reg: 609, father: "അഷ്റഫ്", dob: "17/02/2015", class: 6, shift: 2, phone: "9100000072", paid_fee: 1300, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ ഹിബ", reg: 613, father: "ഹംസ", dob: "18/12/2015", class: 6, shift: 2, phone: "9100000073", paid_fee: 1200, total_fee: 1800, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 7-ാം ക്ലാസ് (7th Class) - [ഷിഫ്റ്റ് 1]
             { name: "മുഹമ്മദ് സ്വബാഹ്", reg: 563, father: "Shahnawaz", dob: "04/10/2013", class: 7, shift: 1, phone: "9100000074", paid_fee: 2000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 48, "അഖീദ": 49 }, half: {}, annual: {} } },
             { name: "അബ്ദുല്ലാഹ് സെയ്ഫ്", reg: 584, father: "Zubair", dob: "24/12/2013", class: 7, shift: 1, phone: "9100000075", paid_fee: 1500, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 44, "അഖീദ": 42 }, half: {}, annual: {} } },
             { name: "മറിയം സുഹാ", reg: 565, father: "Haris", dob: "09/10/2013", class: 7, shift: 1, phone: "9100000076", paid_fee: 2000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 50, "അഖീദ": 50 }, half: {}, annual: {} } },
             { name: "ഫാത്തിമ ഹമീദ്", reg: 570, father: "Hameed", dob: "18/10/2013", class: 7, shift: 1, phone: "9100000077", paid_fee: 1000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 40, "അഖീദ": 39 }, half: {}, annual: {} } },
             { name: "ആയിഷ തമന്ന", reg: 571, father: "Sirajuddin", dob: "16/09/2013", class: 7, shift: 1, phone: "9100000078", paid_fee: 1200, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 46, "അഖീദ": 45 }, half: {}, annual: {} } },
             { name: "മറിയം ഫൈഹ", reg: 587, father: "Muhammad Kunju", dob: "19/05/2014", class: 7, shift: 1, phone: "9100000079", paid_fee: 2000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 47, "അഖീദ": 48 }, half: {}, annual: {} } },
-            { name: "അംന ഫാത്തിമ", reg: 588, father: "Sherif", dob: "27/08/2014", class: 7, shift: 1, phone: "9100000080", paid_fee: 1400, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 41, "അഖീദ": 43 }, half: {}, annual: {} } },
+            { name: "അംന  ഫാത്തിമ", reg: 588, father: "Sherif", dob: "27/08/2014", class: 7, shift: 1, phone: "9100000080", paid_fee: 1400, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 41, "അഖീദ": 43 }, half: {}, annual: {} } },
             { name: "സെബ മറിയം", reg: 589, father: "Zameel", dob: "30/08/2014", class: 7, shift: 1, phone: "9100000081", paid_fee: 1600, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 45, "അഖീദ": 44 }, half: {}, annual: {} } },
             { name: "സെല്ലാ ഷംസീർ", reg: 590, father: "Shamsir", dob: "26/03/2014", class: 7, shift: 1, phone: "9100000082", paid_fee: 2000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 43, "അഖീദ": 46 }, half: {}, annual: {} } },
             { name: "മെഹ്റ മുംതാസ്", reg: 639, father: "Muaaz", dob: "16/12/2013", class: 7, shift: 1, phone: "9100000083", paid_fee: 1100, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 38, "അഖീദ": 40 }, half: {}, annual: {} } },
-            { name: "മിൻഹാ ഫാത്തിമ", reg: 672, father: "Nooruddin", dob: "23/04/2014", class: 7, shift: 1, phone: "9100000084", paid_fee: 1300, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 42, "അഖീദ": 41 }, half: {}, annual: {} } },
+            { name: "മിൻഹാ ഫാത്തിമ", reg: 672, father: "Nooruddin", dob: "23/04/2014", class: 7, shift: 1, phone: "9100000084", paid_fee: 1300, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 42, "अഖീദ": 41 }, half: {}, annual: {} } },
             { name: "ഹാസിയ ഹംന", reg: 697, father: "Muhammad Hanif", dob: "09/08/2012", class: 7, shift: 1, phone: "9100000085", paid_fee: 2000, total_fee: 2000, marks: { quarter: { "തഫ്സീർ": 40, "അഖീദ": 41 }, half: {}, annual: {} } },
-
-            // 8-ാം ക്ലാസ് (8th Class) - [ഷിഫ്റ്റ് 2]
             { name: "മുഹമ്മദ് ഷെഹ്‌സാദ്", reg: 360, father: "Abdullah", dob: "04/06/2013", class: 8, shift: 2, phone: "9100000086", paid_fee: 1000, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുല്ലാഹ് അഷ്റഫ്", reg: 361, father: "Ashraf", dob: "10/10/2013", class: 8, shift: 2, phone: "9100000087", paid_fee: 2000, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് നസ്മിൽ", reg: 347, father: "Haris", dob: "20/07/2012", class: 8, shift: 2, phone: "9100000088", paid_fee: 1500, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
@@ -622,8 +634,6 @@
             { name: "ഫാത്തിമ മിസ്ന", reg: 368, father: "Abdul Nasar", dob: "02/06/2014", class: 8, shift: 2, phone: "9100000091", paid_fee: 1300, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ നുവൈറ", reg: 369, father: "Abdul Latif", dob: "21/02/2013", class: 8, shift: 2, phone: "9100000092", paid_fee: 2000, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആമിന ഷുസൈന", reg: 683, father: "Haris", dob: "12/10/2012", class: 8, shift: 2, phone: "9100000093", paid_fee: 1400, total_fee: 2000, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 9-ാം ക്ലാസ് (9th Class) - [ഷിഫ്റ്റ് 1]
             { name: "അഹ്സിം മിശാൽ", reg: 528, father: "Abdul Khader", dob: "11/05/2012", class: 9, shift: 1, phone: "9100000094", paid_fee: 2000, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുല്ലാഹ് സഈം", reg: 538, father: "Mohammed Jameel", dob: "11/06/2011", class: 9, shift: 1, phone: "9100000095", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അഹ്സൻ ഷാസിൽ", reg: 539, father: "Ashraf", dob: "30/12/2012", class: 9, shift: 1, phone: "9100000096", paid_fee: 1500, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
@@ -635,30 +645,24 @@
             { name: "ഫാത്തിമ KS", reg: 543, father: "Sajid", dob: "20/10/2012", class: 9, shift: 1, phone: "9100000102", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഖദീജ മിൻഹ", reg: 545, father: "Ahmad Muzammil", dob: "07/06/2012", class: 9, shift: 1, phone: "9100000103", paid_fee: 1600, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അഖീല", reg: 705, father: "Abu Nawaz", dob: "07/02/2010", class: 9, shift: 1, phone: "9100000104", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // 10-ാം ക്ലാസ് (10th Class) - [ഷിഫ്റ്റ് 2]
             { name: "നബീൽ ഇബ്രാഹിം", reg: 513, father: "Shahnavaz", dob: "28/11/2011", class: 10, shift: 2, phone: "9100000105", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് ഷംനാദ്", reg: 704, father: "Mohammed Sherif", dob: "05/03/2012", class: 10, shift: 2, phone: "9100000106", paid_fee: 1500, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "സനൂബിയ", reg: 525, father: "Zakariya", dob: "21/03/2012", class: 10, shift: 2, phone: "9100000107", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഷെസാ ഫാത്തിമ", reg: 529, father: "Shafi", dob: "19/03/2011", class: 10, shift: 2, phone: "9100000108", paid_fee: 2000, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഫാത്തിമ ഷാഹില", reg: 615, father: "Abdul Khader", dob: "24/07/2012", class: 10, shift: 2, phone: "9100000109", paid_fee: 2200, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ നജ", reg: 637, father: "Inayat", dob: "03/02/2010", class: 10, shift: 2, phone: "9100000110", paid_fee: 1800, total_fee: 2200, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // പ്ലസ് വൺ (+1 Class) - [ഷിഫ്റ്റ് 3]
-            { name: "മുഹമ്മദ് निहाल", reg: 486, father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", class: 11, shift: 3, phone: "9100000111", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
+            { name: "മുഹമ്മദ് നിഹാൽ", reg: 486, father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", class: 11, shift: 3, phone: "9100000111", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", reg: 487, father: "ഷാഫി", dob: "17/01/2009", class: 11, shift: 3, phone: "9100000112", paid_fee: 2000, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ജാസിം", reg: 514, father: "ഖാലിദ്", dob: "02/02/2011", class: 11, shift: 3, phone: "9100000113", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഷെസിൻ KS", reg: 542, father: "സാജിദ്", dob: "09/10/2010", class: 11, shift: 3, phone: "9100000114", paid_fee: 1800, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മഹ്ഫൂസ്", reg: 650, father: "ഇബ്രാഹിം", dob: "01/09/2010", class: 11, shift: 3, phone: "9100000115", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് സ്വഫ്വാൻ", reg: 712, father: "മുസമ്മിൽ", dob: "16/03/2011", class: 11, shift: 3, phone: "9100000116", paid_fee: 1500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ഫാത്തിമ", reg: 499, father: "ഇബ്രാഹിം", dob: "23/04/2009", class: 11, shift: 3, phone: "9100000117", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
-            { name: "ഖദീജ TA", reg: 518, father: "ഇബ്രാഹിം ഖലീൽ", dob: "05/10/2011", class: 11, shift: 3, phone: "9100000118", paid_fee: 2200, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
+            { name: "ഖദീജ TA", reg: 518, father: "Ibrahim Khalil", dob: "05/10/2011", class: 11, shift: 3, phone: "9100000118", paid_fee: 2200, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
             { name: "ആയിഷ മുൻദിറ", reg: 626, father: "ഇബ്രാഹിം", dob: "07/01/2011", class: 11, shift: 3, phone: "9100000119", paid_fee: 2500, total_fee: 2500, marks: { quarter: {}, half: {}, annual: {} } },
-
-            // പ്ലസ് ടു (+2 Class) - [ഷിഫ്റ്റ് 3]
             { name: "മുഹമ്മദ് ലുബൈബ്", reg: 574, father: "Muhyiddin", dob: "26/10/2010", class: 12, shift: 3, phone: "9100000120", paid_fee: 2500, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 48, "ഫറാഇള്": 47 }, half: {}, annual: {} } },
             { name: "മുഹമ്മദ് മിസാജ്", reg: 489, father: "അഹമ്മദ് മുസമ്മിൽ", dob: "18/07/2009", class: 12, shift: 3, phone: "9100000121", paid_fee: 2000, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 42, "ഫറാഇള്": 40 }, half: {}, annual: {} } },
-            { name: "HUദാ ഫാത്തിമ", reg: 492, father: "ഹാриസ്", dob: "10/11/2009", class: 12, shift: 3, phone: "9100000122", paid_fee: 2500, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 50, "ഫറാഇള്": 49 }, half: {}, annual: {} } },
+            { name: "ഹുദാ ഫാത്തിമ", reg: 492, father: "ഹാരിസ്", dob: "10/11/2009", class: 12, shift: 3, phone: "9100000122", paid_fee: 2500, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 50, "ഫറാഇള്": 49 }, half: {}, annual: {} } },
             { name: "ലൈല നസ്രിൻ", reg: 493, father: "അബ്ദുള്ള മുനീർ", dob: "19/06/2009", class: 12, shift: 3, phone: "9100000123", paid_fee: 2500, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 45, "ഫറാഇള്": 44 }, half: {}, annual: {} } },
             { name: "ആയിഷ നജ", reg: 494, father: "നവാസ്", dob: "24/07/2008", class: 12, shift: 3, phone: "9100000124", paid_fee: 1800, total_fee: 2500, marks: { quarter: { "അഖ്‌ലാഖ്": 40, "ഫറാഇള്": 38 }, half: {}, annual: {} } }
         ];
@@ -672,7 +676,7 @@
             committee: [
                 { id: 201, name: "ഷമീർ കെ. കെ.", role: "ജനറൽ സെക്രട്ടറി (GS)", phone: "919876543210", user: "secretary", pass: "6682" }
             ],
-            notices: [{ date: "12-06-2026", text: "പരീക്ഷാ സമയവിവരപ്പട്ടിക പുതുക്കിയിട്ടുണ്ട്." }],
+            notices: [{ date: "12-06-2026", text: "മദ്റസയിലെ അക്കാദമിക് പാനലുകൾ പ്രവർത്തനസജ്ജമാണ്." }],
             shift_holidays: { "all": false, "1": false, "2": false, "3": false, reason: "" },
             shift_timings: { "1": "6:30 - 8:30 AM", "2": "8:30 - 10:30 AM", "3": "7:00 - 9:00 PM" },
             shift_classes: { "1": [1, 3, 5, 7, 9], "2": [2, 4, 6, 8, 10], "3": [11, 12] },
@@ -742,7 +746,7 @@
                 localStorage.setItem("session_active_role", "committee"); localStorage.setItem("session_committee_id", cMatch.id); hydrateSessionStateOnLoad(); return;
             }
             const regNum = parseInt(u);
-            if (!isNaN(regNum) && p === "") {
+            if (!isNaN(regNum)) {
                 const sMatch = appData.students.find(s => s.reg === regNum);
                 if (sMatch) {
                     localStorage.setItem("session_active_role", "parent"); localStorage.setItem("session_parent_reg", regNum); hydrateSessionStateOnLoad(); return;
@@ -857,7 +861,7 @@
         function submitParentFeedbackDataSlot() {
             const t = document.getElementById("parent-feedback-target").value;
             const text = document.getElementById("parent-feedback-text").value.trim();
-            if(text) { appData.parent_feedbacks.unshift({ target: t, text, date: "12-06-2026", parent_reg: authenticatedParentRegNo }); persistStateToLocalStorage(); alert("അभिപ്രായം സമർപ്പിച്ചു."); }
+            if(text) { appData.parent_feedbacks.unshift({ target: t, text, date: "12-06-2026", parent_reg: authenticatedParentRegNo }); persistStateToLocalStorage(); alert("അഭ്പ്രായം സമർപ്പിച്ചു."); }
         }
 
         function loadUstadDashboardView() {
@@ -880,7 +884,7 @@
 
             if (appData.shift_holidays[sid] || appData.shift_holidays["all"]) {
                 alertCard.classList.remove("hidden");
-                document.getElementById("ustad-holiday-reason-label").innerText = `കാരണം: ${appData.shift_holidays.reason || "അവധി"}`;
+                document.getElementById("ustad-holiday-reason-label").innerText = `കാരണം: ${appData.shift_holidays.reason || "അവധ്"}`;
                 container.classList.add("blur-effect");
             } else {
                 alertCard.classList.add("hidden"); container.classList.remove("blur-effect");
@@ -1082,7 +1086,6 @@
         }
         function downloadSadharSystemBackupJson() { window.open("data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData))); }
 
-        // =================== 🏛️ മാനേജ്‌മെന്റ് പാനൽ ===================
         function renderCommitteeDashboardMetricsAndTables() {
             let paid = appData.students.reduce((sum,s)=>sum+(s.paid_fee||0), 0);
             let total = appData.students.length * (appData.global_annual_fee || 1500);
