@@ -1484,8 +1484,8 @@ const Teacher = {
           <span style="font-size:13.5px;">${U.esc(s.name)} <span class="muted" style="font-size:11.5px;">(Reg No: ${U.esc(s.reg)})</span></span>
         </div>
         <div style="display:flex; gap:6px;">
-          <button class="btn-small" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}')">ഹാജർ</button>
-          <button class="btn-small" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','absent','${cls}')">അസാന്നിധ്യം</button>
+          <button class="btn-small" id="btn-present-${s.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}')">Present</button>
+          <button class="btn-small" id="btn-absent-${s.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','absent','${cls}')">Absent</button>
         </div>
       </div>
       <div id="wa-absent-${s.id}"></div>`;
@@ -1517,11 +1517,19 @@ const Teacher = {
     } else {
       document.getElementById("wa-absent-"+studentId).innerHTML = "";
     }
-    App.refresh();
-    setTimeout(()=>{
-      const sel = document.getElementById("att-class");
-      if(sel) sel.value = cls;
-    },50);
+
+    // Update button highlight styles in place (avoid full re-render which would wipe the WhatsApp button)
+    const presentBtn = document.getElementById("btn-present-"+studentId);
+    const absentBtn = document.getElementById("btn-absent-"+studentId);
+    if(presentBtn && absentBtn){
+      if(status === 'present'){
+        presentBtn.style.background = "var(--moss)"; presentBtn.style.color = "#fff"; presentBtn.style.borderColor = "var(--moss)";
+        absentBtn.style.background = ""; absentBtn.style.color = ""; absentBtn.style.borderColor = "";
+      } else {
+        absentBtn.style.background = "var(--rose)"; absentBtn.style.color = "#fff"; absentBtn.style.borderColor = "var(--rose)";
+        presentBtn.style.background = ""; presentBtn.style.color = ""; presentBtn.style.borderColor = "";
+      }
+    }
   },
 
   // ---------- Fees ----------
@@ -1566,7 +1574,7 @@ const Teacher = {
         <label>ഇപ്പോൾ അടക്കുന്ന തുക (₹)</label>
         <input type="number" id="fee-amount" placeholder="0">
       </div>
-      <button class="primary-btn" onclick="Teacher.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
+      <button class="primary-btn" id="fee-collect-btn-${s.id}" onclick="Teacher.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
       <div id="fee-wa-${s.id}"></div>
     `;
   },
@@ -1584,16 +1592,31 @@ const Teacher = {
     DB.save();
 
     const msg = U.feeMessage(s, amount, date);
+    const balance = Math.max(DB.data.fees.annual - s.paidTotal, 0);
+
     document.getElementById("fee-wa-"+studentId).innerHTML = `
       <div class="divider"></div>
-      <p class="muted">₹${amount} ഫീസ് രേഖപ്പെടുത്തി. അറിയിപ്പ് അയക്കുക:</p>
-      <div class="btn-grid">
-        <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന്</button>
-        <button class="btn-wa" onclick='Teacher.sendToSecretary(${JSON.stringify(msg)})'>📩 ജനറൽ സെക്രട്ടറിക്ക്</button>
+      <div class="row">
+        <span class="muted">പുതിയ ആകെ അടച്ച തുക</span><strong>₹${s.paidTotal}</strong>
       </div>
+      <div class="row">
+        <span class="muted">പുതിയ ബാക്കി കുടിശ്ശിക</span><strong style="color:var(--rose);">₹${balance}</strong>
+      </div>
+      <p class="muted" style="margin-top:8px;">₹${amount} ഫീസ് രേഖപ്പെടുത്തി. രസീത് (Receipt) അയക്കുക:</p>
+      <div class="btn-grid">
+        <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് രസീത്</button>
+        <button class="btn-wa" onclick='Teacher.sendToSecretary(${JSON.stringify(msg)})'>📩 ജനറൽ സെക്രട്ടറിക്ക്</button>
+        <button class="btn-wa" onclick='Teacher.sendToManager(${JSON.stringify(msg)})'>📩 മാനേജർക്ക്</button>
+      </div>
+      <button class="outline-btn btn-block" style="margin-top:8px;" onclick="Teacher.lookupFeeStudent()">പുതിയ പേയ്മെന്റ് / പുതിയ കുട്ടി</button>
     `;
+    // Disable the collect button and amount field to avoid double-submission, but keep the info visible
+    const amtInput = document.getElementById("fee-amount");
+    const collectBtn = document.getElementById("fee-collect-btn-"+studentId);
+    if(amtInput) amtInput.disabled = true;
+    if(collectBtn) collectBtn.disabled = true;
+
     U.toast(`₹${amount} ഫീസ് രേഖപ്പെടുത്തി`);
-    Teacher.lookupFeeStudent();
   },
 
   sendToSecretary(msg){
@@ -1603,6 +1626,15 @@ const Teacher = {
       U.sendWhatsApp(sec.phone, msg);
     } else {
       U.toast("ജനറൽ സെക്രട്ടറിയുടെ നമ്പർ ലഭ്യമല്ല");
+    }
+  },
+
+  sendToManager(msg){
+    const mgr = DB.data.auth.staff.find(s=>s.role==='manager');
+    if(mgr && mgr.phone){
+      U.sendWhatsApp(mgr.phone, msg);
+    } else {
+      U.toast("മാനേജരുടെ നമ്പർ ലഭ്യമല്ല");
     }
   },
 
