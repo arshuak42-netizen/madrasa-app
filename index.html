@@ -1,9 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="ml">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട് — അറ്റൻഡൻസ്, ഫീസ്, റിസൾട്ട്, അറിയിപ്പുകൾ എന്നിവ നിയന്ത്രിക്കാനുള്ള ആപ്പ്.">
+<meta name="theme-color" content="#0F4C4C">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്</title>
 <style>
 :root{
@@ -775,6 +780,19 @@ const Sadhar = {
     // ---- 10. Sadhar profile editor ----
     html += this.accordionItem("acc-profile", 10, "സദർ പ്രൊഫൈൽ എഡിറ്റർ (Sadhar Profile Editor)", `
       <div class="form-group">
+        <label>പേര് (Name)</label>
+        <input type="text" id="sadhar-name" value="${U.esc(data.auth.sadhar.name || '')}" placeholder="സദറിന്റെ പേര്">
+      </div>
+      <div class="form-group">
+        <label>ഫോൺ നമ്പർ (Phone)</label>
+        <input type="text" id="sadhar-phone" value="${U.esc(data.auth.sadhar.phone || '')}">
+      </div>
+      <div class="form-group">
+        <label>ഫോട്ടോ (Photo)</label>
+        <input type="file" accept="image/*" id="sadhar-photo">
+        ${data.auth.sadhar.photo ? `<div style="margin-top:8px;">${U.photoOrInitial(data.auth.sadhar.photo, data.auth.sadhar.name || 'സദർ')}</div>` : ""}
+      </div>
+      <div class="form-group">
         <label>പുതിയ യൂസർനെയിം (New Username)</label>
         <input type="text" id="sadhar-username" value="${U.esc(data.auth.sadhar.username)}">
       </div>
@@ -852,8 +870,17 @@ const Sadhar = {
     }
     DB.data.auth.sadhar.username = username;
     DB.data.auth.sadhar.password = password;
-    DB.save();
-    U.toast("പ്രൊഫൈൽ സേവ് ചെയ്തു");
+    DB.data.auth.sadhar.name = document.getElementById("sadhar-name").value.trim();
+    DB.data.auth.sadhar.phone = document.getElementById("sadhar-phone").value.trim();
+    const fileInput = document.getElementById("sadhar-photo");
+    const finish = ()=>{
+      DB.save();
+      U.toast("പ്രൊഫൈൽ സേവ് ചെയ്തു");
+      App.refresh();
+    };
+    if(fileInput.files[0]){
+      U.readImageFile(fileInput.files[0], (data64)=>{ DB.data.auth.sadhar.photo = data64; finish(); });
+    } else finish();
   },
 
   downloadBackup(){
@@ -1107,6 +1134,13 @@ const Sadhar = {
         <select id="f-cls-${id}">${CLASS_LIST.map(c=>`<option value="${c}" ${c===s.cls?'selected':''}>${CLASS_LABELS[c]}</option>`).join("")}</select>
       </div>
       <div class="form-group"><label>രജിസ്റ്റർ നമ്പർ</label><input type="text" id="f-reg-${id}" value="${U.esc(s.reg)}"></div>
+      <div class="form-group"><label>ആൺ / പെൺ</label>
+        <select id="f-gender-${id}">
+          <option value="" ${!s.gender?'selected':''}>തിരഞ്ഞെടുക്കുക</option>
+          <option value="m" ${s.gender==='m'?'selected':''}>ആൺകുട്ടി (മകൻ)</option>
+          <option value="f" ${s.gender==='f'?'selected':''}>പെൺകുട്ടി (മകൾ)</option>
+        </select>
+      </div>
       <div class="form-group"><label>ജനനത്തീയതി</label><input type="text" id="f-dob-${id}" value="${U.esc(s.dob)}"></div>
       <div class="form-group"><label>രക്ഷിതാവിന്റെ പേര്</label><input type="text" id="f-parent-${id}" value="${U.esc(s.parentName)}"></div>
       <div class="form-group"><label>ഫോൺ നമ്പർ</label><input type="text" id="f-phone-${id}" value="${U.esc(s.phone)}"></div>
@@ -1123,6 +1157,7 @@ const Sadhar = {
     s.name = document.getElementById(`f-name-${id}`).value.trim();
     s.cls = document.getElementById(`f-cls-${id}`).value;
     s.reg = document.getElementById(`f-reg-${id}`).value.trim();
+    s.gender = document.getElementById(`f-gender-${id}`).value;
     s.dob = document.getElementById(`f-dob-${id}`).value.trim();
     s.parentName = document.getElementById(`f-parent-${id}`).value.trim();
     s.phone = document.getElementById(`f-phone-${id}`).value.trim();
@@ -1159,7 +1194,11 @@ const Sadhar = {
       <div class="form-group"><label>റോൾ</label>
         <select id="new-staff-role">
           <option value="teacher">അധ്യാപകൻ (Teacher)</option>
-          <option value="committee">കമ്മിറ്റി / ഭാരവാഹി (Committee)</option>
+          <option value="president">പ്രസിഡണ്ട് (President)</option>
+          <option value="gs">ജനറൽ സെക്രട്ടറി (General Secretary)</option>
+          <option value="joint-secretary">ജോയിന്റ് സെക്രട്ടറി (Joint Secretary)</option>
+          <option value="manager">മാനേജർ (Manager)</option>
+          <option value="committee">മറ്റ് കമ്മിറ്റി അംഗം (Committee Member)</option>
         </select>
       </div>
       <div class="form-group"><label>ഫോൺ നമ്പർ</label><input type="text" id="new-staff-phone"></div>
@@ -1181,7 +1220,7 @@ const Sadhar = {
           ${U.photoOrInitial(st.photo, st.name)}
           <div style="flex:1; margin-left:10px;">
             <div class="card-title" style="margin-bottom:2px;">${U.esc(st.name)}</div>
-            <div class="muted">${st.role==='teacher'?'അധ്യാപകൻ':'കമ്മിറ്റി'} • ${U.esc(st.phone)}</div>
+            <div class="muted">${App.ROLE_LABELS[st.role] || st.role} • ${U.esc(st.phone)}</div>
             <div class="muted">യൂസർനെയിം: ${U.esc(st.username)}</div>
             ${st.classes && st.classes.length ? `<div class="muted">ക്ലാസുകൾ: ${st.classes.map(c=>CLASS_LABELS[c]).join(", ")}</div>`:""}
           </div>
@@ -1238,6 +1277,11 @@ const Sadhar = {
     box.innerHTML = `
       <div class="divider"></div>
       <div class="form-group"><label>പേര്</label><input type="text" id="es-name-${id}" value="${U.esc(st.name)}"></div>
+      <div class="form-group"><label>റോൾ</label>
+        <select id="es-role-${id}">
+          ${Object.entries(App.ROLE_LABELS).map(([val,lab])=>`<option value="${val}" ${st.role===val?'selected':''}>${lab}</option>`).join("")}
+        </select>
+      </div>
       <div class="form-group"><label>ഫോൺ നമ്പർ</label><input type="text" id="es-phone-${id}" value="${U.esc(st.phone)}"></div>
       <div class="form-group"><label>യൂസർനെയിം</label><input type="text" id="es-username-${id}" value="${U.esc(st.username)}"></div>
       <div class="form-group"><label>പാസ്‌വേർഡ്</label><input type="text" id="es-password-${id}" value="${U.esc(st.password)}"></div>
@@ -1254,6 +1298,7 @@ const Sadhar = {
   saveStaff(id){
     const st = DB.data.auth.staff.find(s=>s.id===id);
     st.name = document.getElementById(`es-name-${id}`).value.trim();
+    st.role = document.getElementById(`es-role-${id}`).value;
     st.phone = document.getElementById(`es-phone-${id}`).value.trim();
     st.username = document.getElementById(`es-username-${id}`).value.trim();
     st.password = document.getElementById(`es-password-${id}`).value.trim();
@@ -1436,7 +1481,7 @@ const Teacher = {
       html += `<div class="row" style="padding:6px 0;">
         <div style="display:flex; align-items:center; gap:8px; flex:1;">
           ${U.photoOrInitial(s.photo, s.name)}
-          <span style="font-size:13.5px;">${U.esc(s.name)}</span>
+          <span style="font-size:13.5px;">${U.esc(s.name)} <span class="muted" style="font-size:11.5px;">(Reg No: ${U.esc(s.reg)})</span></span>
         </div>
         <div style="display:flex; gap:6px;">
           <button class="btn-small" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}')">ഹാജർ</button>
@@ -1465,7 +1510,8 @@ const Teacher = {
 
     if(status === 'absent'){
       const s = U.studentById(studentId);
-      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, നിങ്ങളുടെ കുട്ടി ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ഇന്ന് ${U.todayDisplay()} മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+      const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
+      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ഇന്ന് (${U.todayDisplay()}) മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${teacherName}, ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
       document.getElementById("wa-absent-"+studentId).innerHTML =
         `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
     } else {
@@ -1551,7 +1597,8 @@ const Teacher = {
   },
 
   sendToSecretary(msg){
-    const sec = DB.data.auth.staff.find(s=>s.role==='committee');
+    let sec = DB.data.auth.staff.find(s=>s.role==='gs');
+    if(!sec) sec = DB.data.auth.staff.find(s=>App.COMMITTEE_ROLES.includes(s.role));
     if(sec && sec.phone){
       U.sendWhatsApp(sec.phone, msg);
     } else {
@@ -2125,7 +2172,7 @@ const Parent = {
     }
 
     // committee
-    const committee = DB.data.auth.staff.filter(t=>t.role==='committee');
+    const committee = DB.data.auth.staff.filter(t=>App.COMMITTEE_ROLES.includes(t.role));
     if(committee.length){
       html += `<div class="section-title">കമ്മിറ്റി</div>`;
       committee.forEach(c=>{
@@ -2134,6 +2181,7 @@ const Parent = {
             ${U.photoOrInitial(c.photo, c.name)}
             <div style="flex:1; margin-left:10px;">
               <div style="font-weight:700;">${U.esc(c.name)}</div>
+              <div class="muted">${App.ROLE_LABELS[c.role] || 'കമ്മിറ്റി'}</div>
               <div class="muted">${U.esc(c.phone)}</div>
             </div>
             <a class="link-btn" href="tel:${c.phone}">വിളിക്കുക</a>
@@ -2207,8 +2255,20 @@ const Parent = {
 // ===========================================================
 const Public = {
 
+  currentTab: 'results',
+
   render(){
-    let html = `<h2 style="margin-bottom:14px;">റിസൾട്ട് കാണുക (View Results)</h2>`;
+    let html = `<div class="btn-grid" style="margin-bottom:14px;">
+      <button class="${this.currentTab==='results'?'primary-btn':'outline-btn'}" onclick="Public.switchTab('results')">📋 റിസൾട്ട്</button>
+      <button class="${this.currentTab==='staff'?'primary-btn':'outline-btn'}" onclick="Public.switchTab('staff')">👨‍🏫 സ്റ്റാഫ് / കമ്മിറ്റി</button>
+    </div>`;
+
+    if(this.currentTab === 'staff'){
+      html += this.renderStaffDirectory();
+      return html;
+    }
+
+    html += `<h2 style="margin-bottom:14px;">റിസൾട്ട് കാണുക (View Results)</h2>`;
     const exams = Object.keys(DB.data.results);
     if(exams.length===0){
       return html + `<div class="empty-state"><div class="emoji">📋</div>റിസൾട്ടുകൾ ഇതുവരെ പ്രസിദ്ധീകരിച്ചിട്ടില്ല</div>`;
@@ -2272,6 +2332,77 @@ const Public = {
       </table></div>`;
 
     return html;
+  },
+
+  switchTab(tab){
+    this.currentTab = tab;
+    document.getElementById("public-container").innerHTML = this.render();
+  },
+
+  renderStaffDirectory(){
+    let html = `<h2 style="margin-bottom:14px;">സ്റ്റാഫ് & കമ്മിറ്റി (Staff & Committee)</h2>`;
+
+    // Committee first, in a sensible order
+    const roleOrder = ["president","gs","joint-secretary","manager","committee"];
+    const committee = DB.data.auth.staff
+      .filter(s => App.COMMITTEE_ROLES.includes(s.role))
+      .sort((a,b)=> roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role));
+
+    if(committee.length){
+      html += `<div class="section-title">കമ്മിറ്റി / ഭാരവാഹികൾ</div>`;
+      committee.forEach(c=>{
+        html += `<div class="card">
+          <div class="row">
+            ${U.photoOrInitial(c.photo, c.name)}
+            <div style="flex:1; margin-left:10px;">
+              <div style="font-weight:700;">${U.esc(c.name)}</div>
+              <div class="muted">${App.ROLE_LABELS[c.role] || 'കമ്മിറ്റി'}</div>
+              <div class="muted">${U.esc(c.phone)}</div>
+            </div>
+            ${c.phone ? `<a class="link-btn" href="tel:${c.phone}">വിളിക്കുക</a>` : ""}
+          </div>
+        </div>`;
+      });
+    }
+
+    // Sadhar
+    html += `<div class="section-title">സദർ</div>`;
+    html += `<div class="card">
+      <div class="row">
+        ${U.photoOrInitial(DB.data.auth.sadhar.photo || "", DB.data.auth.sadhar.name || "സദർ")}
+        <div style="flex:1; margin-left:10px;">
+          <div style="font-weight:700;">${U.esc(DB.data.auth.sadhar.name || "സദർ")}</div>
+          <div class="muted">സദർ (Sadhar)</div>
+          ${DB.data.auth.sadhar.phone ? `<div class="muted">${U.esc(DB.data.auth.sadhar.phone)}</div>` : ""}
+        </div>
+        ${DB.data.auth.sadhar.phone ? `<a class="link-btn" href="tel:${DB.data.auth.sadhar.phone}">വിളിക്കുക</a>` : ""}
+      </div>
+    </div>`;
+
+    // Teachers
+    const teachers = DB.data.auth.staff.filter(s=>s.role==='teacher');
+    if(teachers.length){
+      html += `<div class="section-title">അധ്യാപകർ (Teachers)</div>`;
+      teachers.forEach(t=>{
+        html += `<div class="card">
+          <div class="row">
+            ${U.photoOrInitial(t.photo, t.name)}
+            <div style="flex:1; margin-left:10px;">
+              <div style="font-weight:700;">${U.esc(t.name)}</div>
+              <div class="muted">${t.classes && t.classes.length ? t.classes.map(c=>CLASS_LABELS[c]).join(", ") : "അധ്യാപകൻ"}</div>
+              <div class="muted">${U.esc(t.phone)}</div>
+            </div>
+            ${t.phone ? `<a class="link-btn" href="tel:${t.phone}">വിളിക്കുക</a>` : ""}
+          </div>
+        </div>`;
+      });
+    }
+
+    if(committee.length===0 && teachers.length===0){
+      html += `<div class="empty-state"><div class="emoji">👨‍🏫</div>ഇതുവരെ ജീവനക്കാരെ ചേർത്തിട്ടില്ല</div>`;
+    }
+
+    return html;
   }
 };
 
@@ -2282,8 +2413,22 @@ const Public = {
 // ===========================================================
 
 const App = {
-  user: null, // {type:'sadhar'|'teacher'|'committee'|'parent', ...}
+  user: null, // {type:'sadhar'|'teacher'|'president'|'gs'|'joint-secretary'|'manager'|'committee'|'parent', ...}
   currentTab: null,
+
+  COMMITTEE_ROLES: ["president","gs","joint-secretary","manager","committee"],
+  ROLE_LABELS: {
+    teacher: "അധ്യാപകൻ (Teacher)",
+    president: "പ്രസിഡണ്ട് (President)",
+    gs: "ജനറൽ സെക്രട്ടറി (General Secretary)",
+    "joint-secretary": "ജോയിന്റ് സെക്രട്ടറി (Joint Secretary)",
+    manager: "മാനേജർ (Manager)",
+    committee: "കമ്മിറ്റി അംഗം (Committee Member)"
+  },
+
+  isCommittee(type){
+    return this.COMMITTEE_ROLES.includes(type);
+  },
 
   init(){
     DB.load();
@@ -2318,7 +2463,7 @@ const App = {
     let label = "";
     if(u.type === "sadhar") label = "സദർ പാനൽ";
     else if(u.type === "teacher") label = (u.name || "അധ്യാപകൻ") + " — ടീച്ചർ പാനൽ";
-    else if(u.type === "committee") label = (u.name || "കമ്മിറ്റി") + " — മാനേജ്മെന്റ്";
+    else if(this.isCommittee(u.type)) label = (u.name || "കമ്മിറ്റി") + " — " + (this.ROLE_LABELS[u.type] || "മാനേജ്മെന്റ്");
     else if(u.type === "parent") label = (u.studentName || "") + " — രക്ഷിതാവ്";
     document.getElementById("topbar-role").textContent = label;
   },
@@ -2337,4 +2482,254 @@ const App = {
     const data = DB.data;
 
     // 1. Sadhar
-    if(username === data.auth.s
+    if(username === data.auth.sadhar.username && password === data.auth.sadhar.password){
+      this.user = { type: "sadhar" };
+      sessionStorage.setItem("madrasa_session", JSON.stringify(this.user));
+      this.showApp();
+      return;
+    }
+
+    // 2. Staff (teacher/committee)
+    const staff = data.auth.staff.find(s => s.username === username && s.password === password);
+    if(staff){
+      this.user = { type: staff.role, id: staff.id, name: staff.name, classes: staff.classes || [] };
+      sessionStorage.setItem("madrasa_session", JSON.stringify(this.user));
+      this.showApp();
+      return;
+    }
+
+    // 3. Parent (username = student reg no)
+    const student = data.students.find(s => s.reg === username);
+    if(student && student.parentPassword && student.parentPassword === password){
+      this.user = { type: "parent", studentId: student.id, studentReg: student.reg, studentName: student.name };
+      sessionStorage.setItem("madrasa_session", JSON.stringify(this.user));
+      this.showApp();
+      return;
+    }
+    // Allow default parent password = reg no itself if not yet set
+    if(student && !student.parentPassword && password === student.reg){
+      this.user = { type: "parent", studentId: student.id, studentReg: student.reg, studentName: student.name };
+      sessionStorage.setItem("madrasa_session", JSON.stringify(this.user));
+      this.showApp();
+      return;
+    }
+
+    errBox.textContent = "യൂസർനെയിമോ പാസ്‌വേർഡോ തെറ്റാണ്. വീണ്ടും ശ്രമിക്കുക.";
+  },
+
+  logout(){
+    sessionStorage.removeItem("madrasa_session");
+    this.user = null;
+    document.getElementById("login-username").value = "";
+    document.getElementById("login-password").value = "";
+    document.getElementById("login-error").textContent = "";
+    this.showLogin();
+  },
+
+  showPublicResults(){
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("public-screen").style.display = "block";
+    document.getElementById("public-container").innerHTML = Public.render();
+  },
+
+  hidePublicResults(){
+    document.getElementById("public-screen").style.display = "none";
+    document.getElementById("login-screen").style.display = "flex";
+  },
+
+  defaultTab(){
+    if(this.user.type === "sadhar") return "sadhar-home";
+    if(this.user.type === "teacher") return "teacher-attendance";
+    if(this.isCommittee(this.user.type)) return "committee-dashboard";
+    if(this.user.type === "parent") return "parent-home";
+    return "sadhar-home";
+  },
+
+  // ---------- Navigation ----------
+  navConfig(){
+    if(this.user.type === "sadhar"){
+      return [
+        {id:"sadhar-home", icon:"🏛️", label:"പാനൽ"},
+        {id:"sadhar-students", icon:"🧒", label:"കുട്ടികൾ"},
+        {id:"sadhar-staff", icon:"👥", label:"ജീവനക്കാർ"},
+        {id:"sadhar-announce", icon:"📢", label:"അറിയിപ്പ്"},
+        {id:"sadhar-complaints", icon:"💬", label:"പരാതികൾ"}
+      ];
+    }
+    if(this.user.type === "teacher"){
+      return [
+        {id:"teacher-attendance", icon:"✅", label:"ഹാജർ"},
+        {id:"teacher-fees", icon:"💰", label:"ഫീസ്"},
+        {id:"teacher-review", icon:"📝", label:"റിവ്യൂ"},
+        {id:"teacher-suggestions", icon:"💬", label:"നിർദ്ദേശം"},
+        {id:"teacher-more", icon:"☰", label:"കൂടുതൽ"}
+      ];
+    }
+    if(this.isCommittee(this.user.type)){
+      return [
+        {id:"committee-dashboard", icon:"📊", label:"ഡാഷ്ബോർഡ്"},
+        {id:"committee-fees", icon:"💰", label:"ഫീസ്"},
+        {id:"committee-staff", icon:"👥", label:"ജീവനക്കാർ"}
+      ];
+    }
+    if(this.user.type === "parent"){
+      return [
+        {id:"parent-home", icon:"🏠", label:"ഹോം"},
+        {id:"parent-fees", icon:"💰", label:"ഫീസ്"},
+        {id:"parent-results", icon:"📋", label:"റിസൾട്ട്"},
+          {id:"parent-staff", icon:"👨‍🏫", label:"സ്റ്റാഫ്"},
+          {id:"parent-profile", icon:"⚙️", label:"പ്രൊഫൈൽ"}
+        ];
+    }
+    return [];
+  },
+
+  renderNav(){
+    const nav = document.getElementById("bottom-nav");
+    nav.innerHTML = "";
+    this.navConfig().forEach(item => {
+      const btn = document.createElement("button");
+      btn.className = "nav-btn";
+      btn.id = "navbtn-" + item.id;
+      btn.innerHTML = `<span class="nav-icon">${item.icon}</span><span>${item.label}</span>`;
+      btn.onclick = () => this.goTo(item.id);
+      nav.appendChild(btn);
+    });
+  },
+
+  goTo(tabId){
+    this.currentTab = tabId;
+    // update nav active state
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    const navBtn = document.getElementById("navbtn-" + tabId);
+    if(navBtn) navBtn.classList.add("active");
+
+    const container = document.getElementById("app-container");
+    container.innerHTML = Renderers.render(tabId);
+    window.scrollTo(0,0);
+  },
+
+  refresh(){
+    this.goTo(this.currentTab);
+  }
+};
+
+// ===========================================================
+// Helper utilities
+// ===========================================================
+const U = {
+  toast(msg, ms=2200){
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(()=> el.classList.remove("show"), ms);
+  },
+
+  uid(prefix="ID"){
+    return prefix + Date.now().toString(36) + Math.floor(Math.random()*1000);
+  },
+
+  todayStr(){
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
+  },
+
+  todayDisplay(){
+    const d = new Date();
+    return String(d.getDate()).padStart(2,'0') + "/" + String(d.getMonth()+1).padStart(2,'0') + "/" + d.getFullYear();
+  },
+
+  // "മകൻ" / "മകൾ" based on gender field, fallback to "മകൻ/മകൾ"
+  childWord(student){
+    if(student.gender === 'm') return "മകൻ";
+    if(student.gender === 'f') return "മകൾ";
+    return "മകൻ/മകൾ";
+  },
+
+  esc(str){
+    if(str === undefined || str === null) return "";
+    return String(str).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  },
+
+  studentById(id){
+    return DB.data.students.find(s => s.id === id);
+  },
+  studentByReg(reg){
+    return DB.data.students.find(s => s.reg === reg);
+  },
+  studentsByClass(cls){
+    return DB.data.students.filter(s => s.cls === cls);
+  },
+
+  classShift(cls){
+    for(const sk of [1,2,3]){
+      if(DB.data.shifts[sk].classes.includes(cls)) return sk;
+    }
+    return null;
+  },
+
+  shiftHoliday(shiftKey){
+    const h = DB.data.holidays;
+    if(h["all"] && h["all"].active) return h["all"];
+    if(h[String(shiftKey)] && h[String(shiftKey)].active) return h[String(shiftKey)];
+    return null;
+  },
+
+  initials(name){
+    if(!name) return "?";
+    return name.trim().charAt(0);
+  },
+
+  photoOrInitial(photo, name, cls="photo-circle"){
+    if(photo){
+      return `<img src="${photo}" class="${cls}" alt="">`;
+    }
+    return `<div class="${cls}">${U.esc(U.initials(name))}</div>`;
+  },
+
+  // WhatsApp link opener
+  sendWhatsApp(phone, message){
+    let p = (phone || "").replace(/\D/g,"");
+    if(p.length === 10) p = "91" + p;
+    const url = `https://wa.me/${p}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  },
+
+  readImageFile(file, callback){
+    const reader = new FileReader();
+    reader.onload = (e) => callback(e.target.result);
+    reader.readAsDataURL(file);
+  },
+
+  // Generate fee message
+  feeMessage(student, paidNow, dateStr){
+    const totalPaid = student.paidTotal;
+    const annual = DB.data.fees.annual;
+    const balance = Math.max(annual - totalPaid, 0);
+    const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
+    return `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ / ജനറൽ സെക്രട്ടറി, ${CLASS_LABELS[student.cls] || student.cls} ക്ലാസ്സിൽ പഠിക്കുന്ന ${student.name} (Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ് അടച്ചിട്ടുണ്ട്. ഇത് ${teacherName} (ക്ലാസ്സ് അധ്യാപകൻ) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}. നന്ദി. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+  },
+
+  // accordion toggle
+  toggleAccordion(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const wasOpen = el.classList.contains("open");
+    el.classList.toggle("open");
+    const body = el.querySelector(".accordion-body");
+    if(!wasOpen){
+      body.style.maxHeight = body.scrollHeight + "px";
+    } else {
+      body.style.maxHeight = "0px";
+    }
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => App.init());
+
+</script>
+</body>
+</html>
