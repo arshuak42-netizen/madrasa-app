@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട് — അറ്റൻഡൻസ്, ഫീസ്, റിസൾട്ട്, അറിയിപ്പുകൾ എന്നിവ നിയന്ത്രിക്കാനുള്ള ആപ്പ്.">
+<meta name="description" content="മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട് — അറ്റൻഡൻസ്, ഫീസ്, റിസൾട്ട്, അറിയിപ്പുകൾ">
 <meta name="theme-color" content="#0F4C4C">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -201,6 +201,13 @@ input,select,textarea{font-family:inherit; font-size:16px;}
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus{border-color:var(--moss);}
 .form-group textarea{resize:vertical; min-height:70px;}
 .btn-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.month-grid{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;}
+.month-chip{
+  display:flex; align-items:center; gap:6px;
+  border:1.5px solid var(--line); border-radius:9px;
+  padding:8px 10px; font-size:12.5px; background:#fff;
+}
+.month-chip input{margin:0;}
 .chip-grid{display:flex; flex-wrap:wrap; gap:6px;}
 .chip{
   padding:7px 12px; border-radius:999px; border:1.5px solid var(--line);
@@ -384,6 +391,24 @@ const CLASS_LABELS = {
   "5":"5-ാം ക്ലാസ്", "6":"6-ാം ക്ലാസ്", "7":"7-ാം ക്ലാസ്", "8":"8-ാം ക്ലാസ്",
   "9":"9-ാം ക്ലാസ്", "10":"10-ാം ക്ലാസ്", "+1":"പ്ലസ് വൺ", "+2":"പ്ലസ് ടു"
 };
+
+// Academic year months: June (2026) to March (2027). key = "YYYY-MM"
+const ACADEMIC_MONTHS = [
+  {key:"2026-04", label:"ഏപ്രിൽ 2026"},
+  {key:"2026-05", label:"മെയ് 2026"},
+  {key:"2026-06", label:"ജൂൺ 2026"},
+  {key:"2026-07", label:"ജൂലൈ 2026"},
+  {key:"2026-08", label:"ഓഗസ്റ്റ് 2026"},
+  {key:"2026-09", label:"സെപ്റ്റംബർ 2026"},
+  {key:"2026-10", label:"ഒക്ടോബർ 2026"},
+  {key:"2026-11", label:"നവംബർ 2026"},
+  {key:"2026-12", label:"ഡിസംബർ 2026"},
+  {key:"2027-01", label:"ജനുവരി 2027"},
+  {key:"2027-02", label:"ഫെബ്രുവരി 2027"},
+  {key:"2027-03", label:"മാർച്ച് 2027"}
+];
+const MONTH_LABELS = Object.fromEntries(ACADEMIC_MONTHS.map(m=>[m.key, m.label]));
+const ATTENDANCE_MIN_DATE = "2026-03-29"; // Madrasa started March 29 2026
 
 // ---- Seed student list (124 students) ----
 const SEED_STUDENTS = [
@@ -579,6 +604,9 @@ function buildDefaultData(){
     holidays: {
       // shiftKey ('1'/'2'/'3'/'all') -> {active:bool, reason:string, date:string}
     },
+    holidayLog: [
+      // {date:'YYYY-MM-DD', target:'1'/'2'/'3'/'all', reason:string} - historical record
+    ],
     attendance: {
       // dateStr -> { studentId: 'present'/'absent', staffId: 'present'/'absent' }
     },
@@ -622,6 +650,9 @@ const DB = {
       const raw = localStorage.getItem(STORAGE_KEY);
       if(raw){
         this.data = JSON.parse(raw);
+        // Migrations for fields added after initial release
+        if(!this.data.holidayLog) this.data.holidayLog = [];
+        if(!this.data.fees) this.data.fees = { monthly:100, annual:1000 };
       } else {
         this.data = buildDefaultData();
         initShiftClasses(this.data);
@@ -667,6 +698,7 @@ const Renderers = {
 
       // Teacher
       case "teacher-attendance": return Teacher.renderAttendance();
+      case "teacher-monthly": return Teacher.renderMonthly();
       case "teacher-fees": return Teacher.renderFees();
       case "teacher-review": return Teacher.renderReview();
       case "teacher-suggestions": return Teacher.renderSuggestions();
@@ -976,8 +1008,30 @@ const Sadhar = {
       return;
     }
     DB.data.holidays[target] = { active:true, reason, date: U.todayStr() };
+    if(!DB.data.holidayLog) DB.data.holidayLog = [];
+    DB.data.holidayLog.push({ date: U.todayStr(), target, reason });
+
+    // Clear today's attendance for affected shift(s) so teachers can re-take it after holiday ends
+    const today = U.todayStr();
+    if(DB.data.attendance[today]){
+      const affectedShifts = (target === "all") ? [1,2,3] : [parseInt(target)];
+      DB.data.students.forEach(s=>{
+        const sh = U.classShift(s.cls);
+        if(affectedShifts.includes(sh)){
+          delete DB.data.attendance[today][s.id];
+        }
+      });
+      DB.data.auth.staff.forEach(st=>{
+        if(st.role !== 'teacher') return;
+        const teacherShifts = (st.classes || []).map(c=>U.classShift(c)).filter(Boolean);
+        if(teacherShifts.some(sh=>affectedShifts.includes(sh))){
+          delete DB.data.attendance[today][st.id];
+        }
+      });
+    }
+
     DB.save();
-    U.toast("അവധി പ്രഖ്യാപിച്ചു");
+    U.toast("അവധി പ്രഖ്യാപിച്ചു. ഇന്നത്തെ ഹാജർ ക്ലിയർ ചെയ്തു.");
     App.refresh();
     setTimeout(()=> U.toggleAccordion("acc-holiday"), 50);
     setTimeout(()=> U.toggleAccordion("acc-holiday"), 60);
@@ -1327,7 +1381,14 @@ const Sadhar = {
   renderAnnounce(){
     let html = `<h2 style="margin-bottom:14px;">പൊതു അറിയിപ്പുകൾ (Announcements)</h2>`;
     html += `<div class="card">
-      <div class="form-group"><label>അറിയിപ്പ് / സന്ദേശം</label><textarea id="ann-text" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea></div>
+      <div class="form-group"><label>അറിയിപ്പ് / സന്ദേശം (ടൈപ്പ് ചെയ്യുക)</label>
+        <textarea id="ann-text" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>📎 ഫോട്ടോ / ഓഡിയോ / വീഡിയോ (ഐച്ഛികം)</label>
+        <input type="file" id="ann-media" accept="image/*,audio/*,video/*">
+        <div class="muted" style="margin-top:4px; font-size:12px;">⚠️ ഫോട്ടോ/ഓഡിയോ/വീഡിയോ ആപ്പിൽ കാണിക്കും. WhatsApp-ൽ text message ആദ്യം send ചെയ്ത ശേഷം media manually share ചെയ്യാം.</div>
+      </div>
       <div class="form-group"><label>ലക്ഷ്യം (Target)</label>
         <select id="ann-target">
           <option value="all">എല്ലാ കുട്ടികളും (All Students)</option>
@@ -1343,9 +1404,20 @@ const Sadhar = {
     const anns = DB.data.announcements.slice().reverse();
     anns.forEach(a => {
       let targetLabel = a.target === "all" ? "എല്ലാവരും" : `ഷിഫ്റ്റ് ${a.target}`;
+      let mediaHtml = "";
+      if(a.mediaType && a.mediaData){
+        if(a.mediaType.startsWith("image/")){
+          mediaHtml = `<img src="${a.mediaData}" style="max-width:100%;border-radius:8px;margin-bottom:8px;">`;
+        } else if(a.mediaType.startsWith("audio/")){
+          mediaHtml = `<audio controls style="width:100%;margin-bottom:8px;"><source src="${a.mediaData}" type="${a.mediaType}"></audio>`;
+        } else if(a.mediaType.startsWith("video/")){
+          mediaHtml = `<video controls style="max-width:100%;border-radius:8px;margin-bottom:8px;"><source src="${a.mediaData}" type="${a.mediaType}"></video>`;
+        }
+      }
       html += `<div class="card">
         <div class="row"><span class="pill">${targetLabel}</span><span class="muted">${a.date}</span></div>
         <p style="margin:8px 0 10px;">${U.esc(a.text)}</p>
+        ${mediaHtml}
         <button class="btn-wa" onclick="Sadhar.sendBroadcast('${a.id}')">📩 WhatsApp അയക്കാൻ ലിസ്റ്റ് കാണുക</button>
         <div id="bc-list-${a.id}"></div>
         <div style="margin-top:8px;"><button class="btn-del" onclick="Sadhar.deleteAnnouncement('${a.id}')">നീക്കം ചെയ്യുക</button></div>
@@ -1361,10 +1433,21 @@ const Sadhar = {
     const text = document.getElementById("ann-text").value.trim();
     const target = document.getElementById("ann-target").value;
     if(!text){ U.toast("അറിയിപ്പ് ടൈപ്പ് ചെയ്യുക"); return; }
-    DB.data.announcements.push({ id: U.uid("ANN"), text, target, date: U.todayDisplay() });
-    DB.save();
-    U.toast("അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു");
-    App.refresh();
+    const mediaInput = document.getElementById("ann-media");
+    const file = mediaInput && mediaInput.files[0];
+    const doSave = (mediaData, mediaType) => {
+      const ann = { id: U.uid("ANN"), text, target, date: U.todayDisplay() };
+      if(mediaData){ ann.mediaData = mediaData; ann.mediaType = mediaType; }
+      DB.data.announcements.push(ann);
+      DB.save();
+      U.toast("അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു");
+      App.refresh();
+    };
+    if(file){
+      U.readImageFile(file, (data64) => doSave(data64, file.type));
+    } else {
+      doSave(null, null);
+    }
   },
 
   deleteAnnouncement(id){
@@ -1443,16 +1526,25 @@ const Teacher = {
       </select>
     </div>`;
 
+    const todayStr = U.todayStr();
+    const minDate = ATTENDANCE_MIN_DATE;
+    html += `<div class="form-group">
+      <label>തീയതി (ഹാജർ എടുക്കാൻ / കാണാൻ)</label>
+      <input type="date" id="att-date" min="${minDate}" max="${todayStr}" value="${Teacher._selDate || todayStr}" onchange="Teacher._selDate=this.value; App.refresh()">
+    </div>`;
+
     const selClass = document.getElementById("att-class") ? document.getElementById("att-class").value : classes[0];
     Teacher._selClass = selClass;
+    const selDate = document.getElementById("att-date") ? document.getElementById("att-date").value : (Teacher._selDate || todayStr);
+    Teacher._selDate = selDate;
 
     const shiftKey = U.classShift(selClass);
-    const holiday = U.shiftHoliday(shiftKey);
+    const holiday = (selDate === todayStr) ? U.shiftHoliday(shiftKey) : null;
 
     if(holiday){
       html += `<div class="blur-box">
         <div class="blurred">
-          ${this.attendanceListHtml(selClass, true)}
+          ${this.attendanceListHtml(selClass, selDate, true)}
         </div>
         <div class="blur-overlay">
           <div>
@@ -1464,17 +1556,23 @@ const Teacher = {
       return html;
     }
 
-    html += this.attendanceListHtml(selClass, false);
+    html += this.attendanceListHtml(selClass, selDate, false);
+
+    // Monthly summary link
+    html += `<div class="divider"></div>
+      <button class="outline-btn btn-block" onclick="App.goTo('teacher-monthly')">📅 മാസം തിരിച്ചുള്ള ഹാജർ സംഗ്രഹം</button>`;
+
     return html;
   },
 
-  attendanceListHtml(cls, disabled){
+  attendanceListHtml(cls, dateStr, disabled){
     const students = U.studentsByClass(cls);
-    const today = U.todayStr();
-    const att = DB.data.attendance[today] || {};
+    const att = DB.data.attendance[dateStr] || {};
+    const isToday = (dateStr === U.todayStr());
+    const displayDate = U.displayDateFromStr(dateStr);
 
     let html = `<div class="card">
-      <div class="card-title">${CLASS_LABELS[cls]} — ${U.todayDisplay()}</div>`;
+      <div class="card-title">${CLASS_LABELS[cls]} — ${displayDate}</div>`;
 
     students.forEach(s=>{
       const status = att[s.id];
@@ -1484,34 +1582,36 @@ const Teacher = {
           <span style="font-size:13.5px;">${U.esc(s.name)} <span class="muted" style="font-size:11.5px;">(Reg No: ${U.esc(s.reg)})</span></span>
         </div>
         <div style="display:flex; gap:6px;">
-          <button class="btn-small" id="btn-present-${s.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}')">Present</button>
-          <button class="btn-small" id="btn-absent-${s.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','absent','${cls}')">Absent</button>
+          <button class="btn-small" id="btn-present-${s.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}','${dateStr}')">Present</button>
+          <button class="btn-small" id="btn-absent-${s.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','absent','${cls}','${dateStr}')">Absent</button>
         </div>
       </div>
       <div id="wa-absent-${s.id}"></div>`;
     });
     if(students.length===0) html += `<p class="muted">ഈ ക്ലാസ്സിൽ കുട്ടികൾ ഇല്ല</p>`;
+    if(!isToday) html += `<p class="muted" style="margin-top:8px;">⚠️ പഴയ തീയതിയിലെ ഹാജർ തിരുത്തുകയോ ചേർക്കുകയോ ചെയ്യുന്നു.</p>`;
     html += `</div>`;
     return html;
   },
 
-  markAttendance(studentId, status, cls){
-    const today = U.todayStr();
-    if(!DB.data.attendance[today]) DB.data.attendance[today] = {};
-    DB.data.attendance[today][studentId] = status;
+  markAttendance(studentId, status, cls, dateStr){
+    if(!DB.data.attendance[dateStr]) DB.data.attendance[dateStr] = {};
+    DB.data.attendance[dateStr][studentId] = status;
 
-    // Auto-mark teacher present for this shift
-    const shiftKey = U.classShift(cls);
-    const teacher = App.user;
-    if(teacher.id){
-      DB.data.attendance[today][teacher.id] = "present";
+    // Auto-mark teacher present for this shift (only for today's date)
+    if(dateStr === U.todayStr()){
+      const teacher = App.user;
+      if(teacher.id){
+        DB.data.attendance[dateStr][teacher.id] = "present";
+      }
     }
     DB.save();
 
     if(status === 'absent'){
       const s = U.studentById(studentId);
       const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
-      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ഇന്ന് (${U.todayDisplay()}) മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${teacherName}, ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+      const dateDisplay = U.displayDateFromStr(dateStr);
+      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${teacherName}, ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
       document.getElementById("wa-absent-"+studentId).innerHTML =
         `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
     } else {
@@ -1546,16 +1646,47 @@ const Teacher = {
   },
 
   lookupFeeStudent(){
-    const reg = document.getElementById("fee-reg").value.trim();
+    const reg = (document.getElementById("fee-reg")||{}).value||"";
     const infoBox = document.getElementById("fee-student-info");
-    if(!reg){ infoBox.innerHTML=""; return; }
-    const s = U.studentByReg(reg);
+    if(!reg.trim()){ infoBox.innerHTML=""; return; }
+    const s = U.studentByReg(reg.trim());
     if(!s){
       infoBox.innerHTML = `<p class="muted" style="margin-top:8px;">കുട്ടിയെ കണ്ടെത്താനായില്ല</p>`;
       return;
     }
+    infoBox.innerHTML = Teacher.feeStudentHtml(s);
+  },
+
+  feeStudentHtml(s){
     const balance = Math.max(DB.data.fees.annual - s.paidTotal, 0);
-    infoBox.innerHTML = `
+    const payHist = (s.payments||[]).slice().reverse();
+
+    let histHtml = "";
+    if(payHist.length){
+      histHtml = `<div class="divider"></div>
+        <div class="card-title" style="font-size:14px; margin-bottom:8px;">📋 ഫീസ് ഹിസ്റ്ററി (Payment History)</div>`;
+      payHist.forEach((p,revIdx)=>{
+        const idx = (s.payments.length - 1) - revIdx;
+        const monthsText = (p.months&&p.months.length) ? p.months.map(mk=>MONTH_LABELS[mk]||mk).join(", ") : "—";
+        const receiptMsg = U.feeMessage(s, p.amount, p.date, p.months||[]);
+        histHtml += `<div class="card" style="margin-bottom:8px; background:#f8f5ef;">
+          <div class="row" style="margin-bottom:4px;">
+            <span style="font-weight:700;">₹${p.amount}</span>
+            <span class="muted" style="font-size:12px;">${p.date}</span>
+          </div>
+          <div class="muted" style="font-size:12px; margin-bottom:8px;">മാസം: ${monthsText}</div>
+          <div class="btn-grid">
+            <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(receiptMsg)})'>📩 രക്ഷിതാവ്</button>
+            <button class="btn-wa" onclick='Teacher.sendToSecretary(${JSON.stringify(receiptMsg)})'>📩 GS</button>
+            <button class="btn-wa" onclick='Teacher.sendToManager(${JSON.stringify(receiptMsg)})'>📩 മാനേജർ</button>
+            <button class="btn-small" onclick="Teacher.startEditPayment('${s.id}',${idx})">✏️ തിരുത്ത്</button>
+          </div>
+          <div id="fee-edit-area-${s.id}-${idx}"></div>
+        </div>`;
+      });
+    }
+
+    return `
       <div class="divider"></div>
       <div class="row">
         ${U.photoOrInitial(s.photo, s.name)}
@@ -1570,72 +1701,109 @@ const Teacher = {
       <div class="row">
         <span class="muted">ബാക്കി കുടിശ്ശിക</span><strong style="color:var(--rose);">₹${balance}</strong>
       </div>
-      <div class="form-group" style="margin-top:12px;">
+      <div class="divider"></div>
+      <div class="card-title" style="font-size:14px; margin-bottom:8px;">➕ പുതിയ ഫീസ് ചേർക്കുക</div>
+      <div class="form-group">
+        <label>ഏത് മാസത്തെ ഫീസ്? (ഒന്നോ അധികമോ)</label>
+        <div class="month-grid">
+          ${ACADEMIC_MONTHS.map(m=>`
+            <label class="month-chip">
+              <input type="checkbox" value="${m.key}" class="fee-month-cb">
+              <span>${m.label}</span>
+            </label>
+          `).join("")}
+        </div>
+      </div>
+      <div class="form-group">
         <label>ഇപ്പോൾ അടക്കുന്ന തുക (₹)</label>
         <input type="number" id="fee-amount" placeholder="0">
       </div>
-      <button class="primary-btn" id="fee-collect-btn-${s.id}" onclick="Teacher.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
-      <div id="fee-wa-${s.id}"></div>
+      <button class="primary-btn btn-block" onclick="Teacher.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
+      ${histHtml}
     `;
   },
 
+  startEditPayment(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const p = s.payments[paymentIndex];
+    const areaId = `fee-edit-area-${studentId}-${paymentIndex}`;
+    const area = document.getElementById(areaId);
+    if(!area) return;
+    area.innerHTML = `
+      <div class="divider"></div>
+      <div style="font-weight:700; margin-bottom:8px;">✏️ പേയ്മെന്റ് തിരുത്തുക</div>
+      <div class="form-group">
+        <label>തുക (₹)</label>
+        <input type="number" id="edit-fee-amount-${studentId}-${paymentIndex}" value="${p.amount}">
+      </div>
+      <div class="form-group">
+        <label>മാസങ്ങൾ</label>
+        <div class="month-grid">
+          ${ACADEMIC_MONTHS.map(m=>`
+            <label class="month-chip">
+              <input type="checkbox" value="${m.key}" class="edit-month-${studentId}-${paymentIndex}" ${(p.months||[]).includes(m.key)?'checked':''}>
+              <span>${m.label}</span>
+            </label>
+          `).join("")}
+        </div>
+      </div>
+      <div class="btn-grid">
+        <button class="primary-btn" onclick="Teacher.savePaymentEdit('${studentId}',${paymentIndex})">✅ സേവ്</button>
+        <button class="btn-danger" onclick="Teacher.deletePayment('${studentId}',${paymentIndex})">🗑️ ഡിലീറ്റ്</button>
+      </div>
+    `;
+  },
+
+  savePaymentEdit(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const newAmount = parseFloat((document.getElementById(`edit-fee-amount-${studentId}-${paymentIndex}`)||{}).value||"0");
+    if(!newAmount||newAmount<=0){ U.toast("ശരിയായ തുക നൽകുക"); return; }
+    const months = Array.from(document.querySelectorAll(`.edit-month-${studentId}-${paymentIndex}`))
+      .filter(cb=>cb.checked).map(cb=>cb.value);
+    const oldAmount = s.payments[paymentIndex].amount;
+    s.paidTotal = s.paidTotal - oldAmount + newAmount;
+    s.payments[paymentIndex].amount = newAmount;
+    s.payments[paymentIndex].months = months;
+    DB.save();
+    U.toast("പേയ്മെന്റ് തിരുത്തി");
+    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
+  },
+
+  deletePayment(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const removed = s.payments.splice(paymentIndex,1)[0];
+    s.paidTotal = Math.max(0, s.paidTotal - removed.amount);
+    DB.save();
+    U.toast("പേയ്മെന്റ് നീക്കം ചെയ്തു");
+    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
+  },
+
   collectFee(studentId){
-    const amount = parseFloat(document.getElementById("fee-amount").value);
-    if(!amount || amount <= 0){
-      U.toast("തുക നൽകുക");
-      return;
-    }
+    const amount = parseFloat((document.getElementById("fee-amount")||{}).value||"0");
+    if(!amount||amount<=0){ U.toast("തുക നൽകുക"); return; }
+    const months = Array.from(document.querySelectorAll('.fee-month-cb'))
+      .filter(cb=>cb.checked).map(cb=>cb.value);
     const s = U.studentById(studentId);
     s.paidTotal += amount;
     const date = U.todayDisplay();
-    s.payments.push({ amount, date });
+    s.payments.push({ amount, date, months });
     DB.save();
-
-    const msg = U.feeMessage(s, amount, date);
-    const balance = Math.max(DB.data.fees.annual - s.paidTotal, 0);
-
-    document.getElementById("fee-wa-"+studentId).innerHTML = `
-      <div class="divider"></div>
-      <div class="row">
-        <span class="muted">പുതിയ ആകെ അടച്ച തുക</span><strong>₹${s.paidTotal}</strong>
-      </div>
-      <div class="row">
-        <span class="muted">പുതിയ ബാക്കി കുടിശ്ശിക</span><strong style="color:var(--rose);">₹${balance}</strong>
-      </div>
-      <p class="muted" style="margin-top:8px;">₹${amount} ഫീസ് രേഖപ്പെടുത്തി. രസീത് (Receipt) അയക്കുക:</p>
-      <div class="btn-grid">
-        <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് രസീത്</button>
-        <button class="btn-wa" onclick='Teacher.sendToSecretary(${JSON.stringify(msg)})'>📩 ജനറൽ സെക്രട്ടറിക്ക്</button>
-        <button class="btn-wa" onclick='Teacher.sendToManager(${JSON.stringify(msg)})'>📩 മാനേജർക്ക്</button>
-      </div>
-      <button class="outline-btn btn-block" style="margin-top:8px;" onclick="Teacher.lookupFeeStudent()">പുതിയ പേയ്മെന്റ് / പുതിയ കുട്ടി</button>
-    `;
-    // Disable the collect button and amount field to avoid double-submission, but keep the info visible
-    const amtInput = document.getElementById("fee-amount");
-    const collectBtn = document.getElementById("fee-collect-btn-"+studentId);
-    if(amtInput) amtInput.disabled = true;
-    if(collectBtn) collectBtn.disabled = true;
-
-    U.toast(`₹${amount} ഫീസ് രേഖപ്പെടുത്തി`);
+    U.toast(`₹${amount} ഫീസ് രേഖപ്പെടുത്തി ✅`);
+    // Re-render info box (now includes payment history with resend buttons)
+    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
   },
 
   sendToSecretary(msg){
     let sec = DB.data.auth.staff.find(s=>s.role==='gs');
     if(!sec) sec = DB.data.auth.staff.find(s=>App.COMMITTEE_ROLES.includes(s.role));
-    if(sec && sec.phone){
-      U.sendWhatsApp(sec.phone, msg);
-    } else {
-      U.toast("ജനറൽ സെക്രട്ടറിയുടെ നമ്പർ ലഭ്യമല്ല");
-    }
+    if(sec&&sec.phone){ U.sendWhatsApp(sec.phone, msg); }
+    else U.toast("ജനറൽ സെക്രട്ടറിയുടെ നമ്പർ ലഭ്യമല്ല");
   },
 
   sendToManager(msg){
     const mgr = DB.data.auth.staff.find(s=>s.role==='manager');
-    if(mgr && mgr.phone){
-      U.sendWhatsApp(mgr.phone, msg);
-    } else {
-      U.toast("മാനേജരുടെ നമ്പർ ലഭ്യമല്ല");
-    }
+    if(mgr&&mgr.phone){ U.sendWhatsApp(mgr.phone, msg); }
+    else U.toast("മാനേജരുടെ നമ്പർ ലഭ്യമല്ല");
   },
 
   // ---------- Review box ----------
@@ -1648,7 +1816,35 @@ const Teacher = {
       </div>
       <div id="rev-student-info"></div>
     </div>`;
+
+    // Recently sent reviews by this teacher (for their classes), with delete option
+    const myClasses = this.myClasses();
+    const myReviews = DB.data.reviews.filter(r=>{
+      const st = U.studentByReg(r.studentReg);
+      return st && myClasses.includes(st.cls);
+    }).slice().reverse().slice(0,10);
+
+    if(myReviews.length){
+      html += `<div class="section-title">അടുത്തിടെ അയച്ച റിവ്യൂകൾ</div>`;
+      myReviews.forEach(r=>{
+        const st = U.studentByReg(r.studentReg);
+        html += `<div class="card">
+          <div class="row"><span class="card-title" style="margin-bottom:0;">${st?U.esc(st.name):'അജ്ഞാതൻ'} (${r.studentReg})</span><span class="muted">${r.date}</span></div>
+          <p style="margin:8px 0;">${U.esc(r.text)}</p>
+          <button class="btn-del" onclick="Teacher.deleteReview('${r.id}')">ഡിലീറ്റ് ചെയ്യുക</button>
+        </div>`;
+      });
+    }
+
     return html;
+  },
+
+  deleteReview(id){
+    const idx = DB.data.reviews.findIndex(r=>r.id===id);
+    if(idx>-1) DB.data.reviews.splice(idx,1);
+    DB.save();
+    U.toast("നീക്കം ചെയ്തു");
+    App.refresh();
   },
 
   lookupReviewStudent(){
@@ -1815,6 +2011,156 @@ const Teacher = {
     box.innerHTML = `<div class="divider"></div>
       <div style="font-weight:700; margin-bottom:6px;">${U.esc(tt.examName)}</div>
       <pre style="white-space:pre-wrap; font-family:inherit; font-size:13px; margin:0;">${U.esc(tt.content)}</pre>`;
+  },
+
+  // ---------- Monthly attendance summary ----------
+  renderMonthly(){
+    let html = `<h2 style="margin-bottom:14px;">📅 മാസം തിരിച്ചുള്ള ഹാജർ സംഗ്രഹം</h2>`;
+    html += `<button class="outline-btn btn-block" style="margin-bottom:12px;" onclick="App.goTo('teacher-attendance')">← ഹാജർ പുസ്തകത്തിലേക്ക്</button>`;
+
+    const classes = this.myClasses();
+    if(classes.length === 0) return html;
+
+    html += `<div class="form-group">
+      <label>ക്ലാസ്സ്</label>
+      <select id="mon-class" onchange="App.refresh()">
+        ${classes.map(c=>`<option value="${c}" ${Teacher._monClass===c?'selected':''}>${CLASS_LABELS[c]}</option>`).join("")}
+      </select>
+    </div>`;
+
+    const selClass = document.getElementById("mon-class") ? document.getElementById("mon-class").value : classes[0];
+    Teacher._monClass = selClass;
+
+    html += `<div class="form-group">
+      <label>മാസം</label>
+      <select id="mon-month" onchange="App.refresh()">
+        ${ACADEMIC_MONTHS.map(m=>`<option value="${m.key}" ${Teacher._monMonth===m.key?'selected':''}>${m.label}</option>`).join("")}
+      </select>
+    </div>`;
+
+    const selMonth = document.getElementById("mon-month") ? document.getElementById("mon-month").value : ACADEMIC_MONTHS[0].key;
+    Teacher._monMonth = selMonth;
+
+    const dates = U.datesInMonth(selMonth);
+    if(dates.length === 0){
+      html += `<div class="empty-state"><div class="emoji">📅</div>ഈ മാസം ഇതുവരെ ആരംഭിച്ചിട്ടില്ല</div>`;
+      return html;
+    }
+
+    // Holiday dates for this class's shift in this month
+    const holidayDates = dates.filter(d=>U.isHolidayForClass(d, selClass));
+    if(holidayDates.length){
+      html += `<div class="card">
+        <div class="card-title">ഈ മാസത്തെ അവധി ദിവസങ്ങൾ</div>
+        ${holidayDates.map(d=>{
+          const h = (DB.data.holidayLog||[]).find(x=>x.date===d && (x.target==='all' || parseInt(x.target)===U.classShift(selClass)));
+          return `<div class="row" style="font-size:13px;"><span>${U.displayDateFromStr(d)}</span><span class="muted">${h?U.esc(h.reason):''}</span></div>`;
+        }).join("")}
+      </div>`;
+    }
+
+    const students = U.studentsByClass(selClass);
+    const workingDates = dates.filter(d=>!holidayDates.includes(d));
+
+    html += `<div class="card">
+      <div class="card-title">${CLASS_LABELS[selClass]} — ${ACADEMIC_MONTHS.find(m=>m.key===selMonth).label}</div>
+      <div class="muted" style="margin-bottom:8px;">പ്രവർത്തി ദിവസങ്ങൾ: ${workingDates.length}</div>
+      <table style="width:100%; font-size:12.5px;">
+        <tr><th style="text-align:right;">കുട്ടി</th><th>ഹാജർ</th><th>അസാന്നിധ്യം</th><th>രേഖപ്പെടുത്താത്തത്</th></tr>
+        ${students.map(s=>{
+          let present=0, absent=0, none=0;
+          workingDates.forEach(d=>{
+            const status = (DB.data.attendance[d]||{})[s.id];
+            if(status==='present') present++;
+            else if(status==='absent') absent++;
+            else none++;
+          });
+          return `<tr>
+            <td style="text-align:right;">${U.esc(s.name)} <span class="muted">(${s.reg})</span></td>
+            <td style="text-align:center; color:var(--moss); font-weight:700;">${present}</td>
+            <td style="text-align:center; color:var(--rose); font-weight:700;">${absent}</td>
+            <td style="text-align:center; color:#aaa;">${none}</td>
+          </tr>`;
+        }).join("")}
+      </table>
+    </div>`;
+
+    return html;
+  },
+
+  // ---------- Monthly Attendance Summary ----------
+  renderMonthly(){
+    const classes = this.myClasses();
+    const allDates = Object.keys(DB.data.attendance).sort();
+    const monthsPresent = {};
+    allDates.forEach(d=>{ const m=d.slice(0,7); monthsPresent[m]=true; });
+    const availMonths = Object.keys(monthsPresent).sort();
+
+    let selMonth = Teacher._selMonth || (availMonths.length ? availMonths[availMonths.length-1] : "");
+    if(!selMonth && ACADEMIC_MONTHS.length) selMonth = ACADEMIC_MONTHS[0].key;
+
+    let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <button class="outline-btn" onclick="App.goTo('teacher-attendance')">← തിരികെ</button>
+      <h2>📅 മാസം തിരിച്ചുള്ള ഹാജർ</h2>
+    </div>`;
+
+    html += `<div class="form-group">
+      <label>മാസം തിരഞ്ഞെടുക്കുക</label>
+      <select id="monthly-month" onchange="Teacher._selMonth=this.value; App.goTo('teacher-monthly')">
+        ${ACADEMIC_MONTHS.map(m=>`<option value="${m.key}" ${selMonth===m.key?'selected':''}>${m.label}</option>`).join("")}
+      </select>
+    </div>`;
+
+    if(!selMonth){ html += `<p class="muted">ഈ മാസത്തിലെ ഹാജർ ഡേറ്റ ഇല്ല</p>`; return html; }
+
+    const curVal = document.getElementById("monthly-month");
+    const theMonth = (curVal ? curVal.value : selMonth) || selMonth;
+    Teacher._selMonth = theMonth;
+
+    // Get all dates in this month that have attendance data
+    const monthDates = allDates.filter(d=>d.startsWith(theMonth)).sort();
+
+    html += `<div class="card">
+      <div class="card-title">ഹാജർ ഉള്ള ദിവസങ്ങൾ: ${monthDates.length}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+        ${monthDates.map(d=>`<span class="pill">${U.displayDateFromStr(d)}</span>`).join("") || '<span class="muted">ഡേറ്റ ഇല്ല</span>'}
+      </div>
+    </div>`;
+
+    // Per-class summary
+    classes.forEach(cls=>{
+      const students = U.studentsByClass(cls);
+      if(!students.length) return;
+
+      html += `<div class="card">
+        <div class="card-title">${CLASS_LABELS[cls]}</div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr style="text-align:center;border-bottom:1px solid var(--line);">
+            <th style="text-align:left;padding:6px 4px;">കുട്ടി</th>
+            <th style="padding:6px 4px;">ഹാജർ</th>
+            <th style="padding:6px 4px;">അസാന്നിധ്യം</th>
+            <th style="padding:6px 4px;">-</th>
+          </tr>`;
+
+      students.forEach(s=>{
+        let p=0, ab=0, blank=0;
+        monthDates.forEach(d=>{
+          const st = (DB.data.attendance[d]||{})[s.id];
+          if(st==='present') p++;
+          else if(st==='absent') ab++;
+          else blank++;
+        });
+        html += `<tr style="border-bottom:1px solid #f0ebe0;">
+          <td style="padding:6px 4px;">${U.esc(s.name)}<br><span class="muted" style="font-size:11px;">Reg:${s.reg}</span></td>
+          <td style="text-align:center;color:var(--moss);font-weight:700;">${p}</td>
+          <td style="text-align:center;color:var(--rose);font-weight:700;">${ab}</td>
+          <td style="text-align:center;color:#aaa;">${blank}</td>
+        </tr>`;
+      });
+      html += `</table></div>`;
+    });
+
+    return html;
   }
 };
 
@@ -1902,10 +2248,33 @@ const Committee = {
         <div class="row">
           <span class="muted">ബാക്കി</span><strong style="color:var(--rose);">₹${Math.max(expected-collected,0)}</strong>
         </div>
+        <button class="outline-btn btn-block" style="margin-top:8px;" onclick="Committee.toggleMonthlyFee('${cls}')">മാസം തിരിച്ച് കാണുക</button>
+        <div id="monthly-fee-${cls}"></div>
       </div>`;
     });
 
     return html;
+  },
+
+  // Show, for each month, how many students in this class have paid (have that month checked in any payment)
+  toggleMonthlyFee(cls){
+    const box = document.getElementById("monthly-fee-"+cls);
+    if(box.innerHTML !== ""){ box.innerHTML=""; return; }
+    const students = U.studentsByClass(cls);
+    let html = `<div class="divider"></div>`;
+    ACADEMIC_MONTHS.forEach(m=>{
+      const paidStudents = students.filter(s=>
+        (s.payments||[]).some(p=>(p.months||[]).includes(m.key))
+      );
+      html += `<div class="row" style="font-size:12.5px; padding:3px 0;">
+        <span>${m.label}</span>
+        <span class="pill ${paidStudents.length>0?'green':''}">${paidStudents.length} / ${students.length}</span>
+      </div>`;
+    });
+    if(students.some(s=>(s.payments||[]).some(p=>!p.months || p.months.length===0))){
+      html += `<p class="muted" style="margin-top:6px;">⚠️ ചില പേയ്മെന്റുകളിൽ മാസം രേഖപ്പെടുത്തിയിട്ടില്ല.</p>`;
+    }
+    box.innerHTML = html;
   },
 
   renderStaff(){
@@ -1918,33 +2287,50 @@ const Committee = {
       return html;
     }
 
+    // Month selector
+    html += `<div class="form-group">
+      <label>മാസം</label>
+      <select id="staff-att-month" onchange="App.refresh()">
+        ${ACADEMIC_MONTHS.map(m=>`<option value="${m.key}" ${Committee._staffMonth===m.key?'selected':''}>${m.label}</option>`).join("")}
+      </select>
+    </div>`;
+    const selMonth = document.getElementById("staff-att-month") ? document.getElementById("staff-att-month").value : ACADEMIC_MONTHS[ACADEMIC_MONTHS.length-1].key;
+    Committee._staffMonth = selMonth;
+    const monthDates = U.datesInMonth(selMonth);
+
     teachers.forEach(t=>{
-      // count attendance points across all dates
-      let points = 0;
-      const dates = Object.keys(data.attendance).sort();
-      let records = [];
-      dates.forEach(date=>{
-        const status = data.attendance[date][t.id];
-        if(status){
-          records.push({date, status});
-          if(status==='present') points++;
-        }
+      const teacherShifts = Array.from(new Set((t.classes||[]).map(c=>U.classShift(c)).filter(Boolean)));
+      const shiftLabel = teacherShifts.length ? teacherShifts.map(sh=>`ഷിഫ്റ്റ് ${sh}`).join(", ") : "ഷിഫ്റ്റ് നൽകിയിട്ടില്ല";
+
+      let present=0, absent=0;
+      const records = [];
+      monthDates.forEach(date=>{
+        // working day if at least one of teacher's shifts was not on holiday that day
+        const workingShifts = teacherShifts.filter(sh => !((data.holidayLog||[]).some(h=>h.date===date && (h.target==='all' || parseInt(h.target)===sh))));
+        if(workingShifts.length === 0) return; // holiday for all of teacher's shifts
+        const status = (data.attendance[date]||{})[t.id];
+        if(status === 'present'){ present++; records.push({date, status:'present'}); }
+        else { absent++; records.push({date, status:'absent'}); }
       });
+
       html += `<div class="card">
         <div class="row">
           ${U.photoOrInitial(t.photo, t.name)}
           <div style="flex:1; margin-left:10px;">
             <div class="card-title" style="margin-bottom:2px;">${U.esc(t.name)}</div>
-            <div class="muted">${t.classes && t.classes.length ? t.classes.map(c=>CLASS_LABELS[c]).join(", ") : ''}</div>
+            <div class="muted">${shiftLabel} • ${t.classes && t.classes.length ? t.classes.map(c=>CLASS_LABELS[c]).join(", ") : ''}</div>
           </div>
-          <span class="pill green">${points} പോയിന്റ്</span>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <span class="pill green">ഹാജർ: ${present}</span>
+          <span class="pill red">അസാന്നിധ്യം: ${absent}</span>
         </div>
         ${records.length ? `
         <div class="divider"></div>
         <table>
           <tr><th>തീയതി</th><th>നില</th></tr>
-          ${records.slice(-10).reverse().map(r=>`<tr><td>${r.date}</td><td>${r.status==='present'?'<span class="pill green">ഹാജർ</span>':'<span class="pill red">അസാന്നിധ്യം</span>'}</td></tr>`).join("")}
-        </table>` : `<p class="muted" style="margin-top:8px;">ഹാജർ രേഖകൾ ഇല്ല</p>`}
+          ${records.slice(-10).reverse().map(r=>`<tr><td>${U.displayDateFromStr(r.date)}</td><td>${r.status==='present'?'<span class="pill green">ഹാജർ</span>':'<span class="pill red">അസാന്നിധ്യം</span>'}</td></tr>`).join("")}
+        </table>` : `<p class="muted" style="margin-top:8px;">ഈ മാസം ഇതുവരെ പ്രവർത്തി ദിവസങ്ങൾ ഇല്ല</p>`}
       </div>`;
     });
 
@@ -2052,6 +2438,21 @@ const Parent = {
       <button class="primary-btn" onclick="Parent.sendFeedback()">സമർപ്പിക്കുക</button>
     </div>`;
 
+    // My sent feedback / complaints (with delete option)
+    const mySadhar = DB.data.complaints.toSadhar.filter(c=>c.studentReg===s.reg).map(c=>({...c, _list:'toSadhar', _label:'സദർ'}));
+    const myTeacher = DB.data.complaints.toTeacher.filter(c=>c.studentReg===s.reg).map(c=>({...c, _list:'toTeacher', _label:'ക്ലാസ്സ് അധ്യാപകൻ'}));
+    const mine = mySadhar.concat(myTeacher).sort((a,b)=> (a.date<b.date?1:-1));
+    if(mine.length){
+      html += `<div class="section-title">എന്റെ അയച്ച അഭിപ്രായങ്ങൾ</div>`;
+      mine.forEach(c=>{
+        html += `<div class="card">
+          <div class="row"><span class="pill">${c._label}</span><span class="muted">${c.date}</span></div>
+          <p style="margin:8px 0;">${U.esc(c.text)}</p>
+          <button class="btn-del" onclick="Parent.deleteFeedback('${c._list}','${c.id}')">ഡിലീറ്റ് ചെയ്യുക</button>
+        </div>`;
+      });
+    }
+
     return html;
   },
 
@@ -2068,6 +2469,16 @@ const Parent = {
     DB.save();
     document.getElementById("fb-text").value = "";
     U.toast("അഭിപ്രായം സമർപ്പിച്ചു");
+    App.refresh();
+  },
+
+  deleteFeedback(list, id){
+    const arr = DB.data.complaints[list];
+    const idx = arr.findIndex(c=>c.id===id);
+    if(idx>-1) arr.splice(idx,1);
+    DB.save();
+    U.toast("നീക്കം ചെയ്തു");
+    App.refresh();
   },
 
   // ---------- Fees ----------
@@ -2199,6 +2610,22 @@ const Parent = {
             <div class="muted">${U.esc(classTeacher.phone)}</div>
           </div>
           <a class="link-btn" href="tel:${classTeacher.phone}">വിളിക്കുക</a>
+        </div>
+      </div>`;
+    }
+
+    // Sadhar
+    const sadhar = DB.data.auth.sadhar;
+    if(sadhar && (sadhar.name || sadhar.phone)){
+      html += `<div class="card">
+        <div class="card-title">സദർ</div>
+        <div class="row">
+          ${U.photoOrInitial(sadhar.photo || "", sadhar.name || "സദർ")}
+          <div style="flex:1; margin-left:10px;">
+            <div style="font-weight:700;">${U.esc(sadhar.name || "സദർ")}</div>
+            ${sadhar.phone ? `<div class="muted">${U.esc(sadhar.phone)}</div>` : ""}
+          </div>
+          ${sadhar.phone ? `<a class="link-btn" href="tel:${sadhar.phone}">വിളിക്കുക</a>` : ""}
         </div>
       </div>`;
     }
@@ -2672,6 +3099,32 @@ const U = {
     return String(d.getDate()).padStart(2,'0') + "/" + String(d.getMonth()+1).padStart(2,'0') + "/" + d.getFullYear();
   },
 
+  // Convert "YYYY-MM-DD" to "DD/MM/YYYY"
+  displayDateFromStr(dateStr){
+    const parts = dateStr.split("-");
+    if(parts.length !== 3) return dateStr;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  },
+
+  // Return all date strings ("YYYY-MM-DD") for a given month ("YYYY-MM"),
+  // clamped to academic year start (2026-06-01) and today.
+  datesInMonth(monthKey){
+    const [y, m] = monthKey.split("-").map(Number);
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const start = new Date("2026-06-01T00:00:00");
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const dates = [];
+    for(let d=1; d<=daysInMonth; d++){
+      const dt = new Date(y, m-1, d);
+      if(dt < start) continue;
+      if(dt > today) continue;
+      const ds = dt.getFullYear() + "-" + String(dt.getMonth()+1).padStart(2,'0') + "-" + String(dt.getDate()).padStart(2,'0');
+      dates.push(ds);
+    }
+    return dates;
+  },
+
   // "മകൻ" / "മകൾ" based on gender field, fallback to "മകൻ/മകൾ"
   childWord(student){
     if(student.gender === 'm') return "മകൻ";
@@ -2702,6 +3155,13 @@ const U = {
     }
     return null;
   },
+
+  // Check holidayLog for whether a given class's shift was on holiday on dateStr
+  isHolidayForClass(dateStr, cls){
+    const shift = this.classShift(cls);
+    return (DB.data.holidayLog || []).some(h => h.date === dateStr && (h.target === "all" || parseInt(h.target) === shift));
+  },
+
 
   shiftHoliday(shiftKey){
     const h = DB.data.holidays;
@@ -2737,12 +3197,13 @@ const U = {
   },
 
   // Generate fee message
-  feeMessage(student, paidNow, dateStr){
+  feeMessage(student, paidNow, dateStr, months){
     const totalPaid = student.paidTotal;
     const annual = DB.data.fees.annual;
     const balance = Math.max(annual - totalPaid, 0);
     const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
-    return `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ / ജനറൽ സെക്രട്ടറി, ${CLASS_LABELS[student.cls] || student.cls} ക്ലാസ്സിൽ പഠിക്കുന്ന ${student.name} (Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ് അടച്ചിട്ടുണ്ട്. ഇത് ${teacherName} (ക്ലാസ്സ് അധ്യാപകൻ) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}. നന്ദി. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+    const monthsText = (months && months.length) ? ` (${months.map(mk=>MONTH_LABELS[mk]||mk).join(", ")} മാസത്തെ ഫീസ്)` : "";
+    return `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ / ജനറൽ സെക്രട്ടറി, ${CLASS_LABELS[student.cls] || student.cls} (${student.name}, Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ്${monthsText} അടച്ചിട്ടുണ്ട്. ഇത് ${teacherName} (ക്ലാസ്സ് അധ്യാപകൻ) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}. നന്ദി. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
   },
 
   // accordion toggle
