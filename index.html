@@ -1866,25 +1866,81 @@ const Teacher = {
         </div>
       </div>
       <div class="form-group" style="margin-top:12px;">
-        <label>നിർദ്ദേശം / അഭിപ്രായം</label>
+        <label>നിർദ്ദേശം / അഭിപ്രായം (ടൈപ്പ് ചെയ്യുക)</label>
         <textarea id="rev-text" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
       </div>
-      <button class="primary-btn" onclick="Teacher.sendReview('${s.id}')">രക്ഷിതാവിന് അയക്കുക</button>
+      <div class="form-group">
+        <label>📎 മീഡിയ അറ്റാച്ച് ചെയ്യുക (ഐച്ഛികം)</label>
+        <div class="btn-grid" style="margin-bottom:8px;">
+          <label class="outline-btn" style="text-align:center;cursor:pointer;">
+            📷 ഫോട്ടോ എടുക്കുക
+            <input type="file" accept="image/*" capture="camera" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
+          </label>
+          <label class="outline-btn" style="text-align:center;cursor:pointer;">
+            🎥 വീഡിയോ റെക്കോർഡ്
+            <input type="file" accept="video/*" capture="camcorder" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
+          </label>
+          <label class="outline-btn" style="text-align:center;cursor:pointer;">
+            🎤 ഓഡിയോ റെക്കോർഡ്
+            <input type="file" accept="audio/*" capture="microphone" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
+          </label>
+          <label class="outline-btn" style="text-align:center;cursor:pointer;">
+            🗂️ ഗ്യാലറിയിൽ നിന്ന്
+            <input type="file" accept="image/*,audio/*,video/*" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
+          </label>
+        </div>
+        <div id="rev-media-preview" style="margin-top:6px;"></div>
+      </div>
+      <button class="primary-btn btn-block" onclick="Teacher.sendReview('${s.id}')">📩 രക്ഷിതാവിന് അയക്കുക</button>
     `;
+  },
+
+  // Store selected media temporarily
+  _reviewMedia: null,
+
+  previewMedia(input, previewId){
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      Teacher._reviewMedia = { data: e.target.result, type: file.type, name: file.name };
+      const box = document.getElementById(previewId);
+      if(!box) return;
+      if(file.type.startsWith("image/")){
+        box.innerHTML = `<img src="${e.target.result}" style="max-width:100%;border-radius:8px;margin-top:4px;"><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
+      } else if(file.type.startsWith("audio/")){
+        box.innerHTML = `<audio controls style="width:100%;margin-top:4px;"><source src="${e.target.result}" type="${file.type}"></audio><div class="muted" style="font-size:12px;">${file.name}</div><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
+      } else if(file.type.startsWith("video/")){
+        box.innerHTML = `<video controls style="max-width:100%;border-radius:8px;margin-top:4px;"><source src="${e.target.result}" type="${file.type}"></video><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
+      }
+    };
+    reader.readAsDataURL(file);
   },
 
   sendReview(studentId){
     const text = document.getElementById("rev-text").value.trim();
-    if(!text){ U.toast("നിർദ്ദേശം ടൈപ്പ് ചെയ്യുക"); return; }
+    if(!text && !Teacher._reviewMedia){ U.toast("നിർദ്ദേശം ടൈപ്പ് ചെയ്യുക"); return; }
     const s = U.studentById(studentId);
-    const msg = `പ്രിയ രക്ഷിതാവേ, ${s.name} (${CLASS_LABELS[s.cls]}, Reg No: ${s.reg}) സംബന്ധിച്ച് ക്ലാസ്സ് അധ്യാപകന്റെ നിർദ്ദേശം: \n\n"${text}"\n\n- മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+    const teacherName = App.user.name || "അധ്യാപകൻ";
+    const msg = `പ്രിയ രക്ഷിതാവേ, ${s.name} (${CLASS_LABELS[s.cls]}, Reg No: ${s.reg}) സംബന്ധിച്ച് ${teacherName}-ന്റെ നിർദ്ദേശം:\n\n"${text}"${Teacher._reviewMedia ? '\n\n[ഒരു ഫോട്ടോ/ഓഡിയോ/വീഡിയോ ഫയൽ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്. WhatsApp-ൽ ഈ message അയച്ചതിന് ശേഷം media separately share ചെയ്യുക.]' : ''}\n\n- മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
 
-    // also save to reviews for parent panel
-    DB.data.reviews.push({ id: U.uid("REV"), studentReg: s.reg, text, date: U.todayDisplay(), from: App.user.name || "അധ്യാപകൻ" });
+    // Save to reviews for parent panel (include media if any)
+    const review = { id: U.uid("REV"), studentReg: s.reg, text, date: U.todayDisplay(), from: teacherName };
+    if(Teacher._reviewMedia){
+      review.mediaData = Teacher._reviewMedia.data;
+      review.mediaType = Teacher._reviewMedia.type;
+    }
+    DB.data.reviews.push(review);
     DB.save();
 
     U.sendWhatsApp(s.phone, msg);
+    Teacher._reviewMedia = null;
     U.toast("നിർദ്ദേശം അയച്ചു");
+    // Clear the form
+    const ti = document.getElementById("rev-text");
+    if(ti) ti.value = "";
+    const preview = document.getElementById("rev-media-preview");
+    if(preview) preview.innerHTML = "";
   },
 
   // ---------- Parent suggestions view ----------
@@ -2393,6 +2449,42 @@ const Parent = {
       </div>
     </div>`;
 
+    // Sadhar contact (always visible on profile)
+    {
+      const sadhar = DB.data.auth.sadhar;
+      const sadharName = sadhar.name || "സദർ";
+      const sadharPhone = sadhar.phone || "";
+      html += `<div class="card">
+        <div class="card-title">സദർ (Sadhar)</div>
+        <div class="row">
+          ${U.photoOrInitial(sadhar.photo || "", sadharName)}
+          <div style="flex:1; margin-left:10px;">
+            <div style="font-weight:700;">${U.esc(sadharName)}</div>
+            ${sadharPhone ? `<div class="muted">${U.esc(sadharPhone)}</div>` : `<div class="muted">നമ്പർ ചേർത്തിട്ടില്ല</div>`}
+          </div>
+          ${sadharPhone ? `<a class="link-btn" href="tel:${sadharPhone}">വിളിക്കുക</a>` : ""}
+        </div>
+      </div>`;
+    }
+
+    // class teacher contact
+    {
+      const classTeacher = DB.data.auth.staff.find(t=>t.role==='teacher' && t.classes && t.classes.includes(s.cls));
+      if(classTeacher){
+        html += `<div class="card">
+          <div class="card-title">ക്ലാസ്സ് അധ്യാപകൻ</div>
+          <div class="row">
+            ${U.photoOrInitial(classTeacher.photo, classTeacher.name)}
+            <div style="flex:1; margin-left:10px;">
+              <div style="font-weight:700;">${U.esc(classTeacher.name)}</div>
+              <div class="muted">${U.esc(classTeacher.phone)}</div>
+            </div>
+            <a class="link-btn" href="tel:${classTeacher.phone}">വിളിക്കുക</a>
+          </div>
+        </div>`;
+      }
+    }
+
     // recent reviews from teacher
     const reviews = DB.data.reviews.filter(r=>r.studentReg===s.reg).slice().reverse();
     if(reviews.length){
@@ -2614,21 +2706,22 @@ const Parent = {
       </div>`;
     }
 
-    // Sadhar
+    // Sadhar — always show
     const sadhar = DB.data.auth.sadhar;
-    if(sadhar && (sadhar.name || sadhar.phone)){
-      html += `<div class="card">
-        <div class="card-title">സദർ</div>
-        <div class="row">
-          ${U.photoOrInitial(sadhar.photo || "", sadhar.name || "സദർ")}
-          <div style="flex:1; margin-left:10px;">
-            <div style="font-weight:700;">${U.esc(sadhar.name || "സദർ")}</div>
-            ${sadhar.phone ? `<div class="muted">${U.esc(sadhar.phone)}</div>` : ""}
-          </div>
-          ${sadhar.phone ? `<a class="link-btn" href="tel:${sadhar.phone}">വിളിക്കുക</a>` : ""}
+    const sadharName = sadhar.name || "സദർ";
+    const sadharPhone = sadhar.phone || "";
+    html += `<div class="card">
+      <div class="card-title">സദർ (Sadhar)</div>
+      <div class="row">
+        ${U.photoOrInitial(sadhar.photo || "", sadharName)}
+        <div style="flex:1; margin-left:10px;">
+          <div style="font-weight:700;">${U.esc(sadharName)}</div>
+          <div class="muted">മദ്റസ സദർ</div>
+          ${sadharPhone ? `<div class="muted">${U.esc(sadharPhone)}</div>` : `<div class="muted" style="color:#c9a84c;">📝 സദർ ഫോൺ നമ്പർ ഇനി ചേർക്കേണ്ടതുണ്ട്</div>`}
         </div>
-      </div>`;
-    }
+        ${sadharPhone ? `<a class="link-btn" href="tel:${sadharPhone}">വിളിക്കുക</a>` : ""}
+      </div>
+    </div>`;
 
     // committee
     const committee = DB.data.auth.staff.filter(t=>App.COMMITTEE_ROLES.includes(t.role));
