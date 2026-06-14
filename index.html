@@ -599,7 +599,9 @@ function buildDefaultData(){
     students: students,
     fees: {
       monthly: 100,
-      annual: 1000
+      annual: 1000,
+      qrCode: null,
+      gpayNumber: ""
     },
     holidays: {
       // shiftKey ('1'/'2'/'3'/'all') -> {active:bool, reason:string, date:string}
@@ -652,7 +654,9 @@ const DB = {
         this.data = JSON.parse(raw);
         // Migrations for fields added after initial release
         if(!this.data.holidayLog) this.data.holidayLog = [];
-        if(!this.data.fees) this.data.fees = { monthly:100, annual:1000 };
+        if(!this.data.fees) this.data.fees = { monthly:100, annual:1000, qrCode:null, gpayNumber:"" };
+        if(this.data.fees.qrCode === undefined) this.data.fees.qrCode = null;
+        if(this.data.fees.gpayNumber === undefined) this.data.fees.gpayNumber = "";
       } else {
         this.data = buildDefaultData();
         initShiftClasses(this.data);
@@ -773,6 +777,18 @@ const Sadhar = {
         <label>വാർഷിക ഫീസ് (Annual Fee) ₹</label>
         <input type="number" id="fee-annual" value="${data.fees.annual}">
       </div>
+      <div class="divider"></div>
+      <div class="card-title" style="font-size:14px;">📱 ഓൺലൈൻ പേയ്മെന്റ് (QR / GPay)</div>
+      <div class="form-group">
+        <label>GPay / UPI നമ്പർ</label>
+        <input type="text" id="fee-gpay" value="${U.esc(data.fees.gpayNumber||'')}" placeholder="ഉദാ: 9876543210@upi">
+      </div>
+      <div class="form-group">
+        <label>QR കോഡ് ഇമേജ്</label>
+        <input type="file" accept="image/*" id="fee-qr-upload">
+        ${data.fees.qrCode ? `<div style="margin-top:8px;"><img src="${data.fees.qrCode}" style="max-width:160px;border-radius:8px;border:1px solid var(--line);"></div>` : ""}
+      </div>
+      <p class="muted" style="font-size:12px;">ഈ QR കോഡും GPay നമ്പറും രക്ഷിതാക്കളുടെ ഫീസ് പേജിൽ കാണിക്കും. പേയ്മെന്റ് കിട്ടിയാൽ ക്ലാസ്സ് അധ്യാപകൻ/സദർ ഫീസ് manually അപ്ഡേറ്റ് ചെയ്യണം.</p>
       <button class="primary-btn" onclick="Sadhar.saveFees()">ഫീസ് സേവ് ചെയ്യുക</button>
     `);
 
@@ -835,6 +851,12 @@ const Sadhar = {
       <button class="primary-btn" onclick="Sadhar.saveProfile()">സേവ് ചെയ്യുക</button>
     `);
 
+    // ---- 11. Fee collection (all classes) ----
+    html += this.accordionItem("acc-fee-collect", 11, "ഫീസ് കളക്ഷൻ (Fee Collection — All Classes)", `
+      <p class="muted" style="margin-bottom:10px;">ഏത് ക്ലാസ്സിലെയും കുട്ടിയുടെ ഫീസ് ഇവിടെ സ്വീകരിക്കാം, തിരുത്താം, രസീത് അയക്കാം.</p>
+      ${FeeShared.render(null)}
+    `);
+
     return html;
   },
 
@@ -889,8 +911,20 @@ const Sadhar = {
     const annual = parseFloat(document.getElementById("fee-annual").value) || 0;
     DB.data.fees.monthly = monthly;
     DB.data.fees.annual = annual;
-    DB.save();
-    U.toast("ഫീസ് ഘടന സേവ് ചെയ്തു");
+    DB.data.fees.gpayNumber = document.getElementById("fee-gpay").value.trim();
+    const qrInput = document.getElementById("fee-qr-upload");
+    const finish = ()=>{
+      DB.save();
+      U.toast("ഫീസ് ഘടന സേവ് ചെയ്തു");
+      App.refresh();
+      setTimeout(()=> U.toggleAccordion("acc-fees"), 50);
+      setTimeout(()=> U.toggleAccordion("acc-fees"), 60);
+    };
+    if(qrInput && qrInput.files[0]){
+      U.readImageFile(qrInput.files[0], (data64)=>{ DB.data.fees.qrCode = data64; finish(); });
+    } else {
+      finish();
+    }
   },
 
   saveProfile(){
@@ -1635,175 +1669,9 @@ const Teacher = {
   // ---------- Fees ----------
   renderFees(){
     let html = `<h2 style="margin-bottom:14px;">ഫീസ് കളക്ഷൻ (Fee Collection)</h2>`;
-    html += `<div class="card">
-      <div class="form-group">
-        <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ</label>
-        <input type="text" id="fee-reg" inputmode="numeric" oninput="Teacher.lookupFeeStudent()" placeholder="ഉദാ: 691">
-      </div>
-      <div id="fee-student-info"></div>
-    </div>`;
+    html += `<p class="muted" style="margin-bottom:10px;">നിങ്ങളുടെ ക്ലാസ്സുകളിലെ (${this.myClasses().map(c=>CLASS_LABELS[c]).join(", ")}) കുട്ടികളുടെ ഫീസ് മാത്രം ഇവിടെ കൈകാര്യം ചെയ്യാം.</p>`;
+    html += FeeShared.render(this.myClasses());
     return html;
-  },
-
-  lookupFeeStudent(){
-    const reg = (document.getElementById("fee-reg")||{}).value||"";
-    const infoBox = document.getElementById("fee-student-info");
-    if(!reg.trim()){ infoBox.innerHTML=""; return; }
-    const s = U.studentByReg(reg.trim());
-    if(!s){
-      infoBox.innerHTML = `<p class="muted" style="margin-top:8px;">കുട്ടിയെ കണ്ടെത്താനായില്ല</p>`;
-      return;
-    }
-    infoBox.innerHTML = Teacher.feeStudentHtml(s);
-  },
-
-  feeStudentHtml(s){
-    const balance = Math.max(DB.data.fees.annual - s.paidTotal, 0);
-    const payHist = (s.payments||[]).slice().reverse();
-
-    let histHtml = "";
-    if(payHist.length){
-      histHtml = `<div class="divider"></div>
-        <div class="card-title" style="font-size:14px; margin-bottom:8px;">📋 ഫീസ് ഹിസ്റ്ററി (Payment History)</div>`;
-      payHist.forEach((p,revIdx)=>{
-        const idx = (s.payments.length - 1) - revIdx;
-        const monthsText = (p.months&&p.months.length) ? p.months.map(mk=>MONTH_LABELS[mk]||mk).join(", ") : "—";
-        const receiptMsg = U.feeMessage(s, p.amount, p.date, p.months||[]);
-        histHtml += `<div class="card" style="margin-bottom:8px; background:#f8f5ef;">
-          <div class="row" style="margin-bottom:4px;">
-            <span style="font-weight:700;">₹${p.amount}</span>
-            <span class="muted" style="font-size:12px;">${p.date}</span>
-          </div>
-          <div class="muted" style="font-size:12px; margin-bottom:8px;">മാസം: ${monthsText}</div>
-          <div class="btn-grid">
-            <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(receiptMsg)})'>📩 രക്ഷിതാവ്</button>
-            <button class="btn-wa" onclick='Teacher.sendToSecretary(${JSON.stringify(receiptMsg)})'>📩 GS</button>
-            <button class="btn-wa" onclick='Teacher.sendToManager(${JSON.stringify(receiptMsg)})'>📩 മാനേജർ</button>
-            <button class="btn-small" onclick="Teacher.startEditPayment('${s.id}',${idx})">✏️ തിരുത്ത്</button>
-          </div>
-          <div id="fee-edit-area-${s.id}-${idx}"></div>
-        </div>`;
-      });
-    }
-
-    return `
-      <div class="divider"></div>
-      <div class="row">
-        ${U.photoOrInitial(s.photo, s.name)}
-        <div style="flex:1; margin-left:10px;">
-          <div class="card-title" style="margin-bottom:2px;">${U.esc(s.name)}</div>
-          <div class="muted">${CLASS_LABELS[s.cls]} • Reg No: ${s.reg}</div>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <span class="muted">ആകെ അടച്ച തുക</span><strong>₹${s.paidTotal}</strong>
-      </div>
-      <div class="row">
-        <span class="muted">ബാക്കി കുടിശ്ശിക</span><strong style="color:var(--rose);">₹${balance}</strong>
-      </div>
-      <div class="divider"></div>
-      <div class="card-title" style="font-size:14px; margin-bottom:8px;">➕ പുതിയ ഫീസ് ചേർക്കുക</div>
-      <div class="form-group">
-        <label>ഏത് മാസത്തെ ഫീസ്? (ഒന്നോ അധികമോ)</label>
-        <div class="month-grid">
-          ${ACADEMIC_MONTHS.map(m=>`
-            <label class="month-chip">
-              <input type="checkbox" value="${m.key}" class="fee-month-cb">
-              <span>${m.label}</span>
-            </label>
-          `).join("")}
-        </div>
-      </div>
-      <div class="form-group">
-        <label>ഇപ്പോൾ അടക്കുന്ന തുക (₹)</label>
-        <input type="number" id="fee-amount" placeholder="0">
-      </div>
-      <button class="primary-btn btn-block" onclick="Teacher.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
-      ${histHtml}
-    `;
-  },
-
-  startEditPayment(studentId, paymentIndex){
-    const s = U.studentById(studentId);
-    const p = s.payments[paymentIndex];
-    const areaId = `fee-edit-area-${studentId}-${paymentIndex}`;
-    const area = document.getElementById(areaId);
-    if(!area) return;
-    area.innerHTML = `
-      <div class="divider"></div>
-      <div style="font-weight:700; margin-bottom:8px;">✏️ പേയ്മെന്റ് തിരുത്തുക</div>
-      <div class="form-group">
-        <label>തുക (₹)</label>
-        <input type="number" id="edit-fee-amount-${studentId}-${paymentIndex}" value="${p.amount}">
-      </div>
-      <div class="form-group">
-        <label>മാസങ്ങൾ</label>
-        <div class="month-grid">
-          ${ACADEMIC_MONTHS.map(m=>`
-            <label class="month-chip">
-              <input type="checkbox" value="${m.key}" class="edit-month-${studentId}-${paymentIndex}" ${(p.months||[]).includes(m.key)?'checked':''}>
-              <span>${m.label}</span>
-            </label>
-          `).join("")}
-        </div>
-      </div>
-      <div class="btn-grid">
-        <button class="primary-btn" onclick="Teacher.savePaymentEdit('${studentId}',${paymentIndex})">✅ സേവ്</button>
-        <button class="btn-danger" onclick="Teacher.deletePayment('${studentId}',${paymentIndex})">🗑️ ഡിലീറ്റ്</button>
-      </div>
-    `;
-  },
-
-  savePaymentEdit(studentId, paymentIndex){
-    const s = U.studentById(studentId);
-    const newAmount = parseFloat((document.getElementById(`edit-fee-amount-${studentId}-${paymentIndex}`)||{}).value||"0");
-    if(!newAmount||newAmount<=0){ U.toast("ശരിയായ തുക നൽകുക"); return; }
-    const months = Array.from(document.querySelectorAll(`.edit-month-${studentId}-${paymentIndex}`))
-      .filter(cb=>cb.checked).map(cb=>cb.value);
-    const oldAmount = s.payments[paymentIndex].amount;
-    s.paidTotal = s.paidTotal - oldAmount + newAmount;
-    s.payments[paymentIndex].amount = newAmount;
-    s.payments[paymentIndex].months = months;
-    DB.save();
-    U.toast("പേയ്മെന്റ് തിരുത്തി");
-    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
-  },
-
-  deletePayment(studentId, paymentIndex){
-    const s = U.studentById(studentId);
-    const removed = s.payments.splice(paymentIndex,1)[0];
-    s.paidTotal = Math.max(0, s.paidTotal - removed.amount);
-    DB.save();
-    U.toast("പേയ്മെന്റ് നീക്കം ചെയ്തു");
-    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
-  },
-
-  collectFee(studentId){
-    const amount = parseFloat((document.getElementById("fee-amount")||{}).value||"0");
-    if(!amount||amount<=0){ U.toast("തുക നൽകുക"); return; }
-    const months = Array.from(document.querySelectorAll('.fee-month-cb'))
-      .filter(cb=>cb.checked).map(cb=>cb.value);
-    const s = U.studentById(studentId);
-    s.paidTotal += amount;
-    const date = U.todayDisplay();
-    s.payments.push({ amount, date, months });
-    DB.save();
-    U.toast(`₹${amount} ഫീസ് രേഖപ്പെടുത്തി ✅`);
-    // Re-render info box (now includes payment history with resend buttons)
-    document.getElementById("fee-student-info").innerHTML = Teacher.feeStudentHtml(s);
-  },
-
-  sendToSecretary(msg){
-    let sec = DB.data.auth.staff.find(s=>s.role==='gs');
-    if(!sec) sec = DB.data.auth.staff.find(s=>App.COMMITTEE_ROLES.includes(s.role));
-    if(sec&&sec.phone){ U.sendWhatsApp(sec.phone, msg); }
-    else U.toast("ജനറൽ സെക്രട്ടറിയുടെ നമ്പർ ലഭ്യമല്ല");
-  },
-
-  sendToManager(msg){
-    const mgr = DB.data.auth.staff.find(s=>s.role==='manager');
-    if(mgr&&mgr.phone){ U.sendWhatsApp(mgr.phone, msg); }
-    else U.toast("മാനേജരുടെ നമ്പർ ലഭ്യമല്ല");
   },
 
   // ---------- Review box ----------
@@ -1869,78 +1737,25 @@ const Teacher = {
         <label>നിർദ്ദേശം / അഭിപ്രായം (ടൈപ്പ് ചെയ്യുക)</label>
         <textarea id="rev-text" placeholder="ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
       </div>
-      <div class="form-group">
-        <label>📎 മീഡിയ അറ്റാച്ച് ചെയ്യുക (ഐച്ഛികം)</label>
-        <div class="btn-grid" style="margin-bottom:8px;">
-          <label class="outline-btn" style="text-align:center;cursor:pointer;">
-            📷 ഫോട്ടോ എടുക്കുക
-            <input type="file" accept="image/*" capture="camera" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
-          </label>
-          <label class="outline-btn" style="text-align:center;cursor:pointer;">
-            🎥 വീഡിയോ റെക്കോർഡ്
-            <input type="file" accept="video/*" capture="camcorder" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
-          </label>
-          <label class="outline-btn" style="text-align:center;cursor:pointer;">
-            🎤 ഓഡിയോ റെക്കോർഡ്
-            <input type="file" accept="audio/*" capture="microphone" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
-          </label>
-          <label class="outline-btn" style="text-align:center;cursor:pointer;">
-            🗂️ ഗ്യാലറിയിൽ നിന്ന്
-            <input type="file" accept="image/*,audio/*,video/*" style="display:none" onchange="Teacher.previewMedia(this,'rev-media-preview')">
-          </label>
-        </div>
-        <div id="rev-media-preview" style="margin-top:6px;"></div>
-      </div>
       <button class="primary-btn btn-block" onclick="Teacher.sendReview('${s.id}')">📩 രക്ഷിതാവിന് അയക്കുക</button>
     `;
   },
 
-  // Store selected media temporarily
-  _reviewMedia: null,
-
-  previewMedia(input, previewId){
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (e)=>{
-      Teacher._reviewMedia = { data: e.target.result, type: file.type, name: file.name };
-      const box = document.getElementById(previewId);
-      if(!box) return;
-      if(file.type.startsWith("image/")){
-        box.innerHTML = `<img src="${e.target.result}" style="max-width:100%;border-radius:8px;margin-top:4px;"><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
-      } else if(file.type.startsWith("audio/")){
-        box.innerHTML = `<audio controls style="width:100%;margin-top:4px;"><source src="${e.target.result}" type="${file.type}"></audio><div class="muted" style="font-size:12px;">${file.name}</div><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
-      } else if(file.type.startsWith("video/")){
-        box.innerHTML = `<video controls style="max-width:100%;border-radius:8px;margin-top:4px;"><source src="${e.target.result}" type="${file.type}"></video><button class="btn-del" style="margin-top:4px;" onclick="Teacher._reviewMedia=null;document.getElementById('${previewId}').innerHTML=''">✕ നീക്കം ചെയ്യുക</button>`;
-      }
-    };
-    reader.readAsDataURL(file);
-  },
-
   sendReview(studentId){
     const text = document.getElementById("rev-text").value.trim();
-    if(!text && !Teacher._reviewMedia){ U.toast("നിർദ്ദേശം ടൈപ്പ് ചെയ്യുക"); return; }
+    if(!text){ U.toast("നിർദ്ദേശം ടൈപ്പ് ചെയ്യുക"); return; }
     const s = U.studentById(studentId);
     const teacherName = App.user.name || "അധ്യാപകൻ";
-    const msg = `പ്രിയ രക്ഷിതാവേ, ${s.name} (${CLASS_LABELS[s.cls]}, Reg No: ${s.reg}) സംബന്ധിച്ച് ${teacherName}-ന്റെ നിർദ്ദേശം:\n\n"${text}"${Teacher._reviewMedia ? '\n\n[ഒരു ഫോട്ടോ/ഓഡിയോ/വീഡിയോ ഫയൽ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്. WhatsApp-ൽ ഈ message അയച്ചതിന് ശേഷം media separately share ചെയ്യുക.]' : ''}\n\n- മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+    const msg = `പ്രിയ രക്ഷിതാവേ, ${s.name} (${CLASS_LABELS[s.cls]}, Reg No: ${s.reg}) സംബന്ധിച്ച് ${teacherName}-ന്റെ നിർദ്ദേശം:\n\n"${text}"\n\n- മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
 
-    // Save to reviews for parent panel (include media if any)
     const review = { id: U.uid("REV"), studentReg: s.reg, text, date: U.todayDisplay(), from: teacherName };
-    if(Teacher._reviewMedia){
-      review.mediaData = Teacher._reviewMedia.data;
-      review.mediaType = Teacher._reviewMedia.type;
-    }
     DB.data.reviews.push(review);
     DB.save();
 
     U.sendWhatsApp(s.phone, msg);
-    Teacher._reviewMedia = null;
     U.toast("നിർദ്ദേശം അയച്ചു");
-    // Clear the form
     const ti = document.getElementById("rev-text");
     if(ti) ti.value = "";
-    const preview = document.getElementById("rev-media-preview");
-    if(preview) preview.innerHTML = "";
   },
 
   // ---------- Parent suggestions view ----------
@@ -2592,11 +2407,29 @@ const Parent = {
     html += `<div class="section-title">പേയ്മെന്റ് ചരിത്രം</div>`;
     if(s.payments.length){
       html += `<div class="card"><table>
-        <tr><th>തീയതി</th><th>തുക</th></tr>
-        ${s.payments.slice().reverse().map(p=>`<tr><td>${p.date}</td><td>₹${p.amount}</td></tr>`).join("")}
+        <tr><th>തീയതി</th><th>തുക</th><th>മാസം</th></tr>
+        ${s.payments.slice().reverse().map(p=>{
+          const monthsText = (p.months&&p.months.length) ? p.months.map(mk=>MONTH_LABELS[mk]||mk).join(", ") : "—";
+          return `<tr><td>${p.date}</td><td>₹${p.amount}</td><td style="font-size:12px;">${monthsText}</td></tr>`;
+        }).join("")}
       </table></div>`;
     } else {
       html += `<div class="empty-state"><div class="emoji">💰</div>പേയ്മെന്റ് രേഖകൾ ഇല്ല</div>`;
+    }
+
+    // QR code / GPay
+    if(fees.qrCode || fees.gpayNumber){
+      html += `<div class="section-title">ഓൺലൈൻ ഫീസ് പേയ്മെന്റ്</div>`;
+      html += `<div class="card" style="text-align:center;">`;
+      if(fees.qrCode){
+        html += `<img src="${fees.qrCode}" style="max-width:200px;border-radius:8px;border:1px solid var(--line);margin-bottom:10px;">`;
+      }
+      if(fees.gpayNumber){
+        html += `<div class="muted" style="margin-bottom:4px;">GPay / UPI</div>
+          <div style="font-weight:700; font-size:16px;">${U.esc(fees.gpayNumber)}</div>`;
+      }
+      html += `<p class="muted" style="font-size:12px; margin-top:10px;">ഈ QR കോഡ് / GPay നമ്പർ ഉപയോഗിച്ച് ഫീസ് അടച്ച ശേഷം, മദ്റസയിൽ വന്ന് ക്ലാസ്സ് അധ്യാപകനെ വിവരം അറിയിക്കുക. ഫീസ് സ്റ്റാറ്റസ് manually അപ്ഡേറ്റ് ചെയ്യപ്പെടും.</p>`;
+      html += `</div>`;
     }
 
     html += `<button class="primary-btn" style="margin-top:10px;" onclick="Parent.downloadFeeReport()">ഫീസ് റിപ്പോർട്ട് ഡൗൺലോഡ് ചെയ്യുക (PDF)</button>`;
@@ -3199,6 +3032,20 @@ const U = {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
   },
 
+  // After dynamically changing content inside an open accordion, recalc its max-height
+  // so the new (taller) content isn't clipped.
+  fixAccordionHeight(el){
+    let node = el;
+    while(node && node !== document.body){
+      if(node.classList && node.classList.contains('accordion-item') && node.classList.contains('open')){
+        const body = node.querySelector('.accordion-body');
+        if(body) body.style.maxHeight = body.scrollHeight + 'px';
+        return;
+      }
+      node = node.parentElement;
+    }
+  },
+
   // Return all date strings ("YYYY-MM-DD") for a given month ("YYYY-MM"),
   // clamped to academic year start (2026-06-01) and today.
   datesInMonth(monthKey){
@@ -3289,14 +3136,39 @@ const U = {
     reader.readAsDataURL(file);
   },
 
-  // Generate fee message
-  feeMessage(student, paidNow, dateStr, months){
+  // Generate fee receipt message. recipientType: 'parent' | 'gs' | 'manager'
+  feeMessage(student, paidNow, dateStr, months, recipientType){
     const totalPaid = student.paidTotal;
     const annual = DB.data.fees.annual;
     const balance = Math.max(annual - totalPaid, 0);
-    const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
+    const collectorName = (App.user && App.user.name) ? App.user.name : "സ്റ്റാഫ്";
+    const collectorRole = (App.user && App.user.type === 'sadhar') ? "സദർ" : "ക്ലാസ്സ് അധ്യാപകൻ";
     const monthsText = (months && months.length) ? ` (${months.map(mk=>MONTH_LABELS[mk]||mk).join(", ")} മാസത്തെ ഫീസ്)` : "";
-    return `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ / ജനറൽ സെക്രട്ടറി, ${CLASS_LABELS[student.cls] || student.cls} (${student.name}, Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ്${monthsText} അടച്ചിട്ടുണ്ട്. ഇത് ${teacherName} (ക്ലാസ്സ് അധ്യാപകൻ) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}. നന്ദി. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+
+    let greeting;
+    if(recipientType === 'gs') greeting = "അസ്സലാമു അലൈക്കും, പ്രിയപ്പെട്ട ജനറൽ സെക്രട്ടറി,";
+    else if(recipientType === 'manager') greeting = "അസ്സലാമു അലൈക്കും, പ്രിയപ്പെട്ട മാനേജർ,";
+    else greeting = "അസ്സലാമു അലൈക്കും, പ്രിയപ്പെട്ട രക്ഷിതാവേ,";
+
+    let body;
+    if(recipientType === 'parent'){
+      body = `നിങ്ങളുടെ ${U.childWord(student)} ${student.name} (${CLASS_LABELS[student.cls] || student.cls}, Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ്${monthsText} അടച്ചിട്ടുണ്ട്. ഇത് ${collectorName} (${collectorRole}) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}.`;
+    } else {
+      body = `${CLASS_LABELS[student.cls] || student.cls} ക്ലാസ്സിൽ പഠിക്കുന്ന ${student.name} (Reg No: ${student.reg}) ${dateStr} തീയതിയിൽ മദ്റസയിൽ ₹${paidNow} ഫീസ്${monthsText} അടച്ചിട്ടുണ്ട്. ഇത് ${collectorName} (${collectorRole}) കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${balance}.`;
+    }
+
+    return `${greeting}\n\n${body}\n\nനന്ദി. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+  },
+
+  // Returns a Set of month-keys already covered by any payment for this student.
+  // If excludePaymentIndex is given, that payment's own months are not counted (so they remain selectable while editing it).
+  paidMonthsSet(student, excludePaymentIndex){
+    const set = new Set();
+    (student.payments||[]).forEach((p,i)=>{
+      if(i === excludePaymentIndex) return;
+      (p.months||[]).forEach(m=>set.add(m));
+    });
+    return set;
   },
 
   // accordion toggle
@@ -3311,6 +3183,204 @@ const U = {
     } else {
       body.style.maxHeight = "0px";
     }
+  }
+};
+
+// ===========================================================
+// FeeShared — common fee-collection UI for Sadhar (all classes)
+// and Teacher (restricted to own classes)
+// ===========================================================
+const FeeShared = {
+  allowedClasses: null, // null = no restriction (Sadhar); array of class keys = restricted (Teacher)
+
+  render(allowedClasses){
+    this.allowedClasses = allowedClasses;
+    let html = `<div class="card">
+      <div class="form-group">
+        <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ</label>
+        <input type="text" id="fee-reg" inputmode="numeric" oninput="FeeShared.lookupStudent()" placeholder="ഉദാ: 691">
+      </div>
+      <div id="fee-student-info"></div>
+    </div>`;
+    return html;
+  },
+
+  lookupStudent(){
+    const reg = (document.getElementById("fee-reg")||{}).value||"";
+    const infoBox = document.getElementById("fee-student-info");
+    if(!infoBox) return;
+    if(!reg.trim()){ infoBox.innerHTML=""; return; }
+    const s = U.studentByReg(reg.trim());
+    if(!s){
+      infoBox.innerHTML = `<p class="muted" style="margin-top:8px;">കുട്ടിയെ കണ്ടെത്താനായില്ല</p>`;
+      return;
+    }
+    if(this.allowedClasses && !this.allowedClasses.includes(s.cls)){
+      infoBox.innerHTML = `<p style="margin-top:8px; color:var(--rose); font-weight:600;">⚠️ ${CLASS_LABELS[s.cls]||s.cls} ക്ലാസ്സിലെ കുട്ടികളുടെ ഫീസ് നിങ്ങൾക്ക് കൈകാര്യം ചെയ്യാൻ അനുവാദമില്ല. നിങ്ങളുടെ ക്ലാസ്സിലെ കുട്ടിയുടെ Reg No നൽകുക.</p>`;
+      return;
+    }
+    infoBox.innerHTML = this.studentHtml(s);
+    U.fixAccordionHeight(infoBox);
+  },
+
+  studentHtml(s){
+    const balance = Math.max(DB.data.fees.annual - s.paidTotal, 0);
+    const payHist = (s.payments||[]).slice().reverse();
+    const paidMonths = U.paidMonthsSet(s);
+
+    let histHtml = "";
+    if(payHist.length){
+      histHtml = `<div class="divider"></div>
+        <div class="card-title" style="font-size:14px; margin-bottom:8px;">📋 ഫീസ് ഹിസ്റ്ററി (Payment History)</div>`;
+      payHist.forEach((p,revIdx)=>{
+        const idx = (s.payments.length - 1) - revIdx;
+        const monthsText = (p.months&&p.months.length) ? p.months.map(mk=>MONTH_LABELS[mk]||mk).join(", ") : "—";
+        const msgParent = U.feeMessage(s, p.amount, p.date, p.months||[], 'parent');
+        const msgGs = U.feeMessage(s, p.amount, p.date, p.months||[], 'gs');
+        const msgMgr = U.feeMessage(s, p.amount, p.date, p.months||[], 'manager');
+        histHtml += `<div class="card" style="margin-bottom:8px; background:#f8f5ef;">
+          <div class="row" style="margin-bottom:4px;">
+            <span style="font-weight:700;">₹${p.amount}</span>
+            <span class="muted" style="font-size:12px;">${p.date}</span>
+          </div>
+          <div class="muted" style="font-size:12px; margin-bottom:8px;">മാസം: ${monthsText}</div>
+          <div class="btn-grid">
+            <button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msgParent)})'>📩 രക്ഷിതാവിന്</button>
+            <button class="btn-wa" onclick='FeeShared.sendToSecretary(${JSON.stringify(msgGs)})'>📩 സെക്രട്ടറിക്ക്</button>
+            <button class="btn-wa" onclick='FeeShared.sendToManager(${JSON.stringify(msgMgr)})'>📩 മാനേജർക്ക്</button>
+            <button class="btn-small" onclick="FeeShared.startEditPayment('${s.id}',${idx})">✏️ തിരുത്ത്</button>
+          </div>
+          <div id="fee-edit-area-${s.id}-${idx}"></div>
+        </div>`;
+      });
+    }
+
+    const availableMonths = ACADEMIC_MONTHS.filter(m=>!paidMonths.has(m.key));
+    const monthCheckboxHtml = availableMonths.length
+      ? `<div class="month-grid">
+          ${availableMonths.map(m=>`
+            <label class="month-chip">
+              <input type="checkbox" value="${m.key}" class="fee-month-cb">
+              <span>${m.label}</span>
+            </label>
+          `).join("")}
+        </div>`
+      : `<p class="muted">✅ ഇതുവരെ ലഭ്യമായ എല്ലാ മാസത്തെയും ഫീസ് അടച്ചു കഴിഞ്ഞു.</p>`;
+
+    return `
+      <div class="divider"></div>
+      <div class="row">
+        ${U.photoOrInitial(s.photo, s.name)}
+        <div style="flex:1; margin-left:10px;">
+          <div class="card-title" style="margin-bottom:2px;">${U.esc(s.name)}</div>
+          <div class="muted">${CLASS_LABELS[s.cls]} • Reg No: ${s.reg}</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <span class="muted">ആകെ അടച്ച തുക</span><strong>₹${s.paidTotal}</strong>
+      </div>
+      <div class="row">
+        <span class="muted">ബാക്കി കുടിശ്ശിക</span><strong style="color:var(--rose);">₹${balance}</strong>
+      </div>
+      <div class="divider"></div>
+      <div class="card-title" style="font-size:14px; margin-bottom:8px;">➕ പുതിയ ഫീസ് ചേർക്കുക</div>
+      <div class="form-group">
+        <label>ഏത് മാസത്തെ ഫീസ്? (ഒന്നോ അധികമോ)</label>
+        ${monthCheckboxHtml}
+      </div>
+      <div class="form-group">
+        <label>ഇപ്പോൾ അടക്കുന്ന തുക (₹)</label>
+        <input type="number" id="fee-amount" placeholder="0">
+      </div>
+      <button class="primary-btn btn-block" onclick="FeeShared.collectFee('${s.id}')">ഫീസ് സ്വീകരിക്കുക</button>
+      ${histHtml}
+    `;
+  },
+
+  startEditPayment(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const p = s.payments[paymentIndex];
+    const areaId = `fee-edit-area-${studentId}-${paymentIndex}`;
+    const area = document.getElementById(areaId);
+    if(!area) return;
+    const paidMonths = U.paidMonthsSet(s, paymentIndex); // exclude this payment's own months
+    area.innerHTML = `
+      <div class="divider"></div>
+      <div style="font-weight:700; margin-bottom:8px;">✏️ പേയ്മെന്റ് തിരുത്തുക</div>
+      <div class="form-group">
+        <label>തുക (₹)</label>
+        <input type="number" id="edit-fee-amount-${studentId}-${paymentIndex}" value="${p.amount}">
+      </div>
+      <div class="form-group">
+        <label>മാസങ്ങൾ</label>
+        <div class="month-grid">
+          ${ACADEMIC_MONTHS.map(m=>{
+            const alreadyPaidElsewhere = paidMonths.has(m.key);
+            const checked = (p.months||[]).includes(m.key);
+            if(alreadyPaidElsewhere && !checked) return ""; // hide months paid by other entries
+            return `<label class="month-chip">
+              <input type="checkbox" value="${m.key}" class="edit-month-${studentId}-${paymentIndex}" ${checked?'checked':''}>
+              <span>${m.label}</span>
+            </label>`;
+          }).join("")}
+        </div>
+      </div>
+      <div class="btn-grid">
+        <button class="primary-btn" onclick="FeeShared.savePaymentEdit('${studentId}',${paymentIndex})">✅ സേവ്</button>
+        <button class="btn-danger" onclick="FeeShared.deletePayment('${studentId}',${paymentIndex})">🗑️ ഡിലീറ്റ്</button>
+      </div>
+    `;
+  },
+
+  savePaymentEdit(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const newAmount = parseFloat((document.getElementById(`edit-fee-amount-${studentId}-${paymentIndex}`)||{}).value||"0");
+    if(!newAmount||newAmount<=0){ U.toast("ശരിയായ തുക നൽകുക"); return; }
+    const months = Array.from(document.querySelectorAll(`.edit-month-${studentId}-${paymentIndex}`))
+      .filter(cb=>cb.checked).map(cb=>cb.value);
+    const oldAmount = s.payments[paymentIndex].amount;
+    s.paidTotal = s.paidTotal - oldAmount + newAmount;
+    s.payments[paymentIndex].amount = newAmount;
+    s.payments[paymentIndex].months = months;
+    DB.save();
+    U.toast("പേയ്മെന്റ് തിരുത്തി");
+    (()=>{ const box=document.getElementById("fee-student-info"); box.innerHTML = FeeShared.studentHtml(s); U.fixAccordionHeight(box); })();
+  },
+
+  deletePayment(studentId, paymentIndex){
+    const s = U.studentById(studentId);
+    const removed = s.payments.splice(paymentIndex,1)[0];
+    s.paidTotal = Math.max(0, s.paidTotal - removed.amount);
+    DB.save();
+    U.toast("പേയ്മെന്റ് നീക്കം ചെയ്തു");
+    (()=>{ const box=document.getElementById("fee-student-info"); box.innerHTML = FeeShared.studentHtml(s); U.fixAccordionHeight(box); })();
+  },
+
+  collectFee(studentId){
+    const amount = parseFloat((document.getElementById("fee-amount")||{}).value||"0");
+    if(!amount||amount<=0){ U.toast("തുക നൽകുക"); return; }
+    const months = Array.from(document.querySelectorAll('.fee-month-cb'))
+      .filter(cb=>cb.checked).map(cb=>cb.value);
+    const s = U.studentById(studentId);
+    s.paidTotal += amount;
+    const date = U.todayDisplay();
+    s.payments.push({ amount, date, months });
+    DB.save();
+    U.toast(`₹${amount} ഫീസ് രേഖപ്പെടുത്തി ✅`);
+    (()=>{ const box=document.getElementById("fee-student-info"); box.innerHTML = FeeShared.studentHtml(s); U.fixAccordionHeight(box); })();
+  },
+
+  sendToSecretary(msg){
+    let sec = DB.data.auth.staff.find(s=>s.role==='gs');
+    if(!sec) sec = DB.data.auth.staff.find(s=>App.COMMITTEE_ROLES.includes(s.role));
+    if(sec&&sec.phone){ U.sendWhatsApp(sec.phone, msg); }
+    else U.toast("ജനറൽ സെക്രട്ടറിയുടെ നമ്പർ ലഭ്യമല്ല");
+  },
+
+  sendToManager(msg){
+    const mgr = DB.data.auth.staff.find(s=>s.role==='manager');
+    if(mgr&&mgr.phone){ U.sendWhatsApp(mgr.phone, msg); }
+    else U.toast("മാനേജരുടെ നമ്പർ ലഭ്യമല്ല");
   }
 };
 
