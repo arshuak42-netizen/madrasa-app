@@ -857,6 +857,12 @@ const Sadhar = {
       ${FeeShared.render(null)}
     `);
 
+    // ---- 12. Attendance for any class (fill-in for absent teachers) ----
+    html += this.accordionItem("acc-sadhar-attendance", 12, "ഹാജർ എടുക്കുക (Attendance — ഏത് ക്ലാസ്സിനും)", `
+      <p class="muted" style="margin-bottom:10px;">ഒരു അധ്യാപകൻ ഹാജരാകാതിരുന്നാൽ, ആ ക്ലാസ്സ് സെലക്ട് ചെയ്ത് സദറിന് നേരിട്ട് ഹാജർ നൽകാം. ഇത് ക്ലാസ്സ് അധ്യാപകന്റെ സ്വന്തം ഹാജറിൽ മാറ്റം വരുത്തില്ല — അധ്യാപകന്റെ ഹാജർ വെവ്വേറെ മാർക്ക് ചെയ്യാം.</p>
+      ${AttendanceShared.render(CLASS_LIST, true, "Sadhar")}
+    `);
+
     return html;
   },
 
@@ -1552,118 +1558,13 @@ const Teacher = {
       html += `<div class="empty-state"><div class="emoji">📚</div>നിങ്ങൾക്ക് ക്ലാസ്സുകൾ നൽകിയിട്ടില്ല. സദറുമായി ബന്ധപ്പെടുക.</div>`;
       return html;
     }
-
-    html += `<div class="form-group">
-      <label>ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക</label>
-      <select id="att-class" onchange="App.refresh()">
-        ${classes.map(c=>`<option value="${c}" ${Teacher._selClass===c?'selected':''}>${CLASS_LABELS[c]}</option>`).join("")}
-      </select>
-    </div>`;
-
-    const todayStr = U.todayStr();
-    const minDate = ATTENDANCE_MIN_DATE;
-    html += `<div class="form-group">
-      <label>തീയതി (ഹാജർ എടുക്കാൻ / കാണാൻ)</label>
-      <input type="date" id="att-date" min="${minDate}" max="${todayStr}" value="${Teacher._selDate || todayStr}" onchange="Teacher._selDate=this.value; App.refresh()">
-    </div>`;
-
-    const selClass = document.getElementById("att-class") ? document.getElementById("att-class").value : classes[0];
-    Teacher._selClass = selClass;
-    const selDate = document.getElementById("att-date") ? document.getElementById("att-date").value : (Teacher._selDate || todayStr);
-    Teacher._selDate = selDate;
-
-    const shiftKey = U.classShift(selClass);
-    const holiday = (selDate === todayStr) ? U.shiftHoliday(shiftKey) : null;
-
-    if(holiday){
-      html += `<div class="blur-box">
-        <div class="blurred">
-          ${this.attendanceListHtml(selClass, selDate, true)}
-        </div>
-        <div class="blur-overlay">
-          <div>
-            <div style="font-size:18px; font-weight:800; color:var(--rose); margin-bottom:6px;">ഇന്ന് അവധിയാണ്!</div>
-            <div style="font-size:13px; color:#7a3d35;">കാരണം: ${U.esc(holiday.reason)}</div>
-          </div>
-        </div>
-      </div>`;
-      return html;
-    }
-
-    html += this.attendanceListHtml(selClass, selDate, false);
+    html += AttendanceShared.render(classes, false, "Teacher");
 
     // Monthly summary link
     html += `<div class="divider"></div>
       <button class="outline-btn btn-block" onclick="App.goTo('teacher-monthly')">📅 മാസം തിരിച്ചുള്ള ഹാജർ സംഗ്രഹം</button>`;
 
     return html;
-  },
-
-  attendanceListHtml(cls, dateStr, disabled){
-    const students = U.studentsByClass(cls);
-    const att = DB.data.attendance[dateStr] || {};
-    const isToday = (dateStr === U.todayStr());
-    const displayDate = U.displayDateFromStr(dateStr);
-
-    let html = `<div class="card">
-      <div class="card-title">${CLASS_LABELS[cls]} — ${displayDate}</div>`;
-
-    students.forEach(s=>{
-      const status = att[s.id];
-      html += `<div class="row" style="padding:6px 0;">
-        <div style="display:flex; align-items:center; gap:8px; flex:1;">
-          ${U.photoOrInitial(s.photo, s.name)}
-          <span style="font-size:13.5px;">${U.esc(s.name)} <span class="muted" style="font-size:11.5px;">(Reg No: ${U.esc(s.reg)})</span></span>
-        </div>
-        <div style="display:flex; gap:6px;">
-          <button class="btn-small" id="btn-present-${s.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','present','${cls}','${dateStr}')">Present</button>
-          <button class="btn-small" id="btn-absent-${s.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="Teacher.markAttendance('${s.id}','absent','${cls}','${dateStr}')">Absent</button>
-        </div>
-      </div>
-      <div id="wa-absent-${s.id}"></div>`;
-    });
-    if(students.length===0) html += `<p class="muted">ഈ ക്ലാസ്സിൽ കുട്ടികൾ ഇല്ല</p>`;
-    if(!isToday) html += `<p class="muted" style="margin-top:8px;">⚠️ പഴയ തീയതിയിലെ ഹാജർ തിരുത്തുകയോ ചേർക്കുകയോ ചെയ്യുന്നു.</p>`;
-    html += `</div>`;
-    return html;
-  },
-
-  markAttendance(studentId, status, cls, dateStr){
-    if(!DB.data.attendance[dateStr]) DB.data.attendance[dateStr] = {};
-    DB.data.attendance[dateStr][studentId] = status;
-
-    // Auto-mark teacher present for this shift (only for today's date)
-    if(dateStr === U.todayStr()){
-      const teacher = App.user;
-      if(teacher.id){
-        DB.data.attendance[dateStr][teacher.id] = "present";
-      }
-    }
-    DB.save();
-
-    if(status === 'absent'){
-      const s = U.studentById(studentId);
-      const teacherName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
-      const dateDisplay = U.displayDateFromStr(dateStr);
-      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${teacherName}, ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-      document.getElementById("wa-absent-"+studentId).innerHTML =
-        `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
-    } else {
-      document.getElementById("wa-absent-"+studentId).innerHTML = "";
-    }
-
-    // Update button highlight styles in place (avoid full re-render which would wipe the WhatsApp button)
-    const presentBtn = document.getElementById("btn-present-"+studentId);
-    const absentBtn = document.getElementById("btn-absent-"+studentId);
-    if(presentBtn && absentBtn){
-      if(status === 'present'){
-        presentBtn.style.background = "var(--moss)"; presentBtn.style.color = "#fff"; presentBtn.style.borderColor = "var(--moss)";
-        absentBtn.style.background = ""; absentBtn.style.color = ""; absentBtn.style.borderColor = "";
-      } else {
-        absentBtn.style.background = "var(--rose)"; absentBtn.style.color = "#fff"; absentBtn.style.borderColor = "var(--rose)";
-        presentBtn.style.background = ""; presentBtn.style.color = ""; presentBtn.style.borderColor = "";
-      }
-    }
   },
 
   // ---------- Fees ----------
@@ -3385,6 +3286,196 @@ const FeeShared = {
 };
 
 document.addEventListener("DOMContentLoaded", () => App.init());
+
+// ===========================================================
+// AttendanceShared — common attendance UI for Teacher (own
+// classes) and Sadhar (any class, fill-in for absent teachers)
+// ===========================================================
+const AttendanceShared = {
+  _state: {}, // namespace -> {selClass, selDate}
+
+  render(allowedClasses, forSadhar, namespace){
+    if(!this._state[namespace]) this._state[namespace] = {};
+    const state = this._state[namespace];
+    let selClass = (state.selClass && allowedClasses.includes(state.selClass)) ? state.selClass : allowedClasses[0];
+    state.selClass = selClass;
+    const todayStr = U.todayStr();
+    let selDate = state.selDate || todayStr;
+    state.selDate = selDate;
+
+    let html = `<div class="form-group">
+      <label>ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക</label>
+      <select id="att-class-${namespace}" onchange="AttendanceShared.onChange('${namespace}', ${forSadhar})">
+        ${allowedClasses.map(c=>{
+          const shiftLabel = forSadhar ? ` — ഷിഫ്റ്റ് ${U.classShift(c)||'-'}` : '';
+          return `<option value="${c}" ${selClass===c?'selected':''}>${CLASS_LABELS[c]}${shiftLabel}</option>`;
+        }).join("")}
+      </select>
+    </div>`;
+
+    html += `<div class="form-group">
+      <label>തീയതി (ഹാജർ എടുക്കാൻ / കാണാൻ)</label>
+      <input type="date" id="att-date-${namespace}" min="${ATTENDANCE_MIN_DATE}" max="${todayStr}" value="${selDate}" onchange="AttendanceShared.onChange('${namespace}', ${forSadhar})">
+    </div>`;
+
+    html += `<div id="att-body-${namespace}">${this.bodyHtml(selClass, selDate, forSadhar, namespace)}</div>`;
+    return html;
+  },
+
+  onChange(namespace, forSadhar){
+    const classSel = document.getElementById(`att-class-${namespace}`);
+    const dateSel = document.getElementById(`att-date-${namespace}`);
+    const state = this._state[namespace];
+    state.selClass = classSel.value;
+    state.selDate = dateSel.value;
+    const body = document.getElementById(`att-body-${namespace}`);
+    body.innerHTML = this.bodyHtml(state.selClass, state.selDate, forSadhar, namespace);
+    U.fixAccordionHeight(body);
+  },
+
+  bodyHtml(cls, dateStr, forSadhar, namespace){
+    const todayStr = U.todayStr();
+    const shiftKey = U.classShift(cls);
+    const holiday = (dateStr === todayStr) ? U.shiftHoliday(shiftKey) : null;
+
+    let html = "";
+    if(forSadhar){
+      html += this.teacherRowHtml(cls, dateStr);
+    }
+    if(holiday){
+      html += `<div class="blur-box">
+        <div class="blurred">${this.attendanceListHtml(cls, dateStr, true, forSadhar, namespace)}</div>
+        <div class="blur-overlay">
+          <div>
+            <div style="font-size:18px; font-weight:800; color:var(--rose); margin-bottom:6px;">ഇന്ന് അവധിയാണ്!</div>
+            <div style="font-size:13px; color:#7a3d35;">കാരണം: ${U.esc(holiday.reason)}</div>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      html += this.attendanceListHtml(cls, dateStr, false, forSadhar, namespace);
+    }
+    return html;
+  },
+
+  // For Sadhar mode: show the class's assigned teacher(s) with their own present/absent toggle,
+  // so taking children's attendance doesn't wrongly mark an absent teacher as present.
+  teacherRowHtml(cls, dateStr){
+    const teachers = DB.data.auth.staff.filter(t=>t.role==='teacher' && (t.classes||[]).includes(cls));
+    if(!teachers.length){
+      return `<div class="card" style="background:#fff7e6;"><p class="muted">ഈ ക്ലാസ്സിന് നിയോഗിക്കപ്പെട്ട അധ്യാപകൻ ഇല്ല.</p></div>`;
+    }
+    const att = DB.data.attendance[dateStr] || {};
+    let html = `<div class="card" style="background:#fff7e6;">
+      <div class="card-title" style="font-size:14px;">👨‍🏫 ക്ലാസ്സ് അധ്യാപകന്റെ ഹാജർ</div>`;
+    teachers.forEach(t=>{
+      const status = att[t.id];
+      html += `<div class="row" style="padding:6px 0;">
+        <div style="display:flex; align-items:center; gap:8px; flex:1;">
+          ${U.photoOrInitial(t.photo, t.name)}
+          <span style="font-size:13.5px;">${U.esc(t.name)}</span>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-small" id="btn-tpresent-${t.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" onclick="AttendanceShared.markTeacher('${t.id}','present','${dateStr}')">Present</button>
+          <button class="btn-small" id="btn-tabsent-${t.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" onclick="AttendanceShared.markTeacher('${t.id}','absent','${dateStr}')">Absent</button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  markTeacher(teacherId, status, dateStr){
+    if(!DB.data.attendance[dateStr]) DB.data.attendance[dateStr] = {};
+    DB.data.attendance[dateStr][teacherId] = status;
+    DB.save();
+    const pBtn = document.getElementById(`btn-tpresent-${teacherId}`);
+    const aBtn = document.getElementById(`btn-tabsent-${teacherId}`);
+    if(pBtn && aBtn){
+      if(status==='present'){
+        pBtn.style.background="var(--moss)"; pBtn.style.color="#fff"; pBtn.style.borderColor="var(--moss)";
+        aBtn.style.background=""; aBtn.style.color=""; aBtn.style.borderColor="";
+      } else {
+        aBtn.style.background="var(--rose)"; aBtn.style.color="#fff"; aBtn.style.borderColor="var(--rose)";
+        pBtn.style.background=""; pBtn.style.color=""; pBtn.style.borderColor="";
+      }
+    }
+    U.toast("അധ്യാപകന്റെ ഹാജർ രേഖപ്പെടുത്തി");
+  },
+
+  attendanceListHtml(cls, dateStr, disabled, forSadhar, namespace){
+    const students = U.studentsByClass(cls);
+    const att = DB.data.attendance[dateStr] || {};
+    const isToday = (dateStr === U.todayStr());
+    const displayDate = U.displayDateFromStr(dateStr);
+
+    let html = `<div class="card">
+      <div class="card-title">${CLASS_LABELS[cls]} — ${displayDate}</div>`;
+
+    students.forEach(s=>{
+      const status = att[s.id];
+      html += `<div class="row" style="padding:6px 0;">
+        <div style="display:flex; align-items:center; gap:8px; flex:1;">
+          ${U.photoOrInitial(s.photo, s.name)}
+          <span style="font-size:13.5px;">${U.esc(s.name)} <span class="muted" style="font-size:11.5px;">(Reg No: ${U.esc(s.reg)})</span></span>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-small" id="btn-present-${s.id}" style="${status==='present'?'background:var(--moss);color:#fff;border-color:var(--moss);':''}" ${disabled?'disabled':''} onclick="AttendanceShared.markAttendance('${s.id}','present','${cls}','${dateStr}',${forSadhar},'${namespace}')">Present</button>
+          <button class="btn-small" id="btn-absent-${s.id}" style="${status==='absent'?'background:var(--rose);color:#fff;border-color:var(--rose);':''}" ${disabled?'disabled':''} onclick="AttendanceShared.markAttendance('${s.id}','absent','${cls}','${dateStr}',${forSadhar},'${namespace}')">Absent</button>
+        </div>
+      </div>
+      <div id="wa-absent-${s.id}"></div>`;
+    });
+    if(students.length===0) html += `<p class="muted">ഈ ക്ലാസ്സിൽ കുട്ടികൾ ഇല്ല</p>`;
+    if(!isToday) html += `<p class="muted" style="margin-top:8px;">⚠️ പഴയ തീയതിയിലെ ഹാജർ തിരുത്തുകയോ ചേർക്കുകയോ ചെയ്യുന്നു.</p>`;
+    if(forSadhar) html += `<p class="muted" style="margin-top:8px;">ℹ️ സദർ നേരിട്ട് ഹാജർ നൽകുന്നു — ഇത് ക്ലാസ്സ് അധ്യാപകന്റെ ഹാജറിൽ മാറ്റം വരുത്തില്ല.</p>`;
+    html += `</div>`;
+    return html;
+  },
+
+  markAttendance(studentId, status, cls, dateStr, forSadhar, namespace){
+    if(!DB.data.attendance[dateStr]) DB.data.attendance[dateStr] = {};
+    DB.data.attendance[dateStr][studentId] = status;
+
+    // Auto-mark teacher present for this shift (only for today's date, and only when a teacher takes their own attendance)
+    if(!forSadhar && dateStr === U.todayStr()){
+      const teacher = App.user;
+      if(teacher.id){
+        DB.data.attendance[dateStr][teacher.id] = "present";
+      }
+    }
+    DB.save();
+
+    if(status === 'absent'){
+      const s = U.studentById(studentId);
+      const senderName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
+      const dateDisplay = U.displayDateFromStr(dateStr);
+      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${senderName}, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+      document.getElementById("wa-absent-"+studentId).innerHTML =
+        `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
+    } else {
+      const waBox = document.getElementById("wa-absent-"+studentId);
+      if(waBox) waBox.innerHTML = "";
+    }
+
+    const presentBtn = document.getElementById("btn-present-"+studentId);
+    const absentBtn = document.getElementById("btn-absent-"+studentId);
+    if(presentBtn && absentBtn){
+      if(status === 'present'){
+        presentBtn.style.background = "var(--moss)"; presentBtn.style.color = "#fff"; presentBtn.style.borderColor = "var(--moss)";
+        absentBtn.style.background = ""; absentBtn.style.color = ""; absentBtn.style.borderColor = "";
+      } else {
+        absentBtn.style.background = "var(--rose)"; absentBtn.style.color = "#fff"; absentBtn.style.borderColor = "var(--rose)";
+        presentBtn.style.background = ""; presentBtn.style.color = ""; presentBtn.style.borderColor = "";
+      }
+    }
+
+    if(forSadhar){
+      const body = document.getElementById(`att-body-${namespace}`);
+      if(body) U.fixAccordionHeight(body);
+    }
+  }
+};
 
 </script>
 </body>
