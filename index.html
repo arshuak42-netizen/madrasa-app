@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട് — അറ്റൻഡൻസ്, ഫീസ്, റിസൾട്ട്, അറിയിപ്പുകൾ">
+<meta name="description" content="മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്">
 <meta name="theme-color" content="#0F4C4C">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -71,6 +71,28 @@ input,select,textarea{font-family:inherit; font-size:16px;}
   font-weight:600;
 }
 .logout-btn:active{background:rgba(255,255,255,0.25);}
+
+.topbar-actions{display:flex; align-items:center; gap:8px;}
+.sync-btn{
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;
+  width:34px; height:34px;
+  border-radius:999px;
+  font-size:15px;
+  display:flex; align-items:center; justify-content:center;
+}
+.sync-btn:active{background:rgba(255,255,255,0.25);}
+.sync-btn.spinning{animation:spin 1s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+#sync-overlay{
+  position:fixed; inset:0; background:rgba(15,40,40,.92);
+  z-index:9999; display:flex; align-items:center; justify-content:center;
+  color:#fff; text-align:center; flex-direction:column; gap:12px;
+  font-size:14px;
+}
+#sync-overlay .spin{font-size:34px; animation:spin 1s linear infinite;}
 
 /* ===== Layout ===== */
 .app-container{max-width:560px; margin:0 auto; padding:16px; padding-bottom:90px;}
@@ -313,6 +335,12 @@ a.link-btn{
 </head>
 <body>
 
+<!-- ============ CLOUD SYNC OVERLAY ============ -->
+<div id="sync-overlay">
+  <div class="spin">🔄</div>
+  <div>ഡാറ്റ സിങ്ക് ചെയ്യുന്നു...<br><span style="font-size:12px; opacity:.75;">(ഇന്റർനെറ്റ് ഇല്ലെങ്കിൽ ഇത് കുറച്ച് സെക്കൻഡിനുള്ളിൽ തനിയെ പോകും)</span></div>
+</div>
+
 <!-- ============ LOGIN SCREEN ============ -->
 <div id="login-screen" class="login-wrap">
   <div class="login-card">
@@ -359,7 +387,10 @@ a.link-btn{
         <div class="sub" id="topbar-role">കൊറക്കോട്</div>
       </div>
     </div>
-    <button class="logout-btn" onclick="App.logout()">ലോഗൗട്ട് (Logout)</button>
+    <div class="topbar-actions">
+      <button class="sync-btn" id="sync-btn" onclick="App.manualSync()" title="സിങ്ക് ചെയ്യുക">🔄</button>
+      <button class="logout-btn" onclick="App.logout()">ലോഗൗട്ട് (Logout)</button>
+    </div>
   </div>
   <div class="app-container" id="app-container">
     <!-- screens injected by JS -->
@@ -368,6 +399,10 @@ a.link-btn{
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Firebase (cloud sync) — loaded from CDN; app falls back to local-only if unavailable -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
 
@@ -378,6 +413,25 @@ a.link-btn{
 // ===========================================================
 
 const STORAGE_KEY = "madrasa_6682_data_v1";
+
+// =====================================================================
+// 🔥 FIREBASE CONFIG — എല്ലാ ഫോണുകളിലും ഒരേ ഡാറ്റ കാണിക്കാൻ ഇത് മാറ്റണം!
+// -----------------------------------------------------------------
+// Firebase Console (console.firebase.google.com) ൽ നിന്ന് കിട്ടുന്ന
+// config object ഇവിടെ പേസ്റ്റ് ചെയ്യുക. ഇത് ചെയ്യാത്തിടത്തോളം ആപ്പ്
+// നിലവിലെ പോലെ ഓരോ ഫോണിലും വെവ്വേറെ (LocalStorage മാത്രം) പ്രവർത്തിക്കും —
+// ആപ്പ് ഒട്ടും broken ആകില്ല, പക്ഷേ multi-device sync ഉണ്ടാകില്ല.
+// =====================================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
+  authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
+  databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "mamb-ul-uloom-madrasa",
+  storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
+  messagingSenderId: "494107652219",
+  appId: "1:494107652219:web:ec9a333ad87c8ca03772de"
+};
+const CLOUD_SYNC_PATH = "madrasa_6682_data";
 
 // ---- Class -> Shift default mapping (editable by Sadhar) ----
 const DEFAULT_CLASS_SHIFT = {
@@ -647,6 +701,8 @@ function initShiftClasses(data){
 // ===========================================================
 const DB = {
   data: null,
+  _firebaseApp: null,
+
   load(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -657,30 +713,126 @@ const DB = {
         if(!this.data.fees) this.data.fees = { monthly:100, annual:1000, qrCode:null, gpayNumber:"" };
         if(this.data.fees.qrCode === undefined) this.data.fees.qrCode = null;
         if(this.data.fees.gpayNumber === undefined) this.data.fees.gpayNumber = "";
+        if(this.data._updatedAt === undefined) this.data._updatedAt = 0;
       } else {
         this.data = buildDefaultData();
         initShiftClasses(this.data);
+        this.data._updatedAt = Date.now();
         this.save();
       }
     }catch(e){
       console.error("DB load error", e);
       this.data = buildDefaultData();
       initShiftClasses(this.data);
+      this.data._updatedAt = Date.now();
       this.save();
     }
     return this.data;
   },
+
   save(){
     try{
+      this.data._updatedAt = Date.now();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
     }catch(e){
       console.error("DB save error", e);
     }
+    this.pushToCloud();
   },
+
   reset(){
     this.data = buildDefaultData();
     initShiftClasses(this.data);
+    this.data._updatedAt = Date.now();
     this.save();
+  },
+
+  // =====================================================================
+  // Cloud sync (Firebase Realtime Database) — optional. If FIREBASE_CONFIG
+  // hasn't been filled in, or the SDK / network isn't available, every
+  // method below is a harmless no-op and the app keeps working locally.
+  // =====================================================================
+
+  cloudConfigured(){
+    return !!(FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY_HERE");
+  },
+
+  cloudRef(){
+    try{
+      if(typeof firebase === 'undefined') return null;
+      if(!this.cloudConfigured()) return null;
+      if(!this._firebaseApp){
+        this._firebaseApp = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      return firebase.database().ref(CLOUD_SYNC_PATH);
+    }catch(e){
+      console.error("Firebase init error", e);
+      return null;
+    }
+  },
+
+  pushToCloud(){
+    const ref = this.cloudRef();
+    if(!ref) return;
+    try{
+      ref.set(this.data).catch(e=>console.error("Cloud push error", e));
+    }catch(e){ console.error("Cloud push error", e); }
+  },
+
+  // One-time fetch + merge, used on app start. Always calls done(),
+  // even if cloud is unreachable (with a short timeout fallback).
+  initCloudSync(done){
+    const ref = this.cloudRef();
+    if(!ref){ done(); return; }
+    let finished = false;
+    const finish = ()=>{ if(finished) return; finished = true; done(); };
+    const timer = setTimeout(finish, 7000);
+    ref.once("value").then(snap=>{
+      clearTimeout(timer);
+      const cloud = snap.val();
+      if(cloud && typeof cloud === 'object'){
+        const cloudTime = cloud._updatedAt || 0;
+        const localTime = this.data._updatedAt || 0;
+        if(cloudTime > localTime){
+          this.data = cloud;
+          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
+        } else if(localTime > cloudTime){
+          ref.set(this.data).catch(e=>console.error("Cloud push error", e));
+        }
+      } else {
+        // Cloud empty -> seed it with our local data
+        ref.set(this.data).catch(e=>console.error("Cloud seed error", e));
+      }
+      finish();
+    }).catch(e=>{
+      console.error("Cloud fetch error", e);
+      clearTimeout(timer);
+      finish();
+    });
+  },
+
+  // Manual re-sync (pull latest from cloud if newer, then refresh UI).
+  // callback(updated:boolean, error?)
+  syncFromCloud(callback){
+    const ref = this.cloudRef();
+    if(!ref){ if(callback) callback(false, "not-configured"); return; }
+    ref.once("value").then(snap=>{
+      const cloud = snap.val();
+      if(cloud && typeof cloud === 'object'){
+        const cloudTime = cloud._updatedAt || 0;
+        const localTime = this.data._updatedAt || 0;
+        if(cloudTime > localTime){
+          this.data = cloud;
+          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
+          if(callback) callback(true);
+          return;
+        }
+      }
+      if(callback) callback(false);
+    }).catch(e=>{
+      console.error("Sync error", e);
+      if(callback) callback(false, e);
+    });
   }
 };
 
@@ -2718,17 +2870,42 @@ const App = {
 
   init(){
     DB.load();
-    const session = sessionStorage.getItem("madrasa_session");
-    if(session){
-      try{
-        this.user = JSON.parse(session);
-        this.showApp();
-      }catch(e){
+    const overlay = document.getElementById("sync-overlay");
+    DB.initCloudSync(()=>{
+      if(overlay) overlay.style.display = "none";
+      const session = sessionStorage.getItem("madrasa_session");
+      if(session){
+        try{
+          this.user = JSON.parse(session);
+          this.showApp();
+        }catch(e){
+          this.showLogin();
+        }
+      } else {
         this.showLogin();
       }
-    } else {
-      this.showLogin();
-    }
+    });
+  },
+
+  // Manual sync button (topbar) — pull latest data from cloud and refresh.
+  manualSync(){
+    const btn = document.getElementById("sync-btn");
+    if(btn) btn.classList.add("spinning");
+    DB.syncFromCloud((updated, err)=>{
+      if(btn) btn.classList.remove("spinning");
+      if(err === "not-configured"){
+        U.toast("ക്ലൗഡ് സിങ്ക് സെറ്റ് ചെയ്തിട്ടില്ല");
+      } else if(updated){
+        U.toast("പുതിയ ഡാറ്റ ലഭിച്ചു ✅");
+        this.refresh();
+        this.renderNav();
+        this.setTopbarRole();
+      } else if(err){
+        U.toast("സിങ്ക് പരാജയപ്പെട്ടു — ഇന്റർനെറ്റ് പരിശോധിക്കുക");
+      } else {
+        U.toast("ഡാറ്റ പുതിയത് തന്നെ ✅");
+      }
+    });
   },
 
   showLogin(){
@@ -3450,7 +3627,7 @@ const AttendanceShared = {
       const s = U.studentById(studentId);
       const senderName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
       const dateDisplay = U.displayDateFromStr(dateStr);
-      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${senderName}, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+      const msg = 'അസ്സലാമു അലൈക്കും , പ്രിയപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${senderName}, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
       document.getElementById("wa-absent-"+studentId).innerHTML =
         `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
     } else {
