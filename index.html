@@ -3627,7 +3627,7 @@ const AttendanceShared = {
       const s = U.studentById(studentId);
       const senderName = (App.user && App.user.name) ? App.user.name : "ക്ലാസ്സ് അധ്യാപകൻ";
       const dateDisplay = U.displayDateFromStr(dateStr);
-      const msg = 'അസ്സലാമു അലൈക്കും , പ്രിയപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${senderName}, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+      const msg = `ബഹുമാനപ്പെട്ട രക്ഷിതാവേ, താങ്കളുടെ ${U.childWord(s)} ${s.name} (Reg No: ${s.reg}, ${CLASS_LABELS[s.cls]}) ${dateDisplay}-ന് മദ്റസയിൽ ഹാജരായിട്ടില്ല. വിവരം അറിയിക്കുന്നു. - ${senderName}, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
       document.getElementById("wa-absent-"+studentId).innerHTML =
         `<div style="margin:4px 0 8px;"><button class="btn-wa" onclick='U.sendWhatsApp("${s.phone}", ${JSON.stringify(msg)})'>📩 രക്ഷിതാവിന് WhatsApp അയക്കുക</button></div>`;
     } else {
