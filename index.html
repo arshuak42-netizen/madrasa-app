@@ -703,17 +703,61 @@ const DB = {
   data: null,
   _firebaseApp: null,
 
+  // Apply all migrations to any data object (local or cloud-downloaded)
+  applyMigrations(d){
+    if(!d) return d;
+    if(!d.holidayLog) d.holidayLog = [];
+    if(!d.fees) d.fees = { monthly:100, annual:1000, qrCode:null, gpayNumber:"" };
+    if(d.fees.qrCode === undefined) d.fees.qrCode = null;
+    if(d.fees.gpayNumber === undefined) d.fees.gpayNumber = "";
+    if(d._updatedAt === undefined) d._updatedAt = 0;
+    if(!d.auth) d.auth = {};
+    // Firebase converts arrays to objects — convert back to arrays
+    const toArr = v => {
+      if(!v) return [];
+      if(Array.isArray(v)) return v;
+      if(typeof v === 'object') return Object.values(v);
+      return [];
+    };
+    d.auth.staff = toArr(d.auth.staff);
+    if(!d.auth.sadhar) d.auth.sadhar = { username:"sadhar", password:"6682" };
+    d.students = (!d.students) ? buildDefaultData().students : toArr(d.students);
+    if(!d.attendance || Array.isArray(d.attendance)) d.attendance = {};
+    if(!d.shifts) d.shifts = {};
+    // Firebase stores numeric keys as strings — normalize and ensure all 3 shifts exist
+    [1,2,3].forEach(sk=>{
+      const shift = d.shifts[sk] || d.shifts[String(sk)];
+      if(!shift || typeof shift !== 'object'){
+        d.shifts[sk] = { time: `ഷിഫ്റ്റ് ${sk}`, classes: [] };
+      } else {
+        d.shifts[sk] = shift;
+        if(!d.shifts[sk].time) d.shifts[sk].time = `ഷിഫ്റ്റ് ${sk}`;
+        if(!Array.isArray(d.shifts[sk].classes)) d.shifts[sk].classes = [];
+      }
+      // Remove string key if it exists (Firebase quirk)
+      if(d.shifts[String(sk)] && String(sk) !== sk) delete d.shifts[String(sk)];
+    });
+    if(!d.shifts[1].classes.length && !d.shifts[2].classes.length && !d.shifts[3].classes.length){
+      initShiftClasses(d);
+    }
+    if(!d.announcements) d.announcements = [];
+    else d.announcements = toArr(d.announcements);
+    if(!d.complaints) d.complaints = { toSadhar:[], toTeacher:[] };
+    else { d.complaints.toSadhar = toArr(d.complaints.toSadhar); d.complaints.toTeacher = toArr(d.complaints.toTeacher); }
+    if(!d.reviews) d.reviews = [];
+    else d.reviews = toArr(d.reviews);
+    if(!d.results) d.results = {};
+    if(!d.timetables) d.timetables = {};
+    if(!d.meta) d.meta = { place:"കൊറക്കോട്", regNo:"6682", year:"2026-2027" };
+    return d;
+  },
+
   load(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
       if(raw){
         this.data = JSON.parse(raw);
-        // Migrations for fields added after initial release
-        if(!this.data.holidayLog) this.data.holidayLog = [];
-        if(!this.data.fees) this.data.fees = { monthly:100, annual:1000, qrCode:null, gpayNumber:"" };
-        if(this.data.fees.qrCode === undefined) this.data.fees.qrCode = null;
-        if(this.data.fees.gpayNumber === undefined) this.data.fees.gpayNumber = "";
-        if(this.data._updatedAt === undefined) this.data._updatedAt = 0;
+        this.applyMigrations(this.data);
       } else {
         this.data = buildDefaultData();
         initShiftClasses(this.data);
@@ -771,11 +815,28 @@ const DB = {
     }
   },
 
+  // Returns a copy of data with large base64 photos stripped out
+  // so Firebase push stays well within size limits.
+  dataForCloud(){
+    const d = JSON.parse(JSON.stringify(this.data));
+    // Strip student photos
+    if(d.students) d.students.forEach(s=>{ if(s.photo && s.photo.length > 200) s.photo = ""; });
+    // Strip staff photos
+    if(d.auth && d.auth.staff) d.auth.staff.forEach(st=>{ if(st.photo && st.photo.length > 200) st.photo = ""; });
+    // Strip sadhar photo
+    if(d.auth && d.auth.sadhar && d.auth.sadhar.photo && d.auth.sadhar.photo.length > 200) d.auth.sadhar.photo = "";
+    // Strip QR code (can be large image)
+    if(d.fees && d.fees.qrCode) d.fees.qrCode = null;
+    // Strip announcement media (audio/video/images)
+    if(d.announcements) d.announcements.forEach(a=>{ if(a.mediaData) delete a.mediaData; });
+    return d;
+  },
+
   pushToCloud(){
     const ref = this.cloudRef();
     if(!ref) return;
     try{
-      ref.set(this.data).catch(e=>console.error("Cloud push error", e));
+      ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
     }catch(e){ console.error("Cloud push error", e); }
   },
 
@@ -786,22 +847,31 @@ const DB = {
     if(!ref){ done(); return; }
     let finished = false;
     const finish = ()=>{ if(finished) return; finished = true; done(); };
-    const timer = setTimeout(finish, 7000);
+    const timer = setTimeout(finish, 8000);
     ref.once("value").then(snap=>{
       clearTimeout(timer);
       const cloud = snap.val();
       if(cloud && typeof cloud === 'object'){
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
-        if(cloudTime > localTime){
+
+        // Apply migrations to cloud data before comparing
+        this.applyMigrations(cloud);
+
+        // If cloud is newer AND has staff data, prefer cloud
+        const cloudHasStaff = cloud.auth && Array.isArray(cloud.auth.staff) && cloud.auth.staff.length > 0;
+        const localHasStaff = this.data.auth && Array.isArray(this.data.auth.staff) && this.data.auth.staff.length > 0;
+
+        if(cloudTime > localTime || (cloudHasStaff && !localHasStaff)){
           this.data = cloud;
           try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
-        } else if(localTime > cloudTime){
-          ref.set(this.data).catch(e=>console.error("Cloud push error", e));
+        } else if(localTime > cloudTime || (localHasStaff && !cloudHasStaff)){
+          // Local is newer or local has staff that cloud doesn't — push to cloud
+          ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
         }
       } else {
         // Cloud empty -> seed it with our local data
-        ref.set(this.data).catch(e=>console.error("Cloud seed error", e));
+        ref.set(this.dataForCloud()).catch(e=>console.error("Cloud seed error", e));
       }
       finish();
     }).catch(e=>{
@@ -819,6 +889,7 @@ const DB = {
     ref.once("value").then(snap=>{
       const cloud = snap.val();
       if(cloud && typeof cloud === 'object'){
+        this.applyMigrations(cloud);
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
         if(cloudTime > localTime){
@@ -883,7 +954,28 @@ const Renderers = {
 const Sadhar = {
 
   renderHome(){
+    try{
+      return this._renderHomeInner();
+    } catch(e){
+      console.error("Sadhar renderHome error:", e);
+      return `<div class="card" style="background:#fdecea; border:2px solid var(--rose);">
+        <div style="font-weight:700; color:var(--rose); margin-bottom:8px;">⚠️ ഒരു error സംഭവിച്ചു</div>
+        <p style="font-size:13px; color:#7a3d35;">${e.message || e}</p>
+        <p class="muted" style="margin-top:8px;">↻ Sync button ഒരു തവണ press ചെയ്ത് refresh ചെയ്യൂ.</p>
+      </div>`;
+    }
+  },
+
+  _renderHomeInner(){
     const data = DB.data;
+    // Ensure shifts are valid before rendering
+    [1,2,3].forEach(sk=>{
+      if(!data.shifts[sk] || typeof data.shifts[sk] !== 'object'){
+        data.shifts[sk] = { time:`ഷിഫ്റ്റ് ${sk}`, classes:[] };
+      }
+      if(!data.shifts[sk].time) data.shifts[sk].time = `ഷിഫ്റ്റ് ${sk}`;
+      if(!Array.isArray(data.shifts[sk].classes)) data.shifts[sk].classes = [];
+    });
     let html = `<h2 style="margin-bottom:14px;">സദർ പാനൽ (Sadhar Panel)</h2>`;
 
     // ---- 1. Shift & Class linking ----
@@ -1016,7 +1108,7 @@ const Sadhar = {
     `);
 
     return html;
-  },
+  }, // end _renderHomeInner
 
   accordionItem(id, num, title, bodyHtml){
     return `
@@ -3068,7 +3160,17 @@ const App = {
     if(navBtn) navBtn.classList.add("active");
 
     const container = document.getElementById("app-container");
-    container.innerHTML = Renderers.render(tabId);
+    try{
+      container.innerHTML = Renderers.render(tabId);
+    } catch(err){
+      console.error("Render error:", err);
+      container.innerHTML = `<div class="card" style="margin:20px; background:#fdecea;">
+        <div style="font-weight:700; color:var(--rose); margin-bottom:8px;">⚠️ പേജ് load ആകുന്നില്ല</div>
+        <p class="muted" style="font-size:13px;">${err.message}</p>
+        <button class="primary-btn" style="margin-top:12px;" onclick="App.refresh()">↺ വീണ്ടും ശ്രമിക്കുക</button>
+        <button class="outline-btn" style="margin-top:8px;" onclick="App.logout()">Logout</button>
+      </div>`;
+    }
     window.scrollTo(0,0);
   },
 
@@ -3538,7 +3640,9 @@ const AttendanceShared = {
   // For Sadhar mode: show the class's assigned teacher(s) with their own present/absent toggle,
   // so taking children's attendance doesn't wrongly mark an absent teacher as present.
   teacherRowHtml(cls, dateStr){
-    const teachers = DB.data.auth.staff.filter(t=>t.role==='teacher' && (t.classes||[]).includes(cls));
+    const staff = DB.data.auth.staff;
+    if(!staff || !Array.isArray(staff)) return `<div class="card" style="background:#fff7e6;"><p class="muted">ജീവനക്കാരുടെ data ലോഡ് ആകുന്നു...</p></div>`;
+    const teachers = staff.filter(t=>t.role==='teacher' && (t.classes||[]).includes(cls));
     if(!teachers.length){
       return `<div class="card" style="background:#fff7e6;"><p class="muted">ഈ ക്ലാസ്സിന് നിയോഗിക്കപ്പെട്ട അധ്യാപകൻ ഇല്ല.</p></div>`;
     }
