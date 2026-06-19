@@ -855,22 +855,37 @@ const DB = {
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
 
-        // Apply migrations to cloud data before comparing
         this.applyMigrations(cloud);
 
-        // If cloud is newer AND has staff data, prefer cloud
         const cloudHasStaff = cloud.auth && Array.isArray(cloud.auth.staff) && cloud.auth.staff.length > 0;
         const localHasStaff = this.data.auth && Array.isArray(this.data.auth.staff) && this.data.auth.staff.length > 0;
+        const cloudShiftsOk = cloud.shifts && cloud.shifts[1] && Array.isArray(cloud.shifts[1].classes);
+        const localShiftsOk = this.data.shifts && this.data.shifts[1] && Array.isArray(this.data.shifts[1].classes);
+
+        let needPush = false;
 
         if(cloudTime > localTime || (cloudHasStaff && !localHasStaff)){
+          // Cloud is newer — use cloud data
           this.data = cloud;
+          // But if cloud shifts are broken, restore from local
+          if(!cloudShiftsOk && localShiftsOk){
+            this.data.shifts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}').shifts || this.data.shifts;
+            initShiftClasses(this.data);
+            needPush = true;
+          }
           try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
-        } else if(localTime > cloudTime || (localHasStaff && !cloudHasStaff)){
-          // Local is newer or local has staff that cloud doesn't — push to cloud
+        } else {
+          needPush = true;
+        }
+
+        // Always push if cloud shifts are null/broken
+        if(!cloudShiftsOk || localHasStaff && !cloudHasStaff) needPush = true;
+
+        if(needPush){
           ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
         }
       } else {
-        // Cloud empty -> seed it with our local data
+        // Cloud empty -> seed it with local data
         ref.set(this.dataForCloud()).catch(e=>console.error("Cloud seed error", e));
       }
       finish();
@@ -893,11 +908,18 @@ const DB = {
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
         if(cloudTime > localTime){
+          // Cloud is newer — update local
           this.data = cloud;
           try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
           if(callback) callback(true);
           return;
+        } else {
+          // Local is newer or equal — push local to cloud
+          ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
         }
+      } else {
+        // Cloud is empty — seed it
+        ref.set(this.dataForCloud()).catch(e=>console.error("Cloud seed error", e));
       }
       if(callback) callback(false);
     }).catch(e=>{
@@ -2987,14 +3009,18 @@ const App = {
       if(btn) btn.classList.remove("spinning");
       if(err === "not-configured"){
         U.toast("ക്ലൗഡ് സിങ്ക് സെറ്റ് ചെയ്തിട്ടില്ല");
+      } else if(typeof err === 'object' && err !== null){
+        // Firebase error — try pushing local data to cloud instead
+        U.toast("ക്ലൗഡിൽ നിന്ന് ലഭിക്കുന്നില്ല — local data push ചെയ്യുന്നു...");
+        DB.pushToCloud();
       } else if(updated){
         U.toast("പുതിയ ഡാറ്റ ലഭിച്ചു ✅");
         this.refresh();
         this.renderNav();
         this.setTopbarRole();
-      } else if(err){
-        U.toast("സിങ്ക് പരാജയപ്പെട്ടു — ഇന്റർനെറ്റ് പരിശോധിക്കുക");
       } else {
+        // Local is up to date — push to cloud to ensure cloud is in sync
+        DB.pushToCloud();
         U.toast("ഡാറ്റ പുതിയത് തന്നെ ✅");
       }
     });
