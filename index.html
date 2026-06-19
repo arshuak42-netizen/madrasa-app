@@ -401,8 +401,9 @@ a.link-btn{
 <div class="toast" id="toast"></div>
 
 <!-- Firebase (cloud sync) — loaded from CDN; app falls back to local-only if unavailable -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<!-- Firebase JS SDK removed: cloud sync now uses plain REST (fetch) calls
+     to the Realtime Database HTTPS endpoint, which is far more reliable
+     across mobile networks/carriers than the SDK's WebSocket connection. -->
 
 <script>
 
@@ -732,10 +733,8 @@ const DB = {
       } else {
         d.shifts[sk] = shift;
         if(!d.shifts[sk].time) d.shifts[sk].time = `ഷിഫ്റ്റ് ${sk}`;
-        if(!Array.isArray(d.shifts[sk].classes)) d.shifts[sk].classes = [];
+        if(!Array.isArray(d.shifts[sk].classes)) d.shifts[sk].classes = toArr(d.shifts[sk].classes);
       }
-      // Remove string key if it exists (Firebase quirk)
-      if(d.shifts[String(sk)] && String(sk) !== sk) delete d.shifts[String(sk)];
     });
     if(!d.shifts[1].classes.length && !d.shifts[2].classes.length && !d.shifts[3].classes.length){
       initShiftClasses(d);
@@ -792,65 +791,89 @@ const DB = {
   },
 
   // =====================================================================
-  // Cloud sync (Firebase Realtime Database) — optional. If FIREBASE_CONFIG
-  // hasn't been filled in, or the SDK / network isn't available, every
-  // method below is a harmless no-op and the app keeps working locally.
+  // Cloud sync (Firebase Realtime Database via plain REST API).
+  // We deliberately avoid the Firebase JS SDK's WebSocket connection
+  // (firebase.database()) because some mobile carriers / networks block
+  // or silently drop that persistent socket, which made sync hang
+  // forever on certain phones. Plain HTTPS REST calls work everywhere
+  // a normal web page works.
   // =====================================================================
 
   cloudConfigured(){
-    return !!(FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY_HERE");
+    return !!(FIREBASE_CONFIG && FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.databaseURL.indexOf("YOUR_PROJECT") === -1);
   },
 
-  cloudRef(){
-    try{
-      if(typeof firebase === 'undefined') return null;
-      if(!this.cloudConfigured()) return null;
-      if(!this._firebaseApp){
-        this._firebaseApp = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
-      }
-      return firebase.database().ref(CLOUD_SYNC_PATH);
-    }catch(e){
-      console.error("Firebase init error", e);
-      return null;
-    }
+  cloudUrl(suffix){
+    // suffix like "" or "/auth"
+    const base = FIREBASE_CONFIG.databaseURL.replace(/\/$/, "");
+    return `${base}/${CLOUD_SYNC_PATH}${suffix || ""}.json`;
   },
 
   // Returns a copy of data with large base64 photos stripped out
-  // so Firebase push stays well within size limits.
+  // so the payload stays small and uploads/downloads fast.
   dataForCloud(){
     const d = JSON.parse(JSON.stringify(this.data));
-    // Strip student photos
     if(d.students) d.students.forEach(s=>{ if(s.photo && s.photo.length > 200) s.photo = ""; });
-    // Strip staff photos
     if(d.auth && d.auth.staff) d.auth.staff.forEach(st=>{ if(st.photo && st.photo.length > 200) st.photo = ""; });
-    // Strip sadhar photo
     if(d.auth && d.auth.sadhar && d.auth.sadhar.photo && d.auth.sadhar.photo.length > 200) d.auth.sadhar.photo = "";
-    // Strip QR code (can be large image)
     if(d.fees && d.fees.qrCode) d.fees.qrCode = null;
-    // Strip announcement media (audio/video/images)
     if(d.announcements) d.announcements.forEach(a=>{ if(a.mediaData) delete a.mediaData; });
     return d;
   },
 
+  // PUT (overwrite) the whole node via REST.
+  cloudPut(data){
+    if(!this.cloudConfigured()) return Promise.resolve(false);
+    return fetch(this.cloudUrl(), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(r=>{
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return true;
+    }).catch(e=>{
+      console.error("Cloud PUT error", e);
+      return false;
+    });
+  },
+
+  // GET the whole node via REST.
+  cloudGet(){
+    if(!this.cloudConfigured()) return Promise.resolve(null);
+    return fetch(this.cloudUrl(), { method: "GET" })
+      .then(r=>{
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .catch(e=>{
+        console.error("Cloud GET error", e);
+        return undefined; // undefined = fetch failed; null = legitimately empty
+      });
+  },
+
   pushToCloud(){
-    const ref = this.cloudRef();
-    if(!ref) return;
-    try{
-      ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
-    }catch(e){ console.error("Cloud push error", e); }
+    if(!this.cloudConfigured()) return;
+    this.cloudPut(this.dataForCloud());
   },
 
   // One-time fetch + merge, used on app start. Always calls done(),
   // even if cloud is unreachable (with a short timeout fallback).
   initCloudSync(done){
-    const ref = this.cloudRef();
-    if(!ref){ done(); return; }
+    if(!this.cloudConfigured()){ done(); return; }
     let finished = false;
     const finish = ()=>{ if(finished) return; finished = true; done(); };
-    const timer = setTimeout(finish, 8000);
-    ref.once("value").then(snap=>{
+    const timer = setTimeout(finish, 10000);
+
+    this.cloudGet().then(cloud=>{
       clearTimeout(timer);
-      const cloud = snap.val();
+
+      if(cloud === undefined){
+        // Network/fetch failure — keep working with local data, try push in background
+        this.cloudPut(this.dataForCloud());
+        finish();
+        return;
+      }
+
       if(cloud && typeof cloud === 'object'){
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
@@ -865,9 +888,7 @@ const DB = {
         let needPush = false;
 
         if(cloudTime > localTime || (cloudHasStaff && !localHasStaff)){
-          // Cloud is newer — use cloud data
           this.data = cloud;
-          // But if cloud shifts are broken, restore from local
           if(!cloudShiftsOk && localShiftsOk){
             this.data.shifts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}').shifts || this.data.shifts;
             initShiftClasses(this.data);
@@ -878,20 +899,13 @@ const DB = {
           needPush = true;
         }
 
-        // Always push if cloud shifts are null/broken
-        if(!cloudShiftsOk || localHasStaff && !cloudHasStaff) needPush = true;
+        if(!cloudShiftsOk || (localHasStaff && !cloudHasStaff)) needPush = true;
 
-        if(needPush){
-          ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
-        }
+        if(needPush) this.cloudPut(this.dataForCloud());
       } else {
         // Cloud empty -> seed it with local data
-        ref.set(this.dataForCloud()).catch(e=>console.error("Cloud seed error", e));
+        this.cloudPut(this.dataForCloud());
       }
-      finish();
-    }).catch(e=>{
-      console.error("Cloud fetch error", e);
-      clearTimeout(timer);
       finish();
     });
   },
@@ -899,32 +913,28 @@ const DB = {
   // Manual re-sync (pull latest from cloud if newer, then refresh UI).
   // callback(updated:boolean, error?)
   syncFromCloud(callback){
-    const ref = this.cloudRef();
-    if(!ref){ if(callback) callback(false, "not-configured"); return; }
-    ref.once("value").then(snap=>{
-      const cloud = snap.val();
+    if(!this.cloudConfigured()){ if(callback) callback(false, "not-configured"); return; }
+    this.cloudGet().then(cloud=>{
+      if(cloud === undefined){
+        if(callback) callback(false, "fetch-failed");
+        return;
+      }
       if(cloud && typeof cloud === 'object'){
         this.applyMigrations(cloud);
         const cloudTime = cloud._updatedAt || 0;
         const localTime = this.data._updatedAt || 0;
         if(cloudTime > localTime){
-          // Cloud is newer — update local
           this.data = cloud;
           try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
           if(callback) callback(true);
           return;
         } else {
-          // Local is newer or equal — push local to cloud
-          ref.set(this.dataForCloud()).catch(e=>console.error("Cloud push error", e));
+          this.cloudPut(this.dataForCloud());
         }
       } else {
-        // Cloud is empty — seed it
-        ref.set(this.dataForCloud()).catch(e=>console.error("Cloud seed error", e));
+        this.cloudPut(this.dataForCloud());
       }
       if(callback) callback(false);
-    }).catch(e=>{
-      console.error("Sync error", e);
-      if(callback) callback(false, e);
     });
   }
 };
@@ -3009,8 +3019,8 @@ const App = {
       if(btn) btn.classList.remove("spinning");
       if(err === "not-configured"){
         U.toast("ക്ലൗഡ് സിങ്ക് സെറ്റ് ചെയ്തിട്ടില്ല");
-      } else if(typeof err === 'object' && err !== null){
-        // Firebase error — try pushing local data to cloud instead
+      } else if(err === "fetch-failed" || (typeof err === 'object' && err !== null)){
+        // Network/Firebase reachability issue — try pushing local data to cloud instead
         U.toast("ക്ലൗഡിൽ നിന്ന് ലഭിക്കുന്നില്ല — local data push ചെയ്യുന്നു...");
         DB.pushToCloud();
       } else if(updated){
