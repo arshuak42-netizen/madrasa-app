@@ -708,6 +708,7 @@ const DB = {
   applyMigrations(d){
     if(!d) return d;
     if(!d.holidayLog) d.holidayLog = [];
+    if(!d.holidays || Array.isArray(d.holidays)) d.holidays = {};
     if(!d.fees) d.fees = { monthly:100, annual:1000, qrCode:null, gpayNumber:"" };
     if(d.fees.qrCode === undefined) d.fees.qrCode = null;
     if(d.fees.gpayNumber === undefined) d.fees.gpayNumber = "";
@@ -947,6 +948,20 @@ const DB = {
 
 const Renderers = {
   render(tabId){
+    try{
+      return this._renderInner(tabId);
+    } catch(e){
+      console.error("Render error on tab " + tabId + ":", e);
+      return `<div class="card" style="background:#fdecea; border:2px solid var(--rose); margin:14px;">
+        <div style="font-weight:700; color:var(--rose); margin-bottom:8px;">⚠️ ഒരു error സംഭവിച്ചു</div>
+        <p style="font-size:13px; color:#7a3d35;">${(e && e.message) ? e.message : e}</p>
+        <p class="muted" style="margin-top:8px; font-size:12px;">Page: ${tabId}</p>
+        <p class="muted" style="margin-top:8px;">↻ Sync button ഒരു തവണ press ചെയ്ത് refresh ചെയ്യൂ. പ്രശ്നം തുടർന്നാൽ ഈ error message-ന്റെ screenshot അയക്കുക.</p>
+      </div>`;
+    }
+  },
+
+  _renderInner(tabId){
     switch(tabId){
       // Sadhar
       case "sadhar-home": return Sadhar.renderHome();
