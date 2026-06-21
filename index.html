@@ -722,8 +722,23 @@ const DB = {
       return [];
     };
     d.auth.staff = toArr(d.auth.staff);
+    d.auth.staff.forEach(st=>{
+      if(!Array.isArray(st.classes)) st.classes = toArr(st.classes);
+      if(st.photo === undefined || st.photo === null) st.photo = "";
+      if(st.phone === undefined || st.phone === null) st.phone = "";
+    });
     if(!d.auth.sadhar) d.auth.sadhar = { username:"sadhar", password:"6682" };
     d.students = (!d.students) ? buildDefaultData().students : toArr(d.students);
+    // Firebase strips empty arrays/objects (e.g. payments:[] or marks:{}) entirely —
+    // restore them on every student record so .length / property access never crashes.
+    d.students.forEach(s=>{
+      if(!Array.isArray(s.payments)) s.payments = toArr(s.payments);
+      if(!s.marks || typeof s.marks !== 'object' || Array.isArray(s.marks)) s.marks = s.marks || {};
+      if(s.paidTotal === undefined || s.paidTotal === null) s.paidTotal = 0;
+      if(s.photo === undefined || s.photo === null) s.photo = "";
+      if(s.phone === undefined || s.phone === null) s.phone = "";
+      if(s.gender === undefined) s.gender = "";
+    });
     if(!d.attendance || Array.isArray(d.attendance)) d.attendance = {};
     if(!d.shifts) d.shifts = {};
     // Firebase stores numeric keys as strings — normalize and ensure all 3 shifts exist
@@ -859,6 +874,68 @@ const DB = {
 
   // One-time fetch + merge, used on app start. Always calls done(),
   // even if cloud is unreachable (with a short timeout fallback).
+  // Merge two arrays of records (e.g. students, staff) by a key field.
+  // Keeps every record that exists in EITHER side (so a record added on
+  // one phone is never silently deleted by a sync from another phone),
+  // and when a record exists on both sides, prefers whichever copy is
+  // "more complete" (more populated fields) as a simple heuristic since
+  // individual records don't carry their own timestamp.
+  mergeArraysByKey(localArr, cloudArr, keyField){
+    localArr = Array.isArray(localArr) ? localArr : [];
+    cloudArr = Array.isArray(cloudArr) ? cloudArr : [];
+    const byKey = new Map();
+    const score = (rec) => Object.values(rec || {}).filter(v => v !== "" && v !== null && v !== undefined && !(Array.isArray(v) && v.length===0)).length;
+
+    cloudArr.forEach(rec=>{ if(rec && rec[keyField] !== undefined) byKey.set(rec[keyField], rec); });
+    localArr.forEach(rec=>{
+      if(!rec || rec[keyField] === undefined) return;
+      const existing = byKey.get(rec[keyField]);
+      if(!existing){
+        byKey.set(rec[keyField], rec); // only on local — keep it
+      } else {
+        // exists on both — keep the more complete one
+        byKey.set(rec[keyField], score(rec) >= score(existing) ? rec : existing);
+      }
+    });
+    return Array.from(byKey.values());
+  },
+
+  // Merge cloud data into local data field-by-field instead of a blind
+  // wholesale overwrite, so concurrent edits on two phones don't erase
+  // each other's additions (e.g. a newly-added teacher disappearing).
+  mergeCloudIntoLocal(cloud){
+    const local = this.data;
+    const merged = JSON.parse(JSON.stringify(local));
+
+    merged.auth = merged.auth || {};
+    merged.auth.staff = this.mergeArraysByKey(local.auth && local.auth.staff, cloud.auth && cloud.auth.staff, 'id');
+    // sadhar credentials: prefer whichever side was updated more recently overall
+    merged.auth.sadhar = ((cloud._updatedAt||0) > (local._updatedAt||0)) ? (cloud.auth && cloud.auth.sadhar) || merged.auth.sadhar : merged.auth.sadhar;
+
+    merged.students = this.mergeArraysByKey(local.students, cloud.students, 'id');
+    merged.announcements = this.mergeArraysByKey(local.announcements, cloud.announcements, 'id');
+    merged.reviews = this.mergeArraysByKey(local.reviews, cloud.reviews, 'id');
+    if(cloud.complaints){
+      merged.complaints = merged.complaints || { toSadhar:[], toTeacher:[] };
+      merged.complaints.toSadhar = this.mergeArraysByKey(local.complaints && local.complaints.toSadhar, cloud.complaints.toSadhar, 'id');
+      merged.complaints.toTeacher = this.mergeArraysByKey(local.complaints && local.complaints.toTeacher, cloud.complaints.toTeacher, 'id');
+    }
+
+    // Attendance/fees/results/timetables/holidays: merge by simply taking
+    // whichever side has the field, preferring the more recently-updated
+    // side's value when both have it (these are rarely edited concurrently
+    // by two different people on the same key).
+    const preferNewer = ((cloud._updatedAt||0) > (local._updatedAt||0));
+    ['attendance','fees','results','timetables','holidays','holidayLog','meta','shifts'].forEach(key=>{
+      if(cloud[key] === undefined) return;
+      if(local[key] === undefined){ merged[key] = cloud[key]; return; }
+      merged[key] = preferNewer ? cloud[key] : merged[key];
+    });
+
+    merged._updatedAt = Math.max(cloud._updatedAt||0, local._updatedAt||0, Date.now());
+    return merged;
+  },
+
   initCloudSync(done){
     if(!this.cloudConfigured()){ done(); return; }
     let finished = false;
@@ -876,33 +953,21 @@ const DB = {
       }
 
       if(cloud && typeof cloud === 'object'){
-        const cloudTime = cloud._updatedAt || 0;
-        const localTime = this.data._updatedAt || 0;
-
         this.applyMigrations(cloud);
 
-        const cloudHasStaff = cloud.auth && Array.isArray(cloud.auth.staff) && cloud.auth.staff.length > 0;
-        const localHasStaff = this.data.auth && Array.isArray(this.data.auth.staff) && this.data.auth.staff.length > 0;
         const cloudShiftsOk = cloud.shifts && cloud.shifts[1] && Array.isArray(cloud.shifts[1].classes);
         const localShiftsOk = this.data.shifts && this.data.shifts[1] && Array.isArray(this.data.shifts[1].classes);
-
-        let needPush = false;
-
-        if(cloudTime > localTime || (cloudHasStaff && !localHasStaff)){
-          this.data = cloud;
-          if(!cloudShiftsOk && localShiftsOk){
-            this.data.shifts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}').shifts || this.data.shifts;
-            initShiftClasses(this.data);
-            needPush = true;
-          }
-          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
-        } else {
-          needPush = true;
+        if(!cloudShiftsOk && localShiftsOk){
+          cloud.shifts = this.data.shifts;
         }
 
-        if(!cloudShiftsOk || (localHasStaff && !cloudHasStaff)) needPush = true;
+        // Merge instead of overwrite, so concurrent additions on different
+        // phones (e.g. two staff added around the same time) are never lost.
+        this.data = this.mergeCloudIntoLocal(cloud);
+        this.applyMigrations(this.data);
 
-        if(needPush) this.cloudPut(this.dataForCloud());
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
+        this.cloudPut(this.dataForCloud());
       } else {
         // Cloud empty -> seed it with local data
         this.cloudPut(this.dataForCloud());
@@ -922,16 +987,19 @@ const DB = {
       }
       if(cloud && typeof cloud === 'object'){
         this.applyMigrations(cloud);
-        const cloudTime = cloud._updatedAt || 0;
-        const localTime = this.data._updatedAt || 0;
-        if(cloudTime > localTime){
-          this.data = cloud;
-          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
-          if(callback) callback(true);
-          return;
-        } else {
-          this.cloudPut(this.dataForCloud());
+
+        const cloudShiftsOk = cloud.shifts && cloud.shifts[1] && Array.isArray(cloud.shifts[1].classes);
+        const localShiftsOk = this.data.shifts && this.data.shifts[1] && Array.isArray(this.data.shifts[1].classes);
+        if(!cloudShiftsOk && localShiftsOk){
+          cloud.shifts = this.data.shifts;
         }
+
+        this.data = this.mergeCloudIntoLocal(cloud);
+        this.applyMigrations(this.data);
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); }catch(e){}
+        this.cloudPut(this.dataForCloud());
+        if(callback) callback(true);
+        return;
       } else {
         this.cloudPut(this.dataForCloud());
       }
