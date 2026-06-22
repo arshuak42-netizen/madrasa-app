@@ -1,921 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#667eea">
-    <meta name="description" content="കൊറക്കോട്ടിലെ മമ്പഉൽ ഉലൂം മദ്റസയ്ക്കായി നിർമ്മിതമായ ഒരു സമ്പൂർണ്ണ വെബ് ആപ്പ്">
-    <title>മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ്</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .login-panel {
-            padding: 40px 20px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .login-panel h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .dashboard {
-            display: none;
-            padding: 20px;
-        }
-
-        .dashboard.active {
-            display: block;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .dashboard-header h2 {
-            color: #333;
-            font-size: 24px;
-        }
-
-        .logout-btn {
-            background: #ff6b6b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .logout-btn:hover {
-            background: #ff5252;
-        }
-
-        .accordion {
-            margin-bottom: 15px;
-        }
-
-        .accordion-header {
-            background: #f5f5f5;
-            padding: 15px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .accordion-header:hover {
-            background: #e8e8e8;
-        }
-
-        .accordion-header.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .accordion-content {
-            display: none;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .accordion-content.active {
-            display: block;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .card h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .table th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .table td {
-            padding: 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .table tr:hover {
-            background: #f5f5f5;
-        }
-
-        .notification {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .notification.error {
-            background: #f8d7da;
-            border-left-color: #dc3545;
-        }
-
-        .notification.success {
-            background: #d4edda;
-            border-left-color: #28a745;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .table {
-                font-size: 14px;
-            }
-
-            .table th, .table td {
-                padding: 8px;
-            }
-        }
-
-        .student-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .student-item {
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .student-item:hover {
-            background: #f5f5f5;
-        }
-
-        .fee-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .fee-status.paid {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .fee-status.pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .fee-status.overdue {
-            background: #f8d7da;
-            color: #721c24;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Malayalam Madrasa - Safe SPA</title>
+  <style>
+    /* Simple responsive styles (keep similar to your original) */
+    :root{
+      --bg:#0f1720;
+      --card:#0b1220;
+      --accent:#22c55e;
+      --text:#e6eef8;
+      --muted:#94a3b8;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans Malayalam',sans-serif}
+    .app {
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:36px 16px;
+      box-sizing:border-box;
+    }
+    header {
+      width:100%;
+      max-width:900px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .brand {font-weight:700;font-size:1.1rem}
+    nav {display:flex;gap:8px}
+    button.nav-btn {
+      background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;cursor:pointer;
+    }
+    .container {
+      width:100%;
+      max-width:900px;
+      display:flex;
+      gap:20px;
+      align-items:flex-start;
+      justify-content:center;
+    }
+    .panel {
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;padding:28px;width:100%;
+      box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    }
+    .login-box { max-width:450px;margin:0 auto;text-align:center;background:white;color:#0b1220;padding:28px;border-radius:12px; }
+    .login-box h2{margin:0 0 12px;font-size:1.25rem}
+    label{display:block;text-align:left;margin:10px 0 6px;color:var(--muted);font-size:0.9rem}
+    input[type="text"],input[type="password"],select{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;box-sizing:border-box;font-size:1rem;
+    }
+    .actions{display:flex;gap:8px;margin-top:14px;justify-content:center}
+    button.btn {background:var(--accent);color:#062219;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+    button.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+    .notice{color:var(--muted);font-size:0.95rem;margin-top:12px}
+    /* Small helper for debug list */
+    pre.debug{background:#071226;color:#9cc7ff;padding:10px;border-radius:8px;overflow:auto;max-height:200px}
+    footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
+    @media (max-width:480px){ .container{padding:0 6px} header{gap:6px} }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Login Panel -->
-        <div id="loginPanel" class="login-panel">
-            <div class="header">
-                <h1>മമ്പഉൽ ഉലൂം മദ്റസ</h1>
-                <p>കൊറക്കോട് - ആപ്പ് പോർട്ടൽ</p>
-            </div>
-            
-            <h2>പ്രവേശനം (Login)</h2>
-            
-            <div class="form-group">
-                <label>ഉപയോക്താവിന്റെ തരം (User Type)</label>
-                <select id="userType" onchange="updateLoginForm()">
-                    <option value="">തിരഞ്ഞെടുക്കുക...</option>
-                    <option value="sadhar">സദർ (Sadhar)</option>
-                    <option value="teacher">അധ്യാപകൻ (Teacher)</option>
-                    <option value="parent">രക്ഷിതാവ് (Parent)</option>
-                    <option value="committee">കമ്മിറ്റി (Committee)</option>
-                </select>
-            </div>
+  <div class="app" id="app">
+    <header>
+      <div class="brand">മദ്രസാ മാനേജ്‌മെന്റ്</div>
+      <nav role="navigation" aria-label="പ്രധാന നാവിഗേഷൻ">
+        <!-- Use buttons for internal navigation -->
+        <button class="nav-btn" data-route="dashboard">ഡാഷ്‌ബോർഡ്</button>
+        <button class="nav-btn" data-route="attendance">attendance</button>
+        <button class="nav-btn" data-route="fees">fees</button>
+        <button class="nav-btn" data-route="notices">notices</button>
+        <button class="nav-btn" id="open-signup">Sign Up</button>
+        <button class="nav-btn" id="open-login">Log In</button>
+      </nav>
+    </header>
 
-            <div id="usernameField" class="form-group" style="display:none;">
-                <label>ഉപയോക്താനാമം (Username)</label>
-                <input type="text" id="username" placeholder="ഉപയോക്താനാമം നൽകുക">
+    <main class="container">
+      <section class="panel" id="main-panel" aria-live="polite">
+        <!-- App content will be rendered here -->
+        <h1 id="page-title">സ്വാഗതം</h1>
+        <p class="notice">ഇത് ഒരു local test SPA ആണ്. Sign Up / Log In ബട്ടനുകൾ ഉപയോഗിച്ച് പരീക്ഷിക്കുക.</p>
+
+        <div id="view-root">
+          <!-- default dashboard -->
+          <div id="dashboard-view">
+            <p>മൊത്തം വിദ്യാർത്ഥികൾ: <strong id="total-students">0</strong></p>
+          </div>
+
+          <!-- login modal (hidden by default) -->
+          <div id="modal-container" style="display:none;margin-top:16px">
+            <div class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title">
+              <h2 id="login-title">ലോഗിൻ</h2>
+              <label for="login-phone">ഫോൺ നമ്പർ</label>
+              <input id="login-phone" type="text" placeholder="9999999999" inputmode="numeric" />
+              <label for="login-pass">Password</label>
+              <input id="login-pass" type="password" placeholder="Password" />
+              <div class="actions">
+                <button class="btn" id="login-submit">Log In</button>
+                <button class="ghost" id="login-cancel">Cancel</button>
+              </div>
+              <p class="notice" style="margin-top:10px">അടിസ്ഥാന ടെസ്റ്റ് اعتبار only. No external redirects used.</p>
             </div>
+          </div>
 
-            <div id="passwordField" class="form-group" style="display:none;">
-                <label>പാസ്സ്വേഡ് (Password)</label>
-                <input type="password" id="password" placeholder="പാസ്സ്വേഡ് നൽകുക">
+          <!-- signup modal -->
+          <div id="signup-container" style="display:none;margin-top:16px">
+            <div class="login-box" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+              <h2 id="signup-title">Sign Up</h2>
+              <label for="su-name">പേര്</label>
+              <input id="su-name" type="text" placeholder="നിങ്ങളുടെ പേര്" />
+              <label for="su-phone">ഫോൺ നമ്പർ</label>
+              <input id="su-phone" type="text" placeholder="9999999999" />
+              <label for="su-pass">Password</label>
+              <input id="su-pass" type="password" placeholder="Password" />
+              <div class="actions">
+                <button class="btn" id="signup-submit">Create Account</button>
+                <button class="ghost" id="signup-cancel">Cancel</button>
+              </div>
+              <p class="notice">Account data saved locally (localStorage).</p>
             </div>
+          </div>
 
-            <div id="regNoField" class="form-group" style="display:none;">
-                <label>കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ (Reg No)</label>
-                <input type="text" id="regNo" placeholder="രജിസ്റ്റർ നമ്പർ നൽകുക">
-            </div>
-
-            <div id="errorMsg" class="notification" style="display:none;"></div>
-
-            <button class="btn btn-primary" onclick="login()">പ്രവേശിക്കുക (Login)</button>
         </div>
 
-        <!-- Sadhar Dashboard -->
-        <div id="sadharDashboard" class="dashboard">
-            <div class="dashboard-header">
-                <h2>സദർ പാനൽ (Sadhar Panel)</h2>
-                <button class="logout-btn" onclick="logout()">പുറത്തുകടക്കുക (Logout)</button>
-            </div>
+        <pre class="debug" id="debug-output" style="display:none"></pre>
+      </section>
+    </main>
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഷിഫ്റ്റ് & ക്ലാസ് ലിങ്കിംഗ് (Shift & Class Setup)
-                </div>
-                <div class="accordion-content">
-                    <p>ഷിഫ്റ്റ് സമയം സജ്ജീകരണം പ്രവർത്തനം ഇവിടെ നടപ്പിലാക്കും.</p>
-                </div>
-            </div>
+    <footer>© മദ്രസാ • Local demo</footer>
+  </div>
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ജീവനക്കാരുടെ നിയന്ത്രണം (Staff Management)
-                </div>
-                <div class="accordion-content">
-                    <p>അധ്യാപകരെ ചേർക്കൽ, തിരുത്തൽ, നീക്കം ചെയ്യൽ എന്നിവ ഇവിടെ നടപ്പിലാക്കും.</p>
-                </div>
-            </div>
+  <script>
+    // --- Simple SPA routing (no document.location assignment) ---
+    const state = { current: 'dashboard' };
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ കുട്ടികളുടെ വിവരങ്ങൾ തിരുത്തൽ (Student Editor)
-                </div>
-                <div class="accordion-content">
-                    <input type="text" id="searchStudent" placeholder="കുട്ടിയുടെ പേര് അല്ലെങ്കിൽ നമ്പർ തിരയുക" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
-                    <div id="studentList" class="student-list"></div>
-                </div>
-            </div>
+    function render() {
+      const title = document.getElementById('page-title');
+      const total = document.getElementById('total-students');
+      title.textContent = state.current === 'dashboard' ? 'ഡാഷ്‌ബോർഡ്' : state.current;
+      // sample: count stored students
+      const students = JSON.parse(localStorage.getItem('students')||'[]');
+      total.textContent = students.length;
+      // hide modals by default
+      document.getElementById('modal-container').style.display = 'none';
+      document.getElementById('signup-container').style.display = 'none';
+      if (state.current === 'login') document.getElementById('modal-container').style.display = 'block';
+      if (state.current === 'signup') document.getElementById('signup-container').style.display = 'block';
+    }
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഫീസ് കൗണ്ടർ (Fee Counter)
-                </div>
-                <div class="accordion-content">
-                    <p>ക്ലാസ്സ് തിരിച്ച് കുട്ടികളുടെ ഫീസ് അപ്ഡേറ്റ് ചെയ്യാം.</p>
-                </div>
-            </div>
+    function navigate(route) {
+      // Internal navigation using History API (no direct location assignment)
+      state.current = route || 'dashboard';
+      history.pushState({route:state.current}, '', '#'+state.current);
+      render();
+    }
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ അവധി പ്രഖ്യാപനം (Holiday Manager)
-                </div>
-                <div class="accordion-content">
-                    <p>അവധി നിയോഗ ഫീച്ചർ ഇവിടെ ലഭ്യമാണ്.</p>
-                </div>
-            </div>
+    window.addEventListener('popstate', (ev) => {
+      if (ev.state && ev.state.route) {
+        state.current = ev.state.route;
+      } else {
+        state.current = 'dashboard';
+      }
+      render();
+    });
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ പൊതു അറിയിപ്പുകൾ (Announcements)
-                </div>
-                <div class="accordion-content">
-                    <p>മൾട്ടിമീഡിയ അറിയിപ്പുകൾ പ്രസിദ്ധീകരിക്കാം.</p>
-                </div>
-            </div>
-        </div>
+    // Wire nav buttons
+    document.querySelectorAll('[data-route]').forEach(btn=>{
+      btn.addEventListener('click', ()=> navigate(btn.getAttribute('data-route')));
+    });
 
-        <!-- Teacher Dashboard -->
-        <div id="teacherDashboard" class="dashboard">
-            <div class="dashboard-header">
-                <h2>അധ്യാപക പാനൽ (Teacher Panel)</h2>
-                <button class="logout-btn" onclick="logout()">പുറത്തുകടക്കുക (Logout)</button>
-            </div>
+    document.getElementById('open-signup').addEventListener('click', ()=> navigate('signup'));
+    document.getElementById('open-login').addEventListener('click', ()=> navigate('login'));
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഹാജർ പുസ്തകം (Attendance Book)
-                </div>
-                <div class="accordion-content">
-                    <p>കുട്ടികളുടെ ദൈനിക ഹാജർ രേഖപ്പെടുത്താം.</p>
-                </div>
-            </div>
+    // Simple signup/login (localStorage)
+    function safeString(s){ return String(s||'').trim(); }
+    document.getElementById('signup-submit').addEventListener('click', ()=>{
+      const name = safeString(document.getElementById('su-name').value);
+      const phone = safeString(document.getElementById('su-phone').value);
+      const pass = safeString(document.getElementById('su-pass').value);
+      if (!name || !phone || !pass) { alert('വിളിപാടി: എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക'); return; }
+      const users = JSON.parse(localStorage.getItem('mm_users')||'[]');
+      if (users.find(u=>u.phone===phone)){ alert('Phone number already registered'); return; }
+      users.push({name,phone,pass,role:'parent'});
+      localStorage.setItem('mm_users', JSON.stringify(users));
+      alert('Account created (local only)');
+      navigate('dashboard');
+    });
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഫീസ് കൗണ്ടർ (Fee Counter)
-                </div>
-                <div class="accordion-content">
-                    <p>നിയോഗിത ക്ലാസുകളിലെ ഫീസ് സ്വീകരിക്കാം.</p>
-                </div>
-            </div>
+    document.getElementById('login-submit').addEventListener('click', ()=>{
+      const phone = safeString(document.getElementById('login-phone').value);
+      const pass = safeString(document.getElementById('login-pass').value);
+      const users = JSON.parse(localStorage.getItem('mm_users')||'[]');
+      const user = users.find(u=>u.phone===phone && u.pass===pass);
+      if (!user){ alert('Invalid credentials'); return; }
+      localStorage.setItem('mm_current_user', JSON.stringify(user));
+      alert('Logged in as '+user.name);
+      navigate('dashboard');
+    });
 
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ വിദ്യാർത്ഥി പരിശോധന (Student Review)
-                </div>
-                <div class="accordion-content">
-                    <p>കുട്ടികളെക്കുറിച്ച് നിർദ്ദേശങ്ങൾ നൽകാം.</p>
-                </div>
-            </div>
-        </div>
+    document.getElementById('login-cancel').addEventListener('click', ()=> navigate('dashboard'));
+    document.getElementById('signup-cancel').addEventListener('click', ()=> navigate('dashboard'));
 
-        <!-- Parent Dashboard -->
-        <div id="parentDashboard" class="dashboard">
-            <div class="dashboard-header">
-                <h2>രക്ഷിതാവിന്റെ പാനൽ (Parent Panel)</h2>
-                <button class="logout-btn" onclick="logout()">പുറത്തുകടക്കുക (Logout)</button>
-            </div>
-
-            <div id="parentInfo"></div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ കുട്ടിയുടെ വിവരങ്ങൾ (Student Info)
-                </div>
-                <div class="accordion-content">
-                    <div id="studentInfo"></div>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഫീസ് സ്ഥിതി (Fee Status)
-                </div>
-                <div class="accordion-content">
-                    <div id="feeStatus"></div>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ പരീക്ഷാ സമയവിവരപ്പട്ടിക (Exam Timetable)
-                </div>
-                <div class="accordion-content">
-                    <p>പരീക്ഷാ സമയവിവരപ്പട്ടിക ഇവിടെ കാണാം.</p>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ജീവനക്കാരുടെ വിവരങ്ങൾ (Staff Directory)
-                </div>
-                <div class="accordion-content">
-                    <p>സ്കൂൾ ജീവനക്കാരുടെ വിവരങ്ങൾ ഇവിടെ കാണാം.</p>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ അഭിപ്രായ പെട്ടി (Feedback Box)
-                </div>
-                <div class="accordion-content">
-                    <textarea placeholder="നിങ്ങളുടെ അഭിപ്രായം ഇവിടെ നൽകുക..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px; min-height:100px;"></textarea>
-                    <button class="btn btn-primary" style="margin-top:10px;">സമർപ്പിക്കുക (Submit)</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Committee Dashboard -->
-        <div id="committeeDashboard" class="dashboard">
-            <div class="dashboard-header">
-                <h2>കമ്മിറ്റി പാനൽ (Committee Panel)</h2>
-                <button class="logout-btn" onclick="logout()">പുറത്തുകടക്കുക (Logout)</button>
-            </div>
-
-            <div class="grid">
-                <div class="card">
-                    <h3>ആകെ വിദ്യാർത്ഥികൾ</h3>
-                    <p style="font-size: 24px; color: #667eea; font-weight: bold;">124</p>
-                </div>
-                <div class="card">
-                    <h3>ആകെ അധ്യാപകർ</h3>
-                    <p style="font-size: 24px; color: #667eea; font-weight: bold;">12</p>
-                </div>
-                <div class="card">
-                    <h3>ഇന്നത്തെ ഹാജർ</h3>
-                    <p style="font-size: 24px; color: #667eea; font-weight: bold;">118</p>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ഫീസ് കണക്ക് പുസ്തകം (Fee Ledger)
-                </div>
-                <div class="accordion-content">
-                    <p>ക്ലാസ്സ് തിരിച്ച് ഫീസ് വിവരങ്ങൾ കാണാം.</p>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ് (Unpaid List)
-                </div>
-                <div class="accordion-content">
-                    <p>ഫീസ് നൽകാത്ത കുട്ടികളുടെ ലിസ്റ്റ് ഇവിടെ കാണാം.</p>
-                </div>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    ✓ ജീവനക്കാരുടെ ഹാജർ (Staff Attendance)
-                </div>
-                <div class="accordion-content">
-                    <p>അധ്യാപകരുടെ ഹാജർ ട്രാക്കർ ഇവിടെ ലഭ്യമാണ്.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Student Data - 124 കുട്ടികളുടെ ഡാറ്റ
-        const studentsData = [
-            // 1st Class
-            {regNo: 691, name: "അത്വാഉറഹ്മാൻ", class: 1, shift: 1, parentName: "Ashkar Ali", dob: "06/04/2019", phone: "9100000001"},
-            {regNo: 708, name: "മുഹമ്മദ് ഷാസിൽ", class: 1, shift: 1, parentName: "Sirajuddin", dob: "26/05/2020", phone: "9100000002"},
-            {regNo: 707, name: "മുഹമ്മദ് രിഫ്ദ്", class: 1, shift: 1, parentName: "Sakeer", dob: "28/06/2019", phone: "9100000003"},
-            {regNo: 713, name: "ഇബ്രാഹിം KM", class: 1, shift: 1, parentName: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9100000004"},
-            {regNo: 706, name: "സൈനബ മറിയം മെഹ്‌വിഷ്", class: 1, shift: 1, parentName: "Shameer Abdullah", dob: "26/09/2020", phone: "9100000005"},
-            {regNo: 711, name: "റുഖയ്യ സിദ", class: 1, shift: 1, parentName: "Muhammed Haris", dob: "26/09/2020", phone: "9100000006"},
-            // 2nd Class
-            {regNo: 680, name: "അബ്ദുൽ ബാസിത്", class: 2, shift: 2, parentName: "നൂറുദ്ദീൻ അബ്ദുള്ള", dob: "14/03/2018", phone: "9100000007"},
-            {regNo: 681, name: "ഷാൻ അബ്ദുൽ റസാഖ്", class: 2, shift: 2, parentName: "ഷംസുദ്ദീൻ", dob: "04/01/2019", phone: "9100000008"},
-            {regNo: 693, name: "അഹദ് മുഹ്‌യിദ്ദീൻ", class: 2, shift: 2, parentName: "ഷാനവാസ്", dob: "07/12/2019", phone: "9100000009"},
-            {regNo: 694, name: "മുഹമ്മദ് റബീഹ്", class: 2, shift: 2, parentName: "ആഷിഖ്", dob: "18/06/2019", phone: "9100000010"},
-            {regNo: 695, name: "നസീഹ് ഇബ്രാഹിം", class: 2, shift: 2, parentName: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9100000011"},
-            {regNo: 700, name: "മുഹമ്മദ് അമൻ സാഹിദ്", class: 2, shift: 2, parentName: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", phone: "9100000012"},
-            {regNo: 687, name: "ആയിഷ ലൈബ", class: 2, shift: 2, parentName: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", phone: "9100000013"},
-            {regNo: 689, name: "സൻഹ റുഖയ്യ", class: 2, shift: 2, parentName: "ഹിദായത്ത് അലി", dob: "23/05/2019", phone: "9100000014"},
-            {regNo: 690, name: "സൈനബ ഇശൽ", class: 2, shift: 2, parentName: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", phone: "9100000015"},
-            {regNo: 692, name: "ഖദീജ ലിബ", class: 2, shift: 2, parentName: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", phone: "9100000016"},
-            {regNo: 696, name: "റുഖയ്യ നദ", class: 2, shift: 2, parentName: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9100000017"},
-            // 3rd Class
-            {regNo: 620, name: "അദ്നാൻ", class: 3, shift: 1, parentName: "അസ്ഹർ അലി", dob: "17/12/2014", phone: "9100000018"},
-            {regNo: 628, name: "അബ്ദുൽ നാഫിഹ്", class: 3, shift: 1, parentName: "രാജുദ്ദീൻ", dob: "05/09/2016", phone: "9100000019"},
-            {regNo: 657, name: "രെഹാൻ ശൈഖ്", class: 3, shift: 1, parentName: "സക്കരിയ്യ", dob: "23/04/2018", phone: "9100000020"},
-            {regNo: 658, name: "മുഹമ്മദ് ലബീബ്", class: 3, shift: 1, parentName: "ഹബീബ്", dob: "21/11/2017", phone: "9100000021"},
-            {regNo: 656, name: "അഹ്‌മദ് നസ്ആൻ", class: 3, shift: 1, parentName: "അബ്ദുൽ ലത്തീഫ്", dob: "03/04/2017", phone: "9100000022"},
-            {regNo: 653, name: "ഇസ്ഹാഖ് ഇസ്മായിൽ", class: 3, shift: 1, parentName: "ഇസ്മായിൽ", dob: "04/09/2016", phone: "9100000023"},
-            {regNo: 661, name: "ഷംആൻ", class: 3, shift: 1, parentName: "സുലൈമാൻ", dob: "11/02/2016", phone: "9100000024"},
-            {regNo: 676, name: "അബ്ദുല്ലാഹ് ആമിർ", class: 3, shift: 1, parentName: "ആഷിഖ്", dob: "11/06/2018", phone: "9100000025"},
-            {regNo: 677, name: "മുഹ്സിൽ മിശാൽ", class: 3, shift: 1, parentName: "മുഹമ്മദ് മുആദ്", dob: "07/11/2017", phone: "9100000026"},
-            {regNo: 679, name: "മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", class: 3, shift: 1, parentName: "ആസിഫ് റഹ്മാൻ", dob: "05/05/2018", phone: "9100000027"},
-            {regNo: 710, name: "മുഹമ്മദ് ഹയാൻ", class: 3, shift: 1, parentName: "മുഹമ്മദ് ഇഖ്ബാൽ", dob: "27/09/2017", phone: "9100000028"},
-            {regNo: 714, name: "സിംസാറുൽ ഹഖ്", class: 3, shift: 1, parentName: "ഹബീബ്", dob: "17/04/2016", phone: "9100000029"},
-            {regNo: 664, name: "അഫ്രാ അഷ്റഫ്", class: 3, shift: 1, parentName: "അഷ്റഫ്", dob: "18/10/2017", phone: "9100000030"},
-            {regNo: 669, name: "നഫീസ സഫ", class: 3, shift: 1, parentName: "ഇബ്രാഹിം", dob: "08/01/2018", phone: "9100000031"},
-            {regNo: 675, name: "ഫാത്തിമ ഇശൽ", class: 3, shift: 1, parentName: "ഇസ്മായിൽ", dob: "15/02/2018", phone: "9100000032"},
-            {regNo: 701, name: "റിംസ സക്കീർ", class: 3, shift: 1, parentName: "സക്കീർ", dob: "15/06/2017", phone: "9100000033"},
-            // 4th Class
-            {regNo: 685, name: "അബ്ദുൽ ഹയൻ", class: 4, shift: 2, parentName: "മാഹിൻ", dob: "14/12/2015", phone: "9100000034"},
-            {regNo: 599, name: "നസ്‌വാൻ", class: 4, shift: 2, parentName: "അബ്ദുൽ ഹാരിസ്", dob: "18/08/2015", phone: "9100000035"},
-            {regNo: 633, name: "ഇബ്രാഹിം ഖലീൽ", class: 4, shift: 2, parentName: "അബ്ദുൽ ലത്തീഫ്", dob: "04/01/2017", phone: "9100000036"},
-            {regNo: 634, name: "അയാസ് അബൂബക്കർ", class: 4, shift: 2, parentName: "ഹമീദ്", dob: "09/06/2016", phone: "9100000037"},
-            {regNo: 652, name: "മുഹമ്മദ് രിഫാൽ", class: 4, shift: 2, parentName: "റഷാദ്", dob: "23/02/2017", phone: "9100000038"},
-            {regNo: 654, name: "ആസിം മുഹാസ്", class: 4, shift: 2, parentName: "അബ്ദുൽ ഖാദർ ഷാഹ്", dob: "02/04/2018", phone: "9100000039"},
-            {regNo: 659, name: "മുഹമ്മദ് ഹാഫിസ്", class: 4, shift: 2, parentName: "ഹംസ മുഹമ്മദ്", dob: "28/06/2016", phone: "9100000040"},
-            {regNo: 660, name: "മുഹമ്മദ് നഹ്‌യാൻ", class: 4, shift: 2, parentName: "സാജിദ്", dob: "08/11/2017", phone: "9100000041"},
-            {regNo: 663, name: "മുഹമ്മദ് മിഷ്ഹദ്", class: 4, shift: 2, parentName: "അഹ്മദ് മുസമ്മിൽ", dob: "05/12/2017", phone: "9100000042"},
-            {regNo: 655, name: "യൂസഫ് സാഹി", class: 4, shift: 2, parentName: "മുഹമ്മദ് ഷംസീർ", dob: "26/04/2017", phone: "9100000043"},
-            {regNo: 662, name: "അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", class: 4, shift: 2, parentName: "അബ്ദുറഹ്മാൻ അബ്ദുറഹീം", dob: "26/11/2016", phone: "9100000044"},
-            {regNo: 686, name: "അലാ ബിൻ ബിലാൽ", class: 4, shift: 2, parentName: "ബിലാൽ", dob: "27/08/2014", phone: "9100000045"},
-            {regNo: 698, name: "മുഹമ്മദ് അമ്മാർ", class: 4, shift: 2, parentName: "മുഹമ്മദ് നിഫ്", dob: "10/12/2014", phone: "9100000046"},
-            {regNo: 703, name: "അബ്ദുറഹ്മാൻ ഇസാൻ", class: 4, shift: 2, parentName: "മുഹമ്മദ് അഫ്താബ്", dob: "14/05/2016", phone: "9100000047"},
-            {regNo: 665, name: "അസാ മറിയം", class: 4, shift: 2, parentName: "മുജീബ്", dob: "21/01/2017", phone: "9100000048"},
-            // 5th Class
-            {regNo: 611, name: "അബ്ദുല്ലാഹ്", class: 5, shift: 1, parentName: "Navas", dob: "24/11/2015", phone: "9100000049"},
-            {regNo: 630, name: "മുഈനുദ്ദീൻ", class: 5, shift: 1, parentName: "Habeeb", dob: "16/07/2016", phone: "9100000050"},
-            {regNo: 631, name: "അദ്നാൻ", class: 5, shift: 1, parentName: "Noushad", dob: "04/12/2016", phone: "9100000051"},
-            {regNo: 632, name: "മുഹമ്മദ് മിൻഹാജ്", class: 5, shift: 1, parentName: "Abdul Nasar", dob: "12/09/2016", phone: "9100000052"},
-            {regNo: 649, name: "വാഹിദ് സമാൻ", class: 5, shift: 1, parentName: "Mahmood Inayath", dob: "09/12/2015", phone: "9100000053"},
-            {regNo: 604, name: "ഷൈമ മറിയം", class: 5, shift: 1, parentName: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", phone: "9100000054"},
-            {regNo: 640, name: "മറിയം സഫ", class: 5, shift: 1, parentName: "ഹാരിസ്", dob: "21/08/2016", phone: "9100000055"},
-            {regNo: 641, name: "ഫാത്തിമ TK", class: 5, shift: 1, parentName: "അഹ്മദ്", dob: "14/08/2016", phone: "9100000056"},
-            {regNo: 642, name: "ആയിഷ അബ്ദുല്ലാഹ്", class: 5, shift: 1, parentName: "അബ്ദുള്ള", dob: "15/04/2016", phone: "9100000057"},
-            {regNo: 643, name: "ഫാത്തിമ ജുമാന", class: 5, shift: 1, parentName: "ഹാലിത്", dob: "22/02/2014", phone: "9100000058"},
-            {regNo: 667, name: "ആയിഷ മെഹ്സിൻ", class: 5, shift: 1, parentName: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", phone: "9100000059"},
-            // 6th Class
-            {regNo: 586, name: "അബൂ താഹിർ", class: 6, shift: 2, parentName: "ഹബീബ്", dob: "29/09/2014", phone: "9100000060"},
-            {regNo: 600, name: "അബ്ദുൽ ഖാദർ ഷെഹാൻ", class: 6, shift: 2, parentName: "അബ്ദുൽ ഖാദർ", dob: "25/04/2015", phone: "9100000061"},
-            {regNo: 601, name: "മഹ്മൂദ് അസാൻ", class: 6, shift: 2, parentName: "നിയാസ്", dob: "07/10/2014", phone: "9100000062"},
-            {regNo: 602, name: "മാലിക് ഹസൻ", class: 6, shift: 2, parentName: "ഖലീൽ", dob: "26/05/2015", phone: "9100000063"},
-            {regNo: 603, name: "അഹ്‌മദ് നസൽ", class: 6, shift: 2, parentName: "സത്താർ", dob: "25/05/2015", phone: "9100000064"},
-            {regNo: 646, name: "ഫിസാൻ", class: 6, shift: 2, parentName: "അർഷാദ്", dob: "19/04/2016", phone: "9100000065"},
-            {regNo: 668, name: "ഇബ്രാഹിം ഇസ്മാഈൽ", class: 6, shift: 2, parentName: "ഇസ്മായിൽ", dob: "04/09/2014", phone: "9100000066"},
-            {regNo: 684, name: "മുഹമ്മദ് സിനാൻ", class: 6, shift: 2, parentName: "മാഹിൻ", dob: "28/05/2012", phone: "9100000067"},
-            {regNo: 699, name: "മുഹമ്മദ് ഷിബ്‌ലി", class: 6, shift: 2, parentName: "മുഹമ്മദ് റാഷിദ്", dob: "05/09/2013", phone: "9100000068"},
-            {regNo: 606, name: "ആയിഷ ഐഫ", class: 6, shift: 2, parentName: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", phone: "9100000069"},
-            {regNo: 607, name: "ഷഹാന ഷെറിൻ", class: 6, shift: 2, parentName: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", phone: "9100000070"},
-            {regNo: 608, name: "ലിയ്യാ ഫാത്തിമ", class: 6, shift: 2, parentName: "ഖലീൽ", dob: "27/10/2015", phone: "9100000071"},
-            {regNo: 609, name: "ആയിഷ മെഹ്‌റ", class: 6, shift: 2, parentName: "അഷ്റഫ്", dob: "17/02/2015", phone: "9100000072"},
-            {regNo: 613, name: "ആയിഷ ഹിബ", class: 6, shift: 2, parentName: "ഹംസ", dob: "18/12/2015", phone: "9100000073"},
-            // 7th Class
-            {regNo: 563, name: "മുഹമ്മദ് സ്വബാഹ്", class: 7, shift: 1, parentName: "Shahnawaz", dob: "04/10/2013", phone: "9100000074"},
-            {regNo: 584, name: "അബ്ദുല്ലാഹ് സെയ്ഫ്", class: 7, shift: 1, parentName: "Zubair", dob: "24/12/2013", phone: "9100000075"},
-            {regNo: 565, name: "മറിയം സുഹാ", class: 7, shift: 1, parentName: "Haris", dob: "09/10/2013", phone: "9100000076"},
-            {regNo: 570, name: "ഫാത്തിമ ഹമീദ്", class: 7, shift: 1, parentName: "Hameed", dob: "18/10/2013", phone: "9100000077"},
-            {regNo: 571, name: "ആയിഷ തമന്ന", class: 7, shift: 1, parentName: "Sirajuddin", dob: "16/09/2013", phone: "9100000078"},
-            {regNo: 587, name: "മറിയം ഫൈഹ", class: 7, shift: 1, parentName: "Muhammad Kunhi", dob: "19/05/2014", phone: "9100000079"},
-            {regNo: 588, name: "അംന ഫാത്തിമ", class: 7, shift: 1, parentName: "Zameel", dob: "30/08/2014", phone: "9100000080"},
-            {regNo: 589, name: "സെബ മറിയം", class: 7, shift: 1, parentName: "Zameel", dob: "30/08/2014", phone: "9100000081"},
-            {regNo: 590, name: "സെല്ലാ ഷംസീർ", class: 7, shift: 1, parentName: "Shamsir", dob: "26/03/2014", phone: "9100000082"},
-            {regNo: 639, name: "മെഹ്റ മുംതാസ്", class: 7, shift: 1, parentName: "Muaaz", dob: "16/12/2013", phone: "9100000083"},
-            {regNo: 672, name: "മിൻഹാ ഫാത്തിമ", class: 7, shift: 1, parentName: "Nooruddin", dob: "23/04/2014", phone: "9100000084"},
-            {regNo: 697, name: "ഹാസിയ ഹംന", class: 7, shift: 1, parentName: "Muhammad Hanif", dob: "09/08/2012", phone: "9100000085"},
-            // 8th Class
-            {regNo: 560, name: "മുഹമ്മദ് ഷെഹ്‌സാദ്", class: 8, shift: 2, parentName: "Abdullah", dob: "04/06/2013", phone: "9100000086"},
-            {regNo: 561, name: "അബ്ദുല്ലാഹ് അഷ്റഫ്", class: 8, shift: 2, parentName: "Ashraf", dob: "10/10/2013", phone: "9100000087"},
-            {regNo: 547, name: "മുഹമ്മദ് നസ്മിൽ", class: 8, shift: 2, parentName: "Haris", dob: "20/07/2012", phone: "9100000088"},
-            {regNo: 555, name: "ആയിഷ അഷ്റഫ്", class: 8, shift: 2, parentName: "Muhammad Ashraf", dob: "16/07/2012", phone: "9100000089"},
-            {regNo: 567, name: "സഹ്റ ബത്തുൽ", class: 8, shift: 2, parentName: "Ibrahim Khalil", dob: "17/06/2013", phone: "9100000090"},
-            {regNo: 568, name: "ഫാത്തിമ മിസ്ന", class: 8, shift: 2, parentName: "Abdul Nasar", dob: "02/06/2014", phone: "9100000091"},
-            {regNo: 569, name: "ആയിഷ നുവൈറ", class: 8, shift: 2, parentName: "Abdul Latif", dob: "21/02/2013", phone: "9100000092"},
-            {regNo: 683, name: "ആമിന ഷുസൈന", class: 8, shift: 2, parentName: "Haris", dob: "12/10/2012", phone: "9100000093"},
-            // 9th Class
-            {regNo: 528, name: "അഹ്സം മിശാൽ", class: 9, shift: 1, parentName: "Abdul Khader", dob: "11/05/2012", phone: "9100000094"},
-            {regNo: 538, name: "അബ്ദുല്ലാഹ് സഈം", class: 9, shift: 1, parentName: "Mohammed Jameel", dob: "11/06/2011", phone: "9100000095"},
-            {regNo: 539, name: "അഹ്സൻ ഷാസിൽ", class: 9, shift: 1, parentName: "Ashraf", dob: "30/12/2012", phone: "9100000096"},
-            {regNo: 540, name: "മുഹമ്മദ് ഷഹീൻ", class: 9, shift: 1, parentName: "Shameer Abdullah", dob: "05/05/2012", phone: "9100000097"},
-            {regNo: 541, name: "മുഹ്‌യിദ്ദീൻ നിഹാൽ", class: 9, shift: 1, parentName: "Mohammed Habeeb", dob: "13/12/2011", phone: "9100000098"},
-            {regNo: 715, name: "മുഹമ്മദ് മിദ്ലാജ്", class: 9, shift: 1, parentName: "Abdul Karim", dob: "14/08/2010", phone: "9100000099"},
-            {regNo: 526, name: "ഹിബ മിഫന്ന", class: 9, shift: 1, parentName: "Mahmood", dob: "17/11/2011", phone: "9100000100"},
-            {regNo: 537, name: "ഫാത്തിമ ഷാഹിയ", class: 9, shift: 1, parentName: "Sirajuddin", dob: "16/06/2011", phone: "9100000101"},
-            {regNo: 543, name: "ഫാത്തിമ KS", class: 9, shift: 1, parentName: "Sajid", dob: "20/10/2012", phone: "9100000102"},
-            {regNo: 545, name: "ഖദീജ മിൻഹ", class: 9, shift: 1, parentName: "Ahmad Muzammil", dob: "07/06/2012", phone: "9100000103"},
-            {regNo: 705, name: "അഖീല", class: 9, shift: 1, parentName: "Abu Nawaz", dob: "07/02/2010", phone: "9100000104"},
-            // 10th Class
-            {regNo: 513, name: "നബീൽ ഇബ്രാഹിം", class: 10, shift: 2, parentName: "Shahnavaz", dob: "28/11/2011", phone: "9100000105"},
-            {regNo: 704, name: "മുഹമ്മദ് ഷംനാദ്", class: 10, shift: 2, parentName: "Mohammed Sherif", dob: "05/03/2012", phone: "9100000106"},
-            {regNo: 525, name: "സനൂബിയ", class: 10, shift: 2, parentName: "Zakariya", dob: "21/03/2012", phone: "9100000107"},
-            {regNo: 529, name: "ഷെസാ ഫാത്തിമ", class: 10, shift: 2, parentName: "Shafi", dob: "19/03/2011", phone: "9100000108"},
-            {regNo: 615, name: "ഫാത്തിമ ഷാഹില", class: 10, shift: 2, parentName: "Abdul Khader", dob: "24/07/2012", phone: "9100000109"},
-            {regNo: 637, name: "ആയിഷ നജ", class: 10, shift: 2, parentName: "Inayat", dob: "03/02/2010", phone: "9100000110"},
-            // +1 Class
-            {regNo: 486, name: "മുഹമ്മദ് നിഹാൽ", class: 11, shift: 3, parentName: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", phone: "9100000111"},
-            {regNo: 487, name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", class: 11, shift: 3, parentName: "ഷാഫി", dob: "17/01/2009", phone: "9100000112"},
-            {regNo: 514, name: "ജാസിം", class: 11, shift: 3, parentName: "ഖാലിദ്", dob: "02/02/2011", phone: "9100000113"},
-            {regNo: 542, name: "ഷെസിൻ KS", class: 11, shift: 3, parentName: "സാജിദ്", dob: "09/10/2010", phone: "9100000114"},
-            {regNo: 650, name: "മഹ്ഫൂസ്", class: 11, shift: 3, parentName: "ഇബ്രാഹിം", dob: "01/09/2010", phone: "9100000115"},
-            {regNo: 712, name: "മുഹമ്മദ് സ്വഫ്വാൻ", class: 11, shift: 3, parentName: "മുസമ്മിൽ", dob: "16/03/2011", phone: "9100000116"},
-            {regNo: 499, name: "ഫാത്തിമ", class: 11, shift: 3, parentName: "ഇബ്രാഹിം", dob: "23/04/2009", phone: "9100000117"},
-            {regNo: 518, name: "ഖദീജ TA", class: 11, shift: 3, parentName: "Ibrahim Khalil", dob: "05/10/2011", phone: "9100000118"},
-            {regNo: 626, name: "ആയിഷ മുൻദിറ", class: 11, shift: 3, parentName: "ഇബ്രാഹിം", dob: "07/01/2011", phone: "9100000119"},
-            // +2 Class
-            {regNo: 574, name: "മുഹമ്മദ് ലുബൈബ്", class: 12, shift: 3, parentName: "Muhyiddin", dob: "26/10/2010", phone: "9100000120"},
-            {regNo: 489, name: "മുഹമ്മദ് മിസാജ്", class: 12, shift: 3, parentName: "അഹ്‌മദ് മുസമ്മിൽ", dob: "18/07/2009", phone: "9100000121"},
-            {regNo: 492, name: "ഹുദാ ഫാത്തിമ", class: 12, shift: 3, parentName: "ഹാരിസ്", dob: "10/11/2009", phone: "9100000122"},
-            {regNo: 493, name: "ലൈല നസ്രിൻ", class: 12, shift: 3, parentName: "അബ്ദുള്ള മുനീർ", dob: "19/06/2009", phone: "9100000123"},
-            {regNo: 494, name: "ആയിഷ നജ", class: 12, shift: 3, parentName: "നവാസ്", dob: "24/07/2008", phone: "9100000124"}
-        ];
-
-        // Initialize localStorage
-        function initializeData() {
-            if (!localStorage.getItem('madrasaData')) {
-                localStorage.setItem('madrasaData', JSON.stringify({
-                    students: studentsData,
-                    currentUser: null,
-                    fees: {},
-                    attendance: {},
-                    announcements: []
-                }));
-            }
+    // -- Auto-fix/checker for empty href anchors (will replace them with buttons)
+    function fixEmptyHrefAnchors() {
+      const anchors = Array.from(document.querySelectorAll('a'));
+      const converted = [];
+      anchors.forEach(a=>{
+        const href = (a.getAttribute('href') || '').trim();
+        if (!href) {
+          // Replace with a button to preserve event listeners visually
+          const btn = document.createElement('button');
+          btn.className = a.className || '';
+          btn.innerHTML = a.innerHTML || a.textContent || 'link';
+          // copy dataset
+          Array.from(a.attributes).forEach(attr=>{
+            if (attr.name.startsWith('data-')) btn.setAttribute(attr.name, attr.value);
+          });
+          a.parentNode.replaceChild(btn, a);
+          converted.push(btn);
         }
+      });
+      return converted;
+    }
 
-        function updateLoginForm() {
-            const userType = document.getElementById('userType').value;
-            document.getElementById('usernameField').style.display = userType === 'sadhar' || userType === 'teacher' || userType === 'committee' ? 'block' : 'none';
-            document.getElementById('passwordField').style.display = userType === 'sadhar' || userType === 'teacher' || userType === 'committee' ? 'block' : 'none';
-            document.getElementById('regNoField').style.display = userType === 'parent' ? 'block' : 'none';
-        }
+    // -- Debug utility to list any anchor problems and show in a debug panel
+    function debugAnchors() {
+      const anchors = Array.from(document.querySelectorAll('a,link'));
+      const problems = [];
+      anchors.forEach(el=>{
+        const tag = el.tagName.toLowerCase();
+        const href = el.getAttribute('href');
+        if (!href || href.trim()==='') problems.push({tag, outer: el.outerHTML.slice(0,200)});
+      });
+      const dbg = document.getElementById('debug-output');
+      if (problems.length) {
+        dbg.style.display = 'block';
+        dbg.textContent = 'Found empty href tags (auto-fixed if anchors):\\n' + problems.map(p=>p.tag + ' — ' + p.outer).join('\\n\\n');
+        console.warn('Empty href/link elements found. See debug output.');
+        // run fixer for empty anchors only
+        fixEmptyHrefAnchors();
+      } else {
+        dbg.style.display = 'none';
+      }
+    }
 
-        function login() {
-            const userType = document.getElementById('userType').value;
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'none';
+    // Seed sample students (only if none)
+    if (!localStorage.getItem('students')) {
+      const sample = [
+        {id:1,name:'അബ്ദുൽ റഹ്‌മാന്‍',class:1,shift:'morning'},
+        {id:2,name:'ഫാത്തിമ',class:2,shift:'evening'}
+      ];
+      localStorage.setItem('students', JSON.stringify(sample));
+    }
 
-            if (!userType) {
-                showError('ഉപയോക്താവിന്റെ തരം തിരഞ്ഞെടുക്കുക');
-                return;
-            }
+    // Initialize app
+    (function init(){
+      // Run debug check for empty hrefs
+      debugAnchors();
 
-            if (userType === 'sadhar') {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                if (username === 'sadhar' && password === '6682') {
-                    loginSuccess('sadhar');
-                } else {
-                    showError('ഉപയോക്താനാമം അല്ലെങ്കിൽ പാസ്സ്വേഡ് തെറ്റാണ്');
-                }
-            } else if (userType === 'teacher') {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                if (username && password) {
-                    loginSuccess('teacher');
-                } else {
-                    showError('ഉപയോക്താനാമവും പാസ്സ്വേഡും നൽകുക');
-                }
-            } else if (userType === 'parent') {
-                const regNo = document.getElementById('regNo').value;
-                const student = studentsData.find(s => s.regNo == regNo);
-                if (student) {
-                    loginSuccess('parent', student);
-                } else {
-                    showError('രജിസ്റ്റർ നമ്പർ കണ്ടെത്താനായില്ല');
-                }
-            } else if (userType === 'committee') {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                if (username && password) {
-                    loginSuccess('committee');
-                } else {
-                    showError('ഉപയോക്താനാമവും പാസ്സ്വേഡും നൽകുക');
-                }
-            }
-        }
+      // On load, if there's a hash route, go there
+      const hash = location.hash && location.hash.slice(1);
+      state.current = hash || 'dashboard';
+      history.replaceState({route:state.current}, '', '#'+state.current);
+      render();
+    })();
 
-        function showError(msg) {
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.textContent = msg;
-            errorMsg.style.display = 'block';
-        }
+    // Example safe external open (only used if you intentionally want to open external URL)
+    function openExternal(url) {
+      // Confirm before leaving app context
+      if (!url || typeof url !== 'string') return;
+      const ok = confirm('ഈ പ്രവർത്തനം നിങ്ങളുടെ ബ്രൗസര്‍ പുതിയ ടാബിൽ തുറക്കും. തുടരണം?');
+      if (ok) window.open(url, '_blank', 'noopener');
+    }
 
-        function loginSuccess(userType, student = null) {
-            document.getElementById('loginPanel').style.display = 'none';
-            
-            if (userType === 'sadhar') {
-                document.getElementById('sadharDashboard').classList.add('active');
-                loadStudentList();
-            } else if (userType === 'teacher') {
-                document.getElementById('teacherDashboard').classList.add('active');
-            } else if (userType === 'parent') {
-                document.getElementById('parentDashboard').classList.add('active');
-                loadParentPanel(student);
-            } else if (userType === 'committee') {
-                document.getElementById('committeeDashboard').classList.add('active');
-            }
-        }
+    // Expose for debugging (optional)
+    window.mmApp = { navigate, debugAnchors, fixEmptyHrefAnchors, openExternal };
 
-        function loadStudentList() {
-            const searchInput = document.getElementById('searchStudent');
-            const studentList = document.getElementById('studentList');
-            
-            searchInput.addEventListener('keyup', function() {
-                const query = this.value.toLowerCase();
-                const filtered = studentsData.filter(s => 
-                    s.name.toLowerCase().includes(query) || 
-                    s.regNo.toString().includes(query)
-                );
-                
-                studentList.innerHTML = filtered.map(s => `
-                    <div class="student-item">
-                        <div>
-                            <strong>${s.name}</strong> (Reg: ${s.regNo})<br>
-                            <small>ക്ലാസ്സ്: ${s.class}, വാപ്പാൻ: ${s.parentName}</small>
-                        </div>
-                        <button class="btn btn-secondary" style="width:auto; padding:5px 10px;">തിരുത്തുക</button>
-                    </div>
-                `).join('');
-            });
-            
-            // Load all students initially
-            searchInput.dispatchEvent(new Event('keyup'));
-        }
-
-        function loadParentPanel(student) {
-            const parentInfo = document.getElementById('parentInfo');
-            const studentInfo = document.getElementById('studentInfo');
-            const feeStatus = document.getElementById('feeStatus');
-            
-            parentInfo.innerHTML = `
-                <div class="notification success">
-                    <strong>സ്വാഗതം!</strong> നിങ്ങളുടെ കുട്ടി ${student.name} (Reg No: ${student.regNo}) ന്റെ വിവരങ്ങൾ കാണാം.
-                </div>
-            `;
-            
-            studentInfo.innerHTML = `
-                <table class="table">
-                    <tr>
-                        <th>വിവരം</th>
-                        <th>വിവരണം</th>
-                    </tr>
-                    <tr>
-                        <td>പേര്</td>
-                        <td>${student.name}</td>
-                    </tr>
-                    <tr>
-                        <td>രജിസ്റ്റർ നമ്പർ</td>
-                        <td>${student.regNo}</td>
-                    </tr>
-                    <tr>
-                        <td>ക്ലാസ്സ്</td>
-                        <td>${student.class}</td>
-                    </tr>
-                    <tr>
-                        <td>ജനനത്തീയതി</td>
-                        <td>${student.dob}</td>
-                    </tr>
-                    <tr>
-                        <td>വാപ്പാൻ്റെ പേര്</td>
-                        <td>${student.parentName}</td>
-                    </tr>
-                    <tr>
-                        <td>ഫോൺ നമ്പർ</td>
-                        <td>${student.phone}</td>
-                    </tr>
-                </table>
-            `;
-            
-            feeStatus.innerHTML = `
-                <div class="grid">
-                    <div class="card">
-                        <h3>ആകെ ഫീസ്</h3>
-                        <p style="font-size: 24px; color: #667eea; font-weight: bold;">₹5000</p>
-                    </div>
-                    <div class="card">
-                        <h3>അടച്ച തുക</h3>
-                        <p style="font-size: 24px; color: #28a745; font-weight: bold;">₹2000</p>
-                    </div>
-                    <div class="card">
-                        <h3>ബാക്കി തുക</h3>
-                        <p style="font-size: 24px; color: #ff6b6b; font-weight: bold;">₹3000</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function toggleAccordion(header) {
-            header.classList.toggle('active');
-            const content = header.nextElementSibling;
-            if (content) {
-                content.classList.toggle('active');
-            }
-        }
-
-        function logout() {
-            document.getElementById('loginPanel').style.display = 'block';
-            document.getElementById('sadharDashboard').classList.remove('active');
-            document.getElementById('teacherDashboard').classList.remove('active');
-            document.getElementById('parentDashboard').classList.remove('active');
-            document.getElementById('committeeDashboard').classList.remove('active');
-            
-            document.getElementById('userType').value = '';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('regNo').value = '';
-            document.getElementById('errorMsg').style.display = 'none';
-            updateLoginForm();
-        }
-
-        // Initialize on page load
-        window.addEventListener('load', function() {
-            initializeData();
-        });
-    </script>
+  </script>
 </body>
 </html>
