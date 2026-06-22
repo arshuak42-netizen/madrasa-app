@@ -1,286 +1,536 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ml">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Malayalam Madrasa - Safe SPA</title>
-  <style>
-    /* Simple responsive styles (keep similar to your original) */
-    :root{
-      --bg:#0f1720;
-      --card:#0b1220;
-      --accent:#22c55e;
-      --text:#e6eef8;
-      --muted:#94a3b8;
-    }
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans Malayalam',sans-serif}
-    .app {
-      min-height:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:36px 16px;
-      box-sizing:border-box;
-    }
-    header {
-      width:100%;
-      max-width:900px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:18px;
-    }
-    .brand {font-weight:700;font-size:1.1rem}
-    nav {display:flex;gap:8px}
-    button.nav-btn {
-      background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;cursor:pointer;
-    }
-    .container {
-      width:100%;
-      max-width:900px;
-      display:flex;
-      gap:20px;
-      align-items:flex-start;
-      justify-content:center;
-    }
-    .panel {
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:14px;padding:28px;width:100%;
-      box-shadow:0 8px 30px rgba(2,6,23,0.6);
-    }
-    .login-box { max-width:450px;margin:0 auto;text-align:center;background:white;color:#0b1220;padding:28px;border-radius:12px; }
-    .login-box h2{margin:0 0 12px;font-size:1.25rem}
-    label{display:block;text-align:left;margin:10px 0 6px;color:var(--muted);font-size:0.9rem}
-    input[type="text"],input[type="password"],select{
-      width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;box-sizing:border-box;font-size:1rem;
-    }
-    .actions{display:flex;gap:8px;margin-top:14px;justify-content:center}
-    button.btn {background:var(--accent);color:#062219;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
-    button.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
-    .notice{color:var(--muted);font-size:0.95rem;margin-top:12px}
-    /* Small helper for debug list */
-    pre.debug{background:#071226;color:#9cc7ff;padding:10px;border-radius:8px;overflow:auto;max-height:200px}
-    footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
-    @media (max-width:480px){ .container{padding:0 6px} header{gap:6px} }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>മമ്പഉൽ ഉലൂം മദ്റസ</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Smooth transitions & custom styles */
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+        }
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.2s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-content.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+        .blur-bg {
+            backdrop-filter: blur(6px);
+            background: rgba(255,255,255,0.7);
+        }
+        .holiday-banner {
+            background: #dc2626;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .card-hover:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        .teacher-absent {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+        }
+        .teacher-present {
+            background: #dcfce7;
+            border-left: 4px solid #16a34a;
+        }
+        .btn-primary {
+            background: #1e3a8a;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: scale(1.02);
+        }
+        .btn-danger {
+            background: #b91c1c;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+        .btn-success {
+            background: #15803d;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .firebase-box {
+            background: #f1f5f9;
+            border: 2px solid #94a3b8;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center; justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+        .popup-card {
+            background: white;
+            max-width: 90%;
+            width: 400px;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .qr-img {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: contain;
+        }
+        input, select, textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 12px;
+            width: 100%;
+        }
+        .panel-tab {
+            background: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .panel-tab.active {
+            background: #1e3a8a;
+            color: white;
+        }
+        /* Scrollable lists */
+        .scroll-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <header>
-      <div class="brand">മദ്രസാ മാനേജ്‌മെന്റ്</div>
-      <nav role="navigation" aria-label="പ്രധാന നാവിഗേഷൻ">
-        <!-- Use buttons for internal navigation -->
-        <button class="nav-btn" data-route="dashboard">ഡാഷ്‌ബോർഡ്</button>
-        <button class="nav-btn" data-route="attendance">attendance</button>
-        <button class="nav-btn" data-route="fees">fees</button>
-        <button class="nav-btn" data-route="notices">notices</button>
-        <button class="nav-btn" id="open-signup">Sign Up</button>
-        <button class="nav-btn" id="open-login">Log In</button>
-      </nav>
-    </header>
 
-    <main class="container">
-      <section class="panel" id="main-panel" aria-live="polite">
-        <!-- App content will be rendered here -->
-        <h1 id="page-title">സ്വാഗതം</h1>
-        <p class="notice">ഇത് ഒരു local test SPA ആണ്. Sign Up / Log In ബട്ടനുകൾ ഉപയോഗിച്ച് പരീക്ഷിക്കുക.</p>
+<!-- FIREBASE CONFIG BOX (shown on first load if no config) -->
+<div id="firebaseConfigBox" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" style="display: none;">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+        <h2 class="text-xl font-bold text-center text-blue-900">⚙️ ഫയർബേസ് കോൺഫിഗ്</h2>
+        <p class="text-sm text-gray-600 text-center mb-4">നിങ്ങളുടെ Firebase Realtime Database വിവരങ്ങൾ നൽകുക</p>
+        <div class="space-y-2">
+            <input id="fbApiKey" placeholder="apiKey" class="w-full p-2 border rounded">
+            <input id="fbAuthDomain" placeholder="authDomain" class="w-full p-2 border rounded">
+            <input id="fbDatabaseURL" placeholder="databaseURL" class="w-full p-2 border rounded">
+            <input id="fbProjectId" placeholder="projectId" class="w-full p-2 border rounded">
+            <input id="fbStorageBucket" placeholder="storageBucket" class="w-full p-2 border rounded">
+            <input id="fbMessagingSenderId" placeholder="messagingSenderId" class="w-full p-2 border rounded">
+            <input id="fbAppId" placeholder="appId" class="w-full p-2 border rounded">
+        </div>
+        <button id="saveFirebaseConfig" class="mt-4 w-full bg-blue-900 text-white py-2 rounded-full font-bold">✅ സേവ് ചെയ്യുക &amp; ബന്ധിപ്പിക്കുക</button>
+        <p id="fbConfigError" class="text-red-600 text-sm mt-2 text-center hidden">ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു, ദയവായി വിവരങ്ങൾ വീണ്ടും പരിശോധിക്കുക</p>
+    </div>
+</div>
 
-        <div id="view-root">
-          <!-- default dashboard -->
-          <div id="dashboard-view">
-            <p>മൊത്തം വിദ്യാർത്ഥികൾ: <strong id="total-students">0</strong></p>
-          </div>
+<!-- POPUP NOTIFICATION FOR PARENTS -->
+<div id="popupNotification" class="popup-overlay" style="display: none;">
+    <div class="popup-card">
+        <div class="flex justify-between items-start">
+            <h3 class="text-xl font-bold text-blue-900">📢 പുതിയ അറിയിപ്പ്</h3>
+            <button onclick="closePopup()" class="text-gray-500 text-2xl">&times;</button>
+        </div>
+        <div id="popupContent" class="mt-3 text-gray-700"></div>
+        <button onclick="closePopup()" class="mt-4 w-full bg-blue-900 text-white py-2 rounded-full">ശരി, മനസ്സിലായി</button>
+    </div>
+</div>
 
-          <!-- login modal (hidden by default) -->
-          <div id="modal-container" style="display:none;margin-top:16px">
-            <div class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title">
-              <h2 id="login-title">ലോഗിൻ</h2>
-              <label for="login-phone">ഫോൺ നമ്പർ</label>
-              <input id="login-phone" type="text" placeholder="9999999999" inputmode="numeric" />
-              <label for="login-pass">Password</label>
-              <input id="login-pass" type="password" placeholder="Password" />
-              <div class="actions">
-                <button class="btn" id="login-submit">Log In</button>
-                <button class="ghost" id="login-cancel">Cancel</button>
-              </div>
-              <p class="notice" style="margin-top:10px">അടിസ്ഥാന ടെസ്റ്റ് اعتبار only. No external redirects used.</p>
+<!-- MAIN APP -->
+<div id="app" class="max-w-6xl mx-auto p-3 md:p-6">
+    <!-- HEADER -->
+    <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm mb-4 border border-gray-200">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white font-bold text-xl">മു</div>
+            <div>
+                <h1 class="text-xl font-extrabold text-blue-900">മമ്പഉൽ ഉലൂം മദ്റസ <span class="text-sm font-normal text-gray-600">(Korakode)</span></h1>
+                <p id="userRoleDisplay" class="text-xs text-gray-500">ലോഗിൻ ചെയ്തിട്ടില്ല</p>
             </div>
-          </div>
+        </div>
+        <button id="logoutBtn" class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm hidden"><i class="fas fa-sign-out-alt"></i> ലോഗൗട്ട്</button>
+    </div>
 
-          <!-- signup modal -->
-          <div id="signup-container" style="display:none;margin-top:16px">
-            <div class="login-box" role="dialog" aria-modal="true" aria-labelledby="signup-title">
-              <h2 id="signup-title">Sign Up</h2>
-              <label for="su-name">പേര്</label>
-              <input id="su-name" type="text" placeholder="നിങ്ങളുടെ പേര്" />
-              <label for="su-phone">ഫോൺ നമ്പർ</label>
-              <input id="su-phone" type="text" placeholder="9999999999" />
-              <label for="su-pass">Password</label>
-              <input id="su-pass" type="password" placeholder="Password" />
-              <div class="actions">
-                <button class="btn" id="signup-submit">Create Account</button>
-                <button class="ghost" id="signup-cancel">Cancel</button>
-              </div>
-              <p class="notice">Account data saved locally (localStorage).</p>
+    <!-- LOGIN SECTION -->
+    <div id="loginSection" class="bg-white p-6 rounded-2xl shadow-md border border-gray-200">
+        <h2 class="text-2xl font-bold text-center text-blue-900">🔐 ലോഗിൻ (Login)</h2>
+        <div class="mt-4 flex flex-col md:flex-row gap-4">
+            <!-- Teacher/Staff Login -->
+            <div class="flex-1 border p-4 rounded-xl bg-gray-50">
+                <h3 class="font-semibold text-gray-700">👨‍🏫 അധ്യാപകർ / ഭാരവാഹികൾ</h3>
+                <input id="loginUsername" placeholder="യൂസർനെയിം (Username)" class="w-full p-2 border rounded mt-2">
+                <input id="loginPassword" type="password" placeholder="പാസ്‌വേർഡ് (Password)" class="w-full p-2 border rounded mt-2">
+                <button id="loginStaffBtn" class="mt-2 w-full bg-blue-900 text-white py-2 rounded-full font-bold">കയറുക</button>
             </div>
-          </div>
+            <!-- Parent Login -->
+            <div class="flex-1 border p-4 rounded-xl bg-gray-50">
+                <h3 class="font-semibold text-gray-700">👪 രക്ഷിതാവ് (Parent)</h3>
+                <input id="loginParentReg" placeholder="കുട്ടിയുടെ Reg No (ഉദാ: 691)" class="w-full p-2 border rounded mt-2">
+                <button id="loginParentBtn" class="mt-2 w-full bg-green-700 text-white py-2 rounded-full font-bold">കുട്ടിയുടെ പാനലിലേക്ക്</button>
+            </div>
+        </div>
+        <p id="loginError" class="text-red-600 text-center mt-2 hidden">ലോഗിൻ വിവരങ്ങൾ തെറ്റാണ്. ശ്രമിക്കുക.</p>
+    </div>
 
+    <!-- DASHBOARD (hidden until login) -->
+    <div id="dashboard" class="mt-6 hidden">
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-2 mb-4" id="tabContainer">
+            <button class="panel-tab active" data-tab="sadhar">സദർ</button>
+            <button class="panel-tab" data-tab="teacher">അധ്യാപകൻ</button>
+            <button class="panel-tab" data-tab="parent">രക്ഷിതാവ്</button>
+            <button class="panel-tab" data-tab="committee">കമ്മിറ്റി</button>
+            <button class="panel-tab" data-tab="public">പബ്ലിക് റിസൾട്ട്</button>
         </div>
 
-        <pre class="debug" id="debug-output" style="display:none"></pre>
-      </section>
-    </main>
+        <!-- SADHAR PANEL -->
+        <div id="panel-sadhar" class="panel-content">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ (Sadhar Control)</h2>
+                <!-- Accordion items -->
+                <div class="mt-4 space-y-2">
+                    <!-- 1. Shift + Class Linking -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc1">
+                            <span>⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc1" class="accordion-content p-3">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <label><input type="checkbox" class="shift-check" value="1"> ഷിഫ്റ്റ് 1</label>
+                                <label><input type="checkbox" class="shift-check" value="2"> ഷിഫ്റ്റ് 2</label>
+                                <label><input type="checkbox" class="shift-check" value="3"> ഷിഫ്റ്റ് 3</label>
+                            </div>
+                            <div class="grid grid-cols-3 md:grid-cols-6 gap-1 mt-2">
+                                <label><input type="checkbox" class="class-check" value="1"> 1</label><label><input type="checkbox" class="class-check" value="2"> 2</label>
+                                <label><input type="checkbox" class="class-check" value="3"> 3</label><label><input type="checkbox" class="class-check" value="4"> 4</label>
+                                <label><input type="checkbox" class="class-check" value="5"> 5</label><label><input type="checkbox" class="class-check" value="6"> 6</label>
+                                <label><input type="checkbox" class="class-check" value="7"> 7</label><label><input type="checkbox" class="class-check" value="8"> 8</label>
+                                <label><input type="checkbox" class="class-check" value="9"> 9</label><label><input type="checkbox" class="class-check" value="10"> 10</label>
+                                <label><input type="checkbox" class="class-check" value="11"> 11</label><label><input type="checkbox" class="class-check" value="12"> 12</label>
+                            </div>
+                            <button class="mt-2 btn-primary text-sm" onclick="saveShiftClass()">സേവ് ചെയ്യുക</button>
+                        </div>
+                    </div>
+                    <!-- 2. Staff Management -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc2">
+                            <span>👥 ജീവനക്കാരുടെ നിയന്ത്രണം</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc2" class="accordion-content p-3">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <input id="staffName" placeholder="പേര്" class="flex-1 min-w-[120px]">
+                                <input id="staffUsername" placeholder="Username" class="flex-1 min-w-[120px]">
+                                <input id="staffPassword" placeholder="Password" class="flex-1 min-w-[120px]">
+                                <input id="staffClasses" placeholder="ക്ലാസ്സുകൾ (1,2,3)" class="flex-1 min-w-[120px]">
+                                <button class="btn-primary" onclick="addStaff()">ചേർക്കുക</button>
+                            </div>
+                            <div id="staffList" class="scroll-list text-sm space-y-1"></div>
+                        </div>
+                    </div>
+                    <!-- 3. Sadhar Direct Attendance -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc3">
+                            <span>✅ സദർ നേരിട്ടുള്ള ഹാജർ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc3" class="accordion-content p-3">
+                            <select id="sadharClassSelect" class="w-full p-2 border rounded"></select>
+                            <div id="sadharAttendanceList" class="mt-2 space-y-1 max-h-60 overflow-y-auto"></div>
+                            <button class="mt-2 btn-success text-sm" onclick="submitSadharAttendance()">ഹാജർ സബ്മിറ്റ് ചെയ്യുക</button>
+                        </div>
+                    </div>
+                    <!-- 4. Exam Timetable -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc4">
+                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc4" class="accordion-content p-3">
+                            <textarea id="examTimetable" rows="3" placeholder="ക്ലാസ് 1: ..." class="w-full border rounded p-2"></textarea>
+                            <button class="mt-1 btn-primary text-sm" onclick="saveExamTimetable()">സേവ് ചെയ്യുക</button>
+                            <button class="mt-1 whatsapp-btn text-sm" onclick="sendExamAlert()"><i class="fab fa-whatsapp"></i> Send Tomorrow's Exam Alert</button>
+                        </div>
+                    </div>
+                    <!-- 5. Fee Structure & QR -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc5">
+                            <span>💰 ഫീസ് ഘടന &amp; QR</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc5" class="accordion-content p-3">
+                            <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="w-full p-2 border rounded">
+                            <input id="googlePayNumber" placeholder="Google Pay നമ്പർ" class="w-full p-2 border rounded mt-1">
+                            <input type="file" id="qrUpload" accept="image/*" class="mt-1">
+                            <button class="mt-1 btn-primary text-sm" onclick="saveFeeQR()">സേവ് ചെയ്യുക</button>
+                            <div id="qrPreview" class="mt-2"></div>
+                        </div>
+                    </div>
+                    <!-- 6. Holiday Manager -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc6">
+                            <span>🏖️ അവധി പ്രകടന ബോർഡ്</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc6" class="accordion-content p-3">
+                            <input id="holidayReason" placeholder="അവധിക്കുള്ള കാരണം" class="w-full p-2 border rounded">
+                            <select id="holidayShift" class="w-full p-2 border rounded mt-1">
+                                <option value="all">എല്ലാ ഷിഫ്റ്റുകളും</option>
+                                <option value="1">ഷിഫ്റ്റ് 1</option>
+                                <option value="2">ഷിഫ്റ്റ് 2</option>
+                                <option value="3">ഷിഫ്റ്റ് 3</option>
+                            </select>
+                            <button class="mt-1 btn-danger text-sm" onclick="setHoliday()">അവധി പ്രഖ്യാപിക്കുക</button>
+                            <button class="mt-1 bg-gray-500 text-white px-4 py-1 rounded-full text-sm" onclick="clearHoliday()">അവധി എടുത്തുമാറ്റുക</button>
+                        </div>
+                    </div>
+                    <!-- 7. Public Announcements -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc7">
+                            <span>📢 പൊതു അറിയിപ്പുകൾ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc7" class="accordion-content p-3">
+                            <input id="announceTitle" placeholder="തലക്കെട്ട്" class="w-full p-2 border rounded">
+                            <textarea id="announceBody" rows="2" placeholder="അറിയിപ്പ് വിവരം" class="w-full border rounded p-2 mt-1"></textarea>
+                            <select id="announceTarget" class="w-full p-2 border rounded mt-1">
+                                <option value="all">എല്ലാ വിദ്യാർത്ഥികൾ</option>
+                                <option value="1">ഷിഫ്റ്റ് 1</option>
+                                <option value="2">ഷിഫ്റ്റ് 2</option>
+                                <option value="3">ഷിഫ്റ്റ് 3</option>
+                            </select>
+                            <input type="file" id="announceMedia" accept="image/*,audio/*,video/*" class="mt-1">
+                            <button class="mt-1 btn-primary text-sm" onclick="publishAnnouncement()">പ്രസിദ്ധീകരിക്കുക</button>
+                        </div>
+                    </div>
+                    <!-- 8. Student Editor -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc8">
+                            <span>📚 കുട്ടികളുടെ വിവരങ്ങൾ (Full Editor)</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc8" class="accordion-content p-3">
+                            <div id="studentEditorList" class="max-h-80 overflow-y-auto text-sm space-y-1"></div>
+                            <button class="mt-2 btn-primary text-sm" onclick="syncStudentsToFirebase()">Firebase-ലേക്ക് സമന്വയിപ്പിക്കുക</button>
+                        </div>
+                    </div>
+                    <!-- 9. Fee Counter per Class -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc9">
+                            <span>💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ് കൗണ്ടർ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc9" class="accordion-content p-3">
+                            <select id="feeClassSelect" class="w-full p-2 border rounded"></select>
+                            <div id="feeStudentList" class="mt-2 max-h-60 overflow-y-auto space-y-1"></div>
+                        </div>
+                    </div>
+                    <!-- 10. Complaints, Backup, Profile -->
+                    <div class="border rounded-xl overflow-hidden">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" data-target="acc10">
+                            <span>📋 പരാതികൾ, ബാക്കപ്പ്, പ്രൊഫൈൽ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="acc10" class="accordion-content p-3">
+                            <button class="btn-primary text-sm" onclick="viewComplaints()">പരാതികൾ കാണുക</button>
+                            <button class="btn-primary text-sm ml-2" onclick="exportJSON()">JSON ബാക്കപ്പ്</button>
+                            <button class="btn-primary text-sm ml-2" onclick="editProfile()">പ്രൊഫൈൽ എഡിറ്റ്</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <footer>© മദ്രസാ • Local demo</footer>
-  </div>
+        <!-- TEACHER PANEL -->
+        <div id="panel-teacher" class="panel-content hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-blue-900">👨‍🏫 അധ്യാപക പാനൽ (Teacher)</h2>
+                <div id="teacherDashboard" class="mt-2">
+                    <p class="text-gray-500">നിങ്ങളുടെ ക്ലാസുകൾ ഇവിടെ ദൃശ്യമാകും.</p>
+                    <div id="teacherClassList" class="mt-2 space-y-3"></div>
+                </div>
+                <div class="mt-4 border-t pt-2">
+                    <h4 class="font-semibold">📋 ഹാജർ പുസ്തകം (March 2026)</h4>
+                    <div id="teacherAttendanceView" class="max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+            </div>
+        </div>
 
-  <script>
-    // --- Simple SPA routing (no document.location assignment) ---
-    const state = { current: 'dashboard' };
+        <!-- PARENT PANEL -->
+        <div id="panel-parent" class="panel-content hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-blue-900">👪 രക്ഷിതാവ് പാനൽ (Parent)</h2>
+                <div id="parentInfo" class="mt-2 text-sm"></div>
+                <div id="parentNotifications" class="mt-3 p-3 bg-yellow-50 rounded-xl"></div>
+                <div id="parentPaymentBox" class="mt-3 p-3 bg-green-50 rounded-xl"></div>
+                <div id="parentEdit" class="mt-3 p-3 bg-gray-50 rounded-xl">
+                    <h4 class="font-semibold">✏️ വിവരങ്ങൾ തിരുത്തുക</h4>
+                    <input id="parentEditName" placeholder="രക്ഷിതാവിന്റെ പേര്" class="w-full p-2 border rounded mt-1">
+                    <input id="parentEditPhone" placeholder="ഫോൺ നമ്പർ" class="w-full p-2 border rounded mt-1">
+                    <input type="file" id="parentEditPhoto" accept="image/*" class="mt-1">
+                    <button class="mt-1 btn-primary text-sm" onclick="updateParentInfo()">അപ്ഡേറ്റ് ചെയ്യുക</button>
+                </div>
+                <div class="mt-3 p-3 bg-blue-50 rounded-xl">
+                    <h4 class="font-semibold">📊 ഫീസ് &amp; കുടിശ്ശിക</h4>
+                    <div id="parentFeeStatus"></div>
+                </div>
+            </div>
+        </div>
 
-    function render() {
-      const title = document.getElementById('page-title');
-      const total = document.getElementById('total-students');
-      title.textContent = state.current === 'dashboard' ? 'ഡാഷ്‌ബോർഡ്' : state.current;
-      // sample: count stored students
-      const students = JSON.parse(localStorage.getItem('students')||'[]');
-      total.textContent = students.length;
-      // hide modals by default
-      document.getElementById('modal-container').style.display = 'none';
-      document.getElementById('signup-container').style.display = 'none';
-      if (state.current === 'login') document.getElementById('modal-container').style.display = 'block';
-      if (state.current === 'signup') document.getElementById('signup-container').style.display = 'block';
+        <!-- COMMITTEE PANEL -->
+        <div id="panel-committee" class="panel-content hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-blue-900">🏛️ കമ്മിറ്റി പാനൽ (View Only)</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalTeachers">0</span><br>അധ്യാപകർ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="todayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="feeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
+                </div>
+                <div class="mt-4">
+                    <h4 class="font-semibold">📋 കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ്</h4>
+                    <div id="defaultersList" class="max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+                <div class="mt-4">
+                    <h4 class="font-semibold">👨‍🏫 സ്റ്റാഫ് ഹാജർ ട്രാക്കർ</h4>
+                    <div id="staffAttendanceTracker" class="max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PUBLIC RESULT PAGE -->
+        <div id="panel-public" class="panel-content hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട് (Public Result)</h2>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <select id="resultClass" class="w-auto p-2 border rounded">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    </select>
+                    <input id="resultExam" placeholder="പരീക്ഷ (ഉദാ: Mid Term)" class="w-auto p-2 border rounded">
+                    <button class="btn-primary" onclick="showPublicResult()">കാണുക</button>
+                    <button class="bg-gray-700 text-white px-4 py-1 rounded-full text-sm" onclick="printResult()">🖨️ Print / PDF</button>
+                </div>
+                <div id="publicResultDisplay" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ----------------------------------------------
+// 1. FIREBASE INIT & CONFIG BOX
+// ----------------------------------------------
+let firebaseApp = null;
+let db = null;
+let currentUser = null; // { role, username, regNo, name, class? }
+let allStudents = [];
+let allStaff = [];
+let allFees = {};
+let allAttendance = {};
+let allHolidays = {};
+let allAnnouncements = [];
+let allExamTimetables = {};
+let allFeeQR = {};
+
+// Load config from localStorage
+const savedConfig = localStorage.getItem('firebaseConfig');
+if (savedConfig) {
+    try {
+        const config = JSON.parse(savedConfig);
+        initializeFirebase(config);
+    } catch(e) { showConfigBox(); }
+} else {
+    showConfigBox();
+}
+
+function showConfigBox() {
+    document.getElementById('firebaseConfigBox').style.display = 'flex';
+}
+
+document.getElementById('saveFirebaseConfig').addEventListener('click', function() {
+    const config = {
+        apiKey: document.getElementById('fbApiKey').value.trim(),
+        authDomain: document.getElementById('fbAuthDomain').value.trim(),
+        databaseURL: document.getElementById('fbDatabaseURL').value.trim(),
+        projectId: document.getElementById('fbProjectId').value.trim(),
+        storageBucket: document.getElementById('fbStorageBucket').value.trim(),
+        messagingSenderId: document.getElementById('fbMessagingSenderId').value.trim(),
+        appId: document.getElementById('fbAppId').value.trim()
+    };
+    if (!config.apiKey || !config.databaseURL) {
+        document.getElementById('fbConfigError').classList.remove('hidden');
+        return;
     }
-
-    function navigate(route) {
-      // Internal navigation using History API (no direct location assignment)
-      state.current = route || 'dashboard';
-      history.pushState({route:state.current}, '', '#'+state.current);
-      render();
+    try {
+        initializeFirebase(config);
+        localStorage.setItem('firebaseConfig', JSON.stringify(config));
+        document.getElementById('firebaseConfigBox').style.display = 'none';
+        document.getElementById('fbConfigError').classList.add('hidden');
+        loadInitialData();
+    } catch(e) {
+        document.getElementById('fbConfigError').classList.remove('hidden');
+        console.error(e);
     }
+});
 
-    window.addEventListener('popstate', (ev) => {
-      if (ev.state && ev.state.route) {
-        state.current = ev.state.route;
-      } else {
-        state.current = 'dashboard';
-      }
-      render();
+function initializeFirebase(config) {
+    if (firebase.apps.length) firebase.apps[0].delete();
+    firebaseApp = firebase.initializeApp(config);
+    db = firebase.database();
+    // Test connection
+    db.ref('.info/connected').on('value', (snap) => {
+        if (snap.val() === true) console.log('Firebase connected');
     });
+}
 
-    // Wire nav buttons
-    document.querySelectorAll('[data-route]').forEach(btn=>{
-      btn.addEventListener('click', ()=> navigate(btn.getAttribute('data-route')));
-    });
-
-    document.getElementById('open-signup').addEventListener('click', ()=> navigate('signup'));
-    document.getElementById('open-login').addEventListener('click', ()=> navigate('login'));
-
-    // Simple signup/login (localStorage)
-    function safeString(s){ return String(s||'').trim(); }
-    document.getElementById('signup-submit').addEventListener('click', ()=>{
-      const name = safeString(document.getElementById('su-name').value);
-      const phone = safeString(document.getElementById('su-phone').value);
-      const pass = safeString(document.getElementById('su-pass').value);
-      if (!name || !phone || !pass) { alert('വിളിപാടി: എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക'); return; }
-      const users = JSON.parse(localStorage.getItem('mm_users')||'[]');
-      if (users.find(u=>u.phone===phone)){ alert('Phone number already registered'); return; }
-      users.push({name,phone,pass,role:'parent'});
-      localStorage.setItem('mm_users', JSON.stringify(users));
-      alert('Account created (local only)');
-      navigate('dashboard');
-    });
-
-    document.getElementById('login-submit').addEventListener('click', ()=>{
-      const phone = safeString(document.getElementById('login-phone').value);
-      const pass = safeString(document.getElementById('login-pass').value);
-      const users = JSON.parse(localStorage.getItem('mm_users')||'[]');
-      const user = users.find(u=>u.phone===phone && u.pass===pass);
-      if (!user){ alert('Invalid credentials'); return; }
-      localStorage.setItem('mm_current_user', JSON.stringify(user));
-      alert('Logged in as '+user.name);
-      navigate('dashboard');
-    });
-
-    document.getElementById('login-cancel').addEventListener('click', ()=> navigate('dashboard'));
-    document.getElementById('signup-cancel').addEventListener('click', ()=> navigate('dashboard'));
-
-    // -- Auto-fix/checker for empty href anchors (will replace them with buttons)
-    function fixEmptyHrefAnchors() {
-      const anchors = Array.from(document.querySelectorAll('a'));
-      const converted = [];
-      anchors.forEach(a=>{
-        const href = (a.getAttribute('href') || '').trim();
-        if (!href) {
-          // Replace with a button to preserve event listeners visually
-          const btn = document.createElement('button');
-          btn.className = a.className || '';
-          btn.innerHTML = a.innerHTML || a.textContent || 'link';
-          // copy dataset
-          Array.from(a.attributes).forEach(attr=>{
-            if (attr.name.startsWith('data-')) btn.setAttribute(attr.name, attr.value);
-          });
-          a.parentNode.replaceChild(btn, a);
-          converted.push(btn);
-        }
-      });
-      return converted;
-    }
-
-    // -- Debug utility to list any anchor problems and show in a debug panel
-    function debugAnchors() {
-      const anchors = Array.from(document.querySelectorAll('a,link'));
-      const problems = [];
-      anchors.forEach(el=>{
-        const tag = el.tagName.toLowerCase();
-        const href = el.getAttribute('href');
-        if (!href || href.trim()==='') problems.push({tag, outer: el.outerHTML.slice(0,200)});
-      });
-      const dbg = document.getElementById('debug-output');
-      if (problems.length) {
-        dbg.style.display = 'block';
-        dbg.textContent = 'Found empty href tags (auto-fixed if anchors):\\n' + problems.map(p=>p.tag + ' — ' + p.outer).join('\\n\\n');
-        console.warn('Empty href/link elements found. See debug output.');
-        // run fixer for empty anchors only
-        fixEmptyHrefAnchors();
-      } else {
-        dbg.style.display = 'none';
-      }
-    }
-
-    // Seed sample students (only if none)
-    if (!localStorage.getItem('students')) {
-      const sample = [
-        {id:1,name:'അബ്ദുൽ റഹ്‌മാന്‍',class:1,shift:'morning'},
-        {id:2,name:'ഫാത്തിമ',class:2,shift:'evening'}
-      ];
-      localStorage.setItem('students', JSON.stringify(sample));
-    }
-
-    // Initialize app
-    (function init(){
-      // Run debug check for empty hrefs
-      debugAnchors();
-
-      // On load, if there's a hash route, go there
-      const hash = location.hash && location.hash.slice(1);
-      state.current = hash || 'dashboard';
-      history.replaceState({route:state.current}, '', '#'+state.current);
-      render();
-    })();
-
-    // Example safe external open (only used if you intentionally want to open external URL)
-    function openExternal(url) {
-      // Confirm before leaving app context
-      if (!url || typeof url !== 'string') return;
-      const ok = confirm('ഈ പ്രവർത്തനം നിങ്ങളുടെ ബ്രൗസര്‍ പുതിയ ടാബിൽ തുറക്കും. തുടരണം?');
-      if (ok) window.open(url, '_blank', 'noopener');
-    }
-
-    // Expose for debugging (optional)
-    window.mmApp = { navigate, debugAnchors, fixEmptyHrefAnchors, openExternal };
-
-  </script>
-</body>
-</html>
+// ----------------------------------------------
+// 2. INITIAL STUDENT DATA (124 students)
+// ----------------------------------------------
+const INITIAL_STUDENTS = [
+// 1st Class - Shift 1
+{reg:691, name:"അത്വാഉറഹ്മാൻ", father:"Ashkar Ali", dob:"06/04/2019", phone:"9100000001", cls:1, shift:1, photo:""},
+{reg:708, name:"മുഹമ്മദ് ഷാസിൽ", father:"Sirajuddin", dob:"26/05/2020", phone:"9100000002", cls:1, shift:1, photo:""},
+{reg:707, name:"മുഹമ്മദ് രിഫ്ദ്", father:"Sakeer", dob:"28/06/2019", phone:"9100000003", cls:1, shift:1, photo:""},
+{reg:713, name:"ഇബ്രാഹിം KM
