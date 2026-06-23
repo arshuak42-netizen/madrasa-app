@@ -30,11 +30,9 @@
         .qr-img { max-width: 150px; max-height: 150px; object-fit: contain; }
         .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .student-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .fee-paid { background: #dcfce7; }
-        .fee-due { background: #fee2e2; }
+        .hidden-tab { display: none !important; }
     </style>
 </head>
 <body>
@@ -103,7 +101,7 @@
         </div>
 
         <!-- SADHAR PANEL -->
-        <div id="panel-sadhar" class="tab-content active">
+        <div id="panel-sadhar" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ</h2>
                 <div class="mt-4 space-y-2">
@@ -281,7 +279,7 @@
         </div>
 
         <!-- PARENT PANEL -->
-        <div id="panel-parent" class="tab-content">
+        <div id="panel-parent" class="tab-content active">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👪 രക്ഷിതാവ് പാനൽ</h2>
                 <div id="parentInfo" class="mt-2 text-sm"></div>
@@ -345,7 +343,7 @@
 
 <script>
 // ====================================================
-//  FIREBASE CONFIG (Your Config)
+//  FIREBASE CONFIG
 // ====================================================
 const firebaseConfig = {
     apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
@@ -357,7 +355,6 @@ const firebaseConfig = {
     appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -522,7 +519,6 @@ const INITIAL_STUDENTS = [
 function loadAllData() {
     showLoading(true);
     
-    // Load students
     db.ref('students').once('value').then(snap => {
         const data = snap.val();
         if (data) {
@@ -539,7 +535,6 @@ function loadAllData() {
         showLoading(false);
     });
 
-    // Load staff - realtime
     db.ref('staff').on('value', snap => {
         const data = snap.val();
         if (data) allStaff = Object.values(data);
@@ -549,7 +544,6 @@ function loadAllData() {
         updateTeacherPanel();
     });
 
-    // Load fees - realtime
     db.ref('fees').on('value', snap => {
         const data = snap.val();
         if (data) allFees = data;
@@ -558,7 +552,6 @@ function loadAllData() {
         updateCommitteeStats();
     });
 
-    // Load attendance - realtime
     db.ref('attendance').on('value', snap => {
         const data = snap.val();
         if (data) allAttendance = data;
@@ -567,7 +560,6 @@ function loadAllData() {
         updateCommitteeStats();
     });
 
-    // Load holidays - realtime
     db.ref('holidays').on('value', snap => {
         const data = snap.val();
         if (data) allHolidays = data;
@@ -575,7 +567,6 @@ function loadAllData() {
         updateHolidayUI();
     });
 
-    // Load announcements - realtime
     db.ref('announcements').on('value', snap => {
         const data = snap.val();
         if (data) allAnnouncements = Object.values(data);
@@ -583,14 +574,12 @@ function loadAllData() {
         updateParentNotifications();
     });
 
-    // Load exam timetables - realtime
     db.ref('examTimetables').on('value', snap => {
         const data = snap.val();
         if (data) allExamTimetables = data;
         else allExamTimetables = {};
     });
 
-    // Load fee QR - realtime
     db.ref('feeQR').on('value', snap => {
         const data = snap.val();
         if (data) allFeeQR = data;
@@ -611,9 +600,6 @@ function showLoading(show) {
     document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
 }
 
-// ====================================================
-//  UI POPULATE FUNCTIONS
-// ====================================================
 function populateAllUI() {
     populateClassSelects();
     renderStudentEditor();
@@ -647,13 +633,13 @@ function populateClassSelects() {
 }
 
 // ====================================================
-//  LOGIN SYSTEM
+//  LOGIN SYSTEM - FIXED
 // ====================================================
 document.getElementById('loginStaffBtn').addEventListener('click', function() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     
-    // Sadhar login
+    // SADHAR LOGIN
     if (username === 'sadhar' && password === 'admin123') {
         document.getElementById('loginError').classList.add('hidden');
         currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
@@ -661,11 +647,11 @@ document.getElementById('loginStaffBtn').addEventListener('click', function() {
         return;
     }
     
-    // Staff login
+    // STAFF LOGIN
     const staff = allStaff.find(s => s.username === username && s.password === password);
     if (!staff || staff.deleted) {
         document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = staff && staff.deleted ? '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.' : '❌ ലോഗിൻ പരാജയപ്പെട്ടു.';
+        document.getElementById('loginError').textContent = staff && staff.deleted ? '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.' : '❌ ലോഗിൻ പരാജയപ്പെട്ടു. യൂസർനെയിം / പാസ്‌വേർഡ് ശരിയാണോയെന്ന് പരിശോധിക്കുക.';
         return;
     }
     document.getElementById('loginError').classList.add('hidden');
@@ -697,20 +683,43 @@ function loginSuccess(roleDisplay) {
     document.getElementById('logoutBtn').classList.remove('hidden');
     document.getElementById('userRoleDisplay').textContent = `👤 ${currentUser.name} (${roleDisplay})`;
     
-    // Show appropriate tab
-    if (currentUser.role === 'sadhar') switchTab('sadhar');
-    else if (currentUser.role === 'staff') switchTab('teacher');
-    else if (currentUser.role === 'parent') switchTab('parent');
-    else switchTab('committee');
+    // Show correct tab based on role
+    if (currentUser.role === 'sadhar') {
+        switchTab('sadhar');
+        // Show only sadhar and public tabs
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            if (tab.dataset.tab === 'sadhar' || tab.dataset.tab === 'public') {
+                tab.style.display = 'inline-block';
+            } else {
+                tab.style.display = 'none';
+            }
+        });
+    } else if (currentUser.role === 'staff') {
+        switchTab('teacher');
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            if (tab.dataset.tab === 'teacher' || tab.dataset.tab === 'public') {
+                tab.style.display = 'inline-block';
+            } else {
+                tab.style.display = 'none';
+            }
+        });
+    } else if (currentUser.role === 'parent') {
+        switchTab('parent');
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            if (tab.dataset.tab === 'parent' || tab.dataset.tab === 'public') {
+                tab.style.display = 'inline-block';
+            } else {
+                tab.style.display = 'none';
+            }
+        });
+        checkParentNotifications();
+    } else {
+        switchTab('committee');
+    }
     
     // Check for staff deletion every 30 seconds
     if (currentUser.role === 'staff') {
         setInterval(checkStaffDeletion, 30000);
-    }
-    
-    // Show popup for parent
-    if (currentUser.role === 'parent') {
-        checkParentNotifications();
     }
 }
 
@@ -723,6 +732,11 @@ function logout() {
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginParentReg').value = '';
+    
+    // Show all tabs again
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+        tab.style.display = 'inline-block';
+    });
 }
 
 function checkStaffDeletion() {
@@ -740,8 +754,10 @@ function checkStaffDeletion() {
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.add('active');
-    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    const panel = document.getElementById('panel-' + tab);
+    if (panel) panel.classList.add('active');
+    const tabBtn = document.querySelector(`[data-tab="${tab}"]`);
+    if (tabBtn) tabBtn.classList.add('active');
     if (tab === 'committee') updateCommitteeStats();
     if (tab === 'teacher') updateTeacherPanel();
     if (tab === 'parent') updateParentPanel();
@@ -916,9 +932,7 @@ function clearHoliday() {
     updateHolidayUI();
 }
 
-function updateHolidayUI() {
-    // Will be shown in teacher panel
-}
+function updateHolidayUI() {}
 
 // ====================================================
 //  ANNOUNCEMENTS
@@ -974,7 +988,6 @@ function updateParentPanel() {
     document.getElementById('parentEditName').value = student.father || '';
     document.getElementById('parentEditPhone').value = student.phone || '';
 
-    // Payment box
     const fee = allFeeQR.monthlyFee || 0;
     const paid = allFees[student.reg] || 0;
     const due = fee - paid;
@@ -1127,7 +1140,6 @@ function updateCommitteeStats() {
     Object.values(allFees).forEach(f => totalFee += f);
     document.getElementById('feeCollected').textContent = '₹' + totalFee;
 
-    // Defaulters
     const container = document.getElementById('defaultersList');
     const fee = allFeeQR.monthlyFee || 0;
     const defaulters = allStudents.filter(s => (allFees[s.reg] || 0) < fee);
@@ -1138,7 +1150,6 @@ function updateCommitteeStats() {
         </div>
     `).join('');
 
-    // Staff attendance tracker
     const staffContainer = document.getElementById('staffAttendanceTracker');
     const activeStaff = allStaff.filter(s => !s.deleted);
     staffContainer.innerHTML = activeStaff.map(s => {
