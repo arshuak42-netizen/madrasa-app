@@ -3,1973 +3,1308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>മമ്പഉൽ ഉലൂം മദ്റസ</title>
+    <title>മമ്പഉൽ ഉലൂം മദ്റസ - കൊറക്കോട്</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; }
-        .accordion-content { transition: max-height 0.3s ease, opacity 0.2s ease; max-height: 0; opacity: 0; overflow: hidden; }
-        .accordion-content.open { max-height: 5000px; opacity: 1; }
-        .panel-tab { padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: all 0.2s; background: #e2e8f0; border: none; font-size: 0.85rem; }
-        .panel-tab.active { background: #1e3a8a; color: white; }
-        .btn-primary { background: #1e3a8a; color: white; padding: 6px 18px; border-radius: 30px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.85rem; }
-        .btn-primary:hover { background: #1e40af; transform: scale(1.02); }
-        .btn-success { background: #15803d; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
-        .btn-danger { background: #b91c1c; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
-        .btn-warning { background: #d97706; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
-        .whatsapp-btn { background: #25D366; color: white; border-radius: 30px; padding: 4px 14px; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; font-size: 0.75rem; }
-        .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); }
-        .popup-card { background: white; max-width:95%; width:500px; border-radius:24px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:popIn 0.3s ease; max-height:90vh; overflow-y:auto; }
-        @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
-        .holiday-banner { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; text-align: center; }
-        .scroll-list { max-height: 350px; overflow-y: auto; }
-        input, select, textarea { border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; width: 100%; font-size: 0.9rem; }
-        .teacher-present { border-left: 4px solid #16a34a; background: #f0fdf4; }
-        .teacher-absent { border-left: 4px solid #dc2626; background: #fef2f2; }
-        .qr-img { max-width: 150px; max-height: 150px; object-fit: contain; }
-        .loading { display: inline-block; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .shift-drop-zone { border: 2px dashed #94a3b8; border-radius: 12px; padding: 12px; min-height: 100px; }
-        .class-chip { display: inline-block; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; margin: 3px; cursor: pointer; }
-        .class-chip.selected { background: #1e3a8a; color: white; }
-        .month-selector { display: flex; flex-wrap: wrap; gap: 6px; }
-        .month-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #d1d5db; cursor: pointer; font-size: 0.8rem; }
-        .month-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
-        .student-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .student-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .public-result-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; padding: 20px; text-align: center; }
-        .public-result-card.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
-        .public-result-card.silver { background: linear-gradient(135deg, #d1d5db, #9ca3af); }
-        .public-result-card.bronze { background: linear-gradient(135deg, #d97706, #b45309); }
-        .public-result-card h3 { color: white; }
-        @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
-        .print-only { display: none; }
-        .staff-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .exam-type-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #d1d5db; cursor: pointer; font-size: 0.8rem; }
-        .exam-type-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
-        .attendance-summary { background: #f8fafc; border-radius: 8px; padding: 8px; }
-        .attendance-bar { height: 20px; border-radius: 10px; background: #e5e7eb; overflow: hidden; }
-        .attendance-bar-fill { height: 100%; border-radius: 10px; background: #16a34a; transition: width 0.3s; }
+        body { background: #0a0e1a; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-light {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .card-hover {
+            transition: all 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+        .gold { color: #fbbf24; }
+        .silver { color: #d1d5db; }
+        .bronze { color: #d97706; }
+        .tab-active {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-bottom: 2px solid #fbbf24;
+        }
+        .accordion-header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .blur-holiday {
+            filter: blur(4px);
+            pointer-events: none;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+        .blur-holiday::after {
+            content: "ഇന്ന് അവധിയാണ്!";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            z-index: 10;
+            background: rgba(0,0,0,0.7);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            border: 2px solid #ef4444;
+            pointer-events: none;
+        }
+        .popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 360px;
+            width: 90%;
+            z-index: 9999;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #fbbf24;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body>
-
-<!-- LOADING OVERLAY -->
-<div id="loadingOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style="display:none;">
-    <div class="bg-white p-6 rounded-2xl flex flex-col items-center">
-        <div class="loading"></div>
-        <p class="mt-2 text-gray-700">ഡാറ്റ ലോഡ് ചെയ്യുന്നു...</p>
-    </div>
-</div>
-
-<!-- POPUP NOTIFICATION -->
-<div id="popupNotification" class="popup-overlay" style="display:none;">
-    <div class="popup-card">
-        <div class="flex justify-between items-start">
-            <h3 class="text-xl font-bold text-blue-900">📢 പുതിയ അറിയിപ്പ്</h3>
-            <button onclick="closePopup()" class="text-gray-500 text-2xl">&times;</button>
-        </div>
-        <div id="popupContent" class="mt-3 text-gray-700"></div>
-        <button onclick="closePopup()" class="mt-4 w-full bg-blue-900 text-white py-2 rounded-full">ശരി</button>
-    </div>
-</div>
-
-<!-- MAIN APP -->
-<div id="app" class="max-w-7xl mx-auto p-3 md:p-6">
-    <!-- HEADER -->
-    <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm mb-4 border border-gray-200">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white font-bold text-xl">മു</div>
-            <div>
-                <h1 class="text-xl font-extrabold text-blue-900">മമ്പഉൽ ഉലൂം മദ്റസ <span class="text-sm font-normal text-gray-600">(കൊറക്കോട്)</span></h1>
-                <p id="userRoleDisplay" class="text-xs text-gray-500">ലോഗിൻ ചെയ്തിട്ടില്ല</p>
-            </div>
-        </div>
-        <button id="logoutBtn" class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm hidden" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ലോഗൗട്ട്</button>
-    </div>
-
-    <!-- PUBLIC RESULT - Home Page Only -->
-    <div id="publicResultSection" class="public-result-only bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-4">
-        <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട്</h2>
-        <div class="flex flex-wrap gap-2 mt-2">
-            <select id="publicResultClass" class="w-auto p-2 border rounded">
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-            </select>
-            <select id="publicResultExamType" class="w-auto p-2 border rounded">
-                <option value="പാദ വാർഷികം">പാദ വാർഷികം</option>
-                <option value="അർധ വാർഷികം">അർധ വാർഷികം</option>
-                <option value="വാർഷികം">വാർഷികം</option>
-            </select>
-            <button class="btn-primary" onclick="showPublicResult()">കാണുക</button>
-            <button class="bg-gray-700 text-white px-4 py-1 rounded-full text-sm" onclick="printPublicResult()">🖨️ PDF</button>
-        </div>
-        <div id="publicResultDisplay" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-    </div>
-
-    <!-- LOGIN SECTION - 4 Types -->
-    <div id="loginSection" class="bg-white p-6 rounded-2xl shadow-md border border-gray-200">
-        <h2 class="text-2xl font-bold text-center text-blue-900">🔐 ലോഗിൻ (4 തരം)</h2>
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- 1. Sadhar Login -->
-            <div class="border p-4 rounded-xl bg-blue-50">
-                <h3 class="font-semibold text-blue-900">🛠️ സദർ</h3>
-                <input id="loginSadharUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2" value="sadhar">
-                <input id="loginSadharPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2" value="admin123">
-                <button id="loginSadharBtn" class="mt-2 w-full bg-blue-900 text-white py-2 rounded-full font-bold">കയറുക</button>
-            </div>
-            <!-- 2. Staff Login -->
-            <div class="border p-4 rounded-xl bg-green-50">
-                <h3 class="font-semibold text-green-900">👨‍🏫 അധ്യാപകർ</h3>
-                <input id="loginStaffUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2">
-                <input id="loginStaffPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2">
-                <button id="loginStaffBtn" class="mt-2 w-full bg-green-700 text-white py-2 rounded-full font-bold">കയറുക</button>
-            </div>
-            <!-- 3. Management Login -->
-            <div class="border p-4 rounded-xl bg-purple-50">
-                <h3 class="font-semibold text-purple-900">🏛️ മാനേജ്മെന്റ്</h3>
-                <input id="loginManagementUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2">
-                <input id="loginManagementPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2">
-                <button id="loginManagementBtn" class="mt-2 w-full bg-purple-700 text-white py-2 rounded-full font-bold">കയറുക</button>
-            </div>
-            <!-- 4. Parent Login -->
-            <div class="border p-4 rounded-xl bg-yellow-50">
-                <h3 class="font-semibold text-yellow-700">👪 രക്ഷിതാവ്</h3>
-                <input id="loginParentReg" placeholder="Reg No (ഉദാ: 691)" class="w-full p-2 border rounded mt-2">
-                <button id="loginParentBtn" class="mt-2 w-full bg-yellow-600 text-white py-2 rounded-full font-bold">കയറുക</button>
-            </div>
-        </div>
-        <p id="loginError" class="text-red-600 text-center mt-3 hidden">❌ ലോഗിൻ പരാജയപ്പെട്ടു. ശരിയായ വിവരങ്ങൾ നൽകുക.</p>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="mt-6 hidden">
-        <div class="flex flex-wrap gap-2 mb-4" id="tabContainer">
-            <button class="panel-tab active" data-tab="sadhar" onclick="switchTab('sadhar')">സദർ</button>
-            <button class="panel-tab" data-tab="teacher" onclick="switchTab('teacher')">അധ്യാപകൻ</button>
-            <button class="panel-tab" data-tab="parent" onclick="switchTab('parent')">രക്ഷിതാവ്</button>
-            <button class="panel-tab" data-tab="management" onclick="switchTab('management')">മാനേജ്മെന്റ്</button>
-            <button class="panel-tab" data-tab="committee" onclick="switchTab('committee')">കമ്മിറ്റി</button>
-        </div>
-
-        <!-- SADHAR PANEL -->
-        <div id="panel-sadhar" class="tab-content active">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ</h2>
-                <div class="mt-4 space-y-2">
-                    <!-- Accordion 1: Shift + Class Linking -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc1')">
-                            <span>⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc1" class="accordion-content p-3">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 1</h4><div id="shift1Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
-                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 2</h4><div id="shift2Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
-                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 3</h4><div id="shift3Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
-                            </div>
-                            <div class="mt-3"><p class="text-sm text-gray-600">ലഭ്യമായ ക്ലാസുകൾ: <span id="availableClassesList" class="flex flex-wrap gap-1 mt-1"></span></p></div>
-                            <button class="mt-3 btn-primary text-sm" onclick="saveShiftClassNew()">സേവ് ചെയ്യുക</button>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 2: Staff Management with Photo -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc2')">
-                            <span>👥 ജീവനക്കാരുടെ നിയന്ത്രണം</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc2" class="accordion-content p-3">
-                            <div class="flex flex-wrap gap-2">
-                                <input id="staffName" placeholder="പേര്" class="flex-1 min-w-[100px]">
-                                <input id="staffUsername" placeholder="Username" class="flex-1 min-w-[100px]">
-                                <input id="staffPassword" placeholder="Password" class="flex-1 min-w-[100px]">
-                                <input id="staffClasses" placeholder="ക്ലാസ്സുകൾ" class="flex-1 min-w-[100px]">
-                                <select id="staffRole" class="flex-1 min-w-[100px] p-2 border rounded">
-                                    <option value="teacher">അധ്യാപകൻ</option>
-                                    <option value="management">മാനേജ്മെന്റ്</option>
-                                    <option value="committee">കമ്മിറ്റി</option>
-                                </select>
-                                <input type="file" id="staffPhoto" accept="image/*" class="flex-1 min-w-[100px]">
-                                <button class="btn-primary" onclick="addStaff()">ചേർക്കുക</button>
-                            </div>
-                            <div id="staffList" class="scroll-list text-sm space-y-1 mt-2"></div>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 3: Sadhar Attendance -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc3')">
-                            <span>✅ സദർ ഹാജർ</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc3" class="accordion-content p-3">
-                            <div class="flex flex-wrap gap-2">
-                                <select id="sadharClassSelect" class="flex-1 min-w-[150px] p-2 border rounded"></select>
-                                <input type="date" id="sadharAttendanceDate" class="flex-1 min-w-[150px] p-2 border rounded">
-                            </div>
-                            <div id="sadharAttendanceList" class="mt-2 space-y-1 max-h-60 overflow-y-auto"></div>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <button class="btn-success text-sm" onclick="submitSadharAttendance()">✅ ഹാജർ സബ്മിറ്റ്</button>
-                                <button class="whatsapp-btn text-sm" onclick="sendAbsentAlert()"><i class="fab fa-whatsapp"></i> അബ്സന്റ് അറിയിപ്പ്</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 4: Exam Timetable with 3 Exam Types -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc4')">
-                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc4" class="accordion-content p-3">
-                            <div class="flex flex-wrap gap-2 mb-2">
-                                <span class="font-semibold">പരീക്ഷ തരം:</span>
-                                <button class="exam-type-btn active" data-exam="പാദ വാർഷികം" onclick="selectExamType(this)">പാദ വാർഷികം</button>
-                                <button class="exam-type-btn" data-exam="അർധ വാർഷികം" onclick="selectExamType(this)">അർധ വാർഷികം</button>
-                                <button class="exam-type-btn" data-exam="വാർഷികം" onclick="selectExamType(this)">വാർഷികം</button>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <select id="examClassSelect" class="flex-1 min-w-[100px] p-2 border rounded">
-                                    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                                    <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                                </select>
-                                <input id="examSubject" placeholder="വിഷയം" class="flex-1 min-w-[100px] p-2 border rounded">
-                                <input id="examDate" type="date" class="flex-1 min-w-[120px] p-2 border rounded">
-                                <input id="examTime" placeholder="സമയം (ഉദാ: 10:00 AM)" class="flex-1 min-w-[100px] p-2 border rounded">
-                                <button class="btn-primary text-sm" onclick="addExamSchedule()">ചേർക്കുക</button>
-                            </div>
-                            <div id="examTimetableList" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
-                            <button class="mt-2 whatsapp-btn text-sm" onclick="sendClassExamAlert()"><i class="fab fa-whatsapp"></i> ക്ലാസ് ഗ്രൂപ്പിലേക്ക് അയക്കുക</button>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 5: Fee Structure -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc5')">
-                            <span>💰 ഫീസ് &amp; QR</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc5" class="accordion-content p-3">
-                            <div class="month-selector" id="feeMonthSelector">
-                                <button class="month-btn active" data-month="January">ജനു</button>
-                                <button class="month-btn" data-month="February">ഫെബ്രു</button>
-                                <button class="month-btn" data-month="March">മാർച്ച്</button>
-                                <button class="month-btn" data-month="April">ഏപ്രിൽ</button>
-                                <button class="month-btn" data-month="May">മെയ്</button>
-                                <button class="month-btn" data-month="June">ജൂൺ</button>
-                                <button class="month-btn" data-month="July">ജൂലൈ</button>
-                                <button class="month-btn" data-month="August">ഓഗസ്റ്റ്</button>
-                                <button class="month-btn" data-month="September">സെപ്റ്റം</button>
-                                <button class="month-btn" data-month="October">ഒക്ടോ</button>
-                                <button class="month-btn" data-month="November">നവം</button>
-                                <button class="month-btn" data-month="December">ഡിസം</button>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="flex-1 min-w-[100px] p-2 border rounded">
-                                <input id="googlePayNumber" placeholder="Google Pay" class="flex-1 min-w-[100px] p-2 border rounded">
-                                <input type="file" id="qrUpload" accept="image/*" class="flex-1 min-w-[100px]">
-                                <button class="btn-primary text-sm" onclick="saveFeeQR()">സേവ്</button>
-                            </div>
-                            <div id="qrPreview" class="mt-2"></div>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 6: Holiday -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc6')">
-                            <span>🏖️ അവധി</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc6" class="accordion-content p-3">
-                            <input id="holidayReason" placeholder="അവധിക്കുള്ള കാരണം" class="w-full p-2 border rounded">
-                            <select id="holidayShift" class="w-full p-2 border rounded mt-1">
-                                <option value="all">എല്ലാ ഷിഫ്റ്റുകളും</option>
-                                <option value="1">ഷിഫ്റ്റ് 1</option>
-                                <option value="2">ഷിഫ്റ്റ് 2</option>
-                                <option value="3">ഷിഫ്റ്റ് 3</option>
-                            </select>
-                            <input type="date" id="holidayDate" class="w-full p-2 border rounded mt-1">
-                            <button class="mt-1 btn-danger text-sm" onclick="setHoliday()">അവധി പ്രഖ്യാപിക്കുക</button>
-                            <button class="mt-1 bg-gray-500 text-white px-4 py-1 rounded-full text-sm" onclick="clearHoliday()">അവധി എടുത്തുമാറ്റുക</button>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 7: Announcements -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc7')">
-                            <span>📢 അറിയിപ്പുകൾ</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc7" class="accordion-content p-3">
-                            <input id="announceTitle" placeholder="തലക്കെട്ട്" class="w-full p-2 border rounded">
-                            <textarea id="announceBody" rows="2" placeholder="അറിയിപ്പ് വിവരം" class="w-full border rounded p-2 mt-1"></textarea>
-                            <select id="announceTarget" class="w-full p-2 border rounded mt-1">
-                                <option value="all">എല്ലാവർക്കും</option>
-                                <option value="1">ഷിഫ്റ്റ് 1</option>
-                                <option value="2">ഷിഫ്റ്റ് 2</option>
-                                <option value="3">ഷിഫ്റ്റ് 3</option>
-                            </select>
-                            <input type="file" id="announceMedia" accept="image/*,audio/*,video/*" class="mt-1">
-                            <button class="mt-1 btn-primary text-sm" onclick="publishAnnouncement()">പ്രസിദ്ധീകരിക്കുക</button>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 8: Student Info -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc8')">
-                            <span>📚 കുട്ടികളുടെ വിവരങ്ങൾ</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc8" class="accordion-content p-3">
-                            <select id="studentClassFilter" class="w-full p-2 border rounded">
-                                <option value="all">എല്ലാ ക്ലാസുകളും</option>
-                                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                            </select>
-                            <div id="studentEditorList" class="max-h-80 overflow-y-auto text-sm space-y-1 mt-2"></div>
-                            <button class="mt-2 btn-primary text-sm" onclick="syncStudentsToFirebase()">Firebase-ലേക്ക് സമന്വയിപ്പിക്കുക</button>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 9: Class Fee -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc9')">
-                            <span>💰 ക്ലാസ്സ് ഫീസ്</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc9" class="accordion-content p-3">
-                            <div class="flex flex-wrap gap-2">
-                                <select id="feeClassSelect" class="flex-1 min-w-[100px] p-2 border rounded"></select>
-                                <select id="feeMonthSelect" class="flex-1 min-w-[100px] p-2 border rounded">
-                                    <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                                    <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                                    <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                                    <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                                    <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                                    <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                                </select>
-                            </div>
-                            <div id="feeStudentList" class="mt-2 max-h-60 overflow-y-auto space-y-1"></div>
-                        </div>
-                    </div>
-
-                    <!-- Accordion 10: Backup & Profile -->
-                    <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc10')">
-                            <span>📋 ബാക്കപ്പ് &amp; പ്രൊഫൈൽ</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="acc10" class="accordion-content p-3">
-                            <button class="btn-primary text-sm" onclick="exportJSON()">JSON ബാക്കപ്പ്</button>
-                            <button class="btn-primary text-sm ml-2" onclick="showProfileEditor()">പ്രൊഫൈൽ</button>
-                            <button class="btn-primary text-sm ml-2" onclick="viewAllComplaints()">പരാതികൾ</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TEACHER PANEL -->
-        <div id="panel-teacher" class="tab-content">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-blue-900">👨‍🏫 അധ്യാപക പാനൽ</h2>
-                <div id="teacherClassList" class="mt-2 space-y-3"></div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📋 ഹാജർ ഹിസ്റ്ററി</h4>
-                    <div class="flex flex-wrap gap-2 mt-1">
-                        <input type="date" id="teacherAttendanceDate" class="flex-1 min-w-[150px] p-2 border rounded">
-                        <button class="btn-primary text-sm" onclick="loadTeacherAttendance()">കാണുക</button>
-                    </div>
-                    <div id="teacherAttendanceView" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">💰 ഫീസ് അപ്ഡേറ്റ്</h4>
-                    <div class="flex flex-wrap gap-2 mt-1">
-                        <select id="teacherFeeClass" class="flex-1 min-w-[100px] p-2 border rounded"></select>
-                        <select id="teacherFeeMonth" class="flex-1 min-w-[100px] p-2 border rounded">
-                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                        </select>
-                    </div>
-                    <div id="teacherFeeList" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📝 പരാതികൾ &amp; നിർദ്ദേശങ്ങൾ</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <textarea id="teacherComplaint" rows="2" placeholder="പരാതി / നിർദ്ദേശം..." class="flex-1 min-w-[150px] p-2 border rounded"></textarea>
-                        <input id="teacherComplaintReg" placeholder="Reg No" class="w-24 p-2 border rounded">
-                        <button class="btn-primary text-sm" onclick="submitTeacherComplaint()">അയക്കുക</button>
-                        <button class="whatsapp-btn text-sm" onclick="sendComplaintWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp-ൽ</button>
-                    </div>
-                    <div id="teacherComplaintsList" class="max-h-40 overflow-y-auto text-sm mt-2"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📝 മാർക്ക്</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <input id="teacherMarksReg" placeholder="Reg No" class="w-24 p-2 border rounded">
-                        <input id="teacherMarksSubject" placeholder="വിഷയം" class="w-32 p-2 border rounded">
-                        <input id="teacherMarksScore" placeholder="മാർക്ക്" class="w-24 p-2 border rounded">
-                        <select id="teacherMarksExamType" class="w-32 p-2 border rounded">
-                            <option value="പാദ വാർഷികം">പാദ വാർഷികം</option>
-                            <option value="അർധ വാർഷികം">അർധ വാർഷികം</option>
-                            <option value="വാർഷികം">വാർഷികം</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="submitTeacherMarks()">മാർക്ക്</button>
-                        <button class="whatsapp-btn text-sm" onclick="sendMarksToParent()"><i class="fab fa-whatsapp"></i> രക്ഷിതാവിന്</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PARENT PANEL -->
-        <div id="panel-parent" class="tab-content">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-blue-900">👪 രക്ഷിതാവ് പാനൽ</h2>
-                <div id="parentInfo" class="mt-2 text-sm"></div>
-                <div id="parentNotifications" class="mt-3 p-3 bg-yellow-50 rounded-xl"></div>
-                <div id="parentPaymentBox" class="mt-3 p-3 bg-green-50 rounded-xl"></div>
-                <div class="mt-3 p-3 bg-gray-50 rounded-xl">
-                    <h4 class="font-semibold">✏️ വിവരങ്ങൾ തിരുത്തുക</h4>
-                    <input id="parentEditName" placeholder="രക്ഷിതാവിന്റെ പേര്" class="w-full p-2 border rounded mt-1">
-                    <input id="parentEditPhone" placeholder="ഫോൺ" class="w-full p-2 border rounded mt-1">
-                    <input type="file" id="parentEditPhoto" accept="image/*" class="mt-1">
-                    <button class="mt-1 btn-primary text-sm" onclick="updateParentInfo()">അപ്ഡേറ്റ്</button>
-                </div>
-                <div class="mt-3 p-3 bg-blue-50 rounded-xl">
-                    <h4 class="font-semibold">📊 ഫീസ് &amp; കുടിശ്ശിക</h4>
-                    <div id="parentFeeStatus"></div>
-                </div>
-                <div id="parentMarksView" class="mt-3 p-3 bg-purple-50 rounded-xl">
-                    <h4 class="font-semibold">📝 മാർക്ക്</h4>
-                    <div id="parentMarksList"></div>
-                </div>
-                <div class="mt-3 p-3 bg-red-50 rounded-xl">
-                    <h4 class="font-semibold">📢 പരാതി / നിർദ്ദേശം</h4>
-                    <textarea id="parentComplaint" rows="2" placeholder="നിങ്ങളുടെ പരാതി / നിർദ്ദേശം..." class="w-full p-2 border rounded"></textarea>
-                    <button class="mt-1 btn-primary text-sm" onclick="submitParentComplaint()">അയക്കുക</button>
-                    <button class="mt-1 whatsapp-btn text-sm" onclick="sendParentComplaintWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp-ൽ</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MANAGEMENT PANEL -->
-        <div id="panel-management" class="tab-content">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-purple-900">🏛️ മാനേജ്മെന്റ് പാനൽ</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTotalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTotalTeachers">0</span><br>അധ്യാപകർ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTodayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtFeeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
-                </div>
-                <div class="mt-4">
-                    <h4 class="font-semibold">📊 മാസ ഹാജർ സംഗ്രഹം</h4>
-                    <div class="flex flex-wrap gap-2 mt-1">
-                        <select id="mgmtAttendanceMonth" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="loadManagementAttendance()">കാണുക</button>
-                    </div>
-                    <div id="mgmtAttendanceSummary" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📊 മാസ ഫീസ് റിപ്പോർട്ട്</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="mgmtFeeMonth" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="loadManagementFeeReport()">കാണുക</button>
-                    </div>
-                    <div id="mgmtFeeReport" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">👥 ജീവനക്കാരുടെ പട്ടിക</h4>
-                    <div id="mgmtStaffList" class="max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- COMMITTEE PANEL -->
-        <div id="panel-committee" class="tab-content">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-blue-900">🏛️ കമ്മിറ്റി പാനൽ</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalTeachers">0</span><br>അധ്യാപകർ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="todayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
-                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="feeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
-                </div>
-                <div class="mt-4">
-                    <h4 class="font-semibold">📊 ദിവസേനയുള്ള ഹാജർ</h4>
-                    <div class="flex flex-wrap gap-2 mt-1">
-                        <input type="date" id="committeeDailyDate" class="p-2 border rounded">
-                        <button class="btn-primary text-sm" onclick="loadCommitteeDailyAttendance()">കാണുക</button>
-                    </div>
-                    <div id="committeeDailyAttendance" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📊 മാസ ഹാജർ നില</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="committeeMonthFilter" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                        </select>
-                        <select id="committeeShiftFilter" class="p-2 border rounded">
-                            <option value="all">എല്ലാ ഷിഫ്റ്റുകളും</option>
-                            <option value="1">ഷിഫ്റ്റ് 1</option>
-                            <option value="2">ഷിഫ്റ്റ് 2</option>
-                            <option value="3">ഷിഫ്റ്റ് 3</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="loadCommitteeMonthlyAttendance()">കാണുക</button>
-                    </div>
-                    <div id="committeeMonthlyAttendance" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">💰 മാസ ശമ്പളം</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="salaryMonth" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="calculateSalary()">കണക്കാക്കുക</button>
-                    </div>
-                    <div id="salaryResult" class="mt-2 text-sm max-h-60 overflow-y-auto"></div>
-                </div>
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📋 കുടിശ്ശികക്കാർ</h4>
-                    <div id="defaultersList" class="max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="app" class="min-h-screen text-gray-200"></div>
 
 <script>
-// ====================================================
-//  FIREBASE CONFIG
-// ====================================================
-const firebaseConfig = {
-    apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
-    authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
-    databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "mamb-ul-uloom-madrasa",
-    storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
-    messagingSenderId: "494107652219",
-    appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ====================================================
-//  GLOBAL STATE
-// ====================================================
-let currentUser = null;
-let allStudents = [];
-let allStaff = [];
-let allFees = {};
-let allAttendance = {};
-let allHolidays = {};
-let allAnnouncements = [];
-let allExamTimetables = {};
-let allFeeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
-let allComplaints = [];
-let allMarks = {};
-let shiftClassMapping = { shifts: {1:[],2:[],3:[]} };
-let selectedMonth = 'April';
-let selectedExamType = 'പാദ വാർഷികം';
-
-// ====================================================
-//  INITIAL STUDENT DATA (124 students - abbreviated)
-// ====================================================
 const INITIAL_STUDENTS = [
-{reg:691, name:"അത്വാഉറഹ്മാൻ", father:"Ashkar Ali", dob:"06/04/2019", phone:"9100000001", cls:1, shift:1, photo:""},
-{reg:708, name:"മുഹമ്മദ് ഷാസിൽ", father:"Sirajuddin", dob:"26/05/2020", phone:"9100000002", cls:1, shift:1, photo:""},
-{reg:707, name:"മുഹമ്മദ് രിഫ്ദ്", father:"Sakeer", dob:"28/06/2019", phone:"9100000003", cls:1, shift:1, photo:""},
-{reg:713, name:"ഇബ്രാഹിം KM", father:"Abdurrahman K. M.", dob:"09/01/2020", phone:"9100000004", cls:1, shift:1, photo:""},
-{reg:706, name:"സൈനബ മറിയം മെഹ്‌വിഷ്", father:"Shameer Abdullah", dob:"26/09/2020", phone:"9100000005", cls:1, shift:1, photo:""},
-{reg:711, name:"റുഖയ്യ സിദ", father:"Muhammed Haris", dob:"26/09/2020", phone:"9100000006", cls:1, shift:1, photo:""},
-{reg:680, name:"അബ്ദുൽ ബാസിത്", father:"നൂറുദ്ദീൻ അബ്ദുള്ള", dob:"14/03/2018", phone:"9100000007", cls:2, shift:2, photo:""},
-{reg:681, name:"ഷാൻ അബ്ദുൽ റസാഖ്", father:"ഷംസുദ്ദീൻ", dob:"04/01/2019", phone:"9100000008", cls:2, shift:2, photo:""},
-{reg:693, name:"അഹദ് മുഹ്‌യിദ്ദീൻ", father:"ഷാനവാസ്", dob:"07/12/2019", phone:"9100000009", cls:2, shift:2, photo:""},
-{reg:694, name:"മുഹമ്മദ് റബീഹ്", father:"ആഷിഖ്", dob:"18/06/2019", phone:"9100000010", cls:2, shift:2, photo:""},
-{reg:695, name:"നസീഹ് ഇബ്രാഹിം", father:"അബ്ദുൽ നാസർ", dob:"23/08/2019", phone:"9100000011", cls:2, shift:2, photo:""},
-{reg:700, name:"മുഹമ്മദ് അമൻ സാഹിദ്", father:"മുഹമ്മദ് റാഷിദ്", dob:"16/03/2018", phone:"9100000012", cls:2, shift:2, photo:""},
-{reg:687, name:"ആയിഷ ലൈബ", father:"ഇബ്രാഹിം ഖലീൽ", dob:"16/12/2018", phone:"9100000013", cls:2, shift:2, photo:""},
-{reg:689, name:"സൻഹ റുഖയ്യ", father:"ഹിദായത്ത് അലി", dob:"23/05/2019", phone:"9100000014", cls:2, shift:2, photo:""},
-{reg:690, name:"സൈനബ ഇശൽ", father:"മുഹമ്മദ് അഷ്റഫ്", dob:"19/05/2019", phone:"9100000015", cls:2, shift:2, photo:""},
-{reg:692, name:"ഖദീജ ലിബ", father:"അബ്ദുൽ മുനീർ", dob:"28/08/2019", phone:"9100000016", cls:2, shift:2, photo:""},
-{reg:696, name:"റുഖയ്യ നദ", father:"അബ്ദുൽ നാസർ", dob:"23/08/2019", phone:"9100000017", cls:2, shift:2, photo:""},
-{reg:620, name:"അദ്നാൻ", father:"അസ്ഹർ അലി", dob:"17/12/2014", phone:"9100000018", cls:3, shift:1, photo:""},
-{reg:628, name:"അബ്ദുൽ നാഫിഹ്", father:"രാജുദ്ദീൻ", dob:"05/09/2016", phone:"9100000019", cls:3, shift:1, photo:""},
-{reg:657, name:"രെഹാൻ ശൈഖ്", father:"സക്കരിയ്യ", dob:"23/04/2018", phone:"9100000020", cls:3, shift:1, photo:""},
-{reg:658, name:"മുഹമ്മദ് ലബീബ്", father:"ഹബീബ്", dob:"21/11/2017", phone:"9100000021", cls:3, shift:1, photo:""},
-{reg:656, name:"അഹ്‌മദ് നസ്ആൻ", father:"അബ്ദുൽ ലത്തീഫ്", dob:"03/04/2017", phone:"9100000022", cls:3, shift:1, photo:""},
-{reg:653, name:"ഇസ്ഹാഖ് ഇസ്മായിൽ", father:"ഇസ്മായിൽ", dob:"04/09/2016", phone:"9100000023", cls:3, shift:1, photo:""},
-{reg:661, name:"ഷംആൻ", father:"സുലൈമാൻ", dob:"11/02/2016", phone:"9100000024", cls:3, shift:1, photo:""},
-{reg:676, name:"അബ്ദുല്ലാഹ് ആമിർ", father:"ആഷിഖ്", dob:"11/06/2018", phone:"9100000025", cls:3, shift:1, photo:""},
-{reg:677, name:"മുഹ്സിൽ മിശാൽ", father:"മുഹമ്മദ് മുആദ്", dob:"07/11/2017", phone:"9100000026", cls:3, shift:1, photo:""},
-{reg:679, name:"മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", father:"ആസിഫ് റഹ്മാൻ", dob:"05/05/2018", phone:"9100000027", cls:3, shift:1, photo:""},
-{reg:710, name:"മുഹമ്മദ് ഹയാൻ", father:"മുഹമ്മദ് ഇഖ്ബാൽ", dob:"27/09/2017", phone:"9100000028", cls:3, shift:1, photo:""},
-{reg:714, name:"സിംസാറുൽ ഹഖ്", father:"ഹബീബ്", dob:"17/04/2016", phone:"9100000029", cls:3, shift:1, photo:""},
-{reg:664, name:"അഫ്രാ അഷ്റഫ്", father:"അഷ്റഫ്", dob:"18/10/2017", phone:"9100000030", cls:3, shift:1, photo:""},
-{reg:669, name:"നഫീസ സഫ", father:"ഇബ്രാഹിം", dob:"08/01/2018", phone:"9100000031", cls:3, shift:1, photo:""},
-{reg:675, name:"ഫാത്തിമ ഇശൽ", father:"ഇസ്മായിൽ", dob:"15/02/2018", phone:"9100000032", cls:3, shift:1, photo:""},
-{reg:701, name:"റിംസ സക്കീർ", father:"സക്കീർ", dob:"15/06/2017", phone:"9100000033", cls:3, shift:1, photo:""},
-{reg:685, name:"അബ്ദുൽ ഹയൻ", father:"മാഹിൻ", dob:"14/12/2015", phone:"9100000034", cls:4, shift:2, photo:""},
-{reg:599, name:"നസ്‌വാൻ", father:"അബ്ദുൽ ഹാരിസ്", dob:"18/08/2015", phone:"9100000035", cls:4, shift:2, photo:""},
-{reg:633, name:"ഇബ്രാഹിം ഖലീൽ", father:"അബ്ദുൽ ലത്തീഫ്", dob:"04/01/2017", phone:"9100000036", cls:4, shift:2, photo:""},
-{reg:634, name:"അയാസ് അബൂബക്കർ", father:"ഹമീദ്", dob:"09/06/2016", phone:"9100000037", cls:4, shift:2, photo:""},
-{reg:652, name:"മുഹമ്മദ് രിഫാൽ", father:"റഷാദ്", dob:"23/02/2017", phone:"9100000038", cls:4, shift:2, photo:""},
-{reg:654, name:"ആസിം മുഹാസ്", father:"അബ്ദുൽ ഖാദർ ഷാഹ്", dob:"02/04/2018", phone:"9100000039", cls:4, shift:2, photo:""},
-{reg:659, name:"മുഹമ്മദ് ഹാഫിസ്", father:"ഹംസ മുഹമ്മദ്", dob:"28/06/2016", phone:"9100000040", cls:4, shift:2, photo:""},
-{reg:660, name:"മുഹമ്മദ് നഹ്‌യാൻ", father:"സാജിദ്", dob:"08/11/2017", phone:"9100000041", cls:4, shift:2, photo:""},
-{reg:663, name:"മുഹമ്മദ് മിഷ്ഹദ്", father:"അഹ്മദ് മുസമ്മിൽ", dob:"05/12/2017", phone:"9100000042", cls:4, shift:2, photo:""},
-{reg:655, name:"യൂസഫ് സാഹി", father:"മുഹമ്മദ് ഷംസീർ", dob:"26/04/2017", phone:"9100000043", cls:4, shift:2, photo:""},
-{reg:662, name:"അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", father:"അബ്ദുറഹ്മാൻ അബ്ദുറഹീം", dob:"26/11/2016", phone:"9100000044", cls:4, shift:2, photo:""},
-{reg:686, name:"അലാ ബിൻ ബിലാൽ", father:"ബിലാൽ", dob:"27/08/2014", phone:"9100000045", cls:4, shift:2, photo:""},
-{reg:698, name:"മുഹമ്മദ് അമ്മാർ", father:"മുഹമ്മദ് Hനീഫ്", dob:"10/12/2014", phone:"9100000046", cls:4, shift:2, photo:""},
-{reg:703, name:"അബ്ദുറഹ്മാൻ ഇസാൻ", father:"മുഹമ്മദ് അഫ്താബ്", dob:"14/05/2016", phone:"9100000047", cls:4, shift:2, photo:""},
-{reg:665, name:"അസാ മറിയം", father:"മുജീബ്", dob:"21/01/2017", phone:"9100000048", cls:4, shift:2, photo:""},
-{reg:611, name:"അബ്ദുല്ലാഹ്", father:"Navas", dob:"24/11/2015", phone:"9100000049", cls:5, shift:1, photo:""},
-{reg:630, name:"മുഈനുദ്ദീൻ", father:"Habeeb", dob:"16/07/2016", phone:"9100000050", cls:5, shift:1, photo:""},
-{reg:631, name:"അദ്നാൻ", father:"Noushad", dob:"04/12/2016", phone:"9100000051", cls:5, shift:1, photo:""},
-{reg:632, name:"മുഹമ്മദ് മിൻഹാജ്", father:"Abdul Nasar", dob:"12/09/2016", phone:"9100000052", cls:5, shift:1, photo:""},
-{reg:649, name:"വാഹിദ് സമാൻ", father:"Mahmood Inayath", dob:"09/12/2015", phone:"9100000053", cls:5, shift:1, photo:""},
-{reg:604, name:"ഷൈമ മറിയം", father:"അബ്ദുൽ ബഷീർ", dob:"02/10/2015", phone:"9100000054", cls:5, shift:1, photo:""},
-{reg:640, name:"മറിയം സഫ", father:"ഹാരിസ്", dob:"21/08/2016", phone:"9100000055", cls:5, shift:1, photo:""},
-{reg:641, name:"ഫാത്തിമ TK", father:"അഹ്മദ്", dob:"14/08/2016", phone:"9100000056", cls:5, shift:1, photo:""},
-{reg:642, name:"ആയിഷ അബ്ദുല്ലാഹ്", father:"അബ്ദുള്ള", dob:"15/04/2016", phone:"9100000057", cls:5, shift:1, photo:""},
-{reg:643, name:"ഫാത്തിമ ജുമാന", father:"ഹാലിത്", dob:"22/02/2014", phone:"9100000058", cls:5, shift:1, photo:""},
-{reg:667, name:"ആയിഷ മെഹ്സിൻ", father:"മുഹമ്മദ് സ്വാദിഖ്", dob:"21/05/2015", phone:"9100000059", cls:5, shift:1, photo:""},
-{reg:586, name:"അബൂ താഹിർ", father:"ഹബീബ്", dob:"29/09/2014", phone:"9100000060", cls:6, shift:2, photo:""},
-{reg:600, name:"അബ്ദുൽ ഖാദർ ഷെഹാൻ", father:"അബ്ദുൽ ഖാദർ", dob:"25/04/2015", phone:"9100000061", cls:6, shift:2, photo:""},
-{reg:601, name:"മഹ്മൂദ് അസാൻ", father:"നിയാസ്", dob:"07/10/2014", phone:"9100000062", cls:6, shift:2, photo:""},
-{reg:602, name:"മാലിക് ഹസൻ", father:"ഖലീൽ", dob:"26/05/2015", phone:"9100000063", cls:6, shift:2, photo:""},
-{reg:603, name:"അഹ്‌മദ് നസൽ", father:"സത്താർ", dob:"25/05/2015", phone:"9100000064", cls:6, shift:2, photo:""},
-{reg:646, name:"ഫിസാൻ", father:"അർഷാദ്", dob:"19/04/2016", phone:"9100000065", cls:6, shift:2, photo:""},
-{reg:668, name:"ഇബ്രാഹിം ഇസ്മാഈൽ", father:"ഇസ്മായിൽ", dob:"04/09/2014", phone:"9100000066", cls:6, shift:2, photo:""},
-{reg:684, name:"മുഹമ്മദ് സിനാൻ", father:"മാഹിൻ", dob:"28/05/2012", phone:"9100000067", cls:6, shift:2, photo:""},
-{reg:699, name:"മുഹമ്മദ് ഷിബ്‌ലി", father:"മുഹമ്മദ് റാഷിദ്", dob:"05/09/2013", phone:"9100000068", cls:6, shift:2, photo:""},
-{reg:606, name:"ആയിഷ ഐഫ", father:"ആസിഫ് റഹ്മാൻ", dob:"18/05/2015", phone:"9100000069", cls:6, shift:2, photo:""},
-{reg:607, name:"ഷഹാന ഷെറിൻ", father:"ഷമീർ അബ്ദുള്ള", dob:"23/01/2016", phone:"9100000070", cls:6, shift:2, photo:""},
-{reg:608, name:"ലിയ്യാ ഫാത്തിമ", father:"ഖലീൽ", dob:"27/10/2015", phone:"9100000071", cls:6, shift:2, photo:""},
-{reg:609, name:"ആയിഷ മെഹ്‌റ", father:"അഷ്റഫ്", dob:"17/02/2015", phone:"9100000072", cls:6, shift:2, photo:""},
-{reg:613, name:"ആയിഷ ഹിബ", father:"ഹംസ", dob:"18/12/2015", phone:"9100000073", cls:6, shift:2, photo:""},
-{reg:563, name:"മുഹമ്മദ് സ്വബാഹ്", father:"Shahnawaz", dob:"04/10/2013", phone:"9100000074", cls:7, shift:1, photo:""},
-{reg:584, name:"അബ്ദുല്ലാഹ് സെയ്ഫ്", father:"Zubair", dob:"24/12/2013", phone:"9100000075", cls:7, shift:1, photo:""},
-{reg:565, name:"മറിയം സുഹാ", father:"Haris", dob:"09/10/2013", phone:"9100000076", cls:7, shift:1, photo:""},
-{reg:570, name:"ഫാത്തിമ ഹമീദ്", father:"Hameed", dob:"18/10/2013", phone:"9100000077", cls:7, shift:1, photo:""},
-{reg:571, name:"ആയിഷ തമന്ന", father:"Sirajuddin", dob:"16/09/2013", phone:"9100000078", cls:7, shift:1, photo:""},
-{reg:587, name:"മറിയം ഫൈഹ", father:"Muhammad Kunhi", dob:"19/05/2014", phone:"9100000079", cls:7, shift:1, photo:""},
-{reg:588, name:"അംന ഫാത്തിമ", father:"Sherif", dob:"27/08/2014", phone:"9100000080", cls:7, shift:1, photo:""},
-{reg:589, name:"സെബ മറിയം", father:"Zameel", dob:"30/08/2014", phone:"9100000081", cls:7, shift:1, photo:""},
-{reg:590, name:"സെല്ലാ ഷംസീർ", father:"Shamsir", dob:"26/03/2014", phone:"9100000082", cls:7, shift:1, photo:""},
-{reg:639, name:"മെഹ്റ മുംതാസ്", father:"Muaaz", dob:"16/12/2013", phone:"9100000083", cls:7, shift:1, photo:""},
-{reg:672, name:"മിൻഹാ ഫാത്തിമ", father:"Nooruddin", dob:"23/04/2014", phone:"9100000084", cls:7, shift:1, photo:""},
-{reg:697, name:"ഹാസിയ ഹംന", father:"Muhammad Hanif", dob:"09/08/2012", phone:"9100000085", cls:7, shift:1, photo:""},
-{reg:560, name:"മുഹമ്മദ് ഷെഹ്‌സാദ്", father:"Abdullah", dob:"04/06/2013", phone:"9100000086", cls:8, shift:2, photo:""},
-{reg:561, name:"അബ്ദുല്ലാഹ് അഷ്റഫ്", father:"Ashraf", dob:"10/10/2013", phone:"9100000087", cls:8, shift:2, photo:""},
-{reg:547, name:"മുഹമ്മദ് നസ്മിൽ", father:"Haris", dob:"20/07/2012", phone:"9100000088", cls:8, shift:2, photo:""},
-{reg:555, name:"ആയിഷ അഷ്റഫ്", father:"Muhammad Ashraf", dob:"16/07/2012", phone:"9100000089", cls:8, shift:2, photo:""},
-{reg:567, name:"സഹ്റ ബത്തുൽ", father:"Ibrahim Khalil", dob:"17/06/2013", phone:"9100000090", cls:8, shift:2, photo:""},
-{reg:568, name:"ഫാത്തിമ മിസ്ന", father:"Abdul Nasar", dob:"02/06/2014", phone:"9100000091", cls:8, shift:2, photo:""},
-{reg:569, name:"ആയിഷ നുവൈറ", father:"Abdul Latif", dob:"21/02/2013", phone:"9100000092", cls:8, shift:2, photo:""},
-{reg:683, name:"ആമിന ഷുസൈന", father:"Haris", dob:"12/10/2012", phone:"9100000093", cls:8, shift:2, photo:""},
-{reg:528, name:"അഹ്സം മിശാൽ", father:"Abdul Khader", dob:"11/05/2012", phone:"9100000094", cls:9, shift:1, photo:""},
-{reg:538, name:"അബ്ദുല്ലാഹ് സഈം", father:"Mohammed Jameel", dob:"11/06/2011", phone:"9100000095", cls:9, shift:1, photo:""},
-{reg:539, name:"അഹ്സൻ ഷാസിൽ", father:"Ashraf", dob:"30/12/2012", phone:"9100000096", cls:9, shift:1, photo:""},
-{reg:540, name:"മുഹമ്മദ് ഷഹീൻ", father:"Shameer Abdullah", dob:"05/05/2012", phone:"9100000097", cls:9, shift:1, photo:""},
-{reg:541, name:"മുഹ്‌യിദ്ദീൻ നിഹാൽ", father:"Mohammed Habeeb", dob:"13/12/2011", phone:"9100000098", cls:9, shift:1, photo:""},
-{reg:715, name:"മുഹമ്മദ് മിദ്ലാജ്", father:"Abdul Karim", dob:"14/08/2010", phone:"9100000099", cls:9, shift:1, photo:""},
-{reg:526, name:"ഹിബ മിഫന്ന", father:"Mahmood", dob:"17/11/2011", phone:"9100000100", cls:9, shift:1, photo:""},
-{reg:537, name:"ഫാത്തിമ ഷാഹിയ", father:"Sirajuddin", dob:"16/06/2011", phone:"9100000101", cls:9, shift:1, photo:""},
-{reg:543, name:"ഫാത്തിമ KS", father:"Sajid", dob:"20/10/2012", phone:"9100000102", cls:9, shift:1, photo:""},
-{reg:545, name:"ഖദീജ മിൻഹ", father:"Ahmad Muzammil", dob:"07/06/2012", phone:"9100000103", cls:9, shift:1, photo:""},
-{reg:705, name:"അഖീല", father:"Abu Nawaz", dob:"07/02/2010", phone:"9100000104", cls:9, shift:1, photo:""},
-{reg:513, name:"നബീൽ ഇബ്രാഹിം", father:"Shahnavaz", dob:"28/11/2011", phone:"9100000105", cls:10, shift:2, photo:""},
-{reg:704, name:"മുഹമ്മദ് ഷംനാദ്", father:"Mohammed Sherif", dob:"05/03/2012", phone:"9100000106", cls:10, shift:2, photo:""},
-{reg:525, name:"സനൂബിയ", father:"Zakariya", dob:"21/03/2012", phone:"9100000107", cls:10, shift:2, photo:""},
-{reg:529, name:"ഷെസാ ഫാത്തിമ", father:"Shafi", dob:"19/03/2011", phone:"9100000108", cls:10, shift:2, photo:""},
-{reg:615, name:"ഫാത്തിമ ഷാഹില", father:"Abdul Khader", dob:"24/07/2012", phone:"9100000109", cls:10, shift:2, photo:""},
-{reg:637, name:"ആയിഷ നജ", father:"Inayat", dob:"03/02/2010", phone:"9100000110", cls:10, shift:2, photo:""},
-{reg:486, name:"മുഹമ്മദ് നിഹാൽ", father:"അബ്ദുൽ ലത്തീഫ്", dob:"06/01/2009", phone:"9100000111", cls:11, shift:3, photo:""},
-{reg:487, name:"അബ്ദുല്ലാഹ് ഷാഹിസ്", father:"ഷാഫി", dob:"17/01/2009", phone:"9100000112", cls:11, shift:3, photo:""},
-{reg:514, name:"ജാസിം", father:"ഖാലിദ്", dob:"02/02/2011", phone:"9100000113", cls:11, shift:3, photo:""},
-{reg:542, name:"ഷെസിൻ KS", father:"സാജിദ്", dob:"09/10/2010", phone:"9100000114", cls:11, shift:3, photo:""},
-{reg:650, name:"മഹ്ഫൂസ്", father:"ഇബ്രാഹിം", dob:"01/09/2010", phone:"9100000115", cls:11, shift:3, photo:""},
-{reg:712, name:"മുഹമ്മദ് സ്വഫ്വാൻ", father:"മുസമ്മിൽ", dob:"16/03/2011", phone:"9100000116", cls:11, shift:3, photo:""},
-{reg:499, name:"ഫാത്തിമ", father:"ഇബ്രാഹിം", dob:"23/04/2009", phone:"9100000117", cls:11, shift:3, photo:""},
-{reg:518, name:"ഖദീജ TA", father:"Ibrahim Khalil", dob:"05/10/2011", phone:"9100000118", cls:11, shift:3, photo:""},
-{reg:626, name:"ആയിഷ മുൻദിറ", father:"ഇബ്രാഹിം", dob:"07/01/2011", phone:"9100000119", cls:11, shift:3, photo:""},
-{reg:574, name:"മുഹമ്മദ് ലുബൈബ്", father:"Muhyiddin", dob:"26/10/2010", phone:"9100000120", cls:12, shift:3, photo:""},
-{reg:489, name:"മുഹമ്മദ് മിസാജ്", father:"അഹ്‌മദ് മുസമ്മിൽ", dob:"18/07/2009", phone:"9100000121", cls:12, shift:3, photo:""},
-{reg:492, name:"ഹുദാ ഫാത്തിമ", father:"ഹാരിസ്", dob:"10/11/2009", phone:"9100000122", cls:12, shift:3, photo:""},
-{reg:493, name:"ലൈല നസ്രിൻ", father:"അബ്ദുള്ള മുനീർ", dob:"19/06/2009", phone:"9100000123", cls:12, shift:3, photo:""},
-{reg:494, name:"ആയിഷ നജ", father:"നവാസ്", dob:"24/07/2008", phone:"9100000124", cls:12, shift:3, photo:""}
+[691,'അത്വാഉറഹ്മാൻ','Ashkar Ali','06/04/2019','9100000001',1,1],
+[708,'മുഹമ്മദ് ഷാസിൽ','Sirajuddin','26/05/2020','9100000002',1,1],
+[707,'മുഹമ്മദ് രിഫ്ദ്','Sakeer','28/06/2019','9100000003',1,1],
+[713,'ഇബ്രാഹിം KM','Abdurrahman K. M.','09/01/2020','9100000004',1,1],
+[706,'സൈനബ മറിയം മെഹ്‌വിഷ്','Shameer Abdullah','26/09/2020','9100000005',1,1],
+[711,'റുഖയ്യ സിദ','Muhammed Haris','26/09/2020','9100000006',1,1],
+[680,'അബ്ദുൽ ബാസിത്','നൂറുദ്ദീൻ അബ്ദുള്ള','14/03/2018','9100000007',2,2],
+[681,'ഷാൻ അബ്ദുൽ റസാഖ്','ഷംസുദ്ദീൻ','04/01/2019','9100000008',2,2],
+[693,'അഹദ് മുഹ്‌യിദ്ദീൻ','ഷാനവാസ്','07/12/2019','9100000009',2,2],
+[694,'മുഹമ്മദ് റബീഹ്','ആഷിഖ്','18/06/2019','9100000010',2,2],
+[695,'നസീഹ് ഇബ്രാഹിം','അബ്ദുൽ നാസർ','23/08/2019','9100000011',2,2],
+[700,'മുഹമ്മദ് അമൻ സാഹിദ്','മുഹമ്മദ് റാഷിദ്','16/03/2018','9100000012',2,2],
+[687,'ആയിഷ ലൈബ','ഇബ്രാഹിം ഖലീൽ','16/12/2018','9100000013',2,2],
+[689,'സൻഹ റുഖയ്യ','ഹിദായത്ത് അലി','23/05/2019','9100000014',2,2],
+[690,'സൈനബ ഇശൽ','മുഹമ്മദ് അഷ്റഫ്','19/05/2019','9100000015',2,2],
+[692,'ഖദീജ ലിബ','അബ്ദുൽ മുനീർ','28/08/2019','9100000016',2,2],
+[696,'റുഖയ്യ നദ','അബ്ദുൽ നാസർ','23/08/2019','9100000017',2,2],
+[620,'അദ്നാൻ','അസ്ഹർ അലി','17/12/2014','9100000018',3,1],
+[628,'അബ്ദുൽ നാഫിഹ്','രാജുദ്ദീൻ','05/09/2016','9100000019',3,1],
+[657,'രെഹാൻ ശൈഖ്','സക്കരിയ്യ','23/04/2018','9100000020',3,1],
+[658,'മുഹമ്മദ് ലബീബ്','ഹബീബ്','21/11/2017','9100000021',3,1],
+[656,'അഹ്‌മദ് നസ്ആൻ','അബ്ദുൽ ലത്തീഫ്','03/04/2017','9100000022',3,1],
+[653,'ഇസ്ഹാഖ്','ഇസ്മായിൽ','04/09/2016','9100000023',3,1],
+[661,'ഷംആൻ','സുലൈമാൻ','11/02/2016','9100000024',3,1],
+[676,'അബ്ദുല്ലാഹ് ആമിർ','ആഷിഖ്','11/06/2018','9100000025',3,1],
+[677,'മുഹ്സിൽ മിശാൽ','മുഹമ്മദ് മുആദ്','07/11/2017','9100000026',3,1],
+[679,'മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ','ആസിഫ് റഹ്മാൻ','05/05/2018','9100000027',3,1],
+[710,'മുഹമ്മദ് ഹയാൻ','മുഹമ്മദ് ഇഖ്ബാൽ','27/09/2017','9100000028',3,1],
+[714,'സിംസാറുൽ ഹഖ്','ഹബീബ്','17/04/2016','9100000029',3,1],
+[664,'അഫ്രാ','അഷ്റഫ്','18/10/2017','9100000030',3,1],
+[669,'നഫീസ സഫ','ഇബ്രാഹിം','08/01/2018','9100000031',3,1],
+[675,'ഫാത്തിമ ഇശൽ','ഇസ്മായിൽ','15/02/2018','9100000032',3,1],
+[701,'റിംസ','സക്കീർ','15/06/2017','9100000033',3,1],
+[685,'അബ്ദുൽ ഹയൻ','മാഹിൻ','14/12/2015','9100000034',4,2],
+[599,'നസ്‌വാൻ','അബ്ദുൽ ഹാരിസ്','18/08/2015','9100000035',4,2],
+[633,'ഇബ്രാഹിം ഖലീൽ','അബ്ദുൽ ലത്തീഫ്','04/01/2017','9100000036',4,2],
+[634,'അയാസ്','അബൂബക്കർ ഹമീദ്','09/06/2016','9100000037',4,2],
+[652,'മുഹമ്മദ് രിഫാൽ','റഷാദ്','23/02/2017','9100000038',4,2],
+[654,'ആസിം മുഹാസ്','അബ്ദുൽ ഖാദർ ഷാഹ്','02/04/2018','9100000039',4,2],
+[659,'മുഹമ്മദ് ഹാഫിസ്','ഹംസ മുഹമ്മദ്','28/06/2016','9100000040',4,2],
+[660,'മുഹമ്മദ് നഹ്‌യാൻ','സാജിദ്','08/11/2017','9100000041',4,2],
+[663,'മുഹമ്മദ് മിഷ്ഹദ്','അഹ്മദ് മുസമ്മിൽ','05/12/2017','9100000042',4,2],
+[655,'യൂസഫ് സാഹി','മുഹമ്മദ് ഷംസീർ','26/04/2017','9100000043',4,2],
+[662,'അബ്ദുല്ലാഹ് ഷെയാൻ','സലാം അബ്ദുറഹ്മാൻ','26/11/2016','9100000044',4,2],
+[686,'അലാ ബിൻ ബിലാൽ','ബിലാൽ','27/08/2014','9100000045',4,2],
+[698,'മുഹമ്മദ് അമ്മാർ','മുഹമ്മദ് Hനീഫ്','10/12/2014','9100000046',4,2],
+[703,'അബ്ദുറഹ്മാൻ ഇസാൻ','മുഹമ്മദ് അഫ്താബ്','14/05/2016','9100000047',4,2],
+[665,'അസാ മറിയം','മുജീബ്','21/01/2017','9100000048',4,2],
+[611,'അബ്ദുല്ലാഹ്','Navas','24/11/2015','9100000049',5,1],
+[630,'മുഈനുദ്ദീൻ','Habeeb','16/07/2016','9100000050',5,1],
+[631,'അദ്നാൻ','Noushad','04/12/2016','9100000051',5,1],
+[632,'മുഹമ്മദ് മിൻഹാജ്','Abdul Nasar','12/09/2016','9100000052',5,1],
+[649,'വാഹിദ് സമാൻ','Mahmood Inayath','09/12/2015','9100000053',5,1],
+[604,'ഷൈമ മറിയം','അബ്ദുൽ ബഷീർ','02/10/2015','9100000054',5,1],
+[640,'മറിയം സഫ','ഹാരിസ്','21/08/2016','9100000055',5,1],
+[641,'ഫാത്തിമ TK','അഹ്മദ്','14/08/2016','9100000056',5,1],
+[642,'ആയിഷ','അബ്ദുല്ലാഹ്','15/04/2016','9100000057',5,1],
+[643,'ഫാത്തിമ ജുമാന','ഹാലിത്','22/02/2014','9100000058',5,1],
+[667,'ആയിഷ മെഹ്സിൻ','മുഹമ്മദ് സ്വാദിഖ്','21/05/2015','9100000059',5,1],
+[586,'അബൂ താഹിർ','ഹബീബ്','29/09/2014','9100000060',6,2],
+[600,'അബ്ദുൽ ഖാദർ ഷെഹാൻ','അബ്ദുൽ ഖാദർ','25/04/2015','9100000061',6,2],
+[601,'മഹ്മൂദ് അസാൻ','നിയാസ്','07/10/2014','9100000062',6,2],
+[602,'മാലിക് ഹസൻ','ഖലീൽ','26/05/2015','9100000063',6,2],
+[603,'അഹ്‌മദ് നസൽ','സത്താർ','25/05/2015','9100000064',6,2],
+[646,'ഫിസാൻ','അർഷാദ്','19/04/2016','9100000065',6,2],
+[668,'ഇബ്രാഹിം ഇസ്മാഈൽ','ഇസ്മായിൽ','04/09/2014','9100000066',6,2],
+[684,'മുഹമ്മദ് സിനാൻ','മാഹിൻ','28/05/2012','9100000067',6,2],
+[699,'മുഹമ്മദ് ഷിബ്‌ലി','മുഹമ്മദ് റാഷിദ്','05/09/2013','9100000068',6,2],
+[606,'ആയിഷ ഐഫ','ആസിഫ് റഹ്മാൻ','18/05/2015','9100000069',6,2],
+[607,'ഷഹാന ഷെറിൻ','ഷമീർ അബ്ദുള്ള','23/01/2016','9100000070',6,2],
+[608,'ലിയ്യാ ഫാത്തിമ','ഖലീൽ','27/10/2015','9100000071',6,2],
+[609,'ആയിഷ മെഹ്‌റ','അഷ്റഫ്','17/02/2015','9100000072',6,2],
+[613,'ആയിഷ ഹിബ','ഹംസ','18/12/2015','9100000073',6,2],
+[563,'മുഹമ്മദ് സ്വബാഹ്','Shahnawaz','04/10/2013','9100000074',7,1],
+[584,'അബ്ദുല്ലാഹ് സെയ്ഫ്','Zubair','24/12/2013','9100000075',7,1],
+[565,'മറിയം സുഹാ','Haris','09/10/2013','9100000076',7,1],
+[570,'ഫാത്തിമ ഹമീദ്','Hameed','18/10/2013','9100000077',7,1],
+[571,'ആയിഷ തമന്ന','Sirajuddin','16/09/2013','9100000078',7,1],
+[587,'മറിയം ഫൈഹ','Muhammad Kunhi','19/05/2014','9100000079',7,1],
+[588,'അംന ഫാത്തിമ','Sherif','27/08/2014','9100000080',7,1],
+[589,'സെബ മറിയം','Zameel','30/08/2014','9100000081',7,1],
+[590,'സെല്ലാ ഷംസീർ','Shamsir','26/03/2014','9100000082',7,1],
+[639,'മെഹ്റ മുംതാസ്','Muaaz','16/12/2013','9100000083',7,1],
+[672,'മിൻഹാ ഫാത്തിമ','Nooruddin','23/04/2014','9100000084',7,1],
+[697,'ഹാസിയ ഹംന','Muhammad Hanif','09/08/2012','9100000085',7,1],
+[560,'മുഹമ്മദ് ഷെഹ്‌സാദ്','Abdullah','04/06/2013','9100000086',8,2],
+[561,'അബ്ദുല്ലാഹ് അഷ്റഫ്','Ashraf','10/10/2013','9100000087',8,2],
+[547,'മുഹമ്മദ് നസ്മിൽ','Haris','20/07/2012','9100000088',8,2],
+[555,'ആയിഷ അഷ്റഫ്','Muhammad Ashraf','16/07/2012','9100000089',8,2],
+[567,'സഹ്റ ബത്തുൽ','Ibrahim Khalil','17/06/2013','9100000090',8,2],
+[568,'ഫാത്തിമ മിസ്ന','Abdul Nasar','02/06/2014','9100000091',8,2],
+[569,'ആയിഷ നുവൈറ','Abdul Latif','21/02/2013','9100000092',8,2],
+[683,'ആമിന ഷുസൈന','Haris','12/10/2012','9100000093',8,2],
+[528,'അഹ്സം മിശാൽ','Abdul Khader','11/05/2012','9100000094',9,1],
+[538,'അബ്ദുല്ലാഹ് സഈം','Mohammed Jameel','11/06/2011','9100000095',9,1],
+[539,'അഹ്സൻ ഷാസിൽ','Ashraf','30/12/2012','9100000096',9,1],
+[540,'മുഹമ്മദ് ഷഹീൻ','Shameer Abdullah','05/05/2012','9100000097',9,1],
+[541,'മുഹ്‌യിദ്ദീൻ നിഹാൽ','Mohammed Habeeb','13/12/2011','9100000098',9,1],
+[715,'മുഹമ്മദ് മിദ്ലാജ്','Abdul Karim','14/08/2010','9100000099',9,1],
+[526,'ഹിബ മിഫന്ന','Mahmood','17/11/2011','9100000100',9,1],
+[537,'ഫാത്തിമ ഷാഹിയ','Sirajuddin','16/06/2011','9100000101',9,1],
+[543,'ഫാത്തിമ KS','Sajid','20/10/2012','9100000102',9,1],
+[545,'ഖദീജ മിൻഹ','Ahmad Muzammil','07/06/2012','9100000103',9,1],
+[705,'അഖീല','Abu Nawaz','07/02/2010','9100000104',9,1],
+[513,'നബീൽ ഇബ്രാഹിം','Shahnavaz','28/11/2011','9100000105',10,2],
+[704,'മുഹമ്മദ് ഷംനാദ്','Mohammed Sherif','05/03/2012','9100000106',10,2],
+[525,'സനൂബിയ','Zakariya','21/03/2012','9100000107',10,2],
+[529,'ഷെസാ ഫാത്തിമ','Shafi','19/03/2011','9100000108',10,2],
+[615,'ഫാത്തിമ ഷാഹില','Abdul Khader','24/07/2012','9100000109',10,2],
+[637,'ആയിഷ നജ','Inayat','03/02/2010','9100000110',10,2],
+[486,'മുഹമ്മദ് നിഹാൽ','അബ്ദുൽ ലത്തീഫ്','06/01/2009','9100000111',11,3],
+[487,'അബ്ദുല്ലാഹ് ഷാഹിസ്','ഷാഫി','17/01/2009','9100000112',11,3],
+[514,'ജാസിം','ഖാലിദ്','02/02/2011','9100000113',11,3],
+[542,'ഷെസിൻ KS','സാജിദ്','09/10/2010','9100000114',11,3],
+[650,'മഹ്ഫൂസ്','ഇബ്രാഹിം','01/09/2010','9100000115',11,3],
+[712,'മുഹമ്മദ് സ്വഫ്വാൻ','മുസമ്മിൽ','16/03/2011','9100000116',11,3],
+[499,'ഫാത്തിമ','ഇബ്രാഹിം','23/04/2009','9100000117',11,3],
+[518,'ഖദീജ TA','Ibrahim Khalil','05/10/2011','9100000118',11,3],
+[626,'ആയിഷ മുൻദിറ','ഇബ്രാഹിം','07/01/2011','9100000119',11,3],
+[574,'മുഹമ്മദ് ലുബൈബ്','Muhyiddin','26/10/2010','9100000120',12,3],
+[489,'മുഹമ്മദ് മിസാജ്','അഹ്‌മദ് മുസമ്മിൽ','18/07/2009','9100000121',12,3],
+[492,'ഹുദാ ഫാത്തിമ','ഹാരിസ്','10/11/2009','9100000122',12,3],
+[493,'ലൈല നസ്രിൻ','അബ്ദുള്ള മുനീർ','19/06/2009','9100000123',12,3],
+[494,'ആയിഷ നജ','നവാസ്','24/07/2008','9100000124',12,3]
 ];
 
-// ====================================================
-//  DATA LOADING FUNCTIONS
-// ====================================================
-function loadAllData() {
-    showLoading(true);
-    db.ref('students').once('value').then(snap => {
-        const data = snap.val();
-        if (data) allStudents = Object.values(data);
-        else { allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS)); syncStudentsToFirebase(); }
-        populateAllUI();
-        showLoading(false);
-    }).catch(() => { allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS)); populateAllUI(); showLoading(false); });
+const APP = {
+    config: null,
+    db: null,
+    currentUser: null,
+    students: {},
+    staff: {},
+    fees: {},
+    attendance: {},
+    holidays: {},
+    announcements: {},
+    examTimetables: {},
+    feeQR: {},
+    complaints: {},
+    marks: {},
+    shiftClassMapping: { shifts: { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] } },
+    staffAttendance: {},
+    loaded: false
+};
 
-    db.ref('staff').on('value', snap => { const d=snap.val(); allStaff=d?Object.values(d):[]; renderStaffList(); updateAll(); });
-    db.ref('fees').on('value', snap => { const d=snap.val(); allFees=d||{}; updateAll(); });
-    db.ref('attendance').on('value', snap => { const d=snap.val(); allAttendance=d||{}; updateAll(); });
-    db.ref('holidays').on('value', snap => { const d=snap.val(); allHolidays=d||{}; updateAll(); });
-    db.ref('announcements').on('value', snap => { const d=snap.val(); allAnnouncements=d?Object.values(d):[]; updateParentNotifications(); });
-    db.ref('examTimetables').on('value', snap => { const d=snap.val(); allExamTimetables=d||{}; renderExamTimetable(); });
-    db.ref('feeQR').on('value', snap => { const d=snap.val(); allFeeQR=d||{monthlyFee:0,googlePay:'',qrBase64:''}; updateQRUI(); });
-    db.ref('complaints').on('value', snap => { const d=snap.val(); allComplaints=d?Object.values(d):[]; });
-    db.ref('marks').on('value', snap => { const d=snap.val(); allMarks=d||{}; });
-    db.ref('shiftClassMapping').on('value', snap => { const d=snap.val(); if(d) shiftClassMapping=d; renderShiftClassUI(); });
+function getFirebaseConfig() {
+    return {
+        apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
+        authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
+        databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "mamb-ul-uloom-madrasa",
+        storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
+        messagingSenderId: "494107652219",
+        appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
+    };
 }
 
-function syncStudentsToFirebase() {
-    const updates={}; allStudents.forEach(s=>{ updates[`students/${s.reg}`]=s; });
-    db.ref().update(updates).catch(e=>console.error(e));
-}
-
-function showLoading(show) { document.getElementById('loadingOverlay').style.display=show?'flex':'none'; }
-
-function populateAllUI() {
-    populateClassSelects();
-    renderStudentEditor();
-    renderStaffList();
-    updateAll();
-    renderShiftClassUI();
-    renderExamTimetable();
-    updateQRUI();
-    showPublicResult();
-    if (currentUser) {
-        if (currentUser.role==='parent') updateParentPanel();
-        if (currentUser.role==='staff' || currentUser.role==='management') updateTeacherPanel();
-        if (currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
-    }
-}
-
-function populateClassSelects() {
-    ['sadharClassSelect','feeClassSelect','teacherFeeClass','studentClassFilter'].forEach(id=>{
-        const sel=document.getElementById(id); if(!sel) return;
-        sel.innerHTML='';
-        if(id==='studentClassFilter') sel.innerHTML='<option value="all">എല്ലാ ക്ലാസുകളും</option>';
-        for(let i=1;i<=12;i++) {
-            const opt=document.createElement('option'); opt.value=i; opt.textContent=i+'-ാം ക്ലാസ്'; sel.appendChild(opt);
+function initFirebase(config) {
+    try {
+        if (typeof firebase === 'undefined') {
+            throw new Error('Firebase SDK not loaded');
         }
-    });
-    document.getElementById('sadharClassSelect')?.addEventListener('change', loadSadharAttendance);
-    document.getElementById('feeClassSelect')?.addEventListener('change', loadFeeStudents);
-    document.getElementById('studentClassFilter')?.addEventListener('change', renderStudentEditor);
-    document.getElementById('teacherFeeClass')?.addEventListener('change', loadTeacherFeeList);
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('sadharAttendanceDate').value = today;
-    document.getElementById('teacherAttendanceDate').value = today;
-    document.getElementById('committeeDailyDate').value = today;
-    loadSadharAttendance();
-    loadFeeStudents();
-}
-
-function updateAll() {
-    updateCommitteeStats();
-    updateManagementStats();
-    updateTeacherPanel();
-    if (currentUser && currentUser.role==='parent') updateParentPanel();
-    if (currentUser && currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
-}
-
-// ====================================================
-//  LOGIN SYSTEM - 4 TYPES
-// ====================================================
-// Sadhar Login
-document.getElementById('loginSadharBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginSadharUsername').value.trim();
-    const password = document.getElementById('loginSadharPassword').value.trim();
-    if (username === 'sadhar' && password === 'admin123') {
-        document.getElementById('loginError').classList.add('hidden');
-        currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
-        loginSuccess('സദർ');
-        return;
-    }
-    document.getElementById('loginError').classList.remove('hidden');
-});
-
-// Staff Login
-document.getElementById('loginStaffBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginStaffUsername').value.trim();
-    const password = document.getElementById('loginStaffPassword').value.trim();
-    const staff = allStaff.find(s => s.username === username && s.password === password && !s.deleted && s.role === 'teacher');
-    if (!staff) {
-        document.getElementById('loginError').classList.remove('hidden');
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'staff', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
-    loginSuccess('അധ്യാപകൻ');
-});
-
-// Management Login
-document.getElementById('loginManagementBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginManagementUsername').value.trim();
-    const password = document.getElementById('loginManagementPassword').value.trim();
-    const staff = allStaff.find(s => s.username === username && s.password === password && !s.deleted && s.role === 'management');
-    if (!staff) {
-        document.getElementById('loginError').classList.remove('hidden');
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'management', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
-    loginSuccess('മാനേജ്മെന്റ്');
-});
-
-// Parent Login
-document.getElementById('loginParentBtn').addEventListener('click', function() {
-    const reg = parseInt(document.getElementById('loginParentReg').value.trim());
-    if (!reg) { document.getElementById('loginError').classList.remove('hidden'); return; }
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) {
-        document.getElementById('loginError').classList.remove('hidden');
-        return;
-    }
-    // Check if student is deleted (inactive)
-    if (student.deleted) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ ഈ കുട്ടിയെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.';
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'parent', regNo: reg, name: student.name, cls: student.cls, shift: student.shift, parentName: student.father||'രക്ഷിതാവ്', phone: student.phone||'' };
-    loginSuccess('രക്ഷിതാവ്');
-});
-
-function loginSuccess(roleDisplay) {
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('logoutBtn').classList.remove('hidden');
-    document.getElementById('userRoleDisplay').textContent = `👤 ${currentUser.name} (${roleDisplay})`;
-    document.getElementById('publicResultSection').style.display = 'none';
-    
-    const tabs = document.querySelectorAll('.panel-tab');
-    tabs.forEach(tab => tab.style.display = 'none');
-    if (currentUser.role === 'sadhar') {
-        document.querySelector('[data-tab="sadhar"]').style.display = 'inline-block';
-        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
-        document.querySelector('[data-tab="management"]').style.display = 'inline-block';
-        switchTab('sadhar');
-    } else if (currentUser.role === 'staff') {
-        document.querySelector('[data-tab="teacher"]').style.display = 'inline-block';
-        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
-        switchTab('teacher');
-    } else if (currentUser.role === 'management') {
-        document.querySelector('[data-tab="management"]').style.display = 'inline-block';
-        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
-        switchTab('management');
-    } else if (currentUser.role === 'parent') {
-        document.querySelector('[data-tab="parent"]').style.display = 'inline-block';
-        switchTab('parent');
-        checkParentNotifications();
-    } else {
-        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
-        switchTab('committee');
-    }
-}
-
-function logout() {
-    currentUser = null;
-    document.getElementById('loginSection').style.display = 'block';
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('logoutBtn').classList.add('hidden');
-    document.getElementById('userRoleDisplay').textContent = 'ലോഗിൻ ചെയ്തിട്ടില്ല';
-    document.getElementById('publicResultSection').style.display = 'block';
-    showPublicResult();
-    document.querySelectorAll('.panel-tab').forEach(tab => tab.style.display = 'inline-block');
-}
-
-function switchTab(tab) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
-    const panel = document.getElementById('panel-'+tab);
-    if (panel) panel.classList.add('active');
-    const btn = document.querySelector(`[data-tab="${tab}"]`);
-    if (btn) btn.classList.add('active');
-    if (tab==='committee') { updateCommitteeStats(); loadCommitteeDailyAttendance(); loadCommitteeMonthlyAttendance(); calculateSalary(); }
-    if (tab==='management') { updateManagementStats(); loadManagementAttendance(); loadManagementFeeReport(); }
-    if (tab==='teacher') updateTeacherPanel();
-    if (tab==='parent') updateParentPanel();
-    if (tab==='sadhar') { loadSadharAttendance(); loadFeeStudents(); renderShiftClassUI(); }
-}
-
-function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-}
-
-// ====================================================
-//  STAFF MANAGEMENT
-// ====================================================
-function addStaff() {
-    const name = document.getElementById('staffName').value.trim();
-    const username = document.getElementById('staffUsername').value.trim();
-    const password = document.getElementById('staffPassword').value.trim();
-    const classes = document.getElementById('staffClasses').value.trim().split(',').map(c=>parseInt(c.trim())).filter(c=>c);
-    const role = document.getElementById('staffRole').value;
-    const file = document.getElementById('staffPhoto').files[0];
-    if (!name || !username || !password) { alert('❌ എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക.'); return; }
-    
-    const newStaff = { name, username, password, classes, role, deleted: false, photo: '' };
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            newStaff.photo = e.target.result;
-            allStaff.push(newStaff);
-            db.ref('staff').push(newStaff);
-            renderStaffList();
-            clearStaffFields();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        allStaff.push(newStaff);
-        db.ref('staff').push(newStaff);
-        renderStaffList();
-        clearStaffFields();
-    }
-}
-
-function clearStaffFields() {
-    document.getElementById('staffName').value='';
-    document.getElementById('staffUsername').value='';
-    document.getElementById('staffPassword').value='';
-    document.getElementById('staffClasses').value='';
-    document.getElementById('staffPhoto').value='';
-}
-
-function deleteStaff(username) {
-    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
-    const staff = allStaff.find(s=>s.username===username);
-    if (staff) {
-        staff.deleted = true;
-        db.ref('staff').orderByChild('username').equalTo(username).once('value').then(snap=>{
-            snap.forEach(child=>child.ref.update({deleted:true}));
-        });
-        renderStaffList();
-        if (currentUser && currentUser.username===username) { alert('നീക്കം ചെയ്തു'); logout(); }
-    }
-}
-
-function renderStaffList() {
-    const container = document.getElementById('staffList');
-    if (!container) return;
-    const active = allStaff.filter(s=>!s.deleted);
-    container.innerHTML = active.map(s=>`
-        <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-            <div class="flex items-center gap-2">
-                ${s.photo ? `<img src="${s.photo}" class="staff-photo">` : `<div class="staff-photo bg-gray-300 rounded-full flex items-center justify-center">👤</div>`}
-                <span><strong>${s.name}</strong> (${s.username}) - ${s.role||'അധ്യാപകൻ'} - ക്ലാസ്സുകൾ: ${s.classes.join(', ')}</span>
-            </div>
-            <button class="btn-danger text-sm" onclick="deleteStaff('${s.username}')">നീക്കം</button>
-        </div>
-    `).join('');
-}
-
-// ====================================================
-//  SHIFT + CLASS LINKING
-// ====================================================
-function renderShiftClassUI() {
-    const shifts = [1,2,3];
-    shifts.forEach(shift => {
-        const container = document.getElementById(`shift${shift}Classes`);
-        if (!container) return;
-        const classes = shiftClassMapping.shifts?.[shift] || [];
-        container.innerHTML = classes.map(c => `<span class="class-chip selected" onclick="removeClassFromShift(${shift},${c})">${c}-ാം ക്ലാസ് ✕</span>`).join('');
-        if (classes.length === 0) container.innerHTML = '<span class="text-gray-400 text-sm">ക്ലാസുകൾ ഇവിടെ ഡ്രാഗ് ചെയ്യുക</span>';
-    });
-    const allAssigned = new Set();
-    [1,2,3].forEach(s => (shiftClassMapping.shifts?.[s]||[]).forEach(c => allAssigned.add(c)));
-    const available = [];
-    for(let i=1;i<=12;i++) if(!allAssigned.has(i)) available.push(i);
-    document.getElementById('availableClassesList').innerHTML = available.map(c => 
-        `<span class="class-chip" onclick="addClassToShift(${c})">${c}-ാം ക്ലാസ് ➕</span>`
-    ).join('') || '<span class="text-gray-400">എല്ലാ ക്ലാസുകളും അസൈൻ ചെയ്തു</span>';
-}
-
-function addClassToShift(cls) {
-    for(let s=1;s<=3;s++) {
-        const classes = shiftClassMapping.shifts?.[s] || [];
-        if (classes.length < 4 && !classes.includes(cls)) {
-            if (!shiftClassMapping.shifts) shiftClassMapping.shifts = {};
-            if (!shiftClassMapping.shifts[s]) shiftClassMapping.shifts[s] = [];
-            shiftClassMapping.shifts[s].push(cls);
-            renderShiftClassUI();
-            return;
+        if (!firebase.apps || firebase.apps.length === 0) {
+            firebase.initializeApp(config);
         }
-    }
-    alert('എല്ലാ ഷിഫ്റ്റുകളിലും 4 ക്ലാസുകൾ വീതം ഉണ്ട്.');
-}
-
-function removeClassFromShift(shift, cls) {
-    if (!shiftClassMapping.shifts) shiftClassMapping.shifts = {};
-    if (!shiftClassMapping.shifts[shift]) return;
-    shiftClassMapping.shifts[shift] = shiftClassMapping.shifts[shift].filter(c => c !== cls);
-    renderShiftClassUI();
-}
-
-function saveShiftClassNew() {
-    db.ref('shiftClassMapping').set(shiftClassMapping).then(() => {
-        alert('✅ സേവ് ചെയ്തു.');
-    }).catch(e => alert('❌ '+e.message));
-}
-
-// ====================================================
-//  SADHAR ATTENDANCE
-// ====================================================
-function loadSadharAttendance() {
-    const cls = parseInt(document.getElementById('sadharClassSelect').value);
-    const date = document.getElementById('sadharAttendanceDate').value || new Date().toISOString().split('T')[0];
-    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-    const container = document.getElementById('sadharAttendanceList');
-    container.innerHTML = students.map(s => `
-        <div class="flex items-center gap-2 p-1 border-b">
-            <span class="w-8 text-xs">${s.reg}</span>
-            <span class="flex-1 text-sm">${s.name}</span>
-            <select class="attendance-select text-sm p-1 border rounded" data-reg="${s.reg}" data-phone="${s.phone}">
-                <option value="present">✅ Present</option>
-                <option value="absent">❌ Absent</option>
-            </select>
-        </div>
-    `).join('');
-}
-
-function submitSadharAttendance() {
-    const cls = parseInt(document.getElementById('sadharClassSelect').value);
-    const date = document.getElementById('sadharAttendanceDate').value || new Date().toISOString().split('T')[0];
-    const selects = document.querySelectorAll('#sadharAttendanceList .attendance-select');
-    const attData = {};
-    const absentStudents = [];
-    selects.forEach(sel => {
-        const reg = parseInt(sel.dataset.reg);
-        const status = sel.value;
-        attData[reg] = status;
-        if (status === 'absent') {
-            const student = allStudents.find(s => s.reg === reg);
-            if (student) absentStudents.push(student);
-        }
-    });
-    db.ref(`attendance/${date}/${cls}`).update(attData).then(() => {
-        alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
-        window._absentStudents = absentStudents;
-        const teacher = allStaff.find(s => s.classes && s.classes.includes(cls) && !s.deleted);
-        if (teacher && absentStudents.length > 0) {
-            db.ref(`attendance/${date}/staff/${teacher.username}`).set('absent');
-        }
-    }).catch(e => alert('❌ '+e.message));
-}
-
-function sendAbsentAlert() {
-    const absent = window._absentStudents || [];
-    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് ഇല്ല.'); return; }
-    let msg = "📢 അസ്സലാമു അലൈക്കും, ഇന്ന് മദ്റസയിൽ ഹാജരാകാത്ത കുട്ടികൾ:\n\n";
-    absent.forEach(s => {
-        msg += `👤 ${s.name} (Reg: ${s.reg}) - ${s.cls}-ാം ക്ലാസ്\n`;
-    });
-    msg += "\nദയവായി അവരുടെ രക്ഷിതാക്കളെ അറിയിക്കുക.";
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-// ====================================================
-//  EXAM TIMETABLE - 3 EXAM TYPES
-// ====================================================
-function selectExamType(btn) {
-    document.querySelectorAll('.exam-type-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedExamType = btn.dataset.exam;
-    renderExamTimetable();
-}
-
-function addExamSchedule() {
-    const cls = document.getElementById('examClassSelect').value;
-    const subject = document.getElementById('examSubject').value.trim();
-    const date = document.getElementById('examDate').value;
-    const time = document.getElementById('examTime').value.trim();
-    if (!subject || !date) { alert('⚠️ വിഷയവും തീയതിയും നൽകുക.'); return; }
-    const examType = selectedExamType;
-    if (!allExamTimetables[cls]) allExamTimetables[cls] = {};
-    if (!allExamTimetables[cls][examType]) allExamTimetables[cls][examType] = [];
-    allExamTimetables[cls][examType].push({ subject, date, time, id: Date.now() });
-    db.ref('examTimetables').set(allExamTimetables);
-    renderExamTimetable();
-    document.getElementById('examSubject').value = '';
-    document.getElementById('examDate').value = '';
-    document.getElementById('examTime').value = '';
-}
-
-function renderExamTimetable() {
-    const container = document.getElementById('examTimetableList');
-    if (!container) return;
-    const cls = document.getElementById('examClassSelect')?.value || '1';
-    const examType = selectedExamType;
-    const exams = allExamTimetables[cls]?.[examType] || [];
-    container.innerHTML = `
-        <div class="font-semibold text-blue-900">📚 ${examType} - ${cls}-ാം ക്ലാസ്</div>
-        ${exams.map(e => `
-            <div class="flex justify-between items-center p-1 border-b text-sm">
-                <span>${e.subject} - ${e.date} ${e.time ? '| '+e.time : ''}</span>
-                <button class="btn-danger text-xs" onclick="removeExam(${e.id})">✕</button>
-            </div>
-        `).join('') || '<p class="text-gray-400">ടൈംടേബിൾ ഇല്ല</p>'}
-    `;
-}
-
-function removeExam(id) {
-    const cls = document.getElementById('examClassSelect').value;
-    const examType = selectedExamType;
-    if (!allExamTimetables[cls]?.[examType]) return;
-    allExamTimetables[cls][examType] = allExamTimetables[cls][examType].filter(e => e.id !== id);
-    db.ref('examTimetables').set(allExamTimetables);
-    renderExamTimetable();
-}
-
-function sendClassExamAlert() {
-    const cls = document.getElementById('examClassSelect').value;
-    const examType = selectedExamType;
-    const exams = allExamTimetables[cls]?.[examType] || [];
-    if (exams.length === 0) { alert('⚠️ ടൈംടേബിൾ ഇല്ല.'); return; }
-    const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
-    const tomorrowExams = exams.filter(e => e.date === tomorrow);
-    if (tomorrowExams.length === 0) { alert('⚠️ നാളത്തെ പരീക്ഷ ഇല്ല.'); return; }
-    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ ${examType} പരീക്ഷാ ടൈംടേബിൾ:\n\n`;
-    tomorrowExams.forEach(e => { msg += `📝 ${e.subject} - ${e.date} ${e.time ? '| '+e.time : ''}\n`; });
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-// ====================================================
-//  FEE & QR
-// ====================================================
-document.querySelectorAll('#feeMonthSelector .month-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('#feeMonthSelector .month-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        selectedMonth = this.dataset.month;
-    });
-});
-
-function saveFeeQR() {
-    const fee = document.getElementById('monthlyFee').value;
-    const gpay = document.getElementById('googlePayNumber').value;
-    const file = document.getElementById('qrUpload').files[0];
-    let qrBase64 = allFeeQR.qrBase64 || '';
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            qrBase64 = e.target.result;
-            const data = { monthlyFee: fee, googlePay: gpay, qrBase64 };
-            db.ref('feeQR').set(data);
-            allFeeQR = data;
-            alert('✅ സേവ് ചെയ്തു.');
-            updateQRUI();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        const data = { monthlyFee: fee, googlePay: gpay, qrBase64 };
-        db.ref('feeQR').set(data);
-        allFeeQR = data;
-        alert('✅ സേവ് ചെയ്തു.');
-        updateQRUI();
+        return firebase.database();
+    } catch (e) {
+        console.error('Firebase init error:', e);
+        throw new Error('ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.');
     }
 }
 
-function updateQRUI() {
-    const preview = document.getElementById('qrPreview');
-    preview.innerHTML = allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img">` : '';
-    document.getElementById('monthlyFee').value = allFeeQR.monthlyFee || '';
-    document.getElementById('googlePayNumber').value = allFeeQR.googlePay || '';
-}
-
-// ====================================================
-//  FEE STUDENT LIST
-// ====================================================
-function loadFeeStudents() {
-    const cls = parseInt(document.getElementById('feeClassSelect').value);
-    const month = document.getElementById('feeMonthSelect').value;
-    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-    const container = document.getElementById('feeStudentList');
-    const fee = allFeeQR.monthlyFee || 0;
-    container.innerHTML = students.map(s => {
-        const key = `${s.reg}_${month}`;
-        const paid = allFees[key] || 0;
-        return `
-            <div class="flex items-center justify-between p-1 border-b text-sm ${paid >= fee ? 'bg-green-50' : 'bg-red-50'}">
-                <span>${s.name} (${s.reg})</span>
-                <span>അടച്ചത്: ₹${paid} | ബാക്കി: ₹${fee - paid}</span>
-                <button class="btn-primary text-xs" onclick="updateFeeMonth(${s.reg},'${month}')">ഫീസ്</button>
-                <button class="whatsapp-btn text-xs" onclick="sendFeeReceiptMonth(${s.reg},'${month}')"><i class="fab fa-whatsapp"></i></button>
+function renderApp() {
+    const root = document.getElementById('app');
+    if (!APP.loaded) {
+        root.innerHTML = `
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="text-center">
+                    <div class="spinner mx-auto mb-4"></div>
+                    <p class="text-gray-400">ലോഡ് ചെയ്യുന്നു...</p>
+                </div>
             </div>
         `;
-    }).join('');
-}
-
-function updateFeeMonth(reg, month) {
-    const amount = prompt(`₹${allFeeQR.monthlyFee||0} ഫീസ് അടയ്ക്കുക:`);
-    if (amount === null) return;
-    const val = parseFloat(amount);
-    if (isNaN(val) || val < 0) { alert('⚠️ ശരിയായ തുക.'); return; }
-    const key = `${reg}_${month}`;
-    const current = allFees[key] || 0;
-    const newTotal = current + val;
-    db.ref(`fees/${key}`).set(newTotal).then(() => {
-        allFees[key] = newTotal;
-        alert('✅ ഫീസ് അപ്ഡേറ്റ് ചെയ്തു.');
-        loadFeeStudents();
-        updateCommitteeStats();
-        updateManagementStats();
-    }).catch(e => alert('❌ '+e.message));
-}
-
-function sendFeeReceiptMonth(reg, month) {
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) return;
-    const fee = allFeeQR.monthlyFee || 0;
-    const key = `${reg}_${month}`;
-    const paid = allFees[key] || 0;
-    const due = fee - paid;
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന ${student.name} (Reg: ${student.reg}) ${month} മാസത്തെ ഫീസ് ₹${fee} അടച്ചു. ആകെ: ₹${paid}, ബാക്കി: ₹${due}. - മമ്പഉൽ ഉലൂം മദ്റസ.`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-// ====================================================
-//  STUDENT EDITOR
-// ====================================================
-function renderStudentEditor() {
-    const container = document.getElementById('studentEditorList');
-    const filter = document.getElementById('studentClassFilter').value;
-    let students = allStudents.filter(s => !s.deleted);
-    if (filter !== 'all') students = students.filter(s => s.cls === parseInt(filter));
-    students.sort((a,b) => a.cls - b.cls || a.reg - b.reg);
-    container.innerHTML = students.map(s => `
-        <div class="student-card">
-            ${s.photo ? `<img src="${s.photo}">` : `<div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">👤</div>`}
-            <div class="flex-1">
-                <div class="font-semibold">${s.name}</div>
-                <div class="text-xs text-gray-600">Reg: ${s.reg} | ${s.cls}-ാം ക്ലാസ് | ഷിഫ്റ്റ് ${s.shift}</div>
-                <div class="text-xs text-gray-500">വാപ്പ: ${s.father} | ഫോൺ: ${s.phone}</div>
-            </div>
-            <button class="btn-primary text-xs" onclick="editStudent(${s.reg})">✏️</button>
-            <button class="btn-danger text-xs" onclick="deleteStudent(${s.reg})">🗑️</button>
-        </div>
-    `).join('');
-}
-
-function editStudent(reg) {
-    const s = allStudents.find(st => st.reg === reg);
-    if (!s) return;
-    const name = prompt('പേര്:', s.name);
-    if (name !== null) s.name = name;
-    const father = prompt('വാപ്പാന്റെ പേര്:', s.father);
-    if (father !== null) s.father = father;
-    const phone = prompt('ഫോൺ:', s.phone);
-    if (phone !== null) s.phone = phone;
-    const cls = prompt('ക്ലാസ് (1-12):', s.cls);
-    if (cls !== null && !isNaN(cls) && cls>=1 && cls<=12) s.cls = parseInt(cls);
-    const shift = prompt('ഷിഫ്റ്റ് (1-3):', s.shift);
-    if (shift !== null && !isNaN(shift) && shift>=1 && shift<=3) s.shift = parseInt(shift);
-    db.ref(`students/${reg}`).update(s);
-    renderStudentEditor();
-}
-
-function deleteStudent(reg) {
-    if (!confirm('ഈ കുട്ടിയെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്യണോ? (ഇനി ഈ Reg No ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യാൻ സാധിക്കില്ല)')) return;
-    const student = allStudents.find(s => s.reg === reg);
-    if (student) {
-        student.deleted = true;
-        db.ref(`students/${reg}`).update({ deleted: true });
-    }
-    renderStudentEditor();
-}
-
-// ====================================================
-//  TEACHER PANEL
-// ====================================================
-function updateTeacherPanel() {
-    if (!currentUser || !['staff','management'].includes(currentUser.role)) return;
-    const container = document.getElementById('teacherClassList');
-    const classes = currentUser.classes || [];
-    if (classes.length === 0) {
-        container.innerHTML = '<p class="text-gray-500">ക്ലാസുകളൊന്നുമില്ല.</p>';
         return;
     }
-    const today = new Date().toISOString().split('T')[0];
-    container.innerHTML = classes.map(cls => {
-        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-        const holiday = allHolidays && (allHolidays.shift === 'all' || parseInt(allHolidays.shift) === currentUser.shift);
-        return `
-            <div class="border rounded-xl p-3 ${holiday ? 'opacity-50 blur-sm' : ''}">
-                <h4 class="font-bold text-lg">${cls}-ാം ക്ലാസ്</h4>
-                ${holiday ? `<div class="holiday-banner">🏖️ അവധി: ${allHolidays.reason}</div>` : ''}
-                <div class="mt-2 text-sm max-h-40 overflow-y-auto">
-                    ${students.map(s => `
-                        <div class="flex items-center justify-between p-1 border-b">
-                            <span>${s.name} (${s.reg})</span>
-                            <select class="teacher-attendance-select text-xs p-1 border rounded" data-reg="${s.reg}" data-cls="${cls}">
-                                <option value="present">✅ Present</option>
-                                <option value="absent">❌ Absent</option>
-                            </select>
+    if (!APP.currentUser) {
+        renderLogin(root);
+    } else {
+        renderPanel(root);
+    }
+}
+
+function renderLogin(root) {
+    const loginTypes = [
+        { value: 'sadhar', label: '👑 സദർ (Sadhar)' },
+        { value: 'teacher', label: '👨‍🏫 അധ്യാപകൻ (Teacher)' },
+        { value: 'management', label: '🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി (Management)' },
+        { value: 'parent', label: '👪 രക്ഷിതാവ് (Parent)' }
+    ];
+    root.innerHTML = `
+        <div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div class="w-full max-w-md glass rounded-2xl p-6 shadow-2xl border border-white/5">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 mx-auto bg-amber-500/20 rounded-full flex items-center justify-center text-3xl border-2 border-amber-400/30">🕌</div>
+                    <h1 class="text-2xl font-bold mt-3 text-amber-300">മമ്പഉൽ ഉലൂം മദ്റസ</h1>
+                    <p class="text-gray-400 text-sm">കൊറക്കോട് · രജി: 6682</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">ലോഗിൻ തരം (Login Type)</label>
+                        <select id="loginType" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400">
+                            ${loginTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div id="loginFields">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">യൂസർനെയിം (Username)</label>
+                            <input id="username" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: sadhar">
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-sm text-gray-400 mb-1">പാസ്‌വേർഡ് (Password)</label>
+                            <input id="password" type="password" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="പാസ്‌വേർഡ്">
+                        </div>
+                    </div>
+                    <button id="loginBtn" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-all shadow-lg shadow-amber-500/20">🔑 കയറുക (Login)</button>
+                    <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('loginType').addEventListener('change', function() {
+        const fields = document.getElementById('loginFields');
+        if (this.value === 'parent') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ (Reg No)</label>
+                    <input id="regNo" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: 691">
+                </div>
+            `;
+        } else {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">യൂസർനെയിം (Username)</label>
+                    <input id="username" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: sadhar">
+                </div>
+                <div class="mt-3">
+                    <label class="block text-sm text-gray-400 mb-1">പാസ്‌വേർഡ് (Password)</label>
+                    <input id="password" type="password" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="പാസ്‌വേർഡ്">
+                </div>
+            `;
+        }
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        const type = document.getElementById('loginType').value;
+        const errorEl = document.getElementById('loginError');
+        errorEl.classList.add('hidden');
+
+        try {
+            if (type === 'parent') {
+                const reg = document.getElementById('regNo')?.value.trim();
+                if (!reg) { errorEl.textContent = 'രജിസ്റ്റർ നമ്പർ നൽകുക'; errorEl.classList.remove('hidden'); return; }
+                const student = APP.students[reg];
+                if (!student || student.deleted) { errorEl.textContent = 'ഈ രജിസ്റ്റർ നമ്പർ നിലവിലില്ല'; errorEl.classList.remove('hidden'); return; }
+                APP.currentUser = { role: 'parent', reg: reg, student: student };
+                renderApp();
+            } else {
+                const username = document.getElementById('username')?.value.trim();
+                const password = document.getElementById('password')?.value.trim();
+                if (!username || !password) { errorEl.textContent = 'യൂസർനെയിം, പാസ്‌വേർഡ് നൽകുക'; errorEl.classList.remove('hidden'); return; }
+                if (type === 'sadhar') {
+                    if (username === 'sadhar' && password === '6682') {
+                        APP.currentUser = { role: 'sadhar', username: 'sadhar' };
+                        renderApp();
+                        return;
+                    }
+                }
+                // Check staff
+                const staff = Object.values(APP.staff).find(s => s.username === username && s.password === password && !s.deleted);
+                if (staff) {
+                    if (type === 'teacher' && staff.role === 'teacher') {
+                        APP.currentUser = { role: 'teacher', staff: staff };
+                        renderApp();
+                        return;
+                    } else if (type === 'management' && (staff.role === 'management' || staff.role === 'committee')) {
+                        APP.currentUser = { role: 'management', staff: staff };
+                        renderApp();
+                        return;
+                    }
+                }
+                errorEl.textContent = 'തെറ്റായ യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേർഡ്';
+                errorEl.classList.remove('hidden');
+            }
+        } catch (e) {
+            errorEl.textContent = 'ലോഗിൻ പരാജയപ്പെട്ടു: ' + e.message;
+            errorEl.classList.remove('hidden');
+        }
+    });
+}
+
+function renderPanel(root) {
+    const user = APP.currentUser;
+    let panelContent = '';
+
+    if (user.role === 'sadhar') {
+        panelContent = renderSadharPanel();
+    } else if (user.role === 'teacher') {
+        panelContent = renderTeacherPanel();
+    } else if (user.role === 'management') {
+        panelContent = renderManagementPanel();
+    } else if (user.role === 'parent') {
+        panelContent = renderParentPanel();
+    }
+
+    root.innerHTML = `
+        <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div class="sticky top-0 z-50 glass border-b border-white/5 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400 text-xl">🕌</span>
+                    <span class="font-bold text-sm md:text-base text-gray-200">മമ്പഉൽ ഉലൂം</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-400 hidden sm:inline">${user.role === 'sadhar' ? '👑 സദർ' : user.role === 'teacher' ? '👨‍🏫 ' + (user.staff?.name || 'അധ്യാപകൻ') : user.role === 'management' ? '🏛️ മാനേജ്മെന്റ്' : '👪 ' + (user.student?.name || 'രക്ഷിതാവ്')}</span>
+                    <button id="logoutBtn" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg text-sm transition-all border border-red-500/20">🚪 പുറത്തുകടക്കുക</button>
+                </div>
+            </div>
+            <div class="p-4 max-w-4xl mx-auto">
+                ${panelContent}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        APP.currentUser = null;
+        renderApp();
+    });
+}
+
+function renderSadharPanel() {
+    const shifts = APP.shiftClassMapping.shifts || { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] };
+    const staffList = Object.values(APP.staff || {}).filter(s => !s.deleted);
+    const students = Object.values(APP.students || {}).filter(s => !s.deleted);
+    const holidays = Object.values(APP.holidays || {});
+    const announcements = Object.values(APP.announcements || {});
+    const complaints = Object.values(APP.complaints || {});
+    const months = ['ജനുവരി','ഫെബ്രുവരി','മാർച്ച്','ഏപ്രിൽ','മേയ്','ജൂൺ','ജൂലൈ','ഓഗസ്റ്റ്','സെപ്റ്റംബർ','ഒക്ടോബർ','നവംബർ','ഡിസംബർ'];
+
+    const accordionItems = [
+        { id: 'shift', label: '⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്', content: `
+            <div class="space-y-3">
+                ${[1,2,3].map(s => `
+                    <div class="bg-slate-800/50 p-3 rounded-lg">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-medium text-amber-300">ഷിഫ്റ്റ് ${s}</span>
+                            <input type="time" id="shiftTime${s}" class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-gray-200" value="${s === 1 ? '08:00' : s === 2 ? '10:30' : '14:00'}">
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${Array.from({length:12}, (_,i) => i+1).map(c => `
+                                <label class="flex items-center gap-1 text-sm bg-slate-700/50 px-2 py-1 rounded">
+                                    <input type="checkbox" class="clsCheck shift${s}" value="${c}" ${(shifts[s] || []).includes(c) ? 'checked' : ''}>
+                                    ${c}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+                <button onclick="saveShiftMapping()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
+            </div>
+        `},
+        { id: 'staff', label: '👥 ജീവനക്കാരുടെ നിയന്ത്രണം', content: `
+            <div class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <input id="staffName" placeholder="പേര്" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <input id="staffUsername" placeholder="യൂസർനെയിം" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <input id="staffPassword" placeholder="പാസ്‌വേർഡ്" type="password" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <select id="staffRole" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        <option value="teacher">അധ്യാപകൻ</option>
+                        <option value="management">മാനേജ്മെന്റ്</option>
+                        <option value="committee">കമ്മിറ്റി</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">ക്ലാസുകൾ (3-4 എണ്ണം)</label>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                        ${Array.from({length:12}, (_,i) => i+1).map(c => `
+                            <label class="flex items-center gap-1 text-xs bg-slate-700/50 px-2 py-1 rounded">
+                                <input type="checkbox" class="staffClass" value="${c}"> ${c}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+                <button onclick="addStaff()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ ചേർക്കുക</button>
+                <div class="mt-3 space-y-2 max-h-60 overflow-y-auto">
+                    ${staffList.map(s => `
+                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded text-sm">
+                            <span>${s.name} (${s.username}) - ${s.role} - ക്ലാസ്: ${(s.classes || []).join(', ')}</span>
+                            <button onclick="deleteStaff('${s.id}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
                         </div>
                     `).join('')}
                 </div>
-                ${!holiday ? `<button class="mt-2 btn-success text-sm" onclick="submitTeacherAttendance(${cls})">✅ ഹാജർ സബ്മിറ്റ്</button>` : ''}
-                <button class="mt-2 whatsapp-btn text-sm" onclick="sendAbsentWhatsApp(${cls})"><i class="fab fa-whatsapp"></i> അബ്സന്റ് അറിയിപ്പ്</button>
             </div>
-        `;
-    }).join('');
-    loadTeacherFeeList();
-    loadTeacherComplaints();
-}
-
-function submitTeacherAttendance(cls) {
-    const today = new Date().toISOString().split('T')[0];
-    const selects = document.querySelectorAll(`#teacherClassList .teacher-attendance-select[data-cls="${cls}"]`);
-    const attData = {};
-    selects.forEach(sel => { attData[sel.dataset.reg] = sel.value; });
-    db.ref(`attendance/${today}/${cls}`).update(attData).then(() => {
-        db.ref(`staffAttendance/${today}/${currentUser.username}`).set('present');
-        alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
-    }).catch(e => alert('❌ '+e.message));
-}
-
-function sendAbsentWhatsApp(cls) {
-    const today = new Date().toISOString().split('T')[0];
-    const selects = document.querySelectorAll(`#teacherClassList .teacher-attendance-select[data-cls="${cls}"]`);
-    const absent = [];
-    selects.forEach(sel => {
-        if (sel.value === 'absent') {
-            const student = allStudents.find(s => s.reg === parseInt(sel.dataset.reg));
-            if (student) absent.push(student);
-        }
-    });
-    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് ഇല്ല.'); return; }
-    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ അബ്സന്റ് കുട്ടികൾ:\n\n`;
-    absent.forEach(s => { msg += `👤 ${s.name} (Reg: ${s.reg})\n`; });
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-function loadTeacherAttendance() {
-    const date = document.getElementById('teacherAttendanceDate').value || new Date().toISOString().split('T')[0];
-    const container = document.getElementById('teacherAttendanceView');
-    const classes = currentUser?.classes || [];
-    let html = `<h5 class="font-semibold">📅 ${date}</h5>`;
-    classes.forEach(cls => {
-        const att = allAttendance[date]?.[cls] || {};
-        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-        html += `<div class="mt-1"><strong>${cls}-ാം ക്ലാസ്:</strong> `;
-        html += students.map(s => `${s.name}: ${att[s.reg] === 'present' ? '✅' : '❌'}`).join(' | ');
-        html += '</div>';
-    });
-    container.innerHTML = html || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
-}
-
-function loadTeacherFeeList() {
-    const cls = parseInt(document.getElementById('teacherFeeClass').value);
-    const month = document.getElementById('teacherFeeMonth').value;
-    const container = document.getElementById('teacherFeeList');
-    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-    const fee = allFeeQR.monthlyFee || 0;
-    container.innerHTML = students.map(s => {
-        const key = `${s.reg}_${month}`;
-        const paid = allFees[key] || 0;
-        return `
-            <div class="flex items-center justify-between p-1 border-b text-sm">
-                <span>${s.name} (${s.reg})</span>
-                <span>അടച്ചത്: ₹${paid}</span>
-                <button class="btn-primary text-xs" onclick="updateFeeMonth(${s.reg},'${month}')">ഫീസ്</button>
+        `},
+        { id: 'attendance', label: '✅ സദർ ഹാജർ (Direct Attendance)', content: `
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="attClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
+                    </select>
+                    <input type="date" id="attDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div id="attendanceList" class="space-y-1 max-h-60 overflow-y-auto">
+                    ${students.filter(s => s.cls === 1).map(s => `
+                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded text-sm">
+                            <span>${s.name} (${s.reg})</span>
+                            <div class="flex gap-2">
+                                <button onclick="markAttendance(${s.reg}, 'present')" class="text-green-400 hover:text-green-300">✅</button>
+                                <button onclick="markAttendance(${s.reg}, 'absent')" class="text-red-400 hover:text-red-300">❌</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="text-xs text-gray-400">അധ്യാപകൻ അവധിയാണെങ്കിൽ ഇവിടെ നിന്ന് ഹാജർ രേഖപ്പെടുത്താം.</div>
             </div>
-        `;
-    }).join('');
-}
+        `},
+        { id: 'exam', label: '📅 പരീക്ഷാ ടൈംടേബിൾ', content: `
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="examClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
+                    </select>
+                    <select id="examType" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        <option value="quarterly">പാദ വാർഷികം</option>
+                        <option value="halfyearly">അർധ വാർഷികം</option>
+                        <option value="annual">വാർഷികം</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <input id="examSubject" placeholder="വിഷയം" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <input id="examDate" type="date" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                </div>
+                <button onclick="addExam()" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ ചേർക്കുക</button>
+                <div id="examList" class="space-y-1 max-h-40 overflow-y-auto text-sm">
+                </div>
+                <button onclick="sendExamAlert()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-bold w-full">📤 Send Tomorrow's Exam Alert (WhatsApp)</button>
+            </div>
+        `},
+        { id: 'feeqr', label: '💰 ഫീസ് ഘടന & QR', content: `
+            <div class="space-y-3">
+                <div>
+                    <label class="text-sm text-gray-400">പ്രതിമാസ ഫീസ് (₹)</label>
+                    <input id="monthlyFee" type="number" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${APP.feeQR?.monthlyFee || 100}">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Google Pay നമ്പർ</label>
+                    <input id="gpayNumber" type="text" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${APP.feeQR?.googlePay || ''}">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">QR കോഡ് (ചിത്രം അപ്‌ലോഡ് ചെയ്യുക)</label>
+                    <input type="file" id="qrUpload" accept="image/*" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                </div>
+                <button onclick="saveFeeQR()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
+                ${APP.feeQR?.qrBase64 ? `<img src="${APP.feeQR.qrBase64}" class="mt-2 max-w-[150px] rounded border border-slate-600">` : ''}
+            </div>
+        `},
+        { id: 'holiday', label: '🏖️ അവധി പ്രകടന ബോർഡ്', content: `
+            <div class="space-y-3">
+                <div>
+                    <input id="holidayReason" placeholder="അവധിക്കുള്ള കാരണം" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="date" id="holidayDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}">
+                    <select id="holidayShift" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        <option value="all">എല്ലാ ഷിഫ്റ്റുകൾ</option>
+                        <option value="1">ഷിഫ്റ്റ് 1</option>
+                        <option value="2">ഷിഫ്റ്റ് 2</option>
+                        <option value="3">ഷിഫ്റ്റ് 3</option>
+                    </select>
+                </div>
+                <button onclick="addHoliday()" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ അവധി പ്രഖ്യാപിക്കുക</button>
+                <div class="space-y-1 max-h-40 overflow-y-auto text-sm">
+                    ${holidays.map(h => `
+                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
+                            <span>${h.reason} - ${h.date} (Shift ${h.shift})</span>
+                            <button onclick="deleteHoliday('${h.id}')" class="text-red-400"><i class="fas fa-times"></i></button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `},
+        { id: 'announce', label: '📢 പൊതു അറിയിപ്പുകൾ', content: `
+            <div class="space-y-3">
+                <input id="announceTitle" placeholder="തലക്കെട്ട്" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                <textarea id="announceBody" placeholder="വിവരം" rows="2" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm"></textarea>
+                <select id="announceTarget" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <option value="all">എല്ലാ വിദ്യാർത്ഥികൾ</option>
+                    <option value="1">ഷിഫ്റ്റ് 1</option>
+                    <option value="2">ഷിഫ്റ്റ് 2</option>
+                    <option value="3">ഷിഫ്റ്റ് 3</option>
+                </select>
+                <input type="file" id="announceMedia" accept="image/*,audio/*,video/*" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                <button onclick="addAnnouncement()" class="bg-purple-500 hover:bg-purple-400 text-white px-4 py-2 rounded-lg text-sm font-bold">📤 പ്രസിദ്ധീകരിക്കുക</button>
+                <div class="space-y-2 max-h-40 overflow-y-auto text-sm">
+                    ${announcements.map(a => `
+                        <div class="bg-slate-800/50 p-2 rounded">
+                            <div class="font-medium">${a.title}</div>
+                            <div class="text-gray-400 text-xs">${a.body}</div>
+                            ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="mt-1 max-h-20 rounded">` : a.media.startsWith('data:audio') ? `<audio controls class="mt-1 w-full"><source src="${a.media}"></audio>` : a.media.startsWith('data:video') ? `<video controls class="mt-1 max-h-20 rounded"><source src="${a.media}"></video>` : '') : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `},
+        { id: 'students', label: '📚 കുട്ടികളുടെ വിവരങ്ങൾ', content: `
+            <div class="space-y-3">
+                <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                    <table class="w-full text-sm">
+                        <thead class="text-gray-400 border-b border-slate-700">
+                            <tr><th>Reg</th><th>പേര്</th><th>ക്ലാസ്</th><th>ഷിഫ്റ്റ്</th><th>ഫോൺ</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            ${students.map(s => `
+                                <tr class="border-b border-slate-800/50">
+                                    <td class="py-1">${s.reg}</td>
+                                    <td>${s.name}</td>
+                                    <td>${s.cls}</td>
+                                    <td>${s.shift}</td>
+                                    <td>${s.phone}</td>
+                                    <td><button onclick="deleteStudent(${s.reg})" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-xs text-gray-400">Total: ${students.length} കുട്ടികൾ</div>
+            </div>
+        `},
+        { id: 'fees', label: '💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ്', content: `
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="feeClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
+                    </select>
+                    <select id="feeMonth" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        ${months.map((m,i) => `<option value="${i+1}">${m}</option>`).join('')}
+                    </select>
+                </div>
+                <div id="feeStudentList" class="space-y-1 max-h-60 overflow-y-auto text-sm">
+                    ${students.filter(s => s.cls === 1).map(s => `
+                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
+                            <span>${s.name}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-400">₹${APP.feeQR?.monthlyFee || 100}</span>
+                                <button onclick="markFee(${s.reg}, ${new Date().getMonth()+1})" class="text-green-400">✅</button>
+                                <button onclick="sendFeeReceipt(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `},
+        { id: 'complaints', label: '📋 പരാതികൾ & ബാക്കപ്പ്', content: `
+            <div class="space-y-3">
+                <div class="max-h-40 overflow-y-auto text-sm space-y-1">
+                    ${complaints.map(c => `
+                        <div class="bg-slate-800/50 p-2 rounded">
+                            <span class="text-gray-400">${c.reg}:</span> ${c.complaint}
+                            <span class="text-xs text-gray-500">(${c.from})</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="backupData()" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-bold w-full">💾 JSON ബാക്കപ്പ് ഡൗൺലോഡ്</button>
+                <button onclick="restoreData()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold w-full">📂 JSON റിസ്റ്റോർ ചെയ്യുക</button>
+            </div>
+        `}
+    ];
 
-// ====================================================
-//  COMPLAINTS - Teacher & Parent
-// ====================================================
-function submitTeacherComplaint() {
-    const complaint = document.getElementById('teacherComplaint').value.trim();
-    const reg = parseInt(document.getElementById('teacherComplaintReg').value.trim());
-    if (!complaint || !reg) { alert('⚠️ പരാതിയും Reg No യും നൽകുക.'); return; }
-    const data = { reg, complaint, teacher: currentUser.name, date: new Date().toISOString(), id: Date.now() };
-    db.ref('complaints').push(data);
-    alert('✅ പരാതി അയച്ചു.');
-    document.getElementById('teacherComplaint').value = '';
-    document.getElementById('teacherComplaintReg').value = '';
-    loadTeacherComplaints();
-}
-
-function loadTeacherComplaints() {
-    const container = document.getElementById('teacherComplaintsList');
-    const complaints = allComplaints.filter(c => c.teacher === currentUser?.name);
-    container.innerHTML = complaints.map(c => `
-        <div class="p-1 border-b text-sm">
-            <strong>Reg ${c.reg}:</strong> ${c.complaint}
-            <span class="text-xs text-gray-400">${new Date(c.date).toLocaleString()}</span>
+    return `
+        <div class="space-y-3">
+            ${accordionItems.map(item => `
+                <div class="glass-light rounded-xl overflow-hidden border border-white/5">
+                    <div class="accordion-header px-4 py-3 cursor-pointer flex items-center justify-between" onclick="toggleAccordion('${item.id}')">
+                        <span class="font-medium text-gray-200">${item.label}</span>
+                        <span class="text-gray-400"><i class="fas fa-chevron-down" id="icon_${item.id}"></i></span>
+                    </div>
+                    <div id="acc_${item.id}" class="px-4 py-3 hidden">
+                        ${item.content}
+                    </div>
+                </div>
+            `).join('')}
         </div>
-    `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>';
+    `;
 }
 
-function sendComplaintWhatsApp() {
-    const complaint = document.getElementById('teacherComplaint').value.trim();
-    const reg = parseInt(document.getElementById('teacherComplaintReg').value.trim());
-    if (!complaint || !reg) { alert('⚠️ പരാതിയും Reg No യും നൽകുക.'); return; }
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) { alert('⚠️ കുട്ടിയെ കണ്ടില്ല.'); return; }
-    const msg = `📢 ${student.name} (Reg: ${reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ പരാതി/നിർദ്ദേശം:\n\n${complaint}\n\n- അധ്യാപകൻ: ${currentUser.name}`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+function renderTeacherPanel() {
+    const staff = APP.currentUser.staff;
+    const classes = staff?.classes || [];
+    const students = Object.values(APP.students || {}).filter(s => !s.deleted && classes.includes(s.cls));
+    const today = new Date().toISOString().split('T')[0];
+    const holidays = Object.values(APP.holidays || {}).filter(h => h.date === today);
+    const isHoliday = holidays.length > 0;
+    const shift = students.length > 0 ? students[0].shift : null;
+    const shiftHoliday = holidays.some(h => h.shift === 'all' || h.shift == shift);
+
+    return `
+        <div class="space-y-4">
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h2 class="text-xl font-bold text-amber-300">👨‍🏫 അധ്യാപക പാനൽ</h2>
+                <p class="text-sm text-gray-400">${staff?.name} - ക്ലാസുകൾ: ${classes.join(', ')}</p>
+            </div>
+            ${isHoliday && shiftHoliday ? `
+                <div class="bg-red-500/20 border-2 border-red-500/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-red-400">🚫 ഇന്ന് അവധിയാണ്!</div>
+                    <div class="text-red-300">കാരണം: ${holidays[0]?.reason || 'അവധി'}</div>
+                </div>
+            ` : `
+                <div class="glass-light p-4 rounded-xl border border-white/5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="teacherAttDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${today}">
+                        <button onclick="markTeacherAttendance()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm">✅ ഹാജർ സബ്മിറ്റ്</button>
+                    </div>
+                    <div class="text-xs text-gray-400">ഹാജർ സബ്മിറ്റ് ചെയ്താൽ നിങ്ങൾ 'Present' ആയി രേഖപ്പെടുത്തും.</div>
+                </div>
+                <div class="glass-light p-4 rounded-xl border border-white/5">
+                    <h3 class="font-bold mb-2">📋 ഹാജർ പുസ്തകം</h3>
+                    <div class="space-y-1 max-h-60 overflow-y-auto text-sm">
+                        ${students.map(s => `
+                            <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
+                                <span>${s.name} (${s.reg})</span>
+                                <div class="flex gap-2">
+                                    <button onclick="markStudentAttendance(${s.reg}, 'present')" class="text-green-400">✅</button>
+                                    <button onclick="markStudentAttendance(${s.reg}, 'absent')" class="text-red-400">❌</button>
+                                    <button onclick="sendAbsentWhatsApp(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="glass-light p-4 rounded-xl border border-white/5">
+                    <h3 class="font-bold mb-2">💰 ഫീസ് കൗണ്ടർ</h3>
+                    <div class="space-y-1 max-h-40 overflow-y-auto text-sm">
+                        ${students.map(s => `
+                            <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
+                                <span>${s.name}</span>
+                                <div class="flex gap-2">
+                                    <button onclick="markFee(${s.reg}, ${new Date().getMonth()+1})" class="text-green-400">✅</button>
+                                    <button onclick="sendFeeReceipt(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="glass-light p-4 rounded-xl border border-white/5">
+                    <h3 class="font-bold mb-2">📝 കുട്ടിയുടെ വിവരണം (Personal Review)</h3>
+                    <div class="flex gap-2">
+                        <input id="reviewReg" placeholder="Reg No" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        <input id="reviewText" placeholder="അഭിപ്രായം" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                        <button onclick="sendReview()" class="bg-blue-500 hover:bg-blue-400 text-white px-3 py-2 rounded text-sm"><i class="fab fa-whatsapp"></i></button>
+                    </div>
+                </div>
+            `}
+        </div>
+    `;
 }
 
-function submitParentComplaint() {
-    const complaint = document.getElementById('parentComplaint').value.trim();
-    if (!complaint) { alert('⚠️ പരാതി നൽകുക.'); return; }
-    const data = { reg: currentUser.regNo, complaint, parent: currentUser.parentName, date: new Date().toISOString(), id: Date.now() };
-    db.ref('complaints').push(data);
-    alert('✅ പരാതി അയച്ചു.');
-    document.getElementById('parentComplaint').value = '';
+function renderManagementPanel() {
+    const students = Object.values(APP.students || {}).filter(s => !s.deleted);
+    const staff = Object.values(APP.staff || {}).filter(s => !s.deleted);
+    const today = new Date().toISOString().split('T')[0];
+    const att = APP.attendance[today] || {};
+    const totalPresent = Object.values(att).filter(a => a === 'present').length;
+    const totalAbsent = Object.values(att).filter(a => a === 'absent').length;
+
+    return `
+        <div class="space-y-4">
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h2 class="text-xl font-bold text-amber-300">🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി പാനൽ</h2>
+                <p class="text-sm text-gray-400">View Only - കാണാൻ മാത്രം</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-amber-300">${students.length}</div>
+                    <div class="text-xs text-gray-400">കുട്ടികൾ</div>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-amber-300">${staff.length}</div>
+                    <div class="text-xs text-gray-400">അധ്യാപകർ</div>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-green-400">${totalPresent}</div>
+                    <div class="text-xs text-gray-400">ഇന്നത്തെ ഹാജർ</div>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-red-400">${totalAbsent}</div>
+                    <div class="text-xs text-gray-400">അബ്സന്റ്</div>
+                </div>
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">💰 ഫീസ് കണക്ക് പുസ്തകം</h3>
+                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
+                    ${Array.from({length:12}, (_,i) => i+1).map(c => {
+                        const clsStudents = students.filter(s => s.cls === c);
+                        const total = clsStudents.length * (APP.feeQR?.monthlyFee || 100);
+                        return `<div class="flex justify-between bg-slate-800/50 p-2 rounded"><span>ക്ലാസ് ${c}</span><span>${clsStudents.length} കുട്ടികൾ · ₹${total}</span></div>`;
+                    }).join('')}
+                </div>
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">📋 കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ്</h3>
+                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
+                    ${students.filter(s => {
+                        const feeKey = `${s.reg}_${new Date().getMonth()+1}`;
+                        return !APP.fees[feeKey];
+                    }).map(s => `
+                        <div class="flex justify-between items-center bg-slate-800/50 p-2 rounded">
+                            <span>${s.name} (${s.reg})</span>
+                            <button onclick="sendDueAlert(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">👥 സ്റ്റാഫ് ഹാജർ ട്രാക്കർ</h3>
+                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
+                    ${staff.map(s => {
+                        const isPresent = APP.staffAttendance?.[today]?.[s.username] === 'present';
+                        return `<div class="flex justify-between bg-slate-800/50 p-2 rounded"><span>${s.name}</span><span class="${isPresent ? 'text-green-400' : 'text-red-400'}">${isPresent ? '✅ Present' : '❌ Absent'}</span></div>`;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+    `;
 }
 
-function sendParentComplaintWhatsApp() {
-    const complaint = document.getElementById('parentComplaint').value.trim();
-    if (!complaint) { alert('⚠️ പരാതി നൽകുക.'); return; }
-    const msg = `📢 രക്ഷിതാവിന്റെ പരാതി/നിർദ്ദേശം:\n\n${complaint}\n\n- ${currentUser.parentName} (Reg: ${currentUser.regNo})`;
-    // Send to class teacher or sadhar
-    const student = allStudents.find(s => s.reg === currentUser.regNo);
-    if (student) {
-        const teacher = allStaff.find(s => s.classes && s.classes.includes(student.cls) && !s.deleted);
-        if (teacher && teacher.phone) {
-            window.open(`https://wa.me/${teacher.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        } else {
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
+function renderParentPanel() {
+    const student = APP.currentUser.student;
+    if (!student) return '<div class="text-center text-red-400">വിദ്യാർത്ഥി വിവരങ്ങൾ ലഭ്യമല്ല</div>';
+
+    const announcements = Object.values(APP.announcements || {}).filter(a => a.target === 'all' || a.target == student.shift);
+    const today = new Date().toISOString().split('T')[0];
+    const holidays = Object.values(APP.holidays || {}).filter(h => h.date === today && (h.shift === 'all' || h.shift == student.shift));
+    const isHoliday = holidays.length > 0;
+    const feeKey = `${student.reg}_${new Date().getMonth()+1}`;
+    const feePaid = !!APP.fees[feeKey];
+
+    return `
+        <div class="space-y-4">
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <div class="flex items-center gap-4">
+                    ${student.photo ? `<img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400">` : `<div class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl">👤</div>`}
+                    <div>
+                        <h2 class="text-xl font-bold text-amber-300">${student.name}</h2>
+                        <p class="text-sm text-gray-400">Reg: ${student.reg} | ക്ലാസ്: ${student.cls} | ഷിഫ്റ്റ്: ${student.shift}</p>
+                        <p class="text-sm text-gray-400">${student.father} | ${student.phone}</p>
+                    </div>
+                </div>
+            </div>
+            ${isHoliday ? `
+                <div class="bg-red-500/20 border-2 border-red-500/50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-red-400">🚫 ഇന്ന് അവധിയാണ്!</div>
+                    <div class="text-red-300">കാരണം: ${holidays[0]?.reason || 'അവധി'}</div>
+                </div>
+            ` : ''}
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">📢 ഔദ്യോഗിക അറിയിപ്പുകൾ</h3>
+                <div class="space-y-2 max-h-40 overflow-y-auto text-sm">
+                    ${announcements.map(a => `
+                        <div class="bg-slate-800/50 p-2 rounded">
+                            <div class="font-medium">${a.title}</div>
+                            <div class="text-gray-400 text-xs">${a.body}</div>
+                            ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="mt-1 max-h-20 rounded">` : a.media.startsWith('data:audio') ? `<audio controls class="mt-1 w-full"><source src="${a.media}"></audio>` : a.media.startsWith('data:video') ? `<video controls class="mt-1 max-h-20 rounded"><source src="${a.media}"></video>` : '') : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">💰 ഫീസ് വിവരങ്ങൾ</h3>
+                <div class="flex justify-between items-center">
+                    <span>പ്രതിമാസ ഫീസ്: ₹${APP.feeQR?.monthlyFee || 100}</span>
+                    <span class="${feePaid ? 'text-green-400' : 'text-red-400'}">${feePaid ? '✅ അടച്ചു' : '❌ അടക്കാനുണ്ട്'}</span>
+                </div>
+                ${APP.feeQR?.qrBase64 ? `<img src="${APP.feeQR.qrBase64}" class="mt-2 max-w-[120px] rounded border border-slate-600">` : ''}
+                ${APP.feeQR?.googlePay ? `<div class="text-sm text-gray-400 mt-1">Google Pay: ${APP.feeQR.googlePay}</div>` : ''}
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">✏️ വിവരങ്ങൾ തിരുത്തുക</h3>
+                <div class="grid grid-cols-1 gap-2">
+                    <input id="parentName" placeholder="രക്ഷിതാവിന്റെ പേര്" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${student.father || ''}">
+                    <input id="parentPhone" placeholder="ഫോൺ നമ്പർ" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${student.phone || ''}">
+                    <input type="file" id="studentPhoto" accept="image/*" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
+                    <button onclick="updateParentInfo(${student.reg})" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
+                </div>
+            </div>
+            <div class="glass-light p-4 rounded-xl border border-white/5">
+                <h3 class="font-bold mb-2">💬 അഭിപ്രായം / പരാതി</h3>
+                <div class="flex flex-col gap-2">
+                    <textarea id="complaintText" rows="2" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" placeholder="നിങ്ങളുടെ അഭിപ്രായം"></textarea>
+                    <div class="flex gap-2">
+                        <button onclick="sendComplaint(${student.reg}, 'sadhar')" class="bg-purple-500 hover:bg-purple-400 text-white px-4 py-2 rounded-lg text-sm flex-1">📤 സദറിന്</button>
+                        <button onclick="sendComplaint(${student.reg}, 'teacher')" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm flex-1">📤 അധ്യാപകന്</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ========== GLOBAL FUNCTIONS ==========
+window.toggleAccordion = function(id) {
+    const el = document.getElementById('acc_' + id);
+    const icon = document.getElementById('icon_' + id);
+    if (el) {
+        el.classList.toggle('hidden');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
     }
-}
+};
 
-// ====================================================
-//  TEACHER MARKS
-// ====================================================
-function submitTeacherMarks() {
-    const reg = parseInt(document.getElementById('teacherMarksReg').value.trim());
-    const subject = document.getElementById('teacherMarksSubject').value.trim();
-    const marks = document.getElementById('teacherMarksScore').value.trim();
-    const examType = document.getElementById('teacherMarksExamType').value;
-    if (!reg || !subject || !marks) { alert('⚠️ എല്ലാം പൂരിപ്പിക്കുക.'); return; }
-    if (!allMarks[reg]) allMarks[reg] = [];
-    allMarks[reg].push({ subject, marks: parseFloat(marks), examType, teacher: currentUser.name, date: new Date().toISOString() });
-    db.ref('marks').set(allMarks);
-    alert('✅ മാർക്ക് രേഖപ്പെടുത്തി.');
-    document.getElementById('teacherMarksReg').value = '';
-    document.getElementById('teacherMarksSubject').value = '';
-    document.getElementById('teacherMarksScore').value = '';
-}
+window.saveShiftMapping = function() {
+    const shifts = { 1: [], 2: [], 3: [] };
+    for (let s of [1,2,3]) {
+        document.querySelectorAll(`.shift${s}:checked`).forEach(cb => shifts[s].push(parseInt(cb.value)));
+    }
+    APP.shiftClassMapping.shifts = shifts;
+    saveToFirebase('shiftClassMapping', APP.shiftClassMapping);
+    showPopup('✅ ഷിഫ്റ്റ് ലിങ്കിംഗ് സേവ് ചെയ്തു');
+};
 
-function sendMarksToParent() {
-    const reg = parseInt(document.getElementById('teacherMarksReg').value.trim());
-    if (!reg) { alert('⚠️ Reg No നൽകുക.'); return; }
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) { alert('⚠️ കുട്ടിയെ കണ്ടില്ല.'); return; }
-    const marks = allMarks[reg] || [];
-    if (marks.length === 0) { alert('⚠️ മാർക്ക് ഇല്ല.'); return; }
-    let msg = `📝 ${student.name} (Reg: ${student.reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ മാർക്ക്:\n\n`;
-    marks.forEach(m => { msg += `📖 ${m.subject} (${m.examType||'പാദ വാർഷികം'}): ${m.marks}\n`; });
+window.addStaff = function() {
+    const name = document.getElementById('staffName').value.trim();
+    const username = document.getElementById('staffUsername').value.trim();
+    const password = document.getElementById('staffPassword').value.trim();
+    const role = document.getElementById('staffRole').value;
+    const classes = [...document.querySelectorAll('.staffClass:checked')].map(cb => parseInt(cb.value));
+    if (!name || !username || !password) { showPopup('എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക'); return; }
+    if (classes.length < 1 || classes.length > 4) { showPopup('1 മുതൽ 4 ക്ലാസുകൾ വരെ തിരഞ്ഞെടുക്കുക'); return; }
+    const id = 'staff_' + Date.now();
+    APP.staff[id] = { id, name, username, password, classes, role, deleted: false };
+    saveToFirebase('staff', APP.staff);
+    showPopup('✅ ജീവനക്കാരനെ ചേർത്തു');
+    renderApp();
+};
+
+window.deleteStaff = function(id) {
+    if (confirm('ഈ ജീവനക്കാരനെ നീക്കം ചെയ്യണോ?')) {
+        if (APP.staff[id]) APP.staff[id].deleted = true;
+        saveToFirebase('staff', APP.staff);
+        showPopup('🗑️ ജീവനക്കാരനെ നീക്കം ചെയ്തു');
+        renderApp();
+    }
+};
+
+window.markAttendance = function(reg, status) {
+    const date = document.getElementById('attDate')?.value || new Date().toISOString().split('T')[0];
+    const cls = document.getElementById('attClass')?.value || 1;
+    if (!APP.attendance[date]) APP.attendance[date] = {};
+    if (!APP.attendance[date][cls]) APP.attendance[date][cls] = {};
+    APP.attendance[date][cls][reg] = status;
+    saveToFirebase('attendance', APP.attendance);
+    showPopup(`✅ ${status === 'present' ? 'Present' : 'Absent'} മാർക്ക് ചെയ്തു`);
+};
+
+window.addHoliday = function() {
+    const reason = document.getElementById('holidayReason').value.trim();
+    const date = document.getElementById('holidayDate').value;
+    const shift = document.getElementById('holidayShift').value;
+    if (!reason || !date) { showPopup('കാരണം, തീയതി നൽകുക'); return; }
+    const id = 'hol_' + Date.now();
+    APP.holidays[id] = { id, reason, date, shift };
+    saveToFirebase('holidays', APP.holidays);
+    showPopup('✅ അവധി പ്രഖ്യാപിച്ചു');
+    renderApp();
+};
+
+window.deleteHoliday = function(id) {
+    if (confirm('അവധി എടുത്തുമാറ്റണോ?')) {
+        delete APP.holidays[id];
+        saveToFirebase('holidays', APP.holidays);
+        renderApp();
+    }
+};
+
+window.addAnnouncement = function() {
+    const title = document.getElementById('announceTitle').value.trim();
+    const body = document.getElementById('announceBody').value.trim();
+    const target = document.getElementById('announceTarget').value;
+    if (!title || !body) { showPopup('തലക്കെട്ടും വിവരവും നൽകുക'); return; }
+    const file = document.getElementById('announceMedia').files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const id = 'ann_' + Date.now();
+        APP.announcements[id] = { id, title, body, target, media: e.target.result, timestamp: Date.now() };
+        saveToFirebase('announcements', APP.announcements);
+        showPopup('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു');
+        renderApp();
+    };
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        const id = 'ann_' + Date.now();
+        APP.announcements[id] = { id, title, body, target, media: null, timestamp: Date.now() };
+        saveToFirebase('announcements', APP.announcements);
+        showPopup('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു');
+        renderApp();
+    }
+};
+
+window.deleteStudent = function(reg) {
+    if (confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യണോ?')) {
+        if (APP.students[reg]) APP.students[reg].deleted = true;
+        saveToFirebase('students', APP.students);
+        showPopup('🗑️ കുട്ടിയെ നീക്കം ചെയ്തു');
+        renderApp();
+    }
+};
+
+window.markFee = function(reg, month) {
+    const key = `${reg}_${month}`;
+    APP.fees[key] = Date.now();
+    saveToFirebase('fees', APP.fees);
+    showPopup('✅ ഫീസ് രേഖപ്പെടുത്തി');
+};
+
+window.sendFeeReceipt = function(reg) {
+    const student = APP.students[reg];
+    if (!student) return;
+    const month = new Date().getMonth() + 1;
+    const key = `${reg}_${month}`;
+    const fee = APP.feeQR?.monthlyFee || 100;
+    const totalPaid = Object.keys(APP.fees).filter(k => k.startsWith(reg + '_')).length * fee;
+    const due = 12 * fee - totalPaid;
+    const msg = `അസ്സലാമു അലൈക്കും പ്രിയപ്പെട്ട രക്ഷിതാവേ, ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന നിങ്ങളുടെ കുട്ടി ${student.name} (Reg No: ${student.reg}) ${month} മാസത്തെ മദ്റസ ഫീസ് ₹${fee} തീയതി ${new Date().toISOString().split('T')[0]}-ൽ അടച്ചിട്ടുണ്ട്. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${due}. നന്ദി. - ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
     window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-}
+};
 
-// ====================================================
-//  PARENT PANEL
-// ====================================================
-function updateParentPanel() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const student = allStudents.find(s => s.reg === currentUser.regNo);
+window.sendDueAlert = function(reg) {
+    const student = APP.students[reg];
     if (!student) return;
-    document.getElementById('parentInfo').innerHTML = `
-        <div class="flex items-center gap-4">
-            ${student.photo ? `<img src="${student.photo}" class="w-16 h-16 rounded-full">` : `<div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl">👤</div>`}
-            <div>
-                <p><strong>${student.name}</strong> (Reg: ${student.reg})</p>
-                <p class="text-sm">${student.cls}-ാം ക്ലാസ്, ഷിഫ്റ്റ് ${student.shift}</p>
-                <p class="text-sm">രക്ഷിതാവ്: ${student.father}</p>
-            </div>
-        </div>
-    `;
-    document.getElementById('parentEditName').value = student.father || '';
-    document.getElementById('parentEditPhone').value = student.phone || '';
+    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) - ഫീസ് കുടിശ്ശികയുണ്ട്. ദയവായി അടക്കുക. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
 
-    const fee = allFeeQR.monthlyFee || 0;
-    const paid = allFees[`${student.reg}_${selectedMonth}`] || 0;
-    const due = fee - paid;
-    document.getElementById('parentPaymentBox').innerHTML = `
-        <p><strong>💰 ഫീസ്:</strong> ₹${fee}</p>
-        <p><strong>✅ അടച്ചത്:</strong> ₹${paid}</p>
-        <p><strong>⚠️ കുടിശ്ശിക:</strong> ₹${due < 0 ? 0 : due}</p>
-        ${allFeeQR.googlePay ? `<p><strong>Google Pay:</strong> ${allFeeQR.googlePay}</p>` : ''}
-        ${allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img mt-2">` : ''}
-    `;
-    document.getElementById('parentFeeStatus').innerHTML = `
-        <p>മാസം: ${selectedMonth}</p>
-        <p>നില: ${paid >= fee ? '✅ ഫീസ് അടച്ചു' : '⚠️ ബാക്കിയുണ്ട്'}</p>
-    `;
-
-    const marks = allMarks[student.reg] || [];
-    document.getElementById('parentMarksList').innerHTML = marks.map(m => `
-        <div class="p-1 border-b text-sm">📖 ${m.subject} (${m.examType||'പാദ വാർഷികം'}): ${m.marks}</div>
-    `).join('') || '<p class="text-gray-400">മാർക്ക് ഇല്ല</p>';
-}
-
-function updateParentInfo() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const name = document.getElementById('parentEditName').value.trim();
-    const phone = document.getElementById('parentEditPhone').value.trim();
-    const file = document.getElementById('parentEditPhoto').files[0];
-    const student = allStudents.find(s => s.reg === currentUser.regNo);
+window.sendAbsentWhatsApp = function(reg) {
+    const student = APP.students[reg];
     if (!student) return;
-    if (name) student.father = name;
+    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) ഇന്ന് ഹാജരില്ല. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+window.markStudentAttendance = function(reg, status) {
+    const date = document.getElementById('teacherAttDate')?.value || new Date().toISOString().split('T')[0];
+    const student = APP.students[reg];
+    if (!student) return;
+    if (!APP.attendance[date]) APP.attendance[date] = {};
+    if (!APP.attendance[date][student.cls]) APP.attendance[date][student.cls] = {};
+    APP.attendance[date][student.cls][reg] = status;
+    saveToFirebase('attendance', APP.attendance);
+    showPopup(`✅ ${status === 'present' ? 'Present' : 'Absent'} മാർക്ക് ചെയ്തു`);
+};
+
+window.markTeacherAttendance = function() {
+    const date = document.getElementById('teacherAttDate')?.value || new Date().toISOString().split('T')[0];
+    const staff = APP.currentUser.staff;
+    if (!staff) return;
+    if (!APP.staffAttendance) APP.staffAttendance = {};
+    if (!APP.staffAttendance[date]) APP.staffAttendance[date] = {};
+    APP.staffAttendance[date][staff.username] = 'present';
+    saveToFirebase('staffAttendance', APP.staffAttendance);
+    showPopup('✅ നിങ്ങളുടെ ഹാജർ രേഖപ്പെടുത്തി');
+};
+
+window.sendReview = function() {
+    const reg = document.getElementById('reviewReg')?.value.trim();
+    const text = document.getElementById('reviewText')?.value.trim();
+    if (!reg || !text) { showPopup('Reg No, അഭിപ്രായം നൽകുക'); return; }
+    const student = APP.students[reg];
+    if (!student) { showPopup('ഈ Reg No നിലവിലില്ല'); return; }
+    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) - ${text}`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+window.sendComplaint = function(reg, target) {
+    const text = document.getElementById('complaintText')?.value.trim();
+    if (!text) { showPopup('അഭിപ്രായം എഴുതുക'); return; }
+    const id = 'comp_' + Date.now();
+    APP.complaints[id] = { id, reg, complaint: text, from: target, date: Date.now() };
+    saveToFirebase('complaints', APP.complaints);
+    showPopup('✅ അഭിപ്രായം അയച്ചു');
+    document.getElementById('complaintText').value = '';
+};
+
+window.updateParentInfo = function(reg) {
+    const student = APP.students[reg];
+    if (!student) return;
+    const father = document.getElementById('parentName').value.trim();
+    const phone = document.getElementById('parentPhone').value.trim();
+    const file = document.getElementById('studentPhoto').files[0];
+    if (father) student.father = father;
     if (phone) student.phone = phone;
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             student.photo = e.target.result;
-            db.ref(`students/${student.reg}`).update(student);
-            alert('✅ അപ്ഡേറ്റ് ചെയ്തു.');
-            updateParentPanel();
+            saveToFirebase('students', APP.students);
+            showPopup('✅ വിവരങ്ങൾ സേവ് ചെയ്തു');
+            renderApp();
         };
         reader.readAsDataURL(file);
     } else {
-        db.ref(`students/${student.reg}`).update(student);
-        alert('✅ അപ്ഡേറ്റ് ചെയ്തു.');
-        updateParentPanel();
+        saveToFirebase('students', APP.students);
+        showPopup('✅ വിവരങ്ങൾ സേവ് ചെയ്തു');
+        renderApp();
     }
-}
+};
 
-function updateParentNotifications() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const container = document.getElementById('parentNotifications');
-    const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
-    container.innerHTML = recent.length === 0 ? '<p class="text-gray-500">പുതിയ അറിയിപ്പുകൾ ഇല്ല.</p>' :
-        recent.slice(-5).reverse().map(a => `
-            <div class="border-b py-2">
-                <h4 class="font-bold">${a.title}</h4>
-                <p>${a.body}</p>
-                ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="max-h-32">` : '') : ''}
-                <span class="text-xs text-gray-400">${new Date(a.timestamp).toLocaleString()}</span>
-            </div>
-        `).join('');
-}
+window.addExam = function() {
+    const cls = document.getElementById('examClass')?.value;
+    const type = document.getElementById('examType')?.value;
+    const subject = document.getElementById('examSubject')?.value.trim();
+    const date = document.getElementById('examDate')?.value;
+    if (!cls || !subject || !date) { showPopup('എല്ലാം പൂരിപ്പിക്കുക'); return; }
+    if (!APP.examTimetables[cls]) APP.examTimetables[cls] = {};
+    if (!APP.examTimetables[cls][type]) APP.examTimetables[cls][type] = [];
+    APP.examTimetables[cls][type].push({ subject, date, id: Date.now() });
+    saveToFirebase('examTimetables', APP.examTimetables);
+    showPopup('✅ പരീക്ഷാ ടൈംടേബിൾ ചേർത്തു');
+    renderApp();
+};
 
-function checkParentNotifications() {
-    if (allAnnouncements.length > 0 && currentUser?.role === 'parent') {
-        const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
-        if (recent.length > 0) {
-            const last = recent[recent.length - 1];
-            document.getElementById('popupContent').innerHTML = `
-                <h4 class="font-bold">${last.title}</h4>
-                <p>${last.body}</p>
-                ${last.media ? `<img src="${last.media}" class="max-h-40 mt-2">` : ''}
-            `;
-            document.getElementById('popupNotification').style.display = 'flex';
-        }
-    }
-}
-function closePopup() { document.getElementById('popupNotification').style.display = 'none'; }
+window.sendExamAlert = function() {
+    const cls = document.getElementById('examClass')?.value || 1;
+    const type = document.getElementById('examType')?.value || 'quarterly';
+    const exams = APP.examTimetables?.[cls]?.[type] || [];
+    if (exams.length === 0) { showPopup('ഈ ക്ലാസിൽ ടൈംടേബിൾ ഇല്ല'); return; }
+    const msg = `📢 പരീക്ഷാ അറിയിപ്പ്: ക്ലാസ് ${cls} - ${type} പരീക്ഷയുടെ ടൈംടേബിൾ:\n` + exams.map(e => `${e.subject}: ${e.date}`).join('\n');
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+};
 
-// ====================================================
-//  HOLIDAY MANAGER
-// ====================================================
-function setHoliday() {
-    const reason = document.getElementById('holidayReason').value.trim();
-    const shift = document.getElementById('holidayShift').value;
-    const date = document.getElementById('holidayDate').value || new Date().toISOString().split('T')[0];
-    if (!reason) { alert('⚠️ കാരണം നൽകുക.'); return; }
-    const holiday = { reason, shift, date };
-    db.ref('holidays').set(holiday);
-    allHolidays = holiday;
-    alert('✅ അവധി പ്രഖ്യാപിച്ചു.');
-}
-
-function clearHoliday() {
-    if (!confirm('അവധി എടുത്തുമാറ്റണോ?')) return;
-    db.ref('holidays').remove();
-    allHolidays = {};
-    alert('✅ അവധി എടുത്തുമാറ്റി.');
-}
-
-// ====================================================
-//  ANNOUNCEMENTS
-// ====================================================
-function publishAnnouncement() {
-    const title = document.getElementById('announceTitle').value.trim();
-    const body = document.getElementById('announceBody').value.trim();
-    const target = document.getElementById('announceTarget').value;
-    const file = document.getElementById('announceMedia').files[0];
-    if (!title || !body) { alert('⚠️ തലക്കെട്ടും വിവരവും നൽകുക.'); return; }
-    let mediaBase64 = '';
+window.saveFeeQR = function() {
+    const fee = document.getElementById('monthlyFee').value;
+    const gpay = document.getElementById('gpayNumber').value.trim();
+    const file = document.getElementById('qrUpload').files[0];
+    if (!APP.feeQR) APP.feeQR = {};
+    if (fee) APP.feeQR.monthlyFee = parseInt(fee);
+    if (gpay) APP.feeQR.googlePay = gpay;
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            mediaBase64 = e.target.result;
-            const ann = { title, body, target, media: mediaBase64, timestamp: Date.now() };
-            db.ref('announcements').push(ann);
-            alert('✅ പ്രസിദ്ധീകരിച്ചു.');
-            clearAnnounceFields();
+            APP.feeQR.qrBase64 = e.target.result;
+            saveToFirebase('feeQR', APP.feeQR);
+            showPopup('✅ ഫീസ് & QR സേവ് ചെയ്തു');
+            renderApp();
         };
         reader.readAsDataURL(file);
     } else {
-        const ann = { title, body, target, media: '', timestamp: Date.now() };
-        db.ref('announcements').push(ann);
-        alert('✅ പ്രസിദ്ധീകരിച്ചു.');
-        clearAnnounceFields();
+        saveToFirebase('feeQR', APP.feeQR);
+        showPopup('✅ ഫീസ് & QR സേവ് ചെയ്തു');
+        renderApp();
     }
-}
+};
 
-function clearAnnounceFields() {
-    document.getElementById('announceTitle').value = '';
-    document.getElementById('announceBody').value = '';
-    document.getElementById('announceMedia').value = '';
-}
-
-// ====================================================
-//  MANAGEMENT PANEL
-// ====================================================
-function updateManagementStats() {
-    document.getElementById('mgmtTotalStudents').textContent = allStudents.filter(s=>!s.deleted).length;
-    document.getElementById('mgmtTotalTeachers').textContent = allStaff.filter(s=>!s.deleted && s.role==='teacher').length;
-    const today = new Date().toISOString().split('T')[0];
-    let totalPresent = 0;
-    if (allAttendance[today]) {
-        Object.values(allAttendance[today]).forEach(cls => {
-            Object.values(cls).forEach(status => { if(status==='present') totalPresent++; });
-        });
-    }
-    document.getElementById('mgmtTodayAttendance').textContent = totalPresent;
-    let totalFee = 0;
-    Object.values(allFees).forEach(f => totalFee += f);
-    document.getElementById('mgmtFeeCollected').textContent = '₹' + totalFee;
-}
-
-function loadManagementAttendance() {
-    const month = document.getElementById('mgmtAttendanceMonth').value;
-    const container = document.getElementById('mgmtAttendanceSummary');
-    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
-    const year = 2026;
-    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
-    let html = `<h5 class="font-bold">📊 ${month} - മാസ ഹാജർ സംഗ്രഹം</h5>`;
-    const students = allStudents.filter(s => !s.deleted);
-    students.forEach(s => {
-        let present = 0;
-        for(let d=1; d<=daysInMonth; d++) {
-            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            if (allAttendance[date]?.[s.cls]?.[s.reg] === 'present') present++;
-        }
-        const percentage = Math.round((present / daysInMonth) * 100);
-        html += `
-            <div class="flex items-center gap-2 p-1 border-b text-sm">
-                <span class="w-24">${s.name}</span>
-                <span class="w-16 text-center">${present}/${daysInMonth}</span>
-                <div class="flex-1 attendance-bar">
-                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
-                </div>
-                <span class="w-12 text-right">${percentage}%</span>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-function loadManagementFeeReport() {
-    const month = document.getElementById('mgmtFeeMonth').value;
-    const container = document.getElementById('mgmtFeeReport');
-    const fee = allFeeQR.monthlyFee || 0;
-    let html = `<h5 class="font-bold">💰 ${month} - ഫീസ് റിപ്പോർട്ട്</h5>`;
-    const students = allStudents.filter(s => !s.deleted);
-    let totalFee = 0, totalPaid = 0;
-    students.forEach(s => {
-        const key = `${s.reg}_${month}`;
-        const paid = allFees[key] || 0;
-        totalFee += fee;
-        totalPaid += paid;
-        html += `
-            <div class="flex justify-between p-1 border-b text-sm">
-                <span>${s.name} (${s.reg})</span>
-                <span>₹${paid} / ₹${fee}</span>
-            </div>
-        `;
-    });
-    html += `
-        <div class="mt-2 p-2 bg-gray-100 rounded font-bold flex justify-between">
-            <span>ആകെ:</span>
-            <span>₹${totalPaid} / ₹${totalFee} (കുടിശ്ശിക: ₹${totalFee - totalPaid})</span>
-        </div>
-    `;
-    container.innerHTML = html;
-    
-    // Staff list for management
-    const staffContainer = document.getElementById('mgmtStaffList');
-    const active = allStaff.filter(s => !s.deleted);
-    staffContainer.innerHTML = active.map(s => `
-        <div class="flex items-center gap-2 p-1 border-b text-sm">
-            ${s.photo ? `<img src="${s.photo}" class="w-8 h-8 rounded-full">` : `<div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-xs">👤</div>`}
-            <span><strong>${s.name}</strong> (${s.role||'അധ്യാപകൻ'})</span>
-            <span class="text-xs text-gray-400">ക്ലാസ്സുകൾ: ${s.classes.join(', ')}</span>
-        </div>
-    `).join('');
-}
-
-// ====================================================
-//  COMMITTEE PANEL
-// ====================================================
-function updateCommitteeStats() {
-    document.getElementById('totalStudents').textContent = allStudents.filter(s=>!s.deleted).length;
-    document.getElementById('totalTeachers').textContent = allStaff.filter(s=>!s.deleted && s.role==='teacher').length;
-    const today = new Date().toISOString().split('T')[0];
-    let totalPresent = 0;
-    if (allAttendance[today]) {
-        Object.values(allAttendance[today]).forEach(cls => {
-            Object.values(cls).forEach(status => { if(status==='present') totalPresent++; });
-        });
-    }
-    document.getElementById('todayAttendance').textContent = totalPresent;
-    let totalFee = 0;
-    Object.values(allFees).forEach(f => totalFee += f);
-    document.getElementById('feeCollected').textContent = '₹' + totalFee;
-
-    const container = document.getElementById('defaultersList');
-    const fee = allFeeQR.monthlyFee || 0;
-    const defaulters = allStudents.filter(s => !s.deleted && (allFees[`${s.reg}_${selectedMonth}`] || 0) < fee);
-    container.innerHTML = defaulters.map(s => `
-        <div class="flex justify-between items-center p-1 border-b text-sm">
-            <span>${s.name} (${s.reg}) - ₹${fee - (allFees[`${s.reg}_${selectedMonth}`] || 0)} കുടിശ്ശിക</span>
-            <button class="whatsapp-btn text-xs" onclick="sendDefaulterAlert(${s.reg})"><i class="fab fa-whatsapp"></i></button>
-        </div>
-    `).join('') || '<p class="text-gray-400">കുടിശ്ശികക്കാരില്ല</p>';
-}
-
-function sendDefaulterAlert(reg) {
-    const student = allStudents.find(s=>s.reg===reg);
-    if(!student) return;
-    const fee = allFeeQR.monthlyFee || 0;
-    const paid = allFees[`${reg}_${selectedMonth}`] || 0;
-    const due = fee - paid;
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ ഫീസ് ₹${due} കുടിശ്ശിക. ദയവായി അടക്കുക.`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-function loadCommitteeDailyAttendance() {
-    const date = document.getElementById('committeeDailyDate').value || new Date().toISOString().split('T')[0];
-    const container = document.getElementById('committeeDailyAttendance');
-    let html = `<h5 class="font-bold">📅 ${date} - ദിവസേനയുള്ള ഹാജർ</h5>`;
-    for(let cls=1; cls<=12; cls++) {
-        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-        if (students.length === 0) continue;
-        const att = allAttendance[date]?.[cls] || {};
-        const present = students.filter(s => att[s.reg] === 'present').length;
-        const total = students.length;
-        const percentage = Math.round((present/total)*100);
-        html += `
-            <div class="flex items-center gap-2 p-1 border-b text-sm">
-                <span class="w-20 font-semibold">${cls}-ാം ക്ലാസ്</span>
-                <span class="w-24">${present}/${total}</span>
-                <div class="flex-1 attendance-bar">
-                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
-                </div>
-                <span class="w-12 text-right">${percentage}%</span>
-            </div>
-        `;
-    }
-    container.innerHTML = html || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
-}
-
-function loadCommitteeMonthlyAttendance() {
-    const month = document.getElementById('committeeMonthFilter').value;
-    const shift = document.getElementById('committeeShiftFilter').value;
-    const container = document.getElementById('committeeMonthlyAttendance');
-    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
-    const year = 2026;
-    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
-    let html = `<h5 class="font-bold">📊 ${month} - മാസ ഹാജർ നില</h5>`;
-    let students = allStudents.filter(s => !s.deleted);
-    if (shift !== 'all') students = students.filter(s => s.shift === parseInt(shift));
-    students.forEach(s => {
-        let present = 0;
-        for(let d=1; d<=daysInMonth; d++) {
-            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            if (allAttendance[date]?.[s.cls]?.[s.reg] === 'present') present++;
-        }
-        const percentage = Math.round((present / daysInMonth) * 100);
-        html += `
-            <div class="flex items-center gap-2 p-1 border-b text-sm">
-                <span class="w-24">${s.name}</span>
-                <span class="w-16 text-center">${present}/${daysInMonth}</span>
-                <div class="flex-1 attendance-bar">
-                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
-                </div>
-                <span class="w-12 text-right">${percentage}%</span>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-function calculateSalary() {
-    const month = document.getElementById('salaryMonth').value;
-    const container = document.getElementById('salaryResult');
-    const staff = allStaff.filter(s => !s.deleted && s.role === 'teacher');
-    const workingDays = 26;
-    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
-    const year = 2026;
-    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
-    let html = `<h5 class="font-bold">💰 ${month} മാസത്തെ ശമ്പളം</h5>`;
-    staff.forEach(s => {
-        let present = 0;
-        for(let d=1; d<=daysInMonth; d++) {
-            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            if (allAttendance[date]?.['staff']?.[s.username] === 'present') present++;
-        }
-        const salary = (present / workingDays) * 10000;
-        html += `
-            <div class="flex justify-between p-1 border-b text-sm">
-                <span>${s.name}</span>
-                <span>${present}/${workingDays} ദിവസം - ₹${Math.round(salary)}</span>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-// ====================================================
-//  PUBLIC RESULT
-// ====================================================
-function showPublicResult() {
-    const cls = parseInt(document.getElementById('publicResultClass').value);
-    const examType = document.getElementById('publicResultExamType').value;
-    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
-    const withMarks = students.map(s => ({
-        ...s,
-        marks: allMarks[s.reg] ? allMarks[s.reg].filter(m => m.examType === examType).reduce((sum,m) => sum + m.marks, 0) / (allMarks[s.reg].filter(m => m.examType === examType).length || 1) : Math.floor(Math.random()*100)+1
-    }));
-    withMarks.sort((a,b) => b.marks - a.marks);
-    const top3 = withMarks.slice(0,3);
-    const container = document.getElementById('publicResultDisplay');
-    container.innerHTML = top3.map((s,i) => `
-        <div class="public-result-card ${i===0?'gold':i===1?'silver':'bronze'}">
-            <div class="text-4xl">${i===0?'🥇':i===1?'🥈':'🥉'}</div>
-            <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center text-3xl text-gray-700">
-                ${s.photo ? `<img src="${s.photo}" class="w-full h-full rounded-full">` : '👤'}
-            </div>
-            <h3 class="text-xl font-bold text-white mt-2">${s.name}</h3>
-            <p class="text-white text-sm">Reg: ${s.reg}</p>
-            <p class="text-white text-lg font-bold">${s.marks} മാർക്ക്</p>
-            <p class="text-white text-sm">${examType}</p>
-        </div>
-    `).join('') || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
-}
-
-function printPublicResult() { window.print(); }
-
-// ====================================================
-//  PROFILE & UTILITIES
-// ====================================================
-function showProfileEditor() {
-    const user = currentUser;
-    if (!user) { alert('ലോഗിൻ ചെയ്യുക.'); return; }
-    const name = prompt('പേര്:', user.name);
-    if (name !== null) user.name = name;
-    if (user.role === 'staff' || user.role === 'management') {
-        const staff = allStaff.find(s => s.username === user.username);
-        if (staff) {
-            staff.name = user.name;
-            db.ref('staff').orderByChild('username').equalTo(user.username).once('value').then(snap => {
-                snap.forEach(child => child.ref.update({name: user.name}));
-            });
-        }
-    }
-    alert('✅ അപ്ഡേറ്റ് ചെയ്തു');
-}
-
-function viewAllComplaints() {
-    const container = document.createElement('div');
-    container.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    container.innerHTML = `
-        <div class="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-96 overflow-y-auto">
-            <h3 class="text-xl font-bold mb-4">📋 പരാതികൾ</h3>
-            ${allComplaints.map(c => `
-                <div class="p-2 border-b text-sm">
-                    <strong>Reg ${c.reg}:</strong> ${c.complaint}
-                    <div class="text-xs text-gray-400">${c.teacher || c.parent || ''} | ${new Date(c.date).toLocaleString()}</div>
-                </div>
-            `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>'}
-            <button onclick="this.parentElement.parentElement.remove()" class="mt-4 btn-primary">അടയ്ക്കുക</button>
-        </div>
-    `;
-    document.body.appendChild(container);
-}
-
-function exportJSON() {
-    const data = { students: allStudents, staff: allStaff, fees: allFees, attendance: allAttendance, holidays: allHolidays, announcements: allAnnouncements, examTimetables: allExamTimetables, feeQR: allFeeQR, complaints: allComplaints, marks: allMarks };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+window.backupData = function() {
+    const data = {
+        students: APP.students,
+        staff: APP.staff,
+        fees: APP.fees,
+        attendance: APP.attendance,
+        holidays: APP.holidays,
+        announcements: APP.announcements,
+        examTimetables: APP.examTimetables,
+        feeQR: APP.feeQR,
+        complaints: APP.complaints,
+        marks: APP.marks,
+        shiftClassMapping: APP.shiftClassMapping,
+        staffAttendance: APP.staffAttendance
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'madrasa_backup.json'; a.click();
-    URL.revokeObjectURL(url);
+    a.href = url;
+    a.download = 'mambaululoom_backup.json';
+    a.click();
+    showPopup('✅ ബാക്കപ്പ് ഡൗൺലോഡ് ചെയ്തു');
+};
+
+window.restoreData = function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = JSON.parse(ev.target.result);
+                for (let key of ['students','staff','fees','attendance','holidays','announcements','examTimetables','feeQR','complaints','marks','shiftClassMapping','staffAttendance']) {
+                    if (data[key]) APP[key] = data[key];
+                }
+                saveAllToFirebase();
+                showPopup('✅ ഡാറ്റ റിസ്റ്റോർ ചെയ്തു');
+                renderApp();
+            } catch (err) {
+                showPopup('❌ തെറ്റായ JSON ഫയൽ');
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+};
+
+window.showPopup = function(msg) {
+    const div = document.createElement('div');
+    div.className = 'popup glass p-4 rounded-xl border border-white/10 text-sm';
+    div.innerHTML = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 4000);
+};
+
+// ========== FIREBASE HELPERS ==========
+function saveToFirebase(path, data) {
+    if (!APP.db) return;
+    try {
+        APP.db.ref(path).set(data);
+    } catch (e) { console.warn('Save error:', e); }
 }
 
-// ====================================================
-//  INIT
-// ====================================================
-document.addEventListener('DOMContentLoaded', function() {
-    loadAllData();
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('sadharAttendanceDate').value = today;
-    document.getElementById('teacherAttendanceDate').value = today;
-    document.getElementById('committeeDailyDate').value = today;
-    console.log('✅ മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡ് ആയി.');
-    console.log('💡 Sadhar: sadhar/admin123');
-    console.log('💡 Staff: Use credentials from staff management');
-    console.log('💡 Management: Use credentials from staff management with role=management');
-    console.log('💡 Parent: Use student Reg No');
-});
+function saveAllToFirebase() {
+    if (!APP.db) return;
+    try {
+        for (let key of ['students','staff','fees','attendance','holidays','announcements','examTimetables','feeQR','complaints','marks','shiftClassMapping','staffAttendance']) {
+            APP.db.ref(key).set(APP[key]);
+        }
+    } catch (e) { console.warn('Save all error:', e); }
+}
+
+function loadFromFirebase(path) {
+    if (!APP.db) return Promise.resolve();
+    return APP.db.ref(path).once('value').then(snap => snap.val());
+}
+
+// ========== INIT ==========
+async function initApp() {
+    try {
+        const config = getFirebaseConfig();
+        APP.db = initFirebase(config);
+        APP.config = config;
+
+        // Load all data
+        const [students, staff, fees, attendance, holidays, announcements, examTimetables, feeQR, complaints, marks, shiftClassMapping, staffAttendance] = await Promise.all([
+            loadFromFirebase('students'),
+            loadFromFirebase('staff'),
+            loadFromFirebase('fees'),
+            loadFromFirebase('attendance'),
+            loadFromFirebase('holidays'),
+            loadFromFirebase('announcements'),
+            loadFromFirebase('examTimetables'),
+            loadFromFirebase('feeQR'),
+            loadFromFirebase('complaints'),
+            loadFromFirebase('marks'),
+            loadFromFirebase('shiftClassMapping'),
+            loadFromFirebase('staffAttendance')
+        ]);
+
+        // Merge with initial data
+        if (!students || Object.keys(students).length === 0) {
+            const initial = {};
+            for (let s of INITIAL_STUDENTS) {
+                initial[s[0]] = { reg: s[0], name: s[1], father: s[2], dob: s[3], phone: s[4], cls: s[5], shift: s[6], deleted: false };
+            }
+            APP.students = initial;
+            await APP.db.ref('students').set(initial);
+        } else {
+            APP.students = students;
+        }
+
+        APP.staff = staff || {};
+        APP.fees = fees || {};
+        APP.attendance = attendance || {};
+        APP.holidays = holidays || {};
+        APP.announcements = announcements || {};
+        APP.examTimetables = examTimetables || {};
+        APP.feeQR = feeQR || {};
+        APP.complaints = complaints || {};
+        APP.marks = marks || {};
+        APP.shiftClassMapping = shiftClassMapping || { shifts: { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] } };
+        APP.staffAttendance = staffAttendance || {};
+
+        APP.loaded = true;
+        renderApp();
+    } catch (e) {
+        console.error('Init error:', e);
+        document.getElementById('app').innerHTML = `
+            <div class="min-h-screen flex items-center justify-center p-4">
+                <div class="glass p-6 rounded-2xl max-w-md w-full text-center">
+                    <div class="text-red-400 text-4xl mb-3">⚠️</div>
+                    <h2 class="text-xl font-bold text-red-300">ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു</h2>
+                    <p class="text-gray-400 text-sm mt-2">ദയവായി വിവരങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.</p>
+                    <button onclick="initApp()" class="mt-4 bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-2 rounded-lg font-bold">🔄 വീണ്ടും ശ്രമിക്കുക</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// ========== START ==========
+document.addEventListener('DOMContentLoaded', initApp);
 </script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </body>
 </html>
