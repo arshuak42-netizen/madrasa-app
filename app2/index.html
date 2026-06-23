@@ -9,30 +9,53 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; }
         .accordion-content { transition: max-height 0.3s ease, opacity 0.2s ease; max-height: 0; opacity: 0; overflow: hidden; }
-        .accordion-content.open { max-height: 3000px; opacity: 1; }
-        .panel-tab { padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: all 0.2s; background: #e2e8f0; border: none; font-size: 0.9rem; }
+        .accordion-content.open { max-height: 5000px; opacity: 1; }
+        .panel-tab { padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: all 0.2s; background: #e2e8f0; border: none; font-size: 0.85rem; }
         .panel-tab.active { background: #1e3a8a; color: white; }
-        .btn-primary { background: #1e3a8a; color: white; padding: 6px 18px; border-radius: 30px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.9rem; }
+        .btn-primary { background: #1e3a8a; color: white; padding: 6px 18px; border-radius: 30px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.85rem; }
         .btn-primary:hover { background: #1e40af; transform: scale(1.02); }
-        .btn-success { background: #15803d; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; }
-        .btn-danger { background: #b91c1c; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; }
-        .whatsapp-btn { background: #25D366; color: white; border-radius: 30px; padding: 4px 14px; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; font-size: 0.8rem; }
+        .btn-success { background: #15803d; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
+        .btn-danger { background: #b91c1c; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
+        .btn-warning { background: #d97706; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.85rem; }
+        .whatsapp-btn { background: #25D366; color: white; border-radius: 30px; padding: 4px 14px; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; font-size: 0.75rem; }
         .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); }
-        .popup-card { background: white; max-width:90%; width:400px; border-radius:24px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:popIn 0.3s ease; }
+        .popup-card { background: white; max-width:95%; width:500px; border-radius:24px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:popIn 0.3s ease; max-height:90vh; overflow-y:auto; }
         @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
         .holiday-banner { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; text-align: center; }
-        .scroll-list { max-height: 300px; overflow-y: auto; }
+        .scroll-list { max-height: 350px; overflow-y: auto; }
         input, select, textarea { border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; width: 100%; font-size: 0.9rem; }
         .teacher-present { border-left: 4px solid #16a34a; background: #f0fdf4; }
         .teacher-absent { border-left: 4px solid #dc2626; background: #fef2f2; }
         .qr-img { max-width: 150px; max-height: 150px; object-fit: contain; }
-        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite; }
+        .loading { display: inline-block; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .hidden-tab { display: none !important; }
+        .shift-drop-zone { border: 2px dashed #94a3b8; border-radius: 12px; padding: 12px; min-height: 100px; }
+        .shift-drop-zone.dragover { border-color: #1e3a8a; background: #eff6ff; }
+        .class-chip { display: inline-block; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; margin: 3px; cursor: pointer; }
+        .class-chip.selected { background: #1e3a8a; color: white; }
+        .month-selector { display: flex; flex-wrap: wrap; gap: 6px; }
+        .month-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #d1d5db; cursor: pointer; font-size: 0.8rem; }
+        .month-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+        .student-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .student-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .public-result-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; padding: 20px; text-align: center; }
+        .public-result-card.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+        .public-result-card.silver { background: linear-gradient(135deg, #d1d5db, #9ca3af); }
+        .public-result-card.bronze { background: linear-gradient(135deg, #d97706, #b45309); }
+        .public-result-card h3 { color: white; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+        .print-only { display: none; }
+        .staff-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .compact-table { font-size: 0.8rem; }
+        .compact-table td, .compact-table th { padding: 4px 8px; border: 1px solid #e5e7eb; }
     </style>
 </head>
 <body>
@@ -71,6 +94,23 @@
         <button id="logoutBtn" class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm hidden" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ലോഗൗട്ട്</button>
     </div>
 
+    <!-- PUBLIC RESULT - Always Visible -->
+    <div id="publicResultSection" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-4">
+        <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട്</h2>
+        <div class="flex flex-wrap gap-2 mt-2">
+            <select id="publicResultClass" class="w-auto p-2 border rounded">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            </select>
+            <input id="publicResultExam" placeholder="പരീക്ഷ (ഉദാ: Mid Term)" class="w-auto p-2 border rounded">
+            <button class="btn-primary" onclick="showPublicResult()">കാണുക</button>
+            <button class="bg-gray-700 text-white px-4 py-1 rounded-full text-sm" onclick="printPublicResult()">🖨️ PDF</button>
+        </div>
+        <div id="publicResultDisplay" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    </div>
+
     <!-- LOGIN SECTION -->
     <div id="loginSection" class="bg-white p-6 rounded-2xl shadow-md border border-gray-200">
         <h2 class="text-2xl font-bold text-center text-blue-900">🔐 ലോഗിൻ</h2>
@@ -87,7 +127,7 @@
                 <button id="loginParentBtn" class="mt-2 w-full bg-green-700 text-white py-2 rounded-full font-bold">കുട്ടിയുടെ പാനലിലേക്ക്</button>
             </div>
         </div>
-        <p id="loginError" class="text-red-600 text-center mt-2 hidden">❌ ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ ശരിയാണോയെന്ന് പരിശോധിക്കുക.</p>
+        <p id="loginError" class="text-red-600 text-center mt-2 hidden">❌ ലോഗിൻ പരാജയപ്പെട്ടു.</p>
     </div>
 
     <!-- DASHBOARD -->
@@ -97,44 +137,44 @@
             <button class="panel-tab" data-tab="teacher" onclick="switchTab('teacher')">അധ്യാപകൻ</button>
             <button class="panel-tab" data-tab="parent" onclick="switchTab('parent')">രക്ഷിതാവ്</button>
             <button class="panel-tab" data-tab="committee" onclick="switchTab('committee')">കമ്മിറ്റി</button>
-            <button class="panel-tab" data-tab="public" onclick="switchTab('public')">പബ്ലിക് റിസൾട്ട്</button>
         </div>
 
         <!-- SADHAR PANEL -->
-        <div id="panel-sadhar" class="tab-content">
+        <div id="panel-sadhar" class="tab-content active">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ</h2>
                 <div class="mt-4 space-y-2">
-                    <!-- Accordion items -->
+                    <!-- Accordion: Shift + Class Linking (New Model) -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc1')">
                             <span>⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc1" class="accordion-content p-3">
-                            <div class="grid grid-cols-3 gap-2">
-                                <label><input type="checkbox" class="shift-check" value="1"> ഷിഫ്റ്റ് 1</label>
-                                <label><input type="checkbox" class="shift-check" value="2"> ഷിഫ്റ്റ് 2</label>
-                                <label><input type="checkbox" class="shift-check" value="3"> ഷിഫ്റ്റ് 3</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="border rounded-lg p-3">
+                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 1</h4>
+                                    <div id="shift1Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 2</h4>
+                                    <div id="shift2Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 3</h4>
+                                    <div id="shift3Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-4 gap-1 mt-2">
-                                <label><input type="checkbox" class="class-check" value="1"> 1</label>
-                                <label><input type="checkbox" class="class-check" value="2"> 2</label>
-                                <label><input type="checkbox" class="class-check" value="3"> 3</label>
-                                <label><input type="checkbox" class="class-check" value="4"> 4</label>
-                                <label><input type="checkbox" class="class-check" value="5"> 5</label>
-                                <label><input type="checkbox" class="class-check" value="6"> 6</label>
-                                <label><input type="checkbox" class="class-check" value="7"> 7</label>
-                                <label><input type="checkbox" class="class-check" value="8"> 8</label>
-                                <label><input type="checkbox" class="class-check" value="9"> 9</label>
-                                <label><input type="checkbox" class="class-check" value="10"> 10</label>
-                                <label><input type="checkbox" class="class-check" value="11"> 11</label>
-                                <label><input type="checkbox" class="class-check" value="12"> 12</label>
+                            <div class="mt-3">
+                                <p class="text-sm text-gray-600">ലഭ്യമായ ക്ലാസുകൾ: 
+                                    <span id="availableClassesList" class="flex flex-wrap gap-1 mt-1"></span>
+                                </p>
                             </div>
-                            <button class="mt-2 btn-primary text-sm" onclick="saveShiftClass()">സേവ് ചെയ്യുക</button>
+                            <button class="mt-3 btn-primary text-sm" onclick="saveShiftClassNew()">സേവ് ചെയ്യുക</button>
                         </div>
                     </div>
 
+                    <!-- Accordion: Staff Management with Photo -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc2')">
                             <span>👥 ജീവനക്കാരുടെ നിയന്ത്രണം</span>
@@ -146,50 +186,94 @@
                                 <input id="staffUsername" placeholder="Username" class="flex-1 min-w-[100px]">
                                 <input id="staffPassword" placeholder="Password" class="flex-1 min-w-[100px]">
                                 <input id="staffClasses" placeholder="ക്ലാസ്സുകൾ (1,2,3)" class="flex-1 min-w-[100px]">
+                                <select id="staffRole" class="flex-1 min-w-[100px] p-2 border rounded">
+                                    <option value="teacher">അധ്യാപകൻ</option>
+                                    <option value="manager">മാനേജർ</option>
+                                    <option value="secretary">സെക്രട്ടറി</option>
+                                    <option value="committee">കമ്മിറ്റി</option>
+                                </select>
+                                <input type="file" id="staffPhoto" accept="image/*" class="flex-1 min-w-[100px]">
                                 <button class="btn-primary" onclick="addStaff()">ചേർക്കുക</button>
                             </div>
                             <div id="staffList" class="scroll-list text-sm space-y-1 mt-2"></div>
                         </div>
                     </div>
 
+                    <!-- Accordion: Sadhar Attendance with WhatsApp Alert -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc3')">
-                            <span>✅ സദർ നേരിട്ടുള്ള ഹാജർ</span>
+                            <span>✅ സദർ ഹാജർ (WhatsApp Alert)</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc3" class="accordion-content p-3">
-                            <select id="sadharClassSelect" class="w-full p-2 border rounded"></select>
+                            <div class="flex flex-wrap gap-2">
+                                <select id="sadharClassSelect" class="flex-1 min-w-[150px] p-2 border rounded"></select>
+                                <input type="date" id="sadharAttendanceDate" class="flex-1 min-w-[150px] p-2 border rounded">
+                            </div>
                             <div id="sadharAttendanceList" class="mt-2 space-y-1 max-h-60 overflow-y-auto"></div>
-                            <button class="mt-2 btn-success text-sm" onclick="submitSadharAttendance()">ഹാജർ സബ്മിറ്റ് ചെയ്യുക</button>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <button class="btn-success text-sm" onclick="submitSadharAttendance()">✅ ഹാജർ സബ്മിറ്റ്</button>
+                                <button class="whatsapp-btn text-sm" onclick="sendAbsentAlert()"><i class="fab fa-whatsapp"></i> അബ്സന്റ് അറിയിപ്പ്</button>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Accordion: Exam Timetable - Class wise -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc4')">
-                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ</span>
+                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ (ക്ലാസ് വൈസ്)</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc4" class="accordion-content p-3">
-                            <textarea id="examTimetable" rows="3" placeholder="ക്ലാസ് 1: ..." class="w-full border rounded p-2"></textarea>
-                            <button class="mt-1 btn-primary text-sm" onclick="saveExamTimetable()">സേവ് ചെയ്യുക</button>
-                            <button class="mt-1 whatsapp-btn text-sm" onclick="sendExamAlert()"><i class="fab fa-whatsapp"></i> Send Tomorrow's Exam Alert</button>
+                            <div class="flex flex-wrap gap-2">
+                                <select id="examClassSelect" class="flex-1 min-w-[120px] p-2 border rounded">
+                                    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                                    <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                                </select>
+                                <input id="examSubject" placeholder="വിഷയം" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <input id="examDate" type="date" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <button class="btn-primary text-sm" onclick="addExamSchedule()">ചേർക്കുക</button>
+                            </div>
+                            <div id="examTimetableList" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
+                            <button class="mt-2 whatsapp-btn text-sm" onclick="sendClassExamAlert()"><i class="fab fa-whatsapp"></i> ക്ലാസ് ഗ്രൂപ്പിലേക്ക് അയക്കുക</button>
                         </div>
                     </div>
 
+                    <!-- Accordion: Fee Structure with Months -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc5')">
-                            <span>💰 ഫീസ് ഘടന &amp; QR</span>
+                            <span>💰 ഫീസ് ഘടന &amp; QR (മാസം തിരിച്ച്)</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc5" class="accordion-content p-3">
-                            <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="w-full p-2 border rounded">
-                            <input id="googlePayNumber" placeholder="Google Pay നമ്പർ" class="w-full p-2 border rounded mt-1">
-                            <input type="file" id="qrUpload" accept="image/*" class="mt-1">
-                            <button class="mt-1 btn-primary text-sm" onclick="saveFeeQR()">സേവ് ചെയ്യുക</button>
+                            <div class="month-selector" id="feeMonthSelector">
+                                <button class="month-btn active" data-month="January">ജനു</button>
+                                <button class="month-btn" data-month="February">ഫെബ്രു</button>
+                                <button class="month-btn" data-month="March">മാർച്ച്</button>
+                                <button class="month-btn" data-month="April">ഏപ്രിൽ</button>
+                                <button class="month-btn" data-month="May">മെയ്</button>
+                                <button class="month-btn" data-month="June">ജൂൺ</button>
+                                <button class="month-btn" data-month="July">ജൂലൈ</button>
+                                <button class="month-btn" data-month="August">ഓഗസ്റ്റ്</button>
+                                <button class="month-btn" data-month="September">സെപ്റ്റം</button>
+                                <button class="month-btn" data-month="October">ഒക്ടോ</button>
+                                <button class="month-btn" data-month="November">നവം</button>
+                                <button class="month-btn" data-month="December">ഡിസം</button>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <input id="googlePayNumber" placeholder="Google Pay" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <input type="file" id="qrUpload" accept="image/*" class="flex-1 min-w-[120px]">
+                                <button class="btn-primary text-sm" onclick="saveFeeQR()">സേവ്</button>
+                            </div>
                             <div id="qrPreview" class="mt-2"></div>
+                            <div id="feeMonthStatus" class="mt-2 text-sm"></div>
                         </div>
                     </div>
 
+                    <!-- Accordion: Holiday Manager -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc6')">
                             <span>🏖️ അവധി പ്രകടന ബോർഡ്</span>
@@ -203,11 +287,13 @@
                                 <option value="2">ഷിഫ്റ്റ് 2</option>
                                 <option value="3">ഷിഫ്റ്റ് 3</option>
                             </select>
+                            <input type="date" id="holidayDate" class="w-full p-2 border rounded mt-1">
                             <button class="mt-1 btn-danger text-sm" onclick="setHoliday()">അവധി പ്രഖ്യാപിക്കുക</button>
                             <button class="mt-1 bg-gray-500 text-white px-4 py-1 rounded-full text-sm" onclick="clearHoliday()">അവധി എടുത്തുമാറ്റുക</button>
                         </div>
                     </div>
 
+                    <!-- Accordion: Announcements -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc7')">
                             <span>📢 പൊതു അറിയിപ്പുകൾ</span>
@@ -227,59 +313,132 @@
                         </div>
                     </div>
 
+                    <!-- Accordion: Student Info - Class wise -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc8')">
                             <span>📚 കുട്ടികളുടെ വിവരങ്ങൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc8" class="accordion-content p-3">
-                            <div id="studentEditorList" class="max-h-80 overflow-y-auto text-sm space-y-1"></div>
+                            <select id="studentClassFilter" class="w-full p-2 border rounded">
+                                <option value="all">എല്ലാ ക്ലാസുകളും</option>
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <div id="studentEditorList" class="max-h-80 overflow-y-auto text-sm space-y-1 mt-2"></div>
                             <button class="mt-2 btn-primary text-sm" onclick="syncStudentsToFirebase()">Firebase-ലേക്ക് സമന്വയിപ്പിക്കുക</button>
                         </div>
                     </div>
 
+                    <!-- Accordion: Fee Counter with Month -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc9')">
-                            <span>💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ് കൗണ്ടർ</span>
+                            <span>💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ്</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc9" class="accordion-content p-3">
-                            <select id="feeClassSelect" class="w-full p-2 border rounded"></select>
+                            <div class="flex flex-wrap gap-2">
+                                <select id="feeClassSelect" class="flex-1 min-w-[120px] p-2 border rounded"></select>
+                                <select id="feeMonthSelect" class="flex-1 min-w-[120px] p-2 border rounded">
+                                    <option value="January">ജനുവരി</option>
+                                    <option value="February">ഫെബ്രുവരി</option>
+                                    <option value="March">മാർച്ച്</option>
+                                    <option value="April">ഏപ്രിൽ</option>
+                                    <option value="May">മെയ്</option>
+                                    <option value="June">ജൂൺ</option>
+                                    <option value="July">ജൂലൈ</option>
+                                    <option value="August">ഓഗസ്റ്റ്</option>
+                                    <option value="September">സെപ്റ്റംബർ</option>
+                                    <option value="October">ഒക്ടോബർ</option>
+                                    <option value="November">നവംബർ</option>
+                                    <option value="December">ഡിസംബർ</option>
+                                </select>
+                            </div>
                             <div id="feeStudentList" class="mt-2 max-h-60 overflow-y-auto space-y-1"></div>
                         </div>
                     </div>
 
+                    <!-- Accordion: Backup & Profile -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc10')">
-                            <span>📋 പരാതികൾ, ബാക്കപ്പ്, പ്രൊഫൈൽ</span>
+                            <span>📋 ബാക്കപ്പ് &amp; പ്രൊഫൈൽ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc10" class="accordion-content p-3">
-                            <button class="btn-primary text-sm" onclick="viewComplaints()">പരാതികൾ കാണുക</button>
-                            <button class="btn-primary text-sm ml-2" onclick="exportJSON()">JSON ബാക്കപ്പ്</button>
-                            <button class="btn-primary text-sm ml-2" onclick="editProfile()">പ്രൊഫൈൽ എഡിറ്റ്</button>
+                            <button class="btn-primary text-sm" onclick="exportJSON()">JSON ബാക്കപ്പ്</button>
+                            <button class="btn-primary text-sm ml-2" onclick="showProfileEditor()">പ്രൊഫൈൽ എഡിറ്റ്</button>
+                            <button class="btn-primary text-sm ml-2" onclick="viewAllComplaints()">പരാതികൾ</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TEACHER PANEL -->
+        <!-- TEACHER PANEL - Enhanced -->
         <div id="panel-teacher" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👨‍🏫 അധ്യാപക പാനൽ</h2>
-                <div id="teacherDashboard" class="mt-2">
-                    <div id="teacherClassList" class="mt-2 space-y-3"></div>
-                </div>
-                <div class="mt-4 border-t pt-2">
+                
+                <!-- Teacher's Classes -->
+                <div id="teacherClassList" class="mt-2 space-y-3"></div>
+                
+                <!-- Attendance with Date Selector -->
+                <div class="mt-4 border-t pt-3">
                     <h4 class="font-semibold">📋 ഹാജർ പുസ്തകം</h4>
-                    <div id="teacherAttendanceView" class="max-h-60 overflow-y-auto text-sm"></div>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <input type="date" id="teacherAttendanceDate" class="flex-1 min-w-[150px] p-2 border rounded">
+                        <button class="btn-primary text-sm" onclick="loadTeacherAttendance()">കാണുക</button>
+                    </div>
+                    <div id="teacherAttendanceView" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
+                </div>
+
+                <!-- Fee Update for Teacher -->
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">💰 ഫീസ് അപ്ഡേറ്റ്</h4>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <select id="teacherFeeClass" class="flex-1 min-w-[120px] p-2 border rounded"></select>
+                        <select id="teacherFeeMonth" class="flex-1 min-w-[120px] p-2 border rounded">
+                            <option value="January">ജനുവരി</option>
+                            <option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option>
+                            <option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option>
+                            <option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option>
+                            <option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option>
+                            <option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option>
+                            <option value="December">ഡിസംബർ</option>
+                        </select>
+                    </div>
+                    <div id="teacherFeeList" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
+                </div>
+
+                <!-- Complaints & Marks -->
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">📝 പരാതികൾ &amp; മാർക്ക്</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <textarea id="teacherComplaint" rows="2" placeholder="കുട്ടിയുടെ പരാതി / അഭിപ്രായം..." class="flex-1 min-w-[200px] p-2 border rounded"></textarea>
+                        <input id="teacherComplaintReg" placeholder="Reg No" class="w-24 p-2 border rounded">
+                        <button class="btn-primary text-sm" onclick="submitTeacherComplaint()">അയക്കുക</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <input id="teacherMarksReg" placeholder="Reg No" class="w-24 p-2 border rounded">
+                        <input id="teacherMarksSubject" placeholder="വിഷയം" class="w-32 p-2 border rounded">
+                        <input id="teacherMarksScore" placeholder="മാർക്ക്" class="w-24 p-2 border rounded">
+                        <button class="btn-primary text-sm" onclick="submitTeacherMarks()">മാർക്ക് രേഖപ്പെടുത്തുക</button>
+                        <button class="whatsapp-btn text-sm" onclick="sendMarksToParent()"><i class="fab fa-whatsapp"></i> രക്ഷിതാവിന് അയക്കുക</button>
+                    </div>
+                    <div id="teacherComplaintsList" class="max-h-40 overflow-y-auto text-sm mt-2"></div>
                 </div>
             </div>
         </div>
 
         <!-- PARENT PANEL -->
-        <div id="panel-parent" class="tab-content active">
+        <div id="panel-parent" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👪 രക്ഷിതാവ് പാനൽ</h2>
                 <div id="parentInfo" class="mt-2 text-sm"></div>
@@ -296,46 +455,93 @@
                     <h4 class="font-semibold">📊 ഫീസ് &amp; കുടിശ്ശിക</h4>
                     <div id="parentFeeStatus"></div>
                 </div>
+                <div id="parentMarksView" class="mt-3 p-3 bg-purple-50 rounded-xl">
+                    <h4 class="font-semibold">📝 മാർക്ക് വിവരങ്ങൾ</h4>
+                    <div id="parentMarksList"></div>
+                </div>
             </div>
         </div>
 
-        <!-- COMMITTEE PANEL -->
+        <!-- COMMITTEE PANEL - Enhanced -->
         <div id="panel-committee" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🏛️ കമ്മിറ്റി പാനൽ</h2>
+                
+                <!-- Stats -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalTeachers">0</span><br>അധ്യാപകർ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="todayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="feeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
                 </div>
+
+                <!-- Staff Attendance Tracker with Shift -->
                 <div class="mt-4">
+                    <h4 class="font-semibold">👨‍🏫 അധ്യാപക ഹാജർ (ഷിഫ്റ്റ് തിരിച്ച്)</h4>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <select id="committeeShiftFilter" class="p-2 border rounded">
+                            <option value="all">എല്ലാ ഷിഫ്റ്റുകളും</option>
+                            <option value="1">ഷിഫ്റ്റ് 1</option>
+                            <option value="2">ഷിഫ്റ്റ് 2</option>
+                            <option value="3">ഷിഫ്റ്റ് 3</option>
+                        </select>
+                        <input type="date" id="committeeAttendanceDate" class="p-2 border rounded">
+                        <button class="btn-primary text-sm" onclick="loadCommitteeAttendance()">കാണുക</button>
+                    </div>
+                    <div id="staffAttendanceTracker" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
+                </div>
+
+                <!-- Monthly Salary Calculator -->
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">💰 മാസ ശമ്പള കണക്ക്</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="salaryMonth" class="p-2 border rounded">
+                            <option value="January">ജനുവരി</option>
+                            <option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option>
+                            <option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option>
+                            <option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option>
+                            <option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option>
+                            <option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option>
+                            <option value="December">ഡിസംബർ</option>
+                        </select>
+                        <button class="btn-primary text-sm" onclick="calculateSalary()">കണക്കാക്കുക</button>
+                    </div>
+                    <div id="salaryResult" class="mt-2 text-sm max-h-60 overflow-y-auto"></div>
+                </div>
+
+                <!-- Monthly Fee & Attendance Report -->
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">📊 മാസം തിരിച്ചുള്ള റിപ്പോർട്ട്</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="reportMonth" class="p-2 border rounded">
+                            <option value="January">ജനുവരി</option>
+                            <option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option>
+                            <option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option>
+                            <option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option>
+                            <option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option>
+                            <option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option>
+                            <option value="December">ഡിസംബർ</option>
+                        </select>
+                        <button class="btn-primary text-sm" onclick="generateMonthlyReport()">റിപ്പോർട്ട് കാണുക</button>
+                    </div>
+                    <div id="monthlyReport" class="mt-2 text-sm max-h-60 overflow-y-auto"></div>
+                </div>
+
+                <!-- Defaulters List -->
+                <div class="mt-4 border-t pt-3">
                     <h4 class="font-semibold">📋 കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ്</h4>
                     <div id="defaultersList" class="max-h-60 overflow-y-auto text-sm"></div>
                 </div>
-                <div class="mt-4">
-                    <h4 class="font-semibold">👨‍🏫 സ്റ്റാഫ് ഹാജർ ട്രാക്കർ</h4>
-                    <div id="staffAttendanceTracker" class="max-h-60 overflow-y-auto text-sm"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PUBLIC RESULT -->
-        <div id="panel-public" class="tab-content">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട്</h2>
-                <div class="flex flex-wrap gap-2 mt-2">
-                    <select id="resultClass" class="w-auto p-2 border rounded">
-                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                    </select>
-                    <input id="resultExam" placeholder="പരീക്ഷ (ഉദാ: Mid Term)" class="w-auto p-2 border rounded">
-                    <button class="btn-primary" onclick="showPublicResult()">കാണുക</button>
-                    <button class="bg-gray-700 text-white px-4 py-1 rounded-full text-sm" onclick="printResult()">🖨️ PDF</button>
-                </div>
-                <div id="publicResultDisplay" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
             </div>
         </div>
     </div>
@@ -370,9 +576,13 @@ let allHolidays = {};
 let allAnnouncements = [];
 let allExamTimetables = {};
 let allFeeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
+let allComplaints = [];
+let allMarks = {};
+let shiftClassMapping = { shifts: {1:[],2:[],3:[]} };
+let selectedMonth = 'April';
 
 // ====================================================
-//  INITIAL STUDENT DATA (124 students)
+//  INITIAL STUDENT DATA (124 students - same as before)
 // ====================================================
 const INITIAL_STUDENTS = [
 // 1st Class - Shift 1
@@ -514,166 +724,112 @@ const INITIAL_STUDENTS = [
 ];
 
 // ====================================================
-//  DATA LOADING FROM FIREBASE
+//  DATA LOADING FUNCTIONS
 // ====================================================
 function loadAllData() {
     showLoading(true);
-    
     db.ref('students').once('value').then(snap => {
         const data = snap.val();
-        if (data) {
-            allStudents = Object.values(data);
-        } else {
-            allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS));
-            syncStudentsToFirebase();
-        }
+        if (data) allStudents = Object.values(data);
+        else { allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS)); syncStudentsToFirebase(); }
         populateAllUI();
         showLoading(false);
-    }).catch(() => {
-        allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS));
-        populateAllUI();
-        showLoading(false);
-    });
+    }).catch(() => { allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS)); populateAllUI(); showLoading(false); });
 
-    db.ref('staff').on('value', snap => {
-        const data = snap.val();
-        if (data) allStaff = Object.values(data);
-        else allStaff = [];
-        renderStaffList();
-        updateCommitteeStats();
-        updateTeacherPanel();
-    });
-
-    db.ref('fees').on('value', snap => {
-        const data = snap.val();
-        if (data) allFees = data;
-        else allFees = {};
-        updateFeeUI();
-        updateCommitteeStats();
-    });
-
-    db.ref('attendance').on('value', snap => {
-        const data = snap.val();
-        if (data) allAttendance = data;
-        else allAttendance = {};
-        updateAttendanceUI();
-        updateCommitteeStats();
-    });
-
-    db.ref('holidays').on('value', snap => {
-        const data = snap.val();
-        if (data) allHolidays = data;
-        else allHolidays = {};
-        updateHolidayUI();
-    });
-
-    db.ref('announcements').on('value', snap => {
-        const data = snap.val();
-        if (data) allAnnouncements = Object.values(data);
-        else allAnnouncements = [];
-        updateParentNotifications();
-    });
-
-    db.ref('examTimetables').on('value', snap => {
-        const data = snap.val();
-        if (data) allExamTimetables = data;
-        else allExamTimetables = {};
-    });
-
-    db.ref('feeQR').on('value', snap => {
-        const data = snap.val();
-        if (data) allFeeQR = data;
-        else allFeeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
-        updateQRUI();
-    });
+    db.ref('staff').on('value', snap => { const d=snap.val(); allStaff=d?Object.values(d):[]; renderStaffList(); updateAll(); });
+    db.ref('fees').on('value', snap => { const d=snap.val(); allFees=d||{}; updateAll(); });
+    db.ref('attendance').on('value', snap => { const d=snap.val(); allAttendance=d||{}; updateAll(); });
+    db.ref('holidays').on('value', snap => { const d=snap.val(); allHolidays=d||{}; updateAll(); });
+    db.ref('announcements').on('value', snap => { const d=snap.val(); allAnnouncements=d?Object.values(d):[]; updateParentNotifications(); });
+    db.ref('examTimetables').on('value', snap => { const d=snap.val(); allExamTimetables=d||{}; renderExamTimetable(); });
+    db.ref('feeQR').on('value', snap => { const d=snap.val(); allFeeQR=d||{monthlyFee:0,googlePay:'',qrBase64:''}; updateQRUI(); });
+    db.ref('complaints').on('value', snap => { const d=snap.val(); allComplaints=d?Object.values(d):[]; });
+    db.ref('marks').on('value', snap => { const d=snap.val(); allMarks=d||{}; });
+    db.ref('shiftClassMapping').on('value', snap => { const d=snap.val(); if(d) shiftClassMapping=d; renderShiftClassUI(); });
 }
 
 function syncStudentsToFirebase() {
-    const updates = {};
-    allStudents.forEach(s => { updates[`students/${s.reg}`] = s; });
-    db.ref().update(updates).then(() => {
-        console.log('✅ Students synced to Firebase');
-    }).catch(e => console.error('❌ Error syncing students:', e));
+    const updates={}; allStudents.forEach(s=>{ updates[`students/${s.reg}`]=s; });
+    db.ref().update(updates).catch(e=>console.error(e));
 }
 
-function showLoading(show) {
-    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-}
+function showLoading(show) { document.getElementById('loadingOverlay').style.display=show?'flex':'none'; }
 
 function populateAllUI() {
     populateClassSelects();
     renderStudentEditor();
     renderStaffList();
-    updateCommitteeStats();
-    updateTeacherPanel();
-    updateFeeUI();
-    updateAttendanceUI();
-    updateHolidayUI();
-    updateParentNotifications();
+    updateAll();
+    renderShiftClassUI();
+    renderExamTimetable();
     updateQRUI();
+    if (currentUser) {
+        if (currentUser.role==='parent') updateParentPanel();
+        if (currentUser.role==='staff') updateTeacherPanel();
+        if (currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
+    }
+    showPublicResult();
 }
 
 function populateClassSelects() {
-    const selects = ['sadharClassSelect', 'feeClassSelect'];
-    selects.forEach(id => {
-        const sel = document.getElementById(id);
-        if (!sel) return;
-        sel.innerHTML = '';
-        for(let i=1; i<=12; i++) {
-            const opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = i + '-ാം ക്ലാസ്';
-            sel.appendChild(opt);
+    ['sadharClassSelect','feeClassSelect','teacherFeeClass','studentClassFilter'].forEach(id=>{
+        const sel=document.getElementById(id); if(!sel) return;
+        sel.innerHTML='';
+        if(id==='studentClassFilter') sel.innerHTML='<option value="all">എല്ലാ ക്ലാസുകളും</option>';
+        for(let i=1;i<=12;i++) {
+            const opt=document.createElement('option'); opt.value=i; opt.textContent=i+'-ാം ക്ലാസ്'; sel.appendChild(opt);
         }
     });
     document.getElementById('sadharClassSelect')?.addEventListener('change', loadSadharAttendance);
     document.getElementById('feeClassSelect')?.addEventListener('change', loadFeeStudents);
+    document.getElementById('studentClassFilter')?.addEventListener('change', renderStudentEditor);
+    document.getElementById('teacherFeeClass')?.addEventListener('change', loadTeacherFeeList);
+    // Set default date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('sadharAttendanceDate').value = today;
+    document.getElementById('teacherAttendanceDate').value = today;
+    document.getElementById('committeeAttendanceDate').value = today;
     loadSadharAttendance();
     loadFeeStudents();
 }
 
+function updateAll() {
+    updateCommitteeStats();
+    updateTeacherPanel();
+    if (currentUser && currentUser.role==='parent') updateParentPanel();
+    if (currentUser && currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
+}
+
 // ====================================================
-//  LOGIN SYSTEM - FIXED
+//  LOGIN SYSTEM
 // ====================================================
 document.getElementById('loginStaffBtn').addEventListener('click', function() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    
-    // SADHAR LOGIN
     if (username === 'sadhar' && password === 'admin123') {
         document.getElementById('loginError').classList.add('hidden');
         currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
         loginSuccess('സദർ');
         return;
     }
-    
-    // STAFF LOGIN
     const staff = allStaff.find(s => s.username === username && s.password === password);
     if (!staff || staff.deleted) {
         document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = staff && staff.deleted ? '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.' : '❌ ലോഗിൻ പരാജയപ്പെട്ടു. യൂസർനെയിം / പാസ്‌വേർഡ് ശരിയാണോയെന്ന് പരിശോധിക്കുക.';
+        document.getElementById('loginError').textContent = staff?.deleted ? '❌ നീക്കം ചെയ്തു' : '❌ തെറ്റായ വിവരങ്ങൾ';
         return;
     }
     document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'staff', username: staff.username, name: staff.name, classes: staff.classes || [] };
-    loginSuccess('അധ്യാപകൻ / ഭാരവാഹി');
+    currentUser = { role: staff.role || 'staff', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
+    loginSuccess(staff.role==='manager'?'മാനേജർ':staff.role==='secretary'?'സെക്രട്ടറി':'അധ്യാപകൻ');
 });
 
 document.getElementById('loginParentBtn').addEventListener('click', function() {
     const reg = parseInt(document.getElementById('loginParentReg').value.trim());
-    if (!reg) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ Reg No നൽകുക.';
-        return;
-    }
+    if (!reg) { document.getElementById('loginError').classList.remove('hidden'); return; }
     const student = allStudents.find(s => s.reg === reg);
-    if (!student) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ ഈ Reg No ഉള്ള കുട്ടിയെ കണ്ടെത്താനായില്ല.';
-        return;
-    }
+    if (!student) { document.getElementById('loginError').classList.remove('hidden'); return; }
     document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'parent', regNo: reg, name: student.name, cls: student.cls, shift: student.shift, parentName: student.father || 'രക്ഷിതാവ്', phone: student.phone || '' };
+    currentUser = { role: 'parent', regNo: reg, name: student.name, cls: student.cls, shift: student.shift, parentName: student.father||'രക്ഷിതാവ്', phone: student.phone||'' };
     loginSuccess('രക്ഷിതാവ്');
 });
 
@@ -683,44 +839,30 @@ function loginSuccess(roleDisplay) {
     document.getElementById('logoutBtn').classList.remove('hidden');
     document.getElementById('userRoleDisplay').textContent = `👤 ${currentUser.name} (${roleDisplay})`;
     
-    // Show correct tab based on role
+    // Show only relevant tabs
+    const tabs = document.querySelectorAll('.panel-tab');
+    tabs.forEach(tab => tab.style.display = 'none');
     if (currentUser.role === 'sadhar') {
+        document.querySelector('[data-tab="sadhar"]').style.display = 'inline-block';
+        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
         switchTab('sadhar');
-        // Show only sadhar and public tabs
-        document.querySelectorAll('.panel-tab').forEach(tab => {
-            if (tab.dataset.tab === 'sadhar' || tab.dataset.tab === 'public') {
-                tab.style.display = 'inline-block';
-            } else {
-                tab.style.display = 'none';
-            }
-        });
-    } else if (currentUser.role === 'staff') {
+    } else if (currentUser.role === 'staff' || currentUser.role === 'manager' || currentUser.role === 'secretary') {
+        document.querySelector('[data-tab="teacher"]').style.display = 'inline-block';
+        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
         switchTab('teacher');
-        document.querySelectorAll('.panel-tab').forEach(tab => {
-            if (tab.dataset.tab === 'teacher' || tab.dataset.tab === 'public') {
-                tab.style.display = 'inline-block';
-            } else {
-                tab.style.display = 'none';
-            }
-        });
     } else if (currentUser.role === 'parent') {
+        document.querySelector('[data-tab="parent"]').style.display = 'inline-block';
         switchTab('parent');
-        document.querySelectorAll('.panel-tab').forEach(tab => {
-            if (tab.dataset.tab === 'parent' || tab.dataset.tab === 'public') {
-                tab.style.display = 'inline-block';
-            } else {
-                tab.style.display = 'none';
-            }
-        });
         checkParentNotifications();
     } else {
+        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
         switchTab('committee');
     }
-    
-    // Check for staff deletion every 30 seconds
-    if (currentUser.role === 'staff') {
-        setInterval(checkStaffDeletion, 30000);
+    if (currentUser.role !== 'sadhar') {
+        document.querySelector('[data-tab="sadhar"]')?.remove();
     }
+    // Show public result always
+    document.getElementById('publicResultSection').style.display = 'block';
 }
 
 function logout() {
@@ -732,110 +874,157 @@ function logout() {
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginParentReg').value = '';
-    
-    // Show all tabs again
-    document.querySelectorAll('.panel-tab').forEach(tab => {
-        tab.style.display = 'inline-block';
-    });
+    document.querySelectorAll('.panel-tab').forEach(tab => tab.style.display = 'inline-block');
+    document.getElementById('publicResultSection').style.display = 'block';
 }
 
-function checkStaffDeletion() {
-    if (!currentUser || currentUser.role !== 'staff') return;
-    const staff = allStaff.find(s => s.username === currentUser.username);
-    if (!staff || staff.deleted) {
-        alert('⚠️ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു. ദയവായി വീണ്ടും ലോഗിൻ ചെയ്യുക.');
-        logout();
-    }
-}
-
-// ====================================================
-//  TAB SWITCHING
-// ====================================================
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
-    const panel = document.getElementById('panel-' + tab);
+    const panel = document.getElementById('panel-'+tab);
     if (panel) panel.classList.add('active');
-    const tabBtn = document.querySelector(`[data-tab="${tab}"]`);
-    if (tabBtn) tabBtn.classList.add('active');
-    if (tab === 'committee') updateCommitteeStats();
-    if (tab === 'teacher') updateTeacherPanel();
-    if (tab === 'parent') updateParentPanel();
-    if (tab === 'sadhar') populateAllUI();
+    const btn = document.querySelector(`[data-tab="${tab}"]`);
+    if (btn) btn.classList.add('active');
+    if (tab==='committee') { updateCommitteeStats(); loadCommitteeAttendance(); calculateSalary(); generateMonthlyReport(); }
+    if (tab==='teacher') updateTeacherPanel();
+    if (tab==='parent') updateParentPanel();
+    if (tab==='sadhar') { loadSadharAttendance(); loadFeeStudents(); renderShiftClassUI(); }
 }
 
-// ====================================================
-//  ACCORDION TOGGLE
-// ====================================================
 function toggleAccordion(id) {
-    const content = document.getElementById(id);
-    content.classList.toggle('open');
+    document.getElementById(id).classList.toggle('open');
 }
 
 // ====================================================
-//  STAFF MANAGEMENT
+//  STAFF MANAGEMENT WITH PHOTO
 // ====================================================
 function addStaff() {
     const name = document.getElementById('staffName').value.trim();
     const username = document.getElementById('staffUsername').value.trim();
     const password = document.getElementById('staffPassword').value.trim();
-    const classes = document.getElementById('staffClasses').value.trim().split(',').map(c => parseInt(c.trim())).filter(c => c);
-    if (!name || !username || !password) {
-        alert('❌ എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക.');
-        return;
+    const classes = document.getElementById('staffClasses').value.trim().split(',').map(c=>parseInt(c.trim())).filter(c=>c);
+    const role = document.getElementById('staffRole').value;
+    const file = document.getElementById('staffPhoto').files[0];
+    if (!name || !username || !password) { alert('❌ എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക.'); return; }
+    
+    const newStaff = { name, username, password, classes, role, deleted: false, photo: '' };
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            newStaff.photo = e.target.result;
+            allStaff.push(newStaff);
+            db.ref('staff').push(newStaff);
+            renderStaffList();
+            clearStaffFields();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        allStaff.push(newStaff);
+        db.ref('staff').push(newStaff);
+        renderStaffList();
+        clearStaffFields();
     }
-    const newStaff = { name, username, password, classes, deleted: false };
-    allStaff.push(newStaff);
-    db.ref('staff').push(newStaff);
-    renderStaffList();
-    document.getElementById('staffName').value = '';
-    document.getElementById('staffUsername').value = '';
-    document.getElementById('staffPassword').value = '';
-    document.getElementById('staffClasses').value = '';
+}
+
+function clearStaffFields() {
+    document.getElementById('staffName').value='';
+    document.getElementById('staffUsername').value='';
+    document.getElementById('staffPassword').value='';
+    document.getElementById('staffClasses').value='';
+    document.getElementById('staffPhoto').value='';
 }
 
 function deleteStaff(username) {
-    if (!confirm('ഈ അധ്യാപകനെ നീക്കം ചെയ്യണോ?')) return;
-    const staff = allStaff.find(s => s.username === username);
+    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
+    const staff = allStaff.find(s=>s.username===username);
     if (staff) {
         staff.deleted = true;
-        db.ref('staff').orderByChild('username').equalTo(username).once('value').then(snap => {
-            snap.forEach(child => {
-                child.ref.update({ deleted: true });
-            });
+        db.ref('staff').orderByChild('username').equalTo(username).once('value').then(snap=>{
+            snap.forEach(child=>child.ref.update({deleted:true}));
         });
         renderStaffList();
-        if (currentUser && currentUser.username === username) {
-            alert('⚠️ നിങ്ങളെ നീക്കം ചെയ്തിരിക്കുന്നു. ലോഗൗട്ട് ചെയ്യുന്നു.');
-            logout();
-        }
+        if (currentUser && currentUser.username===username) { alert('നീക്കം ചെയ്തു'); logout(); }
     }
 }
 
 function renderStaffList() {
     const container = document.getElementById('staffList');
     if (!container) return;
-    const activeStaff = allStaff.filter(s => !s.deleted);
-    container.innerHTML = activeStaff.map(s => `
-        <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
-            <span><strong>${s.name}</strong> (${s.username}) - ക്ലാസ്സുകൾ: ${s.classes.join(', ')}</span>
-            <button class="btn-danger text-sm" onclick="deleteStaff('${s.username}')">നീക്കം ചെയ്യുക</button>
+    const active = allStaff.filter(s=>!s.deleted);
+    container.innerHTML = active.map(s=>`
+        <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+            <div class="flex items-center gap-2">
+                ${s.photo ? `<img src="${s.photo}" class="staff-photo">` : `<div class="staff-photo bg-gray-300 rounded-full flex items-center justify-center">👤</div>`}
+                <span><strong>${s.name}</strong> (${s.username}) - ${s.role||'അധ്യാപകൻ'} - ക്ലാസ്സുകൾ: ${s.classes.join(', ')}</span>
+            </div>
+            <button class="btn-danger text-sm" onclick="deleteStaff('${s.username}')">നീക്കം</button>
         </div>
     `).join('');
 }
 
 // ====================================================
-//  SADHAR ATTENDANCE
+//  SHIFT + CLASS LINKING (New Model)
+// ====================================================
+function renderShiftClassUI() {
+    const shifts = [1,2,3];
+    shifts.forEach(shift => {
+        const container = document.getElementById(`shift${shift}Classes`);
+        if (!container) return;
+        const classes = shiftClassMapping.shifts?.[shift] || [];
+        container.innerHTML = classes.map(c => `<span class="class-chip selected" onclick="removeClassFromShift(${shift},${c})">${c}-ാം ക്ലാസ് ✕</span>`).join('');
+        if (classes.length === 0) container.innerHTML = '<span class="text-gray-400 text-sm">ക്ലാസുകൾ ഇവിടെ ഡ്രാഗ് ചെയ്യുക</span>';
+    });
+    // Available classes
+    const allAssigned = new Set();
+    [1,2,3].forEach(s => (shiftClassMapping.shifts?.[s]||[]).forEach(c => allAssigned.add(c)));
+    const available = [];
+    for(let i=1;i<=12;i++) if(!allAssigned.has(i)) available.push(i);
+    document.getElementById('availableClassesList').innerHTML = available.map(c => 
+        `<span class="class-chip" onclick="addClassToShift(${c})">${c}-ാം ക്ലാസ് ➕</span>`
+    ).join('') || '<span class="text-gray-400">എല്ലാ ക്ലാസുകളും അസൈൻ ചെയ്തു</span>';
+}
+
+function addClassToShift(cls) {
+    // Find first shift with less than 4 classes
+    for(let s=1;s<=3;s++) {
+        const classes = shiftClassMapping.shifts?.[s] || [];
+        if (classes.length < 4 && !classes.includes(cls)) {
+            if (!shiftClassMapping.shifts) shiftClassMapping.shifts = {};
+            if (!shiftClassMapping.shifts[s]) shiftClassMapping.shifts[s] = [];
+            shiftClassMapping.shifts[s].push(cls);
+            renderShiftClassUI();
+            return;
+        }
+    }
+    alert('എല്ലാ ഷിഫ്റ്റുകളിലും 4 ക്ലാസുകൾ വീതം ഉണ്ട്. ആദ്യം ഒരു ക്ലാസ് നീക്കുക.');
+}
+
+function removeClassFromShift(shift, cls) {
+    if (!shiftClassMapping.shifts) shiftClassMapping.shifts = {};
+    if (!shiftClassMapping.shifts[shift]) return;
+    shiftClassMapping.shifts[shift] = shiftClassMapping.shifts[shift].filter(c => c !== cls);
+    renderShiftClassUI();
+}
+
+function saveShiftClassNew() {
+    db.ref('shiftClassMapping').set(shiftClassMapping).then(() => {
+        alert('✅ ഷിഫ്റ്റ് & ക്ലാസ്സ് ലിങ്കിംഗ് സേവ് ചെയ്തു.');
+    }).catch(e => alert('❌ പിശക്: '+e.message));
+}
+
+// ====================================================
+//  SADHAR ATTENDANCE WITH WHATSAPP ALERT
 // ====================================================
 function loadSadharAttendance() {
     const cls = parseInt(document.getElementById('sadharClassSelect').value);
+    const date = document.getElementById('sadharAttendanceDate').value || new Date().toISOString().split('T')[0];
     const students = allStudents.filter(s => s.cls === cls);
     const container = document.getElementById('sadharAttendanceList');
     container.innerHTML = students.map(s => `
         <div class="flex items-center gap-2 p-1 border-b">
             <span class="w-8 text-xs">${s.reg}</span>
             <span class="flex-1 text-sm">${s.name}</span>
-            <select class="attendance-select text-sm p-1 border rounded" data-reg="${s.reg}">
+            <select class="attendance-select text-sm p-1 border rounded" data-reg="${s.reg}" data-phone="${s.phone}">
                 <option value="present">✅ Present</option>
                 <option value="absent">❌ Absent</option>
             </select>
@@ -845,35 +1034,100 @@ function loadSadharAttendance() {
 
 function submitSadharAttendance() {
     const cls = parseInt(document.getElementById('sadharClassSelect').value);
-    const date = new Date().toISOString().split('T')[0];
+    const date = document.getElementById('sadharAttendanceDate').value || new Date().toISOString().split('T')[0];
     const selects = document.querySelectorAll('#sadharAttendanceList .attendance-select');
     const attData = {};
+    const absentStudents = [];
     selects.forEach(sel => {
-        attData[sel.dataset.reg] = sel.value;
+        const reg = parseInt(sel.dataset.reg);
+        const status = sel.value;
+        attData[reg] = status;
+        if (status === 'absent') {
+            const student = allStudents.find(s => s.reg === reg);
+            if (student) absentStudents.push(student);
+        }
     });
     db.ref(`attendance/${date}/${cls}`).update(attData).then(() => {
         alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
+        // Store absent for WhatsApp
+        window._absentStudents = absentStudents;
+    }).catch(e => alert('❌ പിശക്: '+e.message));
 }
 
-// ====================================================
-//  EXAM TIMETABLE
-// ====================================================
-function saveExamTimetable() {
-    const data = document.getElementById('examTimetable').value;
-    db.ref('examTimetables').set({ data }).then(() => {
-        alert('✅ ടൈംടേബിൾ സേവ് ചെയ്തു.');
+function sendAbsentAlert() {
+    const absent = window._absentStudents || [];
+    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് കുട്ടികൾ ഇല്ല.'); return; }
+    let msg = "📢 അസ്സലാമു അലൈക്കും, ഇന്ന് മദ്റസയിൽ ഹാജരാകാത്ത കുട്ടികൾ:\n\n";
+    absent.forEach(s => {
+        msg += `👤 ${s.name} (Reg: ${s.reg}) - ${s.cls}-ാം ക്ലാസ്\n`;
     });
-}
-
-function sendExamAlert() {
-    const msg = "📢 നാളത്തെ പരീക്ഷാ ടൈംടേബിൾ:\n" + document.getElementById('examTimetable').value;
+    msg += "\nദയവായി അവരുടെ രക്ഷിതാക്കളെ അറിയിക്കുക.";
+    // Open WhatsApp with the message
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ====================================================
-//  FEE & QR
+//  EXAM TIMETABLE - CLASS WISE
 // ====================================================
+function addExamSchedule() {
+    const cls = document.getElementById('examClassSelect').value;
+    const subject = document.getElementById('examSubject').value.trim();
+    const date = document.getElementById('examDate').value;
+    if (!subject || !date) { alert('⚠️ വിഷയവും തീയതിയും നൽകുക.'); return; }
+    if (!allExamTimetables[cls]) allExamTimetables[cls] = [];
+    allExamTimetables[cls].push({ subject, date, id: Date.now() });
+    db.ref('examTimetables').set(allExamTimetables);
+    renderExamTimetable();
+    document.getElementById('examSubject').value = '';
+    document.getElementById('examDate').value = '';
+}
+
+function renderExamTimetable() {
+    const container = document.getElementById('examTimetableList');
+    if (!container) return;
+    const cls = document.getElementById('examClassSelect')?.value || '1';
+    const exams = allExamTimetables[cls] || [];
+    container.innerHTML = exams.map(e => `
+        <div class="flex justify-between items-center p-1 border-b text-sm">
+            <span>${e.subject} - ${e.date}</span>
+            <button class="btn-danger text-xs" onclick="removeExam(${e.id})">✕</button>
+        </div>
+    `).join('') || '<p class="text-gray-400">ഇതുവരെ ടൈംടേബിൾ ഇല്ല</p>';
+}
+
+function removeExam(id) {
+    const cls = document.getElementById('examClassSelect').value;
+    if (!allExamTimetables[cls]) return;
+    allExamTimetables[cls] = allExamTimetables[cls].filter(e => e.id !== id);
+    db.ref('examTimetables').set(allExamTimetables);
+    renderExamTimetable();
+}
+
+function sendClassExamAlert() {
+    const cls = document.getElementById('examClassSelect').value;
+    const exams = allExamTimetables[cls] || [];
+    if (exams.length === 0) { alert('⚠️ ടൈംടേബിൾ ഇല്ല.'); return; }
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+    const tomorrowExams = exams.filter(e => e.date === tomorrow);
+    if (tomorrowExams.length === 0) { alert('⚠️ നാളത്തെ പരീക്ഷ ഇല്ല.'); return; }
+    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ നാളത്തെ പരീക്ഷാ ടൈംടേബിൾ:\n\n`;
+    tomorrowExams.forEach(e => { msg += `📝 ${e.subject} - ${e.date}\n`; });
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ====================================================
+//  FEE WITH MONTHS
+// ====================================================
+document.querySelectorAll('#feeMonthSelector .month-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('#feeMonthSelector .month-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        selectedMonth = this.dataset.month;
+        document.getElementById('feeMonthStatus').innerHTML = `<span class="text-green-600">✅ തിരഞ്ഞെടുത്ത മാസം: ${selectedMonth}</span>`;
+    });
+});
+
 function saveFeeQR() {
     const fee = document.getElementById('monthlyFee').value;
     const gpay = document.getElementById('googlePayNumber').value;
@@ -886,42 +1140,406 @@ function saveFeeQR() {
             const data = { monthlyFee: fee, googlePay: gpay, qrBase64 };
             db.ref('feeQR').set(data);
             allFeeQR = data;
-            alert('✅ ഫീസ് & QR സേവ് ചെയ്തു.');
+            alert('✅ സേവ് ചെയ്തു.');
             updateQRUI();
         };
         reader.readAsDataURL(file);
     } else {
-        const data = { monthlyFee: fee, googlePay: gpay, qrBase64: allFeeQR.qrBase64 || '' };
+        const data = { monthlyFee: fee, googlePay: gpay, qrBase64 };
         db.ref('feeQR').set(data);
         allFeeQR = data;
-        alert('✅ ഫീസ് & QR സേവ് ചെയ്തു.');
+        alert('✅ സേവ് ചെയ്തു.');
         updateQRUI();
     }
 }
 
 function updateQRUI() {
     const preview = document.getElementById('qrPreview');
-    if (allFeeQR.qrBase64) {
-        preview.innerHTML = `<img src="${allFeeQR.qrBase64}" class="qr-img">`;
-    } else {
-        preview.innerHTML = '';
-    }
+    preview.innerHTML = allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img">` : '';
     document.getElementById('monthlyFee').value = allFeeQR.monthlyFee || '';
     document.getElementById('googlePayNumber').value = allFeeQR.googlePay || '';
 }
 
 // ====================================================
-//  HOLIDAY MANAGEMENT
+//  FEE STUDENT LIST WITH MONTH
+// ====================================================
+function loadFeeStudents() {
+    const cls = parseInt(document.getElementById('feeClassSelect').value);
+    const month = document.getElementById('feeMonthSelect').value;
+    const students = allStudents.filter(s => s.cls === cls);
+    const container = document.getElementById('feeStudentList');
+    const fee = allFeeQR.monthlyFee || 0;
+    container.innerHTML = students.map(s => {
+        const key = `${s.reg}_${month}`;
+        const paid = allFees[key] || 0;
+        return `
+            <div class="flex items-center justify-between p-1 border-b text-sm ${paid >= fee ? 'fee-paid' : 'fee-due'}">
+                <span>${s.name} (${s.reg})</span>
+                <span>അടച്ചത്: ₹${paid} | ബാക്കി: ₹${fee - paid}</span>
+                <button class="btn-primary text-xs" onclick="updateFeeMonth(${s.reg},'${month}')">ഫീസ്</button>
+                <button class="whatsapp-btn text-xs" onclick="sendFeeReceiptMonth(${s.reg},'${month}')"><i class="fab fa-whatsapp"></i></button>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateFeeMonth(reg, month) {
+    const amount = prompt(`₹${allFeeQR.monthlyFee||0} ഫീസ് അടയ്ക്കുക:`);
+    if (amount === null) return;
+    const val = parseFloat(amount);
+    if (isNaN(val) || val < 0) { alert('⚠️ ശരിയായ തുക.'); return; }
+    const key = `${reg}_${month}`;
+    const current = allFees[key] || 0;
+    const newTotal = current + val;
+    db.ref(`fees/${key}`).set(newTotal).then(() => {
+        allFees[key] = newTotal;
+        alert('✅ ഫീസ് അപ്ഡേറ്റ് ചെയ്തു.');
+        loadFeeStudents();
+        updateCommitteeStats();
+    }).catch(e => alert('❌ '+e.message));
+}
+
+function sendFeeReceiptMonth(reg, month) {
+    const student = allStudents.find(s => s.reg === reg);
+    if (!student) return;
+    const fee = allFeeQR.monthlyFee || 0;
+    const key = `${reg}_${month}`;
+    const paid = allFees[key] || 0;
+    const due = fee - paid;
+    const msg = `അസ്സലാമു അലൈക്കും, ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന ${student.name} (Reg: ${student.reg}) ${month} മാസത്തെ ഫീസ് ₹${fee} അടച്ചു. ആകെ: ₹${paid}, ബാക്കി: ₹${due}. - മമ്പഉൽ ഉലൂം മദ്റസ.`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ====================================================
+//  STUDENT EDITOR - CLASS WISE
+// ====================================================
+function renderStudentEditor() {
+    const container = document.getElementById('studentEditorList');
+    const filter = document.getElementById('studentClassFilter').value;
+    let students = allStudents;
+    if (filter !== 'all') students = students.filter(s => s.cls === parseInt(filter));
+    students.sort((a,b) => a.cls - b.cls || a.reg - b.reg);
+    container.innerHTML = students.map(s => `
+        <div class="student-card">
+            ${s.photo ? `<img src="${s.photo}">` : `<div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">👤</div>`}
+            <div class="flex-1">
+                <div class="font-semibold">${s.name}</div>
+                <div class="text-xs text-gray-600">Reg: ${s.reg} | ${s.cls}-ാം ക്ലാസ് | ഷിഫ്റ്റ് ${s.shift}</div>
+                <div class="text-xs text-gray-500">വാപ്പ: ${s.father} | ഫോൺ: ${s.phone}</div>
+            </div>
+            <button class="btn-primary text-xs" onclick="editStudent(${s.reg})">✏️</button>
+            <button class="btn-danger text-xs" onclick="deleteStudent(${s.reg})">🗑️</button>
+        </div>
+    `).join('');
+}
+
+function editStudent(reg) {
+    const s = allStudents.find(st => st.reg === reg);
+    if (!s) return;
+    const name = prompt('പേര്:', s.name);
+    if (name !== null) s.name = name;
+    const father = prompt('വാപ്പാന്റെ പേര്:', s.father);
+    if (father !== null) s.father = father;
+    const phone = prompt('ഫോൺ:', s.phone);
+    if (phone !== null) s.phone = phone;
+    const cls = prompt('ക്ലാസ് (1-12):', s.cls);
+    if (cls !== null && !isNaN(cls) && cls>=1 && cls<=12) s.cls = parseInt(cls);
+    const shift = prompt('ഷിഫ്റ്റ് (1-3):', s.shift);
+    if (shift !== null && !isNaN(shift) && shift>=1 && shift<=3) s.shift = parseInt(shift);
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                s.photo = ev.target.result;
+                db.ref(`students/${reg}`).update(s);
+                renderStudentEditor();
+                alert('✅ അപ്ഡേറ്റ് ചെയ്തു');
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    fileInput.click();
+    db.ref(`students/${reg}`).update(s);
+    renderStudentEditor();
+}
+
+function deleteStudent(reg) {
+    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
+    allStudents = allStudents.filter(s => s.reg !== reg);
+    db.ref(`students/${reg}`).remove();
+    renderStudentEditor();
+}
+
+// ====================================================
+//  TEACHER PANEL - ENHANCED
+// ====================================================
+function updateTeacherPanel() {
+    if (!currentUser || !['staff','manager','secretary'].includes(currentUser.role)) return;
+    const container = document.getElementById('teacherClassList');
+    const classes = currentUser.classes || [];
+    if (classes.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">ക്ലാസുകളൊന്നുമില്ല.</p>';
+        return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    container.innerHTML = classes.map(cls => {
+        const students = allStudents.filter(s => s.cls === cls);
+        const holiday = allHolidays && (allHolidays.shift === 'all' || parseInt(allHolidays.shift) === currentUser.shift);
+        return `
+            <div class="border rounded-xl p-3 ${holiday ? 'opacity-50 blur-sm' : ''}">
+                <h4 class="font-bold text-lg">${cls}-ാം ക്ലാസ്</h4>
+                ${holiday ? `<div class="holiday-banner">🏖️ അവധി: ${allHolidays.reason}</div>` : ''}
+                <div class="mt-2 text-sm max-h-40 overflow-y-auto">
+                    ${students.map(s => `
+                        <div class="flex items-center justify-between p-1 border-b">
+                            <span>${s.name} (${s.reg})</span>
+                            <select class="teacher-attendance-select text-xs p-1 border rounded" data-reg="${s.reg}" data-cls="${cls}">
+                                <option value="present">✅ Present</option>
+                                <option value="absent">❌ Absent</option>
+                            </select>
+                        </div>
+                    `).join('')}
+                </div>
+                ${!holiday ? `<button class="mt-2 btn-success text-sm" onclick="submitTeacherAttendance(${cls})">✅ ഹാജർ സബ്മിറ്റ്</button>` : ''}
+                <button class="mt-2 whatsapp-btn text-sm" onclick="sendAbsentWhatsApp(${cls})"><i class="fab fa-whatsapp"></i> അബ്സന്റ് അറിയിപ്പ്</button>
+            </div>
+        `;
+    }).join('');
+    
+    // Load teacher fee list
+    loadTeacherFeeList();
+    // Load teacher complaints
+    loadTeacherComplaints();
+}
+
+function submitTeacherAttendance(cls) {
+    const today = new Date().toISOString().split('T')[0];
+    const selects = document.querySelectorAll(`#teacherClassList .teacher-attendance-select[data-cls="${cls}"]`);
+    const attData = {};
+    selects.forEach(sel => { attData[sel.dataset.reg] = sel.value; });
+    db.ref(`attendance/${today}/${cls}`).update(attData).then(() => {
+        db.ref(`staffAttendance/${today}/${currentUser.username}`).set('present');
+        alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
+    }).catch(e => alert('❌ '+e.message));
+}
+
+function sendAbsentWhatsApp(cls) {
+    const today = new Date().toISOString().split('T')[0];
+    const selects = document.querySelectorAll(`#teacherClassList .teacher-attendance-select[data-cls="${cls}"]`);
+    const absent = [];
+    selects.forEach(sel => {
+        if (sel.value === 'absent') {
+            const student = allStudents.find(s => s.reg === parseInt(sel.dataset.reg));
+            if (student) absent.push(student);
+        }
+    });
+    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് ഇല്ല.'); return; }
+    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ അബ്സന്റ് കുട്ടികൾ:\n\n`;
+    absent.forEach(s => { msg += `👤 ${s.name} (Reg: ${s.reg})\n`; });
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// Teacher Attendance History
+function loadTeacherAttendance() {
+    const date = document.getElementById('teacherAttendanceDate').value || new Date().toISOString().split('T')[0];
+    const container = document.getElementById('teacherAttendanceView');
+    const classes = currentUser?.classes || [];
+    let html = `<h5 class="font-semibold">📅 ${date}</h5>`;
+    classes.forEach(cls => {
+        const att = allAttendance[date]?.[cls] || {};
+        const students = allStudents.filter(s => s.cls === cls);
+        html += `<div class="mt-1"><strong>${cls}-ാം ക്ലാസ്:</strong> `;
+        html += students.map(s => `${s.name}: ${att[s.reg] === 'present' ? '✅' : '❌'}`).join(' | ');
+        html += '</div>';
+    });
+    container.innerHTML = html || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
+}
+
+// Teacher Fee Update
+function loadTeacherFeeList() {
+    const cls = parseInt(document.getElementById('teacherFeeClass').value);
+    const month = document.getElementById('teacherFeeMonth').value;
+    const container = document.getElementById('teacherFeeList');
+    const students = allStudents.filter(s => s.cls === cls);
+    const fee = allFeeQR.monthlyFee || 0;
+    container.innerHTML = students.map(s => {
+        const key = `${s.reg}_${month}`;
+        const paid = allFees[key] || 0;
+        return `
+            <div class="flex items-center justify-between p-1 border-b text-sm">
+                <span>${s.name} (${s.reg})</span>
+                <span>അടച്ചത്: ₹${paid}</span>
+                <button class="btn-primary text-xs" onclick="updateFeeMonth(${s.reg},'${month}')">ഫീസ്</button>
+            </div>
+        `;
+    }).join('');
+}
+
+// Teacher Complaints
+function submitTeacherComplaint() {
+    const complaint = document.getElementById('teacherComplaint').value.trim();
+    const reg = parseInt(document.getElementById('teacherComplaintReg').value.trim());
+    if (!complaint || !reg) { alert('⚠️ പരാതിയും Reg No യും നൽകുക.'); return; }
+    const data = { reg, complaint, teacher: currentUser.name, date: new Date().toISOString(), id: Date.now() };
+    db.ref('complaints').push(data);
+    alert('✅ പരാതി അയച്ചു.');
+    document.getElementById('teacherComplaint').value = '';
+    document.getElementById('teacherComplaintReg').value = '';
+    loadTeacherComplaints();
+}
+
+function loadTeacherComplaints() {
+    const container = document.getElementById('teacherComplaintsList');
+    const complaints = allComplaints.filter(c => c.teacher === currentUser?.name);
+    container.innerHTML = complaints.map(c => `
+        <div class="p-1 border-b text-sm">
+            <strong>Reg ${c.reg}:</strong> ${c.complaint}
+            <span class="text-xs text-gray-400">${new Date(c.date).toLocaleString()}</span>
+        </div>
+    `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>';
+}
+
+// Teacher Marks
+function submitTeacherMarks() {
+    const reg = parseInt(document.getElementById('teacherMarksReg').value.trim());
+    const subject = document.getElementById('teacherMarksSubject').value.trim();
+    const marks = document.getElementById('teacherMarksScore').value.trim();
+    if (!reg || !subject || !marks) { alert('⚠️ എല്ലാം പൂരിപ്പിക്കുക.'); return; }
+    if (!allMarks[reg]) allMarks[reg] = [];
+    allMarks[reg].push({ subject, marks: parseFloat(marks), teacher: currentUser.name, date: new Date().toISOString() });
+    db.ref('marks').set(allMarks);
+    alert('✅ മാർക്ക് രേഖപ്പെടുത്തി.');
+    document.getElementById('teacherMarksReg').value = '';
+    document.getElementById('teacherMarksSubject').value = '';
+    document.getElementById('teacherMarksScore').value = '';
+}
+
+function sendMarksToParent() {
+    const reg = parseInt(document.getElementById('teacherMarksReg').value.trim());
+    if (!reg) { alert('⚠️ Reg No നൽകുക.'); return; }
+    const student = allStudents.find(s => s.reg === reg);
+    if (!student) { alert('⚠️ കുട്ടിയെ കണ്ടില്ല.'); return; }
+    const marks = allMarks[reg] || [];
+    if (marks.length === 0) { alert('⚠️ മാർക്ക് ഇല്ല.'); return; }
+    let msg = `📝 ${student.name} (Reg: ${student.reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ മാർക്ക്:\n\n`;
+    marks.forEach(m => { msg += `📖 ${m.subject}: ${m.marks}\n`; });
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ====================================================
+//  PARENT PANEL
+// ====================================================
+function updateParentPanel() {
+    if (!currentUser || currentUser.role !== 'parent') return;
+    const student = allStudents.find(s => s.reg === currentUser.regNo);
+    if (!student) return;
+    document.getElementById('parentInfo').innerHTML = `
+        <div class="flex items-center gap-4">
+            ${student.photo ? `<img src="${student.photo}" class="w-16 h-16 rounded-full">` : `<div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl">👤</div>`}
+            <div>
+                <p><strong>${student.name}</strong> (Reg: ${student.reg})</p>
+                <p class="text-sm">${student.cls}-ാം ക്ലാസ്, ഷിഫ്റ്റ് ${student.shift}</p>
+                <p class="text-sm">രക്ഷിതാവ്: ${student.father}</p>
+            </div>
+        </div>
+    `;
+    document.getElementById('parentEditName').value = student.father || '';
+    document.getElementById('parentEditPhone').value = student.phone || '';
+
+    const fee = allFeeQR.monthlyFee || 0;
+    const paid = allFees[`${student.reg}_${selectedMonth}`] || 0;
+    const due = fee - paid;
+    document.getElementById('parentPaymentBox').innerHTML = `
+        <p><strong>💰 ഫീസ്:</strong> ₹${fee}</p>
+        <p><strong>✅ അടച്ചത്:</strong> ₹${paid}</p>
+        <p><strong>⚠️ കുടിശ്ശിക:</strong> ₹${due < 0 ? 0 : due}</p>
+        ${allFeeQR.googlePay ? `<p><strong>Google Pay:</strong> ${allFeeQR.googlePay}</p>` : ''}
+        ${allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img mt-2">` : ''}
+    `;
+    document.getElementById('parentFeeStatus').innerHTML = `
+        <p>മാസം: ${selectedMonth}</p>
+        <p>നില: ${paid >= fee ? '✅ ഫീസ് അടച്ചു' : '⚠️ ബാക്കിയുണ്ട്'}</p>
+    `;
+
+    // Show marks
+    const marks = allMarks[student.reg] || [];
+    document.getElementById('parentMarksList').innerHTML = marks.map(m => `
+        <div class="p-1 border-b text-sm">📖 ${m.subject}: ${m.marks}</div>
+    `).join('') || '<p class="text-gray-400">മാർക്ക് ഇല്ല</p>';
+}
+
+function updateParentInfo() {
+    if (!currentUser || currentUser.role !== 'parent') return;
+    const name = document.getElementById('parentEditName').value.trim();
+    const phone = document.getElementById('parentEditPhone').value.trim();
+    const file = document.getElementById('parentEditPhoto').files[0];
+    const student = allStudents.find(s => s.reg === currentUser.regNo);
+    if (!student) return;
+    if (name) student.father = name;
+    if (phone) student.phone = phone;
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            student.photo = e.target.result;
+            db.ref(`students/${student.reg}`).update(student);
+            alert('✅ അപ്ഡേറ്റ് ചെയ്തു.');
+            updateParentPanel();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        db.ref(`students/${student.reg}`).update(student);
+        alert('✅ അപ്ഡേറ്റ് ചെയ്തു.');
+        updateParentPanel();
+    }
+}
+
+function updateParentNotifications() {
+    if (!currentUser || currentUser.role !== 'parent') return;
+    const container = document.getElementById('parentNotifications');
+    const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
+    container.innerHTML = recent.length === 0 ? '<p class="text-gray-500">പുതിയ അറിയിപ്പുകൾ ഇല്ല.</p>' :
+        recent.slice(-5).reverse().map(a => `
+            <div class="border-b py-2">
+                <h4 class="font-bold">${a.title}</h4>
+                <p>${a.body}</p>
+                ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="max-h-32">` : '') : ''}
+                <span class="text-xs text-gray-400">${new Date(a.timestamp).toLocaleString()}</span>
+            </div>
+        `).join('');
+}
+
+function checkParentNotifications() {
+    if (allAnnouncements.length > 0 && currentUser?.role === 'parent') {
+        const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
+        if (recent.length > 0) {
+            const last = recent[recent.length - 1];
+            document.getElementById('popupContent').innerHTML = `
+                <h4 class="font-bold">${last.title}</h4>
+                <p>${last.body}</p>
+                ${last.media ? `<img src="${last.media}" class="max-h-40 mt-2">` : ''}
+            `;
+            document.getElementById('popupNotification').style.display = 'flex';
+        }
+    }
+}
+function closePopup() { document.getElementById('popupNotification').style.display = 'none'; }
+
+// ====================================================
+//  HOLIDAY MANAGER
 // ====================================================
 function setHoliday() {
     const reason = document.getElementById('holidayReason').value.trim();
     const shift = document.getElementById('holidayShift').value;
+    const date = document.getElementById('holidayDate').value || new Date().toISOString().split('T')[0];
     if (!reason) { alert('⚠️ കാരണം നൽകുക.'); return; }
-    const holiday = { reason, shift, date: new Date().toISOString() };
+    const holiday = { reason, shift, date };
     db.ref('holidays').set(holiday);
     allHolidays = holiday;
     alert('✅ അവധി പ്രഖ്യാപിച്ചു.');
-    updateHolidayUI();
 }
 
 function clearHoliday() {
@@ -929,10 +1547,7 @@ function clearHoliday() {
     db.ref('holidays').remove();
     allHolidays = {};
     alert('✅ അവധി എടുത്തുമാറ്റി.');
-    updateHolidayUI();
 }
-
-function updateHolidayUI() {}
 
 // ====================================================
 //  ANNOUNCEMENTS
@@ -950,14 +1565,14 @@ function publishAnnouncement() {
             mediaBase64 = e.target.result;
             const ann = { title, body, target, media: mediaBase64, timestamp: Date.now() };
             db.ref('announcements').push(ann);
-            alert('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു.');
+            alert('✅ പ്രസിദ്ധീകരിച്ചു.');
             clearAnnounceFields();
         };
         reader.readAsDataURL(file);
     } else {
         const ann = { title, body, target, media: '', timestamp: Date.now() };
         db.ref('announcements').push(ann);
-        alert('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു.');
+        alert('✅ പ്രസിദ്ധീകരിച്ചു.');
         clearAnnounceFields();
     }
 }
@@ -969,170 +1584,16 @@ function clearAnnounceFields() {
 }
 
 // ====================================================
-//  PARENT PANEL
-// ====================================================
-function updateParentPanel() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const student = allStudents.find(s => s.reg === currentUser.regNo);
-    if (!student) return;
-    document.getElementById('parentInfo').innerHTML = `
-        <div class="flex items-center gap-4">
-            ${student.photo ? `<img src="${student.photo}" class="w-16 h-16 rounded-full object-cover">` : `<div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl">👤</div>`}
-            <div>
-                <p><strong>${student.name}</strong> (Reg: ${student.reg})</p>
-                <p class="text-sm text-gray-600">${student.cls}-ാം ക്ലാസ്, ഷിഫ്റ്റ് ${student.shift}</p>
-                <p class="text-sm text-gray-600">രക്ഷിതാവ്: ${student.father}</p>
-            </div>
-        </div>
-    `;
-    document.getElementById('parentEditName').value = student.father || '';
-    document.getElementById('parentEditPhone').value = student.phone || '';
-
-    const fee = allFeeQR.monthlyFee || 0;
-    const paid = allFees[student.reg] || 0;
-    const due = fee - paid;
-    document.getElementById('parentPaymentBox').innerHTML = `
-        <p><strong>💰 പ്രതിമാസ ഫീസ്:</strong> ₹${fee}</p>
-        <p><strong>✅ അടച്ചത്:</strong> ₹${paid}</p>
-        <p><strong>⚠️ കുടിശ്ശിക:</strong> ₹${due < 0 ? 0 : due}</p>
-        ${allFeeQR.googlePay ? `<p><strong>Google Pay:</strong> ${allFeeQR.googlePay}</p>` : ''}
-        ${allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img mt-2">` : ''}
-    `;
-
-    document.getElementById('parentFeeStatus').innerHTML = `
-        <p>മാസം: ${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
-        <p>നില: ${paid >= fee ? '✅ ഫീസ് അടച്ചു' : '⚠️ ഫീസ് ബാക്കിയുണ്ട്'}</p>
-    `;
-}
-
-function updateParentInfo() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const name = document.getElementById('parentEditName').value.trim();
-    const phone = document.getElementById('parentEditPhone').value.trim();
-    const file = document.getElementById('parentEditPhoto').files[0];
-    const student = allStudents.find(s => s.reg === currentUser.regNo);
-    if (!student) return;
-    if (name) student.father = name;
-    if (phone) student.phone = phone;
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            student.photo = e.target.result;
-            db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone, photo: student.photo });
-            alert('✅ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു.');
-            updateParentPanel();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone });
-        alert('✅ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു.');
-        updateParentPanel();
-    }
-}
-
-function updateParentNotifications() {
-    if (!currentUser || currentUser.role !== 'parent') return;
-    const container = document.getElementById('parentNotifications');
-    const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
-    if (recent.length === 0) {
-        container.innerHTML = '<p class="text-gray-500">പുതിയ അറിയിപ്പുകൾ ഒന്നുമില്ല.</p>';
-        return;
-    }
-    container.innerHTML = recent.slice(-5).reverse().map(a => `
-        <div class="border-b py-2">
-            <h4 class="font-bold">${a.title}</h4>
-            <p class="text-sm">${a.body}</p>
-            ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="max-h-32 mt-1">` : 
-                         a.media.startsWith('data:audio') ? `<audio controls src="${a.media}" class="mt-1"></audio>` :
-                         `<video controls src="${a.media}" class="max-h-32 mt-1"></video>`) : ''}
-            <span class="text-xs text-gray-400">${new Date(a.timestamp).toLocaleString()}</span>
-        </div>
-    `).join('');
-}
-
-function checkParentNotifications() {
-    if (allAnnouncements.length > 0 && currentUser && currentUser.role === 'parent') {
-        const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
-        if (recent.length > 0) {
-            const last = recent[recent.length - 1];
-            document.getElementById('popupContent').innerHTML = `
-                <h4 class="font-bold text-lg">${last.title}</h4>
-                <p>${last.body}</p>
-                ${last.media ? (last.media.startsWith('data:image') ? `<img src="${last.media}" class="max-h-40 mt-2">` : '') : ''}
-                <p class="text-xs text-gray-400 mt-2">${new Date(last.timestamp).toLocaleString()}</p>
-            `;
-            document.getElementById('popupNotification').style.display = 'flex';
-        }
-    }
-}
-
-function closePopup() {
-    document.getElementById('popupNotification').style.display = 'none';
-}
-
-// ====================================================
-//  TEACHER PANEL
-// ====================================================
-function updateTeacherPanel() {
-    if (!currentUser || currentUser.role !== 'staff') return;
-    const container = document.getElementById('teacherClassList');
-    const classes = currentUser.classes || [];
-    if (classes.length === 0) {
-        container.innerHTML = '<p class="text-gray-500">നിങ്ങൾക്ക് അനുവദിച്ച ക്ലാസുകളൊന്നുമില്ല.</p>';
-        return;
-    }
-    const today = new Date().toISOString().split('T')[0];
-    container.innerHTML = classes.map(cls => {
-        const students = allStudents.filter(s => s.cls === cls);
-        const holiday = allHolidays && (allHolidays.shift === 'all' || parseInt(allHolidays.shift) === currentUser.shift);
-        const holidayHtml = holiday ? `<div class="holiday-banner">🏖️ ഇന്ന് അവധിയാണ്! കാരണം: ${allHolidays.reason}</div>` : '';
-        return `
-            <div class="border rounded-xl p-3 ${holiday ? 'opacity-60 blur-sm' : ''}">
-                <h4 class="font-bold text-lg">${cls}-ാം ക്ലാസ്</h4>
-                ${holidayHtml}
-                <div class="mt-2 text-sm max-h-40 overflow-y-auto">
-                    ${students.map(s => `
-                        <div class="flex items-center justify-between p-1 border-b">
-                            <span>${s.name} (${s.reg})</span>
-                            <select class="attendance-select text-xs p-1 border rounded" data-reg="${s.reg}" data-cls="${cls}">
-                                <option value="present">✅ Present</option>
-                                <option value="absent">❌ Absent</option>
-                            </select>
-                        </div>
-                    `).join('')}
-                </div>
-                ${!holiday ? `<button class="mt-2 btn-success text-sm" onclick="submitTeacherAttendance(${cls})">✅ ഹാജർ സബ്മിറ്റ് ചെയ്യുക</button>` : ''}
-            </div>
-        `;
-    }).join('');
-}
-
-function submitTeacherAttendance(cls) {
-    const today = new Date().toISOString().split('T')[0];
-    const selects = document.querySelectorAll(`#teacherClassList .attendance-select[data-cls="${cls}"]`);
-    const attData = {};
-    selects.forEach(sel => {
-        attData[sel.dataset.reg] = sel.value;
-    });
-    db.ref(`attendance/${today}/${cls}`).update(attData).then(() => {
-        db.ref(`staffAttendance/${today}/${currentUser.username}`).set('present');
-        alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു. നിങ്ങൾ present ആയി രേഖപ്പെടുത്തി.');
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
-}
-
-// ====================================================
-//  COMMITTEE PANEL
+//  COMMITTEE PANEL - ENHANCED
 // ====================================================
 function updateCommitteeStats() {
     document.getElementById('totalStudents').textContent = allStudents.length;
-    document.getElementById('totalTeachers').textContent = allStaff.filter(s => !s.deleted).length;
+    document.getElementById('totalTeachers').textContent = allStaff.filter(s=>!s.deleted).length;
     const today = new Date().toISOString().split('T')[0];
     let totalPresent = 0;
     if (allAttendance[today]) {
         Object.values(allAttendance[today]).forEach(cls => {
-            Object.values(cls).forEach(status => {
-                if (status === 'present') totalPresent++;
-            });
+            Object.values(cls).forEach(status => { if(status==='present') totalPresent++; });
         });
     }
     document.getElementById('todayAttendance').textContent = totalPresent;
@@ -1140,228 +1601,215 @@ function updateCommitteeStats() {
     Object.values(allFees).forEach(f => totalFee += f);
     document.getElementById('feeCollected').textContent = '₹' + totalFee;
 
+    // Defaulters
     const container = document.getElementById('defaultersList');
     const fee = allFeeQR.monthlyFee || 0;
-    const defaulters = allStudents.filter(s => (allFees[s.reg] || 0) < fee);
+    const defaulters = allStudents.filter(s => (allFees[`${s.reg}_${selectedMonth}`] || 0) < fee);
     container.innerHTML = defaulters.map(s => `
         <div class="flex justify-between items-center p-1 border-b text-sm">
-            <span>${s.name} (${s.reg}) - ₹${fee - (allFees[s.reg] || 0)} കുടിശ്ശിക</span>
-            <button class="whatsapp-btn text-xs" onclick="sendDefaulterAlert(${s.reg})"><i class="fab fa-whatsapp"></i> അറിയിപ്പ്</button>
+            <span>${s.name} (${s.reg}) - ₹${fee - (allFees[`${s.reg}_${selectedMonth}`] || 0)} കുടിശ്ശിക</span>
+            <button class="whatsapp-btn text-xs" onclick="sendDefaulterAlert(${s.reg})"><i class="fab fa-whatsapp"></i></button>
         </div>
     `).join('');
-
-    const staffContainer = document.getElementById('staffAttendanceTracker');
-    const activeStaff = allStaff.filter(s => !s.deleted);
-    staffContainer.innerHTML = activeStaff.map(s => {
-        const status = allAttendance[today] && allAttendance[today]['staff'] && allAttendance[today]['staff'][s.username] ? 'present' : 'absent';
-        return `
-            <div class="flex justify-between items-center p-1 border-b text-sm ${status === 'present' ? 'teacher-present' : 'teacher-absent'}">
-                <span>${s.name}</span>
-                <span>${status === 'present' ? '✅ Present' : '❌ Absent'}</span>
-            </div>
-        `;
-    }).join('');
 }
 
 function sendDefaulterAlert(reg) {
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) return;
+    const student = allStudents.find(s=>s.reg===reg);
+    if(!student) return;
     const fee = allFeeQR.monthlyFee || 0;
-    const paid = allFees[reg] || 0;
+    const paid = allFees[`${reg}_${selectedMonth}`] || 0;
     const due = fee - paid;
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${reg}) - ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന കുട്ടിയുടെ ഫീസ് ₹${due} കുടിശ്ശികയുണ്ട്. ദയവായി അടക്കുക. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ ഫീസ് ₹${due} കുടിശ്ശിക. ദയവായി അടക്കുക.`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// Staff Attendance Tracker with Shift
+function loadCommitteeAttendance() {
+    const shift = document.getElementById('committeeShiftFilter').value;
+    const date = document.getElementById('committeeAttendanceDate').value || new Date().toISOString().split('T')[0];
+    const container = document.getElementById('staffAttendanceTracker');
+    let staff = allStaff.filter(s => !s.deleted);
+    if (shift !== 'all') {
+        staff = staff.filter(s => {
+            const classes = s.classes || [];
+            // Check if any class belongs to this shift
+            return classes.some(c => {
+                const student = allStudents.find(st => st.cls === c);
+                return student && student.shift === parseInt(shift);
+            });
+        });
+    }
+    container.innerHTML = staff.map(s => {
+        const status = allAttendance[date]?.['staff']?.[s.username] || 'absent';
+        return `
+            <div class="flex items-center justify-between p-1 border-b text-sm ${status === 'present' ? 'teacher-present' : 'teacher-absent'}">
+                <div class="flex items-center gap-2">
+                    ${s.photo ? `<img src="${s.photo}" class="w-8 h-8 rounded-full">` : ''}
+                    <span>${s.name}</span>
+                    <span class="text-xs text-gray-400">(${s.role||'അധ്യാപകൻ'})</span>
+                </div>
+                <span>${status === 'present' ? '✅ Present' : '❌ Absent'}</span>
+            </div>
+        `;
+    }).join('') || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
+}
+
+// Salary Calculator
+function calculateSalary() {
+    const month = document.getElementById('salaryMonth').value;
+    const container = document.getElementById('salaryResult');
+    // Count working days and attendance for each staff
+    const staff = allStaff.filter(s => !s.deleted);
+    const workingDays = 26; // Assuming 26 working days per month
+    let html = `<h5 class="font-bold">💰 ${month} മാസത്തെ ശമ്പളം</h5>`;
+    staff.forEach(s => {
+        let present = 0;
+        // Count attendance for the month (simplified)
+        const daysInMonth = 30;
+        for(let d=1; d<=daysInMonth; d++) {
+            const date = `2026-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            if (allAttendance[date]?.['staff']?.[s.username] === 'present') present++;
+        }
+        const salary = (present / workingDays) * 10000; // Assuming ₹10,000 monthly salary
+        html += `
+            <div class="flex justify-between p-1 border-b text-sm">
+                <span>${s.name}</span>
+                <span>${present}/${workingDays} ദിവസം - ₹${Math.round(salary)}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// Monthly Report
+function generateMonthlyReport() {
+    const month = document.getElementById('reportMonth').value;
+    const container = document.getElementById('monthlyReport');
+    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
+    const year = 2026;
+    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
+    let html = `<h5 class="font-bold">📊 ${month} ${year} - റിപ്പോർട്ട്</h5>`;
+    
+    // Fee Report
+    let totalFee = 0, totalPaid = 0;
+    allStudents.forEach(s => {
+        const key = `${s.reg}_${month}`;
+        const fee = allFeeQR.monthlyFee || 0;
+        const paid = allFees[key] || 0;
+        totalFee += fee;
+        totalPaid += paid;
+    });
+    html += `<p><strong>ഫീസ്:</strong> ആകെ ₹${totalFee}, അടച്ചത് ₹${totalPaid}, കുടിശ്ശിക ₹${totalFee - totalPaid}</p>`;
+    
+    // Attendance Report
+    let totalPresent = 0, totalStudents = allStudents.length;
+    for(let d=1; d<=daysInMonth; d++) {
+        const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        if (allAttendance[date]) {
+            Object.values(allAttendance[date]).forEach(cls => {
+                Object.values(cls).forEach(status => {
+                    if (status === 'present') totalPresent++;
+                });
+            });
+        }
+    }
+    html += `<p><strong>ഹാജർ:</strong> ആകെ ${totalPresent} ഹാജർ (${Math.round(totalPresent/(totalStudents*daysInMonth)*100)}%)</p>`;
+    container.innerHTML = html;
 }
 
 // ====================================================
 //  PUBLIC RESULT
 // ====================================================
 function showPublicResult() {
-    const cls = parseInt(document.getElementById('resultClass').value);
-    const exam = document.getElementById('resultExam').value.trim() || 'പരീക്ഷ';
+    const cls = parseInt(document.getElementById('publicResultClass').value);
+    const exam = document.getElementById('publicResultExam').value.trim() || 'പരീക്ഷ';
     const students = allStudents.filter(s => s.cls === cls);
     const withMarks = students.map(s => ({
         ...s,
-        marks: Math.floor(Math.random() * 100) + 1
+        marks: allMarks[s.reg] ? allMarks[s.reg].reduce((sum,m) => sum + m.marks, 0) / allMarks[s.reg].length : Math.floor(Math.random()*100)+1
     }));
-    withMarks.sort((a, b) => b.marks - a.marks);
-    const top3 = withMarks.slice(0, 3);
+    withMarks.sort((a,b) => b.marks - a.marks);
+    const top3 = withMarks.slice(0,3);
     const container = document.getElementById('publicResultDisplay');
-    container.innerHTML = top3.map((s, i) => `
-        <div class="bg-gradient-to-br ${i === 0 ? 'from-yellow-400 to-yellow-600' : i === 1 ? 'from-gray-300 to-gray-400' : 'from-amber-600 to-amber-800'} text-white p-4 rounded-xl text-center shadow-lg">
-            <div class="text-4xl">🏆</div>
-            <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center text-3xl text-gray-700 mt-2">
-                ${s.photo ? `<img src="${s.photo}" class="w-full h-full rounded-full object-cover">` : '👤'}
+    container.innerHTML = top3.map((s,i) => `
+        <div class="public-result-card ${i===0?'gold':i===1?'silver':'bronze'}">
+            <div class="text-4xl">${i===0?'🥇':i===1?'🥈':'🥉'}</div>
+            <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center text-3xl text-gray-700">
+                ${s.photo ? `<img src="${s.photo}" class="w-full h-full rounded-full">` : '👤'}
             </div>
-            <h3 class="text-xl font-bold mt-2">${s.name}</h3>
-            <p class="text-sm">Reg: ${s.reg}</p>
-            <p class="text-lg font-bold">${s.marks} മാർക്ക്</p>
-            <p class="text-sm">${exam}</p>
+            <h3 class="text-xl font-bold text-white mt-2">${s.name}</h3>
+            <p class="text-white text-sm">Reg: ${s.reg}</p>
+            <p class="text-white text-lg font-bold">${s.marks} മാർക്ക്</p>
+            <p class="text-white text-sm">${exam}</p>
         </div>
-    `).join('');
+    `).join('') || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
 }
 
-function printResult() {
+function printPublicResult() {
     window.print();
 }
 
 // ====================================================
-//  FEE STUDENT LIST (Sadhar)
+//  PROFILE EDITOR
 // ====================================================
-function loadFeeStudents() {
-    const cls = parseInt(document.getElementById('feeClassSelect').value);
-    const students = allStudents.filter(s => s.cls === cls);
-    const container = document.getElementById('feeStudentList');
-    const fee = allFeeQR.monthlyFee || 0;
-    container.innerHTML = students.map(s => {
-        const paid = allFees[s.reg] || 0;
-        return `
-            <div class="flex items-center justify-between p-1 border-b text-sm">
-                <span>${s.name} (${s.reg})</span>
-                <span>അടച്ചത്: ₹${paid} | ബാക്കി: ₹${fee - paid}</span>
-                <button class="btn-primary text-xs" onclick="updateFee(${s.reg})">ഫീസ് അപ്ഡേറ്റ്</button>
-                <button class="whatsapp-btn text-xs" onclick="sendFeeReceipt(${s.reg})"><i class="fab fa-whatsapp"></i></button>
-            </div>
-        `;
-    }).join('');
+function showProfileEditor() {
+    const user = currentUser;
+    if (!user) { alert('ലോഗിൻ ചെയ്യുക.'); return; }
+    const name = prompt('പേര്:', user.name);
+    if (name !== null) user.name = name;
+    if (user.role === 'staff' || user.role === 'manager' || user.role === 'secretary') {
+        const staff = allStaff.find(s => s.username === user.username);
+        if (staff) {
+            staff.name = user.name;
+            db.ref('staff').orderByChild('username').equalTo(user.username).once('value').then(snap => {
+                snap.forEach(child => child.ref.update({name: user.name}));
+            });
+        }
+    }
+    alert('✅ അപ്ഡേറ്റ് ചെയ്തു');
 }
 
-function updateFee(reg) {
-    const amount = prompt('ഫീസ് തുക (₹) നൽകുക:');
-    if (amount === null) return;
-    const val = parseFloat(amount);
-    if (isNaN(val) || val < 0) { alert('⚠️ ശരിയായ തുക നൽകുക.'); return; }
-    const current = allFees[reg] || 0;
-    const newTotal = current + val;
-    db.ref(`fees/${reg}`).set(newTotal).then(() => {
-        allFees[reg] = newTotal;
-        alert('✅ ഫീസ് അപ്ഡേറ്റ് ചെയ്തു.');
-        loadFeeStudents();
-        updateCommitteeStats();
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
-}
-
-function sendFeeReceipt(reg) {
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) return;
-    const fee = allFeeQR.monthlyFee || 0;
-    const paid = allFees[reg] || 0;
-    const due = fee - paid;
-    const month = new Date().toLocaleString('default', { month: 'long' });
-    const msg = `അസ്സലാമു അലൈക്കും പ്രിയപ്പെട്ട രക്ഷിതാവേ, ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന നിങ്ങളുടെ കുട്ടി ${student.name} (Reg No: ${student.reg}) ${month} മാസത്തെ മദ്റസ ഫീസ് ₹${fee} തീയതി ${new Date().toLocaleDateString()}-ൽ അടച്ചിട്ടുണ്ട്. ഇത് അധ്യാപകൻ കൈപ്പറ്റിയിരിക്കുന്നു. ആകെ അടച്ച തുക: ₹${paid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${due < 0 ? 0 : due}. നന്ദി. - ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-// ====================================================
-//  STUDENT EDITOR
-// ====================================================
-function renderStudentEditor() {
-    const container = document.getElementById('studentEditorList');
-    container.innerHTML = allStudents.map(s => `
-        <div class="flex items-center justify-between p-1 border-b text-sm">
-            <span>${s.name} (${s.reg}) - ${s.cls}-ാം ക്ലാസ്</span>
-            <div>
-                <button class="btn-primary text-xs" onclick="editStudent(${s.reg})">✏️</button>
-                <button class="btn-danger text-xs" onclick="deleteStudent(${s.reg})">🗑️</button>
-            </div>
+function viewAllComplaints() {
+    const container = document.createElement('div');
+    container.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+    container.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-96 overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">📋 പരാതികൾ</h3>
+            ${allComplaints.map(c => `
+                <div class="p-2 border-b text-sm">
+                    <strong>Reg ${c.reg}:</strong> ${c.complaint}
+                    <div class="text-xs text-gray-400">${c.teacher} | ${new Date(c.date).toLocaleString()}</div>
+                </div>
+            `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>'}
+            <button onclick="this.parentElement.parentElement.remove()" class="mt-4 btn-primary">അടയ്ക്കുക</button>
         </div>
-    `).join('');
-}
-
-function editStudent(reg) {
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) return;
-    const name = prompt('പേര്:', student.name);
-    if (name !== null) student.name = name;
-    const father = prompt('വാപ്പാന്റെ പേര്:', student.father);
-    if (father !== null) student.father = father;
-    const phone = prompt('ഫോൺ:', student.phone);
-    if (phone !== null) student.phone = phone;
-    db.ref(`students/${reg}`).update(student);
-    renderStudentEditor();
-}
-
-function deleteStudent(reg) {
-    if (!confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യണോ?')) return;
-    allStudents = allStudents.filter(s => s.reg !== reg);
-    db.ref(`students/${reg}`).remove();
-    renderStudentEditor();
-}
-
-// ====================================================
-//  SHIFT + CLASS LINKING
-// ====================================================
-function saveShiftClass() {
-    const shifts = [];
-    document.querySelectorAll('.shift-check:checked').forEach(cb => shifts.push(cb.value));
-    const classes = [];
-    document.querySelectorAll('.class-check:checked').forEach(cb => classes.push(cb.value));
-    db.ref('shiftClassMapping').set({ shifts, classes }).then(() => {
-        alert('✅ ഷിഫ്റ്റ് & ക്ലാസ്സ് ലിങ്കിംഗ് സേവ് ചെയ്തു.');
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
-}
-
-// ====================================================
-//  OTHER UTILITIES
-// ====================================================
-function viewComplaints() {
-    alert('📋 പരാതികൾ ഇവിടെ ദൃശ്യമാകും.\n(ഈ ഫീച്ചർ വികസിപ്പിച്ചുകൊണ്ടിരിക്കുന്നു)');
+    `;
+    document.body.appendChild(container);
 }
 
 function exportJSON() {
-    const data = {
-        students: allStudents,
-        staff: allStaff,
-        fees: allFees,
-        attendance: allAttendance,
-        holidays: allHolidays,
-        announcements: allAnnouncements,
-        examTimetables: allExamTimetables,
-        feeQR: allFeeQR
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const data = { students: allStudents, staff: allStaff, fees: allFees, attendance: allAttendance, holidays: allHolidays, announcements: allAnnouncements, examTimetables: allExamTimetables, feeQR: allFeeQR, complaints: allComplaints, marks: allMarks };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'madrasa_backup.json';
-    a.click();
+    a.href = url; a.download = 'madrasa_backup.json'; a.click();
     URL.revokeObjectURL(url);
 }
 
-function editProfile() {
-    alert('👤 പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യാനുള്ള ഫീച്ചർ.\n(വികസിപ്പിച്ചുകൊണ്ടിരിക്കുന്നു)');
-}
-
-function updateAttendanceUI() {
-    if (currentUser && currentUser.role === 'staff') {
-        updateTeacherPanel();
-    }
-    if (currentUser && currentUser.role === 'sadhar') {
-        loadSadharAttendance();
-    }
-}
-
-function updateFeeUI() {
-    if (currentUser && currentUser.role === 'sadhar') {
-        loadFeeStudents();
-    }
-    if (currentUser && currentUser.role === 'parent') {
-        updateParentPanel();
-    }
-    updateCommitteeStats();
-}
-
 // ====================================================
-//  INIT ON LOAD
+//  INIT
 // ====================================================
 document.addEventListener('DOMContentLoaded', function() {
     loadAllData();
-    populateClassSelects();
+    // Set default dates
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('sadharAttendanceDate').value = today;
+    document.getElementById('teacherAttendanceDate').value = today;
+    document.getElementById('committeeAttendanceDate').value = today;
     console.log('✅ മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡ് ആയി.');
-    console.log('💡 Sadhar login: username="sadhar", password="admin123"');
-    console.log('💡 Staff login: use credentials added in staff management');
-    console.log('💡 Parent login: use student Reg No (e.g., 691)');
+    console.log('💡 Sadhar: sadhar/admin123');
 });
 </script>
 </body>
 </html>
+```
