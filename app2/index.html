@@ -12,41 +12,38 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; }
         .accordion-content { transition: max-height 0.3s ease, opacity 0.2s ease; max-height: 0; opacity: 0; overflow: hidden; }
         .accordion-content.open { max-height: 3000px; opacity: 1; }
-        .panel-tab { padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: all 0.2s; background: #e2e8f0; }
+        .panel-tab { padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: all 0.2s; background: #e2e8f0; border: none; font-size: 0.9rem; }
         .panel-tab.active { background: #1e3a8a; color: white; }
-        .btn-primary { background: #1e3a8a; color: white; padding: 6px 18px; border-radius: 30px; transition: all 0.2s; }
+        .btn-primary { background: #1e3a8a; color: white; padding: 6px 18px; border-radius: 30px; transition: all 0.2s; border: none; cursor: pointer; font-size: 0.9rem; }
         .btn-primary:hover { background: #1e40af; transform: scale(1.02); }
-        .btn-success { background: #15803d; color: white; padding: 6px 18px; border-radius: 30px; }
-        .btn-danger { background: #b91c1c; color: white; padding: 6px 18px; border-radius: 30px; }
-        .whatsapp-btn { background: #25D366; color: white; border-radius: 30px; padding: 4px 14px; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-success { background: #15803d; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; }
+        .btn-danger { background: #b91c1c; color: white; padding: 6px 18px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; }
+        .whatsapp-btn { background: #25D366; color: white; border-radius: 30px; padding: 4px 14px; display: inline-flex; align-items: center; gap: 4px; border: none; cursor: pointer; font-size: 0.8rem; }
         .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); }
         .popup-card { background: white; max-width:90%; width:400px; border-radius:24px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:popIn 0.3s ease; }
         @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
         .holiday-banner { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; text-align: center; }
         .scroll-list { max-height: 300px; overflow-y: auto; }
-        input, select, textarea { border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; width: 100%; }
+        input, select, textarea { border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; width: 100%; font-size: 0.9rem; }
         .teacher-present { border-left: 4px solid #16a34a; background: #f0fdf4; }
         .teacher-absent { border-left: 4px solid #dc2626; background: #fef2f2; }
+        .qr-img { max-width: 150px; max-height: 150px; object-fit: contain; }
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .student-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .fee-paid { background: #dcfce7; }
+        .fee-due { background: #fee2e2; }
     </style>
 </head>
 <body>
 
-<!-- FIREBASE CONFIG BOX -->
-<div id="firebaseConfigBox" class="popup-overlay" style="display:none;">
-    <div class="popup-card">
-        <h2 class="text-xl font-bold text-center text-blue-900">⚙️ ഫയർബേസ് കോൺഫിഗ്</h2>
-        <p class="text-sm text-gray-600 text-center mb-4">Realtime Database വിവരങ്ങൾ നൽകുക</p>
-        <div class="space-y-2">
-            <input id="fbApiKey" placeholder="apiKey" class="w-full p-2 border rounded">
-            <input id="fbAuthDomain" placeholder="authDomain" class="w-full p-2 border rounded">
-            <input id="fbDatabaseURL" placeholder="databaseURL" class="w-full p-2 border rounded">
-            <input id="fbProjectId" placeholder="projectId" class="w-full p-2 border rounded">
-            <input id="fbStorageBucket" placeholder="storageBucket" class="w-full p-2 border rounded">
-            <input id="fbMessagingSenderId" placeholder="messagingSenderId" class="w-full p-2 border rounded">
-            <input id="fbAppId" placeholder="appId" class="w-full p-2 border rounded">
-        </div>
-        <button id="saveFirebaseConfig" class="mt-4 w-full bg-blue-900 text-white py-2 rounded-full font-bold">✅ ബന്ധിപ്പിക്കുക</button>
-        <p id="fbConfigError" class="text-red-600 text-sm mt-2 text-center hidden">ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ ശരിയാണോയെന്ന് പരിശോധിക്കുക.</p>
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style="display:none;">
+    <div class="bg-white p-6 rounded-2xl flex flex-col items-center">
+        <div class="loading"></div>
+        <p class="mt-2 text-gray-700">ഡാറ്റ ലോഡ് ചെയ്യുന്നു...</p>
     </div>
 </div>
 
@@ -106,13 +103,13 @@
         </div>
 
         <!-- SADHAR PANEL -->
-        <div id="panel-sadhar" class="panel-content">
+        <div id="panel-sadhar" class="tab-content active">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ</h2>
                 <div class="mt-4 space-y-2">
                     <!-- Accordion items -->
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc1')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc1')">
                             <span>⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -141,7 +138,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc2')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc2')">
                             <span>👥 ജീവനക്കാരുടെ നിയന്ത്രണം</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -158,7 +155,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc3')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc3')">
                             <span>✅ സദർ നേരിട്ടുള്ള ഹാജർ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -170,7 +167,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc4')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc4')">
                             <span>📅 പരീക്ഷാ ടൈംടേബിൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -182,7 +179,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc5')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc5')">
                             <span>💰 ഫീസ് ഘടന &amp; QR</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -196,7 +193,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc6')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc6')">
                             <span>🏖️ അവധി പ്രകടന ബോർഡ്</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -214,7 +211,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc7')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc7')">
                             <span>📢 പൊതു അറിയിപ്പുകൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -233,7 +230,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc8')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc8')">
                             <span>📚 കുട്ടികളുടെ വിവരങ്ങൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -244,7 +241,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc9')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc9')">
                             <span>💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ് കൗണ്ടർ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -255,7 +252,7 @@
                     </div>
 
                     <div class="border rounded-xl overflow-hidden">
-                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center" onclick="toggleAccordion('acc10')">
+                        <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc10')">
                             <span>📋 പരാതികൾ, ബാക്കപ്പ്, പ്രൊഫൈൽ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -270,7 +267,7 @@
         </div>
 
         <!-- TEACHER PANEL -->
-        <div id="panel-teacher" class="panel-content hidden">
+        <div id="panel-teacher" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👨‍🏫 അധ്യാപക പാനൽ</h2>
                 <div id="teacherDashboard" class="mt-2">
@@ -284,7 +281,7 @@
         </div>
 
         <!-- PARENT PANEL -->
-        <div id="panel-parent" class="panel-content hidden">
+        <div id="panel-parent" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👪 രക്ഷിതാവ് പാനൽ</h2>
                 <div id="parentInfo" class="mt-2 text-sm"></div>
@@ -305,7 +302,7 @@
         </div>
 
         <!-- COMMITTEE PANEL -->
-        <div id="panel-committee" class="panel-content hidden">
+        <div id="panel-committee" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🏛️ കമ്മിറ്റി പാനൽ</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
@@ -326,7 +323,7 @@
         </div>
 
         <!-- PUBLIC RESULT -->
-        <div id="panel-public" class="panel-content hidden">
+        <div id="panel-public" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട്</h2>
                 <div class="flex flex-wrap gap-2 mt-2">
@@ -348,11 +345,26 @@
 
 <script>
 // ====================================================
+//  FIREBASE CONFIG (Your Config)
+// ====================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
+    authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
+    databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "mamb-ul-uloom-madrasa",
+    storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
+    messagingSenderId: "494107652219",
+    appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ====================================================
 //  GLOBAL STATE
 // ====================================================
-let firebaseApp = null;
-let db = null;
-let currentUser = null; // { role, username, name, regNo?, cls?, shift? }
+let currentUser = null;
 let allStudents = [];
 let allStaff = [];
 let allFees = {};
@@ -361,7 +373,6 @@ let allHolidays = {};
 let allAnnouncements = [];
 let allExamTimetables = {};
 let allFeeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
-let allComplaints = [];
 
 // ====================================================
 //  INITIAL STUDENT DATA (124 students)
@@ -506,80 +517,29 @@ const INITIAL_STUDENTS = [
 ];
 
 // ====================================================
-//  FIREBASE INIT & CONFIG
-// ====================================================
-const savedConfig = localStorage.getItem('firebaseConfig');
-if (savedConfig) {
-    try {
-        const config = JSON.parse(savedConfig);
-        initializeFirebase(config);
-    } catch(e) { showConfigBox(); }
-} else {
-    showConfigBox();
-}
-
-function showConfigBox() {
-    document.getElementById('firebaseConfigBox').style.display = 'flex';
-}
-
-document.getElementById('saveFirebaseConfig').addEventListener('click', function() {
-    const config = {
-        apiKey: document.getElementById('fbApiKey').value.trim(),
-        authDomain: document.getElementById('fbAuthDomain').value.trim(),
-        databaseURL: document.getElementById('fbDatabaseURL').value.trim(),
-        projectId: document.getElementById('fbProjectId').value.trim(),
-        storageBucket: document.getElementById('fbStorageBucket').value.trim(),
-        messagingSenderId: document.getElementById('fbMessagingSenderId').value.trim(),
-        appId: document.getElementById('fbAppId').value.trim()
-    };
-    if (!config.apiKey || !config.databaseURL) {
-        document.getElementById('fbConfigError').classList.remove('hidden');
-        return;
-    }
-    try {
-        initializeFirebase(config);
-        localStorage.setItem('firebaseConfig', JSON.stringify(config));
-        document.getElementById('firebaseConfigBox').style.display = 'none';
-        document.getElementById('fbConfigError').classList.add('hidden');
-        loadAllData();
-    } catch(e) {
-        document.getElementById('fbConfigError').classList.remove('hidden');
-        console.error(e);
-    }
-});
-
-function initializeFirebase(config) {
-    if (firebase.apps.length) firebase.apps[0].delete();
-    firebaseApp = firebase.initializeApp(config);
-    db = firebase.database();
-    // Test connection
-    db.ref('.info/connected').on('value', (snap) => {
-        if (snap.val() === true) console.log('✅ Firebase connected');
-    });
-}
-
-// ====================================================
 //  DATA LOADING FROM FIREBASE
 // ====================================================
 function loadAllData() {
-    if (!db) return;
+    showLoading(true);
+    
     // Load students
     db.ref('students').once('value').then(snap => {
         const data = snap.val();
         if (data) {
             allStudents = Object.values(data);
         } else {
-            // Initial load
             allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS));
             syncStudentsToFirebase();
         }
         populateAllUI();
+        showLoading(false);
     }).catch(() => {
         allStudents = JSON.parse(JSON.stringify(INITIAL_STUDENTS));
         populateAllUI();
+        showLoading(false);
     });
 
-    // Load staff
+    // Load staff - realtime
     db.ref('staff').on('value', snap => {
         const data = snap.val();
         if (data) allStaff = Object.values(data);
@@ -589,7 +549,7 @@ function loadAllData() {
         updateTeacherPanel();
     });
 
-    // Load fees
+    // Load fees - realtime
     db.ref('fees').on('value', snap => {
         const data = snap.val();
         if (data) allFees = data;
@@ -598,7 +558,7 @@ function loadAllData() {
         updateCommitteeStats();
     });
 
-    // Load attendance
+    // Load attendance - realtime
     db.ref('attendance').on('value', snap => {
         const data = snap.val();
         if (data) allAttendance = data;
@@ -607,7 +567,7 @@ function loadAllData() {
         updateCommitteeStats();
     });
 
-    // Load holidays
+    // Load holidays - realtime
     db.ref('holidays').on('value', snap => {
         const data = snap.val();
         if (data) allHolidays = data;
@@ -615,7 +575,7 @@ function loadAllData() {
         updateHolidayUI();
     });
 
-    // Load announcements
+    // Load announcements - realtime
     db.ref('announcements').on('value', snap => {
         const data = snap.val();
         if (data) allAnnouncements = Object.values(data);
@@ -623,14 +583,14 @@ function loadAllData() {
         updateParentNotifications();
     });
 
-    // Load exam timetables
+    // Load exam timetables - realtime
     db.ref('examTimetables').on('value', snap => {
         const data = snap.val();
         if (data) allExamTimetables = data;
         else allExamTimetables = {};
     });
 
-    // Load fee QR
+    // Load fee QR - realtime
     db.ref('feeQR').on('value', snap => {
         const data = snap.val();
         if (data) allFeeQR = data;
@@ -640,12 +600,15 @@ function loadAllData() {
 }
 
 function syncStudentsToFirebase() {
-    if (!db) return;
     const updates = {};
     allStudents.forEach(s => { updates[`students/${s.reg}`] = s; });
     db.ref().update(updates).then(() => {
-        alert('✅ വിദ്യാർത്ഥി വിവരങ്ങൾ Firebase-ലേക്ക് സമന്വയിപ്പിച്ചു.');
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
+        console.log('✅ Students synced to Firebase');
+    }).catch(e => console.error('❌ Error syncing students:', e));
+}
+
+function showLoading(show) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
 }
 
 // ====================================================
@@ -677,7 +640,6 @@ function populateClassSelects() {
             sel.appendChild(opt);
         }
     });
-    // Trigger load
     document.getElementById('sadharClassSelect')?.addEventListener('change', loadSadharAttendance);
     document.getElementById('feeClassSelect')?.addEventListener('change', loadFeeStudents);
     loadSadharAttendance();
@@ -690,20 +652,20 @@ function populateClassSelects() {
 document.getElementById('loginStaffBtn').addEventListener('click', function() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    if (!username || !password) {
-        document.getElementById('loginError').classList.remove('hidden');
+    
+    // Sadhar login
+    if (username === 'sadhar' && password === 'admin123') {
+        document.getElementById('loginError').classList.add('hidden');
+        currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
+        loginSuccess('സദർ');
         return;
     }
-    // Check staff list
+    
+    // Staff login
     const staff = allStaff.find(s => s.username === username && s.password === password);
-    if (!staff) {
+    if (!staff || staff.deleted) {
         document.getElementById('loginError').classList.remove('hidden');
-        return;
-    }
-    // Check if staff is deleted (still in list but marked deleted)
-    if (staff.deleted) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.';
+        document.getElementById('loginError').textContent = staff && staff.deleted ? '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.' : '❌ ലോഗിൻ പരാജയപ്പെട്ടു.';
         return;
     }
     document.getElementById('loginError').classList.add('hidden');
@@ -715,11 +677,13 @@ document.getElementById('loginParentBtn').addEventListener('click', function() {
     const reg = parseInt(document.getElementById('loginParentReg').value.trim());
     if (!reg) {
         document.getElementById('loginError').classList.remove('hidden');
+        document.getElementById('loginError').textContent = '❌ Reg No നൽകുക.';
         return;
     }
     const student = allStudents.find(s => s.reg === reg);
     if (!student) {
         document.getElementById('loginError').classList.remove('hidden');
+        document.getElementById('loginError').textContent = '❌ ഈ Reg No ഉള്ള കുട്ടിയെ കണ്ടെത്താനായില്ല.';
         return;
     }
     document.getElementById('loginError').classList.add('hidden');
@@ -727,69 +691,27 @@ document.getElementById('loginParentBtn').addEventListener('click', function() {
     loginSuccess('രക്ഷിതാവ്');
 });
 
-// Also allow login as sadhar with special credentials
-// Hardcoded sadhar login: username: sadhar, password: admin123
-// This is for demo - in production, store in Firebase
-document.getElementById('loginStaffBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    if (username === 'sadhar' && password === 'admin123') {
-        document.getElementById('loginError').classList.add('hidden');
-        currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
-        loginSuccess('സദർ');
-        return;
-    }
-    // Continue with staff check above - already handled but we need to override
-    // We'll use a flag to prevent double login
-});
-
-// Override the staff login to include sadhar
-const originalStaffLogin = document.getElementById('loginStaffBtn').click;
-document.getElementById('loginStaffBtn').addEventListener('click', function(e) {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    if (username === 'sadhar' && password === 'admin123') {
-        document.getElementById('loginError').classList.add('hidden');
-        currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
-        loginSuccess('സദർ');
-        return;
-    }
-    // Regular staff check
-    const staff = allStaff.find(s => s.username === username && s.password === password);
-    if (!staff) {
-        document.getElementById('loginError').classList.remove('hidden');
-        return;
-    }
-    if (staff.deleted) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.';
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'staff', username: staff.username, name: staff.name, classes: staff.classes || [] };
-    loginSuccess('അധ്യാപകൻ / ഭാരവാഹി');
-});
-
 function loginSuccess(roleDisplay) {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('logoutBtn').classList.remove('hidden');
     document.getElementById('userRoleDisplay').textContent = `👤 ${currentUser.name} (${roleDisplay})`;
+    
     // Show appropriate tab
     if (currentUser.role === 'sadhar') switchTab('sadhar');
     else if (currentUser.role === 'staff') switchTab('teacher');
     else if (currentUser.role === 'parent') switchTab('parent');
     else switchTab('committee');
+    
     // Check for staff deletion every 30 seconds
     if (currentUser.role === 'staff') {
         setInterval(checkStaffDeletion, 30000);
     }
+    
     // Show popup for parent
     if (currentUser.role === 'parent') {
         checkParentNotifications();
     }
-    // Load data again
-    loadAllData();
 }
 
 function logout() {
@@ -816,9 +738,9 @@ function checkStaffDeletion() {
 //  TAB SWITCHING
 // ====================================================
 function switchTab(tab) {
-    document.querySelectorAll('.panel-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.remove('hidden');
+    document.getElementById('panel-' + tab).classList.add('active');
     document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
     if (tab === 'committee') updateCommitteeStats();
     if (tab === 'teacher') updateTeacherPanel();
@@ -848,9 +770,7 @@ function addStaff() {
     }
     const newStaff = { name, username, password, classes, deleted: false };
     allStaff.push(newStaff);
-    if (db) {
-        db.ref('staff').push(newStaff);
-    }
+    db.ref('staff').push(newStaff);
     renderStaffList();
     document.getElementById('staffName').value = '';
     document.getElementById('staffUsername').value = '';
@@ -863,16 +783,12 @@ function deleteStaff(username) {
     const staff = allStaff.find(s => s.username === username);
     if (staff) {
         staff.deleted = true;
-        if (db) {
-            // Find and update in Firebase
-            db.ref('staff').orderByChild('username').equalTo(username).once('value').then(snap => {
-                snap.forEach(child => {
-                    child.ref.update({ deleted: true });
-                });
+        db.ref('staff').orderByChild('username').equalTo(username).once('value').then(snap => {
+            snap.forEach(child => {
+                child.ref.update({ deleted: true });
             });
-        }
+        });
         renderStaffList();
-        // If current user is deleted, logout
         if (currentUser && currentUser.username === username) {
             alert('⚠️ നിങ്ങളെ നീക്കം ചെയ്തിരിക്കുന്നു. ലോഗൗട്ട് ചെയ്യുന്നു.');
             logout();
@@ -919,10 +835,6 @@ function submitSadharAttendance() {
     selects.forEach(sel => {
         attData[sel.dataset.reg] = sel.value;
     });
-    if (!db) {
-        alert('⚠️ Firebase ബന്ധിപ്പിച്ചിട്ടില്ല.');
-        return;
-    }
     db.ref(`attendance/${date}/${cls}`).update(attData).then(() => {
         alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
     }).catch(e => alert('❌ പിശക്: ' + e.message));
@@ -933,7 +845,6 @@ function submitSadharAttendance() {
 // ====================================================
 function saveExamTimetable() {
     const data = document.getElementById('examTimetable').value;
-    if (!db) return;
     db.ref('examTimetables').set({ data }).then(() => {
         alert('✅ ടൈംടേബിൾ സേവ് ചെയ്തു.');
     });
@@ -951,7 +862,6 @@ function saveFeeQR() {
     const fee = document.getElementById('monthlyFee').value;
     const gpay = document.getElementById('googlePayNumber').value;
     const file = document.getElementById('qrUpload').files[0];
-    if (!db) return;
     let qrBase64 = allFeeQR.qrBase64 || '';
     if (file) {
         const reader = new FileReader();
@@ -991,7 +901,6 @@ function setHoliday() {
     const reason = document.getElementById('holidayReason').value.trim();
     const shift = document.getElementById('holidayShift').value;
     if (!reason) { alert('⚠️ കാരണം നൽകുക.'); return; }
-    if (!db) return;
     const holiday = { reason, shift, date: new Date().toISOString() };
     db.ref('holidays').set(holiday);
     allHolidays = holiday;
@@ -1001,7 +910,6 @@ function setHoliday() {
 
 function clearHoliday() {
     if (!confirm('അവധി എടുത്തുമാറ്റണോ?')) return;
-    if (!db) return;
     db.ref('holidays').remove();
     allHolidays = {};
     alert('✅ അവധി എടുത്തുമാറ്റി.');
@@ -1009,13 +917,7 @@ function clearHoliday() {
 }
 
 function updateHolidayUI() {
-    // Check if there's a holiday for current shift
-    if (!allHolidays || !allHolidays.reason) return;
-    const shift = allHolidays.shift;
-    // Show in teacher panel if shift matches
-    if (currentUser && currentUser.role === 'staff') {
-        // Will be shown in teacher panel
-    }
+    // Will be shown in teacher panel
 }
 
 // ====================================================
@@ -1027,7 +929,6 @@ function publishAnnouncement() {
     const target = document.getElementById('announceTarget').value;
     const file = document.getElementById('announceMedia').files[0];
     if (!title || !body) { alert('⚠️ തലക്കെട്ടും വിവരവും നൽകുക.'); return; }
-    if (!db) return;
     let mediaBase64 = '';
     if (file) {
         const reader = new FileReader();
@@ -1085,7 +986,6 @@ function updateParentPanel() {
         ${allFeeQR.qrBase64 ? `<img src="${allFeeQR.qrBase64}" class="qr-img mt-2">` : ''}
     `;
 
-    // Fee status
     document.getElementById('parentFeeStatus').innerHTML = `
         <p>മാസം: ${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
         <p>നില: ${paid >= fee ? '✅ ഫീസ് അടച്ചു' : '⚠️ ഫീസ് ബാക്കിയുണ്ട്'}</p>
@@ -1105,17 +1005,13 @@ function updateParentInfo() {
         const reader = new FileReader();
         reader.onload = function(e) {
             student.photo = e.target.result;
-            if (db) {
-                db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone, photo: student.photo });
-            }
+            db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone, photo: student.photo });
             alert('✅ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു.');
             updateParentPanel();
         };
         reader.readAsDataURL(file);
     } else {
-        if (db) {
-            db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone });
-        }
+        db.ref(`students/${student.reg}`).update({ father: student.father, phone: student.phone });
         alert('✅ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു.');
         updateParentPanel();
     }
@@ -1141,6 +1037,26 @@ function updateParentNotifications() {
     `).join('');
 }
 
+function checkParentNotifications() {
+    if (allAnnouncements.length > 0 && currentUser && currentUser.role === 'parent') {
+        const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
+        if (recent.length > 0) {
+            const last = recent[recent.length - 1];
+            document.getElementById('popupContent').innerHTML = `
+                <h4 class="font-bold text-lg">${last.title}</h4>
+                <p>${last.body}</p>
+                ${last.media ? (last.media.startsWith('data:image') ? `<img src="${last.media}" class="max-h-40 mt-2">` : '') : ''}
+                <p class="text-xs text-gray-400 mt-2">${new Date(last.timestamp).toLocaleString()}</p>
+            `;
+            document.getElementById('popupNotification').style.display = 'flex';
+        }
+    }
+}
+
+function closePopup() {
+    document.getElementById('popupNotification').style.display = 'none';
+}
+
 // ====================================================
 //  TEACHER PANEL
 // ====================================================
@@ -1155,7 +1071,6 @@ function updateTeacherPanel() {
     const today = new Date().toISOString().split('T')[0];
     container.innerHTML = classes.map(cls => {
         const students = allStudents.filter(s => s.cls === cls);
-        // Check holiday
         const holiday = allHolidays && (allHolidays.shift === 'all' || parseInt(allHolidays.shift) === currentUser.shift);
         const holidayHtml = holiday ? `<div class="holiday-banner">🏖️ ഇന്ന് അവധിയാണ്! കാരണം: ${allHolidays.reason}</div>` : '';
         return `
@@ -1186,9 +1101,7 @@ function submitTeacherAttendance(cls) {
     selects.forEach(sel => {
         attData[sel.dataset.reg] = sel.value;
     });
-    if (!db) { alert('⚠️ Firebase ബന്ധിപ്പിച്ചിട്ടില്ല.'); return; }
     db.ref(`attendance/${today}/${cls}`).update(attData).then(() => {
-        // Auto mark teacher present
         db.ref(`staffAttendance/${today}/${currentUser.username}`).set('present');
         alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു. നിങ്ങൾ present ആയി രേഖപ്പെടുത്തി.');
     }).catch(e => alert('❌ പിശക്: ' + e.message));
@@ -1210,7 +1123,6 @@ function updateCommitteeStats() {
         });
     }
     document.getElementById('todayAttendance').textContent = totalPresent;
-    // Fee collected
     let totalFee = 0;
     Object.values(allFees).forEach(f => totalFee += f);
     document.getElementById('feeCollected').textContent = '₹' + totalFee;
@@ -1256,9 +1168,7 @@ function sendDefaulterAlert(reg) {
 function showPublicResult() {
     const cls = parseInt(document.getElementById('resultClass').value);
     const exam = document.getElementById('resultExam').value.trim() || 'പരീക്ഷ';
-    // For demo, show top 3 students from that class
     const students = allStudents.filter(s => s.cls === cls);
-    // Simulate marks - in real app, fetch from Firebase
     const withMarks = students.map(s => ({
         ...s,
         marks: Math.floor(Math.random() * 100) + 1
@@ -1310,7 +1220,6 @@ function updateFee(reg) {
     if (amount === null) return;
     const val = parseFloat(amount);
     if (isNaN(val) || val < 0) { alert('⚠️ ശരിയായ തുക നൽകുക.'); return; }
-    if (!db) { alert('⚠️ Firebase ബന്ധിപ്പിച്ചിട്ടില്ല.'); return; }
     const current = allFees[reg] || 0;
     const newTotal = current + val;
     db.ref(`fees/${reg}`).set(newTotal).then(() => {
@@ -1357,20 +1266,28 @@ function editStudent(reg) {
     if (father !== null) student.father = father;
     const phone = prompt('ഫോൺ:', student.phone);
     if (phone !== null) student.phone = phone;
-    // Update in Firebase
-    if (db) {
-        db.ref(`students/${reg}`).update(student);
-    }
+    db.ref(`students/${reg}`).update(student);
     renderStudentEditor();
 }
 
 function deleteStudent(reg) {
     if (!confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യണോ?')) return;
     allStudents = allStudents.filter(s => s.reg !== reg);
-    if (db) {
-        db.ref(`students/${reg}`).remove();
-    }
+    db.ref(`students/${reg}`).remove();
     renderStudentEditor();
+}
+
+// ====================================================
+//  SHIFT + CLASS LINKING
+// ====================================================
+function saveShiftClass() {
+    const shifts = [];
+    document.querySelectorAll('.shift-check:checked').forEach(cb => shifts.push(cb.value));
+    const classes = [];
+    document.querySelectorAll('.class-check:checked').forEach(cb => classes.push(cb.value));
+    db.ref('shiftClassMapping').set({ shifts, classes }).then(() => {
+        alert('✅ ഷിഫ്റ്റ് & ക്ലാസ്സ് ലിങ്കിംഗ് സേവ് ചെയ്തു.');
+    }).catch(e => alert('❌ പിശക്: ' + e.message));
 }
 
 // ====================================================
@@ -1404,32 +1321,7 @@ function editProfile() {
     alert('👤 പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യാനുള്ള ഫീച്ചർ.\n(വികസിപ്പിച്ചുകൊണ്ടിരിക്കുന്നു)');
 }
 
-function closePopup() {
-    document.getElementById('popupNotification').style.display = 'none';
-}
-
-function checkParentNotifications() {
-    // Show popup if there are new announcements
-    if (allAnnouncements.length > 0 && currentUser && currentUser.role === 'parent') {
-        const recent = allAnnouncements.filter(a => a.target === 'all' || parseInt(a.target) === currentUser.shift);
-        if (recent.length > 0) {
-            const last = recent[recent.length - 1];
-            document.getElementById('popupContent').innerHTML = `
-                <h4 class="font-bold text-lg">${last.title}</h4>
-                <p>${last.body}</p>
-                ${last.media ? (last.media.startsWith('data:image') ? `<img src="${last.media}" class="max-h-40 mt-2">` : '') : ''}
-                <p class="text-xs text-gray-400 mt-2">${new Date(last.timestamp).toLocaleString()}</p>
-            `;
-            document.getElementById('popupNotification').style.display = 'flex';
-        }
-    }
-}
-
-// ====================================================
-//  ATTENDANCE UI UPDATE
-// ====================================================
 function updateAttendanceUI() {
-    // For teacher panel refresh
     if (currentUser && currentUser.role === 'staff') {
         updateTeacherPanel();
     }
@@ -1449,81 +1341,16 @@ function updateFeeUI() {
 }
 
 // ====================================================
-//  SHIFT + CLASS LINKING (Save to Firebase)
-// ====================================================
-function saveShiftClass() {
-    const shifts = [];
-    document.querySelectorAll('.shift-check:checked').forEach(cb => shifts.push(cb.value));
-    const classes = [];
-    document.querySelectorAll('.class-check:checked').forEach(cb => classes.push(cb.value));
-    if (!db) { alert('⚠️ Firebase ബന്ധിപ്പിച്ചിട്ടില്ല.'); return; }
-    db.ref('shiftClassMapping').set({ shifts, classes }).then(() => {
-        alert('✅ ഷിഫ്റ്റ് & ക്ലാസ്സ് ലിങ്കിംഗ് സേവ് ചെയ്തു.');
-    }).catch(e => alert('❌ പിശക്: ' + e.message));
-}
-
-// ====================================================
 //  INIT ON LOAD
 // ====================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if config exists and load data
-    if (db) {
-        loadAllData();
-    }
-    // Setup class selectors for fee
+    loadAllData();
     populateClassSelects();
+    console.log('✅ മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡ് ആയി.');
+    console.log('💡 Sadhar login: username="sadhar", password="admin123"');
+    console.log('💡 Staff login: use credentials added in staff management');
+    console.log('💡 Parent login: use student Reg No (e.g., 691)');
 });
-
-// ====================================================
-//  FIX: LOGIN NOT WORKING - HANDLE DUPLICATE EVENT
-// ====================================================
-// Remove duplicate event listeners
-document.getElementById('loginStaffBtn').replaceWith(document.getElementById('loginStaffBtn').cloneNode(true));
-document.getElementById('loginParentBtn').replaceWith(document.getElementById('loginParentBtn').cloneNode(true));
-
-// Re-attach login events
-document.getElementById('loginStaffBtn').addEventListener('click', function(e) {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    if (username === 'sadhar' && password === 'admin123') {
-        document.getElementById('loginError').classList.add('hidden');
-        currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
-        loginSuccess('സദർ');
-        return;
-    }
-    const staff = allStaff.find(s => s.username === username && s.password === password);
-    if (!staff || staff.deleted) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = staff && staff.deleted ? '❌ നിങ്ങളെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.' : '❌ ലോഗിൻ പരാജയപ്പെട്ടു.';
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'staff', username: staff.username, name: staff.name, classes: staff.classes || [] };
-    loginSuccess('അധ്യാപകൻ / ഭാരവാഹി');
-});
-
-document.getElementById('loginParentBtn').addEventListener('click', function() {
-    const reg = parseInt(document.getElementById('loginParentReg').value.trim());
-    if (!reg) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ Reg No നൽകുക.';
-        return;
-    }
-    const student = allStudents.find(s => s.reg === reg);
-    if (!student) {
-        document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = '❌ ഈ Reg No ഉള്ള കുട്ടിയെ കണ്ടെത്താനായില്ല.';
-        return;
-    }
-    document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: 'parent', regNo: reg, name: student.name, cls: student.cls, shift: student.shift, parentName: student.father || 'രക്ഷിതാവ്', phone: student.phone || '' };
-    loginSuccess('രക്ഷിതാവ്');
-});
-
-console.log('✅ മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡ് ആയി.');
-console.log('💡 Sadhar login: username="sadhar", password="admin123"');
-console.log('💡 Staff login: use the credentials you added in staff management');
-console.log('💡 Parent login: use student Reg No (e.g., 691)');
 </script>
 </body>
 </html>
