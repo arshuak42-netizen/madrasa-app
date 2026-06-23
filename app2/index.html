@@ -35,7 +35,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .shift-drop-zone { border: 2px dashed #94a3b8; border-radius: 12px; padding: 12px; min-height: 100px; }
-        .shift-drop-zone.dragover { border-color: #1e3a8a; background: #eff6ff; }
         .class-chip { display: inline-block; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; margin: 3px; cursor: pointer; }
         .class-chip.selected { background: #1e3a8a; color: white; }
         .month-selector { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -48,14 +47,14 @@
         .public-result-card.silver { background: linear-gradient(135deg, #d1d5db, #9ca3af); }
         .public-result-card.bronze { background: linear-gradient(135deg, #d97706, #b45309); }
         .public-result-card h3 { color: white; }
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-        }
+        @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
         .print-only { display: none; }
         .staff-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .compact-table { font-size: 0.8rem; }
-        .compact-table td, .compact-table th { padding: 4px 8px; border: 1px solid #e5e7eb; }
+        .exam-type-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #d1d5db; cursor: pointer; font-size: 0.8rem; }
+        .exam-type-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+        .attendance-summary { background: #f8fafc; border-radius: 8px; padding: 8px; }
+        .attendance-bar { height: 20px; border-radius: 10px; background: #e5e7eb; overflow: hidden; }
+        .attendance-bar-fill { height: 100%; border-radius: 10px; background: #16a34a; transition: width 0.3s; }
     </style>
 </head>
 <body>
@@ -94,8 +93,8 @@
         <button id="logoutBtn" class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm hidden" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ലോഗൗട്ട്</button>
     </div>
 
-    <!-- PUBLIC RESULT - Always Visible -->
-    <div id="publicResultSection" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-4">
+    <!-- PUBLIC RESULT - Home Page Only -->
+    <div id="publicResultSection" class="public-result-only bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-4">
         <h2 class="text-xl font-bold text-blue-900">🏆 പബ്ലിക് റിസൾട്ട്</h2>
         <div class="flex flex-wrap gap-2 mt-2">
             <select id="publicResultClass" class="w-auto p-2 border rounded">
@@ -104,30 +103,50 @@
                 <option value="7">7</option><option value="8">8</option><option value="9">9</option>
                 <option value="10">10</option><option value="11">11</option><option value="12">12</option>
             </select>
-            <input id="publicResultExam" placeholder="പരീക്ഷ (ഉദാ: Mid Term)" class="w-auto p-2 border rounded">
+            <select id="publicResultExamType" class="w-auto p-2 border rounded">
+                <option value="പാദ വാർഷികം">പാദ വാർഷികം</option>
+                <option value="അർധ വാർഷികം">അർധ വാർഷികം</option>
+                <option value="വാർഷികം">വാർഷികം</option>
+            </select>
             <button class="btn-primary" onclick="showPublicResult()">കാണുക</button>
             <button class="bg-gray-700 text-white px-4 py-1 rounded-full text-sm" onclick="printPublicResult()">🖨️ PDF</button>
         </div>
         <div id="publicResultDisplay" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </div>
 
-    <!-- LOGIN SECTION -->
+    <!-- LOGIN SECTION - 4 Types -->
     <div id="loginSection" class="bg-white p-6 rounded-2xl shadow-md border border-gray-200">
-        <h2 class="text-2xl font-bold text-center text-blue-900">🔐 ലോഗിൻ</h2>
-        <div class="mt-4 flex flex-col md:flex-row gap-4">
-            <div class="flex-1 border p-4 rounded-xl bg-gray-50">
-                <h3 class="font-semibold text-gray-700">👨‍🏫 അധ്യാപകർ / ഭാരവാഹികൾ</h3>
-                <input id="loginUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2">
-                <input id="loginPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2">
-                <button id="loginStaffBtn" class="mt-2 w-full bg-blue-900 text-white py-2 rounded-full font-bold">കയറുക</button>
+        <h2 class="text-2xl font-bold text-center text-blue-900">🔐 ലോഗിൻ (4 തരം)</h2>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. Sadhar Login -->
+            <div class="border p-4 rounded-xl bg-blue-50">
+                <h3 class="font-semibold text-blue-900">🛠️ സദർ</h3>
+                <input id="loginSadharUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2" value="sadhar">
+                <input id="loginSadharPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2" value="admin123">
+                <button id="loginSadharBtn" class="mt-2 w-full bg-blue-900 text-white py-2 rounded-full font-bold">കയറുക</button>
             </div>
-            <div class="flex-1 border p-4 rounded-xl bg-gray-50">
-                <h3 class="font-semibold text-gray-700">👪 രക്ഷിതാവ്</h3>
+            <!-- 2. Staff Login -->
+            <div class="border p-4 rounded-xl bg-green-50">
+                <h3 class="font-semibold text-green-900">👨‍🏫 അധ്യാപകർ</h3>
+                <input id="loginStaffUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2">
+                <input id="loginStaffPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2">
+                <button id="loginStaffBtn" class="mt-2 w-full bg-green-700 text-white py-2 rounded-full font-bold">കയറുക</button>
+            </div>
+            <!-- 3. Management Login -->
+            <div class="border p-4 rounded-xl bg-purple-50">
+                <h3 class="font-semibold text-purple-900">🏛️ മാനേജ്മെന്റ്</h3>
+                <input id="loginManagementUsername" placeholder="യൂസർനെയിം" class="w-full p-2 border rounded mt-2">
+                <input id="loginManagementPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-2 border rounded mt-2">
+                <button id="loginManagementBtn" class="mt-2 w-full bg-purple-700 text-white py-2 rounded-full font-bold">കയറുക</button>
+            </div>
+            <!-- 4. Parent Login -->
+            <div class="border p-4 rounded-xl bg-yellow-50">
+                <h3 class="font-semibold text-yellow-700">👪 രക്ഷിതാവ്</h3>
                 <input id="loginParentReg" placeholder="Reg No (ഉദാ: 691)" class="w-full p-2 border rounded mt-2">
-                <button id="loginParentBtn" class="mt-2 w-full bg-green-700 text-white py-2 rounded-full font-bold">കുട്ടിയുടെ പാനലിലേക്ക്</button>
+                <button id="loginParentBtn" class="mt-2 w-full bg-yellow-600 text-white py-2 rounded-full font-bold">കയറുക</button>
             </div>
         </div>
-        <p id="loginError" class="text-red-600 text-center mt-2 hidden">❌ ലോഗിൻ പരാജയപ്പെട്ടു.</p>
+        <p id="loginError" class="text-red-600 text-center mt-3 hidden">❌ ലോഗിൻ പരാജയപ്പെട്ടു. ശരിയായ വിവരങ്ങൾ നൽകുക.</p>
     </div>
 
     <!-- DASHBOARD -->
@@ -136,6 +155,7 @@
             <button class="panel-tab active" data-tab="sadhar" onclick="switchTab('sadhar')">സദർ</button>
             <button class="panel-tab" data-tab="teacher" onclick="switchTab('teacher')">അധ്യാപകൻ</button>
             <button class="panel-tab" data-tab="parent" onclick="switchTab('parent')">രക്ഷിതാവ്</button>
+            <button class="panel-tab" data-tab="management" onclick="switchTab('management')">മാനേജ്മെന്റ്</button>
             <button class="panel-tab" data-tab="committee" onclick="switchTab('committee')">കമ്മിറ്റി</button>
         </div>
 
@@ -144,7 +164,7 @@
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🛠️ സദർ പാനൽ</h2>
                 <div class="mt-4 space-y-2">
-                    <!-- Accordion: Shift + Class Linking (New Model) -->
+                    <!-- Accordion 1: Shift + Class Linking -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc1')">
                             <span>⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്</span>
@@ -152,29 +172,16 @@
                         </button>
                         <div id="acc1" class="accordion-content p-3">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="border rounded-lg p-3">
-                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 1</h4>
-                                    <div id="shift1Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
-                                </div>
-                                <div class="border rounded-lg p-3">
-                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 2</h4>
-                                    <div id="shift2Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
-                                </div>
-                                <div class="border rounded-lg p-3">
-                                    <h4 class="font-bold text-center">ഷിഫ്റ്റ് 3</h4>
-                                    <div id="shift3Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div>
-                                </div>
+                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 1</h4><div id="shift1Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
+                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 2</h4><div id="shift2Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
+                                <div class="border rounded-lg p-3"><h4 class="font-bold text-center">ഷിഫ്റ്റ് 3</h4><div id="shift3Classes" class="shift-drop-zone flex flex-wrap gap-1 p-2"></div></div>
                             </div>
-                            <div class="mt-3">
-                                <p class="text-sm text-gray-600">ലഭ്യമായ ക്ലാസുകൾ: 
-                                    <span id="availableClassesList" class="flex flex-wrap gap-1 mt-1"></span>
-                                </p>
-                            </div>
+                            <div class="mt-3"><p class="text-sm text-gray-600">ലഭ്യമായ ക്ലാസുകൾ: <span id="availableClassesList" class="flex flex-wrap gap-1 mt-1"></span></p></div>
                             <button class="mt-3 btn-primary text-sm" onclick="saveShiftClassNew()">സേവ് ചെയ്യുക</button>
                         </div>
                     </div>
 
-                    <!-- Accordion: Staff Management with Photo -->
+                    <!-- Accordion 2: Staff Management with Photo -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc2')">
                             <span>👥 ജീവനക്കാരുടെ നിയന്ത്രണം</span>
@@ -185,11 +192,10 @@
                                 <input id="staffName" placeholder="പേര്" class="flex-1 min-w-[100px]">
                                 <input id="staffUsername" placeholder="Username" class="flex-1 min-w-[100px]">
                                 <input id="staffPassword" placeholder="Password" class="flex-1 min-w-[100px]">
-                                <input id="staffClasses" placeholder="ക്ലാസ്സുകൾ (1,2,3)" class="flex-1 min-w-[100px]">
+                                <input id="staffClasses" placeholder="ക്ലാസ്സുകൾ" class="flex-1 min-w-[100px]">
                                 <select id="staffRole" class="flex-1 min-w-[100px] p-2 border rounded">
                                     <option value="teacher">അധ്യാപകൻ</option>
-                                    <option value="manager">മാനേജർ</option>
-                                    <option value="secretary">സെക്രട്ടറി</option>
+                                    <option value="management">മാനേജ്മെന്റ്</option>
                                     <option value="committee">കമ്മിറ്റി</option>
                                 </select>
                                 <input type="file" id="staffPhoto" accept="image/*" class="flex-1 min-w-[100px]">
@@ -199,10 +205,10 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Sadhar Attendance with WhatsApp Alert -->
+                    <!-- Accordion 3: Sadhar Attendance -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc3')">
-                            <span>✅ സദർ ഹാജർ (WhatsApp Alert)</span>
+                            <span>✅ സദർ ഹാജർ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc3" class="accordion-content p-3">
@@ -218,22 +224,29 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Exam Timetable - Class wise -->
+                    <!-- Accordion 4: Exam Timetable with 3 Exam Types -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc4')">
-                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ (ക്ലാസ് വൈസ്)</span>
+                            <span>📅 പരീക്ഷാ ടൈംടേബിൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc4" class="accordion-content p-3">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="font-semibold">പരീക്ഷ തരം:</span>
+                                <button class="exam-type-btn active" data-exam="പാദ വാർഷികം" onclick="selectExamType(this)">പാദ വാർഷികം</button>
+                                <button class="exam-type-btn" data-exam="അർധ വാർഷികം" onclick="selectExamType(this)">അർധ വാർഷികം</button>
+                                <button class="exam-type-btn" data-exam="വാർഷികം" onclick="selectExamType(this)">വാർഷികം</button>
+                            </div>
                             <div class="flex flex-wrap gap-2">
-                                <select id="examClassSelect" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <select id="examClassSelect" class="flex-1 min-w-[100px] p-2 border rounded">
                                     <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                                     <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                                     <option value="7">7</option><option value="8">8</option><option value="9">9</option>
                                     <option value="10">10</option><option value="11">11</option><option value="12">12</option>
                                 </select>
-                                <input id="examSubject" placeholder="വിഷയം" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <input id="examSubject" placeholder="വിഷയം" class="flex-1 min-w-[100px] p-2 border rounded">
                                 <input id="examDate" type="date" class="flex-1 min-w-[120px] p-2 border rounded">
+                                <input id="examTime" placeholder="സമയം (ഉദാ: 10:00 AM)" class="flex-1 min-w-[100px] p-2 border rounded">
                                 <button class="btn-primary text-sm" onclick="addExamSchedule()">ചേർക്കുക</button>
                             </div>
                             <div id="examTimetableList" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
@@ -241,10 +254,10 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Fee Structure with Months -->
+                    <!-- Accordion 5: Fee Structure -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc5')">
-                            <span>💰 ഫീസ് ഘടന &amp; QR (മാസം തിരിച്ച്)</span>
+                            <span>💰 ഫീസ് &amp; QR</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc5" class="accordion-content p-3">
@@ -263,20 +276,19 @@
                                 <button class="month-btn" data-month="December">ഡിസം</button>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-2">
-                                <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="flex-1 min-w-[120px] p-2 border rounded">
-                                <input id="googlePayNumber" placeholder="Google Pay" class="flex-1 min-w-[120px] p-2 border rounded">
-                                <input type="file" id="qrUpload" accept="image/*" class="flex-1 min-w-[120px]">
+                                <input id="monthlyFee" placeholder="പ്രതിമാസ ഫീസ് (₹)" class="flex-1 min-w-[100px] p-2 border rounded">
+                                <input id="googlePayNumber" placeholder="Google Pay" class="flex-1 min-w-[100px] p-2 border rounded">
+                                <input type="file" id="qrUpload" accept="image/*" class="flex-1 min-w-[100px]">
                                 <button class="btn-primary text-sm" onclick="saveFeeQR()">സേവ്</button>
                             </div>
                             <div id="qrPreview" class="mt-2"></div>
-                            <div id="feeMonthStatus" class="mt-2 text-sm"></div>
                         </div>
                     </div>
 
-                    <!-- Accordion: Holiday Manager -->
+                    <!-- Accordion 6: Holiday -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc6')">
-                            <span>🏖️ അവധി പ്രകടന ബോർഡ്</span>
+                            <span>🏖️ അവധി</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc6" class="accordion-content p-3">
@@ -293,17 +305,17 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Announcements -->
+                    <!-- Accordion 7: Announcements -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc7')">
-                            <span>📢 പൊതു അറിയിപ്പുകൾ</span>
+                            <span>📢 അറിയിപ്പുകൾ</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc7" class="accordion-content p-3">
                             <input id="announceTitle" placeholder="തലക്കെട്ട്" class="w-full p-2 border rounded">
                             <textarea id="announceBody" rows="2" placeholder="അറിയിപ്പ് വിവരം" class="w-full border rounded p-2 mt-1"></textarea>
                             <select id="announceTarget" class="w-full p-2 border rounded mt-1">
-                                <option value="all">എല്ലാ വിദ്യാർത്ഥികൾ</option>
+                                <option value="all">എല്ലാവർക്കും</option>
                                 <option value="1">ഷിഫ്റ്റ് 1</option>
                                 <option value="2">ഷിഫ്റ്റ് 2</option>
                                 <option value="3">ഷിഫ്റ്റ് 3</option>
@@ -313,7 +325,7 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Student Info - Class wise -->
+                    <!-- Accordion 8: Student Info -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc8')">
                             <span>📚 കുട്ടികളുടെ വിവരങ്ങൾ</span>
@@ -332,35 +344,29 @@
                         </div>
                     </div>
 
-                    <!-- Accordion: Fee Counter with Month -->
+                    <!-- Accordion 9: Class Fee -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc9')">
-                            <span>💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ്</span>
+                            <span>💰 ക്ലാസ്സ് ഫീസ്</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div id="acc9" class="accordion-content p-3">
                             <div class="flex flex-wrap gap-2">
-                                <select id="feeClassSelect" class="flex-1 min-w-[120px] p-2 border rounded"></select>
-                                <select id="feeMonthSelect" class="flex-1 min-w-[120px] p-2 border rounded">
-                                    <option value="January">ജനുവരി</option>
-                                    <option value="February">ഫെബ്രുവരി</option>
-                                    <option value="March">മാർച്ച്</option>
-                                    <option value="April">ഏപ്രിൽ</option>
-                                    <option value="May">മെയ്</option>
-                                    <option value="June">ജൂൺ</option>
-                                    <option value="July">ജൂലൈ</option>
-                                    <option value="August">ഓഗസ്റ്റ്</option>
-                                    <option value="September">സെപ്റ്റംബർ</option>
-                                    <option value="October">ഒക്ടോബർ</option>
-                                    <option value="November">നവംബർ</option>
-                                    <option value="December">ഡിസംബർ</option>
+                                <select id="feeClassSelect" class="flex-1 min-w-[100px] p-2 border rounded"></select>
+                                <select id="feeMonthSelect" class="flex-1 min-w-[100px] p-2 border rounded">
+                                    <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                                    <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                                    <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                                    <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                                    <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                                    <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
                                 </select>
                             </div>
                             <div id="feeStudentList" class="mt-2 max-h-60 overflow-y-auto space-y-1"></div>
                         </div>
                     </div>
 
-                    <!-- Accordion: Backup & Profile -->
+                    <!-- Accordion 10: Backup & Profile -->
                     <div class="border rounded-xl overflow-hidden">
                         <button class="accordion-toggle w-full text-left p-3 bg-gray-50 font-semibold flex justify-between items-center hover:bg-gray-100" onclick="toggleAccordion('acc10')">
                             <span>📋 ബാക്കപ്പ് &amp; പ്രൊഫൈൽ</span>
@@ -368,7 +374,7 @@
                         </button>
                         <div id="acc10" class="accordion-content p-3">
                             <button class="btn-primary text-sm" onclick="exportJSON()">JSON ബാക്കപ്പ്</button>
-                            <button class="btn-primary text-sm ml-2" onclick="showProfileEditor()">പ്രൊഫൈൽ എഡിറ്റ്</button>
+                            <button class="btn-primary text-sm ml-2" onclick="showProfileEditor()">പ്രൊഫൈൽ</button>
                             <button class="btn-primary text-sm ml-2" onclick="viewAllComplaints()">പരാതികൾ</button>
                         </div>
                     </div>
@@ -376,63 +382,58 @@
             </div>
         </div>
 
-        <!-- TEACHER PANEL - Enhanced -->
+        <!-- TEACHER PANEL -->
         <div id="panel-teacher" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">👨‍🏫 അധ്യാപക പാനൽ</h2>
-                
-                <!-- Teacher's Classes -->
                 <div id="teacherClassList" class="mt-2 space-y-3"></div>
-                
-                <!-- Attendance with Date Selector -->
                 <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📋 ഹാജർ പുസ്തകം</h4>
+                    <h4 class="font-semibold">📋 ഹാജർ ഹിസ്റ്ററി</h4>
                     <div class="flex flex-wrap gap-2 mt-1">
                         <input type="date" id="teacherAttendanceDate" class="flex-1 min-w-[150px] p-2 border rounded">
                         <button class="btn-primary text-sm" onclick="loadTeacherAttendance()">കാണുക</button>
                     </div>
                     <div id="teacherAttendanceView" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
                 </div>
-
-                <!-- Fee Update for Teacher -->
                 <div class="mt-4 border-t pt-3">
                     <h4 class="font-semibold">💰 ഫീസ് അപ്ഡേറ്റ്</h4>
                     <div class="flex flex-wrap gap-2 mt-1">
-                        <select id="teacherFeeClass" class="flex-1 min-w-[120px] p-2 border rounded"></select>
-                        <select id="teacherFeeMonth" class="flex-1 min-w-[120px] p-2 border rounded">
-                            <option value="January">ജനുവരി</option>
-                            <option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option>
-                            <option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option>
-                            <option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option>
-                            <option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option>
-                            <option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option>
-                            <option value="December">ഡിസംബർ</option>
+                        <select id="teacherFeeClass" class="flex-1 min-w-[100px] p-2 border rounded"></select>
+                        <select id="teacherFeeMonth" class="flex-1 min-w-[100px] p-2 border rounded">
+                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
                         </select>
                     </div>
                     <div id="teacherFeeList" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
                 </div>
-
-                <!-- Complaints & Marks -->
                 <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📝 പരാതികൾ &amp; മാർക്ക്</h4>
+                    <h4 class="font-semibold">📝 പരാതികൾ &amp; നിർദ്ദേശങ്ങൾ</h4>
                     <div class="flex flex-wrap gap-2">
-                        <textarea id="teacherComplaint" rows="2" placeholder="കുട്ടിയുടെ പരാതി / അഭിപ്രായം..." class="flex-1 min-w-[200px] p-2 border rounded"></textarea>
+                        <textarea id="teacherComplaint" rows="2" placeholder="പരാതി / നിർദ്ദേശം..." class="flex-1 min-w-[150px] p-2 border rounded"></textarea>
                         <input id="teacherComplaintReg" placeholder="Reg No" class="w-24 p-2 border rounded">
                         <button class="btn-primary text-sm" onclick="submitTeacherComplaint()">അയക്കുക</button>
+                        <button class="whatsapp-btn text-sm" onclick="sendComplaintWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp-ൽ</button>
                     </div>
-                    <div class="flex flex-wrap gap-2 mt-2">
+                    <div id="teacherComplaintsList" class="max-h-40 overflow-y-auto text-sm mt-2"></div>
+                </div>
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">📝 മാർക്ക്</h4>
+                    <div class="flex flex-wrap gap-2">
                         <input id="teacherMarksReg" placeholder="Reg No" class="w-24 p-2 border rounded">
                         <input id="teacherMarksSubject" placeholder="വിഷയം" class="w-32 p-2 border rounded">
                         <input id="teacherMarksScore" placeholder="മാർക്ക്" class="w-24 p-2 border rounded">
-                        <button class="btn-primary text-sm" onclick="submitTeacherMarks()">മാർക്ക് രേഖപ്പെടുത്തുക</button>
-                        <button class="whatsapp-btn text-sm" onclick="sendMarksToParent()"><i class="fab fa-whatsapp"></i> രക്ഷിതാവിന് അയക്കുക</button>
+                        <select id="teacherMarksExamType" class="w-32 p-2 border rounded">
+                            <option value="പാദ വാർഷികം">പാദ വാർഷികം</option>
+                            <option value="അർധ വാർഷികം">അർധ വാർഷികം</option>
+                            <option value="വാർഷികം">വാർഷികം</option>
+                        </select>
+                        <button class="btn-primary text-sm" onclick="submitTeacherMarks()">മാർക്ക്</button>
+                        <button class="whatsapp-btn text-sm" onclick="sendMarksToParent()"><i class="fab fa-whatsapp"></i> രക്ഷിതാവിന്</button>
                     </div>
-                    <div id="teacherComplaintsList" class="max-h-40 overflow-y-auto text-sm mt-2"></div>
                 </div>
             </div>
         </div>
@@ -447,99 +448,130 @@
                 <div class="mt-3 p-3 bg-gray-50 rounded-xl">
                     <h4 class="font-semibold">✏️ വിവരങ്ങൾ തിരുത്തുക</h4>
                     <input id="parentEditName" placeholder="രക്ഷിതാവിന്റെ പേര്" class="w-full p-2 border rounded mt-1">
-                    <input id="parentEditPhone" placeholder="ഫോൺ നമ്പർ" class="w-full p-2 border rounded mt-1">
+                    <input id="parentEditPhone" placeholder="ഫോൺ" class="w-full p-2 border rounded mt-1">
                     <input type="file" id="parentEditPhoto" accept="image/*" class="mt-1">
-                    <button class="mt-1 btn-primary text-sm" onclick="updateParentInfo()">അപ്ഡേറ്റ് ചെയ്യുക</button>
+                    <button class="mt-1 btn-primary text-sm" onclick="updateParentInfo()">അപ്ഡേറ്റ്</button>
                 </div>
                 <div class="mt-3 p-3 bg-blue-50 rounded-xl">
                     <h4 class="font-semibold">📊 ഫീസ് &amp; കുടിശ്ശിക</h4>
                     <div id="parentFeeStatus"></div>
                 </div>
                 <div id="parentMarksView" class="mt-3 p-3 bg-purple-50 rounded-xl">
-                    <h4 class="font-semibold">📝 മാർക്ക് വിവരങ്ങൾ</h4>
+                    <h4 class="font-semibold">📝 മാർക്ക്</h4>
                     <div id="parentMarksList"></div>
+                </div>
+                <div class="mt-3 p-3 bg-red-50 rounded-xl">
+                    <h4 class="font-semibold">📢 പരാതി / നിർദ്ദേശം</h4>
+                    <textarea id="parentComplaint" rows="2" placeholder="നിങ്ങളുടെ പരാതി / നിർദ്ദേശം..." class="w-full p-2 border rounded"></textarea>
+                    <button class="mt-1 btn-primary text-sm" onclick="submitParentComplaint()">അയക്കുക</button>
+                    <button class="mt-1 whatsapp-btn text-sm" onclick="sendParentComplaintWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp-ൽ</button>
                 </div>
             </div>
         </div>
 
-        <!-- COMMITTEE PANEL - Enhanced -->
+        <!-- MANAGEMENT PANEL -->
+        <div id="panel-management" class="tab-content">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-purple-900">🏛️ മാനേജ്മെന്റ് പാനൽ</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTotalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTotalTeachers">0</span><br>അധ്യാപകർ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtTodayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
+                    <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="mgmtFeeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
+                </div>
+                <div class="mt-4">
+                    <h4 class="font-semibold">📊 മാസ ഹാജർ സംഗ്രഹം</h4>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <select id="mgmtAttendanceMonth" class="p-2 border rounded">
+                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
+                        </select>
+                        <button class="btn-primary text-sm" onclick="loadManagementAttendance()">കാണുക</button>
+                    </div>
+                    <div id="mgmtAttendanceSummary" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">📊 മാസ ഫീസ് റിപ്പോർട്ട്</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="mgmtFeeMonth" class="p-2 border rounded">
+                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
+                        </select>
+                        <button class="btn-primary text-sm" onclick="loadManagementFeeReport()">കാണുക</button>
+                    </div>
+                    <div id="mgmtFeeReport" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">👥 ജീവനക്കാരുടെ പട്ടിക</h4>
+                    <div id="mgmtStaffList" class="max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMITTEE PANEL -->
         <div id="panel-committee" class="tab-content">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-blue-900">🏛️ കമ്മിറ്റി പാനൽ</h2>
-                
-                <!-- Stats -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalStudents">0</span><br>ആകെ കുട്ടികൾ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="totalTeachers">0</span><br>അധ്യാപകർ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="todayAttendance">0</span><br>ഇന്നത്തെ ഹാജർ</div>
                     <div class="bg-gray-100 p-3 rounded-xl text-center"><span class="text-2xl font-bold" id="feeCollected">₹0</span><br>ഫീസ് ശേഖരണം</div>
                 </div>
-
-                <!-- Staff Attendance Tracker with Shift -->
                 <div class="mt-4">
-                    <h4 class="font-semibold">👨‍🏫 അധ്യാപക ഹാജർ (ഷിഫ്റ്റ് തിരിച്ച്)</h4>
+                    <h4 class="font-semibold">📊 ദിവസേനയുള്ള ഹാജർ</h4>
                     <div class="flex flex-wrap gap-2 mt-1">
+                        <input type="date" id="committeeDailyDate" class="p-2 border rounded">
+                        <button class="btn-primary text-sm" onclick="loadCommitteeDailyAttendance()">കാണുക</button>
+                    </div>
+                    <div id="committeeDailyAttendance" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
+                </div>
+                <div class="mt-4 border-t pt-3">
+                    <h4 class="font-semibold">📊 മാസ ഹാജർ നില</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="committeeMonthFilter" class="p-2 border rounded">
+                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
+                        </select>
                         <select id="committeeShiftFilter" class="p-2 border rounded">
                             <option value="all">എല്ലാ ഷിഫ്റ്റുകളും</option>
                             <option value="1">ഷിഫ്റ്റ് 1</option>
                             <option value="2">ഷിഫ്റ്റ് 2</option>
                             <option value="3">ഷിഫ്റ്റ് 3</option>
                         </select>
-                        <input type="date" id="committeeAttendanceDate" class="p-2 border rounded">
-                        <button class="btn-primary text-sm" onclick="loadCommitteeAttendance()">കാണുക</button>
+                        <button class="btn-primary text-sm" onclick="loadCommitteeMonthlyAttendance()">കാണുക</button>
                     </div>
-                    <div id="staffAttendanceTracker" class="max-h-60 overflow-y-auto text-sm mt-2"></div>
+                    <div id="committeeMonthlyAttendance" class="mt-2 max-h-60 overflow-y-auto text-sm"></div>
                 </div>
-
-                <!-- Monthly Salary Calculator -->
                 <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">💰 മാസ ശമ്പള കണക്ക്</h4>
+                    <h4 class="font-semibold">💰 മാസ ശമ്പളം</h4>
                     <div class="flex flex-wrap gap-2">
                         <select id="salaryMonth" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option>
-                            <option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option>
-                            <option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option>
-                            <option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option>
-                            <option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option>
-                            <option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option>
-                            <option value="December">ഡിസംബർ</option>
+                            <option value="January">ജനുവരി</option><option value="February">ഫെബ്രുവരി</option>
+                            <option value="March">മാർച്ച്</option><option value="April">ഏപ്രിൽ</option>
+                            <option value="May">മെയ്</option><option value="June">ജൂൺ</option>
+                            <option value="July">ജൂലൈ</option><option value="August">ഓഗസ്റ്റ്</option>
+                            <option value="September">സെപ്റ്റംബർ</option><option value="October">ഒക്ടോബർ</option>
+                            <option value="November">നവംബർ</option><option value="December">ഡിസംബർ</option>
                         </select>
                         <button class="btn-primary text-sm" onclick="calculateSalary()">കണക്കാക്കുക</button>
                     </div>
                     <div id="salaryResult" class="mt-2 text-sm max-h-60 overflow-y-auto"></div>
                 </div>
-
-                <!-- Monthly Fee & Attendance Report -->
                 <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📊 മാസം തിരിച്ചുള്ള റിപ്പോർട്ട്</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="reportMonth" class="p-2 border rounded">
-                            <option value="January">ജനുവരി</option>
-                            <option value="February">ഫെബ്രുവരി</option>
-                            <option value="March">മാർച്ച്</option>
-                            <option value="April">ഏപ്രിൽ</option>
-                            <option value="May">മെയ്</option>
-                            <option value="June">ജൂൺ</option>
-                            <option value="July">ജൂലൈ</option>
-                            <option value="August">ഓഗസ്റ്റ്</option>
-                            <option value="September">സെപ്റ്റംബർ</option>
-                            <option value="October">ഒക്ടോബർ</option>
-                            <option value="November">നവംബർ</option>
-                            <option value="December">ഡിസംബർ</option>
-                        </select>
-                        <button class="btn-primary text-sm" onclick="generateMonthlyReport()">റിപ്പോർട്ട് കാണുക</button>
-                    </div>
-                    <div id="monthlyReport" class="mt-2 text-sm max-h-60 overflow-y-auto"></div>
-                </div>
-
-                <!-- Defaulters List -->
-                <div class="mt-4 border-t pt-3">
-                    <h4 class="font-semibold">📋 കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ്</h4>
+                    <h4 class="font-semibold">📋 കുടിശ്ശികക്കാർ</h4>
                     <div id="defaultersList" class="max-h-60 overflow-y-auto text-sm"></div>
                 </div>
             </div>
@@ -580,19 +612,18 @@ let allComplaints = [];
 let allMarks = {};
 let shiftClassMapping = { shifts: {1:[],2:[],3:[]} };
 let selectedMonth = 'April';
+let selectedExamType = 'പാദ വാർഷികം';
 
 // ====================================================
-//  INITIAL STUDENT DATA (124 students - same as before)
+//  INITIAL STUDENT DATA (124 students - abbreviated)
 // ====================================================
 const INITIAL_STUDENTS = [
-// 1st Class - Shift 1
 {reg:691, name:"അത്വാഉറഹ്മാൻ", father:"Ashkar Ali", dob:"06/04/2019", phone:"9100000001", cls:1, shift:1, photo:""},
 {reg:708, name:"മുഹമ്മദ് ഷാസിൽ", father:"Sirajuddin", dob:"26/05/2020", phone:"9100000002", cls:1, shift:1, photo:""},
 {reg:707, name:"മുഹമ്മദ് രിഫ്ദ്", father:"Sakeer", dob:"28/06/2019", phone:"9100000003", cls:1, shift:1, photo:""},
 {reg:713, name:"ഇബ്രാഹിം KM", father:"Abdurrahman K. M.", dob:"09/01/2020", phone:"9100000004", cls:1, shift:1, photo:""},
 {reg:706, name:"സൈനബ മറിയം മെഹ്‌വിഷ്", father:"Shameer Abdullah", dob:"26/09/2020", phone:"9100000005", cls:1, shift:1, photo:""},
 {reg:711, name:"റുഖയ്യ സിദ", father:"Muhammed Haris", dob:"26/09/2020", phone:"9100000006", cls:1, shift:1, photo:""},
-// 2nd Class - Shift 2
 {reg:680, name:"അബ്ദുൽ ബാസിത്", father:"നൂറുദ്ദീൻ അബ്ദുള്ള", dob:"14/03/2018", phone:"9100000007", cls:2, shift:2, photo:""},
 {reg:681, name:"ഷാൻ അബ്ദുൽ റസാഖ്", father:"ഷംസുദ്ദീൻ", dob:"04/01/2019", phone:"9100000008", cls:2, shift:2, photo:""},
 {reg:693, name:"അഹദ് മുഹ്‌യിദ്ദീൻ", father:"ഷാനവാസ്", dob:"07/12/2019", phone:"9100000009", cls:2, shift:2, photo:""},
@@ -604,7 +635,6 @@ const INITIAL_STUDENTS = [
 {reg:690, name:"സൈനബ ഇശൽ", father:"മുഹമ്മദ് അഷ്റഫ്", dob:"19/05/2019", phone:"9100000015", cls:2, shift:2, photo:""},
 {reg:692, name:"ഖദീജ ലിബ", father:"അബ്ദുൽ മുനീർ", dob:"28/08/2019", phone:"9100000016", cls:2, shift:2, photo:""},
 {reg:696, name:"റുഖയ്യ നദ", father:"അബ്ദുൽ നാസർ", dob:"23/08/2019", phone:"9100000017", cls:2, shift:2, photo:""},
-// 3rd Class - Shift 1
 {reg:620, name:"അദ്നാൻ", father:"അസ്ഹർ അലി", dob:"17/12/2014", phone:"9100000018", cls:3, shift:1, photo:""},
 {reg:628, name:"അബ്ദുൽ നാഫിഹ്", father:"രാജുദ്ദീൻ", dob:"05/09/2016", phone:"9100000019", cls:3, shift:1, photo:""},
 {reg:657, name:"രെഹാൻ ശൈഖ്", father:"സക്കരിയ്യ", dob:"23/04/2018", phone:"9100000020", cls:3, shift:1, photo:""},
@@ -621,7 +651,6 @@ const INITIAL_STUDENTS = [
 {reg:669, name:"നഫീസ സഫ", father:"ഇബ്രാഹിം", dob:"08/01/2018", phone:"9100000031", cls:3, shift:1, photo:""},
 {reg:675, name:"ഫാത്തിമ ഇശൽ", father:"ഇസ്മായിൽ", dob:"15/02/2018", phone:"9100000032", cls:3, shift:1, photo:""},
 {reg:701, name:"റിംസ സക്കീർ", father:"സക്കീർ", dob:"15/06/2017", phone:"9100000033", cls:3, shift:1, photo:""},
-// 4th Class - Shift 2
 {reg:685, name:"അബ്ദുൽ ഹയൻ", father:"മാഹിൻ", dob:"14/12/2015", phone:"9100000034", cls:4, shift:2, photo:""},
 {reg:599, name:"നസ്‌വാൻ", father:"അബ്ദുൽ ഹാരിസ്", dob:"18/08/2015", phone:"9100000035", cls:4, shift:2, photo:""},
 {reg:633, name:"ഇബ്രാഹിം ഖലീൽ", father:"അബ്ദുൽ ലത്തീഫ്", dob:"04/01/2017", phone:"9100000036", cls:4, shift:2, photo:""},
@@ -637,7 +666,6 @@ const INITIAL_STUDENTS = [
 {reg:698, name:"മുഹമ്മദ് അമ്മാർ", father:"മുഹമ്മദ് Hനീഫ്", dob:"10/12/2014", phone:"9100000046", cls:4, shift:2, photo:""},
 {reg:703, name:"അബ്ദുറഹ്മാൻ ഇസാൻ", father:"മുഹമ്മദ് അഫ്താബ്", dob:"14/05/2016", phone:"9100000047", cls:4, shift:2, photo:""},
 {reg:665, name:"അസാ മറിയം", father:"മുജീബ്", dob:"21/01/2017", phone:"9100000048", cls:4, shift:2, photo:""},
-// 5th Class - Shift 1
 {reg:611, name:"അബ്ദുല്ലാഹ്", father:"Navas", dob:"24/11/2015", phone:"9100000049", cls:5, shift:1, photo:""},
 {reg:630, name:"മുഈനുദ്ദീൻ", father:"Habeeb", dob:"16/07/2016", phone:"9100000050", cls:5, shift:1, photo:""},
 {reg:631, name:"അദ്നാൻ", father:"Noushad", dob:"04/12/2016", phone:"9100000051", cls:5, shift:1, photo:""},
@@ -649,7 +677,6 @@ const INITIAL_STUDENTS = [
 {reg:642, name:"ആയിഷ അബ്ദുല്ലാഹ്", father:"അബ്ദുള്ള", dob:"15/04/2016", phone:"9100000057", cls:5, shift:1, photo:""},
 {reg:643, name:"ഫാത്തിമ ജുമാന", father:"ഹാലിത്", dob:"22/02/2014", phone:"9100000058", cls:5, shift:1, photo:""},
 {reg:667, name:"ആയിഷ മെഹ്സിൻ", father:"മുഹമ്മദ് സ്വാദിഖ്", dob:"21/05/2015", phone:"9100000059", cls:5, shift:1, photo:""},
-// 6th Class - Shift 2
 {reg:586, name:"അബൂ താഹിർ", father:"ഹബീബ്", dob:"29/09/2014", phone:"9100000060", cls:6, shift:2, photo:""},
 {reg:600, name:"അബ്ദുൽ ഖാദർ ഷെഹാൻ", father:"അബ്ദുൽ ഖാദർ", dob:"25/04/2015", phone:"9100000061", cls:6, shift:2, photo:""},
 {reg:601, name:"മഹ്മൂദ് അസാൻ", father:"നിയാസ്", dob:"07/10/2014", phone:"9100000062", cls:6, shift:2, photo:""},
@@ -664,7 +691,6 @@ const INITIAL_STUDENTS = [
 {reg:608, name:"ലിയ്യാ ഫാത്തിമ", father:"ഖലീൽ", dob:"27/10/2015", phone:"9100000071", cls:6, shift:2, photo:""},
 {reg:609, name:"ആയിഷ മെഹ്‌റ", father:"അഷ്റഫ്", dob:"17/02/2015", phone:"9100000072", cls:6, shift:2, photo:""},
 {reg:613, name:"ആയിഷ ഹിബ", father:"ഹംസ", dob:"18/12/2015", phone:"9100000073", cls:6, shift:2, photo:""},
-// 7th Class - Shift 1
 {reg:563, name:"മുഹമ്മദ് സ്വബാഹ്", father:"Shahnawaz", dob:"04/10/2013", phone:"9100000074", cls:7, shift:1, photo:""},
 {reg:584, name:"അബ്ദുല്ലാഹ് സെയ്ഫ്", father:"Zubair", dob:"24/12/2013", phone:"9100000075", cls:7, shift:1, photo:""},
 {reg:565, name:"മറിയം സുഹാ", father:"Haris", dob:"09/10/2013", phone:"9100000076", cls:7, shift:1, photo:""},
@@ -677,7 +703,6 @@ const INITIAL_STUDENTS = [
 {reg:639, name:"മെഹ്റ മുംതാസ്", father:"Muaaz", dob:"16/12/2013", phone:"9100000083", cls:7, shift:1, photo:""},
 {reg:672, name:"മിൻഹാ ഫാത്തിമ", father:"Nooruddin", dob:"23/04/2014", phone:"9100000084", cls:7, shift:1, photo:""},
 {reg:697, name:"ഹാസിയ ഹംന", father:"Muhammad Hanif", dob:"09/08/2012", phone:"9100000085", cls:7, shift:1, photo:""},
-// 8th Class - Shift 2
 {reg:560, name:"മുഹമ്മദ് ഷെഹ്‌സാദ്", father:"Abdullah", dob:"04/06/2013", phone:"9100000086", cls:8, shift:2, photo:""},
 {reg:561, name:"അബ്ദുല്ലാഹ് അഷ്റഫ്", father:"Ashraf", dob:"10/10/2013", phone:"9100000087", cls:8, shift:2, photo:""},
 {reg:547, name:"മുഹമ്മദ് നസ്മിൽ", father:"Haris", dob:"20/07/2012", phone:"9100000088", cls:8, shift:2, photo:""},
@@ -686,7 +711,6 @@ const INITIAL_STUDENTS = [
 {reg:568, name:"ഫാത്തിമ മിസ്ന", father:"Abdul Nasar", dob:"02/06/2014", phone:"9100000091", cls:8, shift:2, photo:""},
 {reg:569, name:"ആയിഷ നുവൈറ", father:"Abdul Latif", dob:"21/02/2013", phone:"9100000092", cls:8, shift:2, photo:""},
 {reg:683, name:"ആമിന ഷുസൈന", father:"Haris", dob:"12/10/2012", phone:"9100000093", cls:8, shift:2, photo:""},
-// 9th Class - Shift 1
 {reg:528, name:"അഹ്സം മിശാൽ", father:"Abdul Khader", dob:"11/05/2012", phone:"9100000094", cls:9, shift:1, photo:""},
 {reg:538, name:"അബ്ദുല്ലാഹ് സഈം", father:"Mohammed Jameel", dob:"11/06/2011", phone:"9100000095", cls:9, shift:1, photo:""},
 {reg:539, name:"അഹ്സൻ ഷാസിൽ", father:"Ashraf", dob:"30/12/2012", phone:"9100000096", cls:9, shift:1, photo:""},
@@ -698,14 +722,12 @@ const INITIAL_STUDENTS = [
 {reg:543, name:"ഫാത്തിമ KS", father:"Sajid", dob:"20/10/2012", phone:"9100000102", cls:9, shift:1, photo:""},
 {reg:545, name:"ഖദീജ മിൻഹ", father:"Ahmad Muzammil", dob:"07/06/2012", phone:"9100000103", cls:9, shift:1, photo:""},
 {reg:705, name:"അഖീല", father:"Abu Nawaz", dob:"07/02/2010", phone:"9100000104", cls:9, shift:1, photo:""},
-// 10th Class - Shift 2
 {reg:513, name:"നബീൽ ഇബ്രാഹിം", father:"Shahnavaz", dob:"28/11/2011", phone:"9100000105", cls:10, shift:2, photo:""},
 {reg:704, name:"മുഹമ്മദ് ഷംനാദ്", father:"Mohammed Sherif", dob:"05/03/2012", phone:"9100000106", cls:10, shift:2, photo:""},
 {reg:525, name:"സനൂബിയ", father:"Zakariya", dob:"21/03/2012", phone:"9100000107", cls:10, shift:2, photo:""},
 {reg:529, name:"ഷെസാ ഫാത്തിമ", father:"Shafi", dob:"19/03/2011", phone:"9100000108", cls:10, shift:2, photo:""},
 {reg:615, name:"ഫാത്തിമ ഷാഹില", father:"Abdul Khader", dob:"24/07/2012", phone:"9100000109", cls:10, shift:2, photo:""},
 {reg:637, name:"ആയിഷ നജ", father:"Inayat", dob:"03/02/2010", phone:"9100000110", cls:10, shift:2, photo:""},
-// Plus One - Shift 3
 {reg:486, name:"മുഹമ്മദ് നിഹാൽ", father:"അബ്ദുൽ ലത്തീഫ്", dob:"06/01/2009", phone:"9100000111", cls:11, shift:3, photo:""},
 {reg:487, name:"അബ്ദുല്ലാഹ് ഷാഹിസ്", father:"ഷാഫി", dob:"17/01/2009", phone:"9100000112", cls:11, shift:3, photo:""},
 {reg:514, name:"ജാസിം", father:"ഖാലിദ്", dob:"02/02/2011", phone:"9100000113", cls:11, shift:3, photo:""},
@@ -715,7 +737,6 @@ const INITIAL_STUDENTS = [
 {reg:499, name:"ഫാത്തിമ", father:"ഇബ്രാഹിം", dob:"23/04/2009", phone:"9100000117", cls:11, shift:3, photo:""},
 {reg:518, name:"ഖദീജ TA", father:"Ibrahim Khalil", dob:"05/10/2011", phone:"9100000118", cls:11, shift:3, photo:""},
 {reg:626, name:"ആയിഷ മുൻദിറ", father:"ഇബ്രാഹിം", dob:"07/01/2011", phone:"9100000119", cls:11, shift:3, photo:""},
-// Plus Two - Shift 3
 {reg:574, name:"മുഹമ്മദ് ലുബൈബ്", father:"Muhyiddin", dob:"26/10/2010", phone:"9100000120", cls:12, shift:3, photo:""},
 {reg:489, name:"മുഹമ്മദ് മിസാജ്", father:"അഹ്‌മദ് മുസമ്മിൽ", dob:"18/07/2009", phone:"9100000121", cls:12, shift:3, photo:""},
 {reg:492, name:"ഹുദാ ഫാത്തിമ", father:"ഹാരിസ്", dob:"10/11/2009", phone:"9100000122", cls:12, shift:3, photo:""},
@@ -763,12 +784,12 @@ function populateAllUI() {
     renderShiftClassUI();
     renderExamTimetable();
     updateQRUI();
+    showPublicResult();
     if (currentUser) {
         if (currentUser.role==='parent') updateParentPanel();
-        if (currentUser.role==='staff') updateTeacherPanel();
+        if (currentUser.role==='staff' || currentUser.role==='management') updateTeacherPanel();
         if (currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
     }
-    showPublicResult();
 }
 
 function populateClassSelects() {
@@ -784,50 +805,81 @@ function populateClassSelects() {
     document.getElementById('feeClassSelect')?.addEventListener('change', loadFeeStudents);
     document.getElementById('studentClassFilter')?.addEventListener('change', renderStudentEditor);
     document.getElementById('teacherFeeClass')?.addEventListener('change', loadTeacherFeeList);
-    // Set default date
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('sadharAttendanceDate').value = today;
     document.getElementById('teacherAttendanceDate').value = today;
-    document.getElementById('committeeAttendanceDate').value = today;
+    document.getElementById('committeeDailyDate').value = today;
     loadSadharAttendance();
     loadFeeStudents();
 }
 
 function updateAll() {
     updateCommitteeStats();
+    updateManagementStats();
     updateTeacherPanel();
     if (currentUser && currentUser.role==='parent') updateParentPanel();
     if (currentUser && currentUser.role==='sadhar') { loadSadharAttendance(); loadFeeStudents(); }
 }
 
 // ====================================================
-//  LOGIN SYSTEM
+//  LOGIN SYSTEM - 4 TYPES
 // ====================================================
-document.getElementById('loginStaffBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
+// Sadhar Login
+document.getElementById('loginSadharBtn').addEventListener('click', function() {
+    const username = document.getElementById('loginSadharUsername').value.trim();
+    const password = document.getElementById('loginSadharPassword').value.trim();
     if (username === 'sadhar' && password === 'admin123') {
         document.getElementById('loginError').classList.add('hidden');
         currentUser = { role: 'sadhar', username: 'sadhar', name: 'സദർ' };
         loginSuccess('സദർ');
         return;
     }
-    const staff = allStaff.find(s => s.username === username && s.password === password);
-    if (!staff || staff.deleted) {
+    document.getElementById('loginError').classList.remove('hidden');
+});
+
+// Staff Login
+document.getElementById('loginStaffBtn').addEventListener('click', function() {
+    const username = document.getElementById('loginStaffUsername').value.trim();
+    const password = document.getElementById('loginStaffPassword').value.trim();
+    const staff = allStaff.find(s => s.username === username && s.password === password && !s.deleted && s.role === 'teacher');
+    if (!staff) {
         document.getElementById('loginError').classList.remove('hidden');
-        document.getElementById('loginError').textContent = staff?.deleted ? '❌ നീക്കം ചെയ്തു' : '❌ തെറ്റായ വിവരങ്ങൾ';
         return;
     }
     document.getElementById('loginError').classList.add('hidden');
-    currentUser = { role: staff.role || 'staff', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
-    loginSuccess(staff.role==='manager'?'മാനേജർ':staff.role==='secretary'?'സെക്രട്ടറി':'അധ്യാപകൻ');
+    currentUser = { role: 'staff', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
+    loginSuccess('അധ്യാപകൻ');
 });
 
+// Management Login
+document.getElementById('loginManagementBtn').addEventListener('click', function() {
+    const username = document.getElementById('loginManagementUsername').value.trim();
+    const password = document.getElementById('loginManagementPassword').value.trim();
+    const staff = allStaff.find(s => s.username === username && s.password === password && !s.deleted && s.role === 'management');
+    if (!staff) {
+        document.getElementById('loginError').classList.remove('hidden');
+        return;
+    }
+    document.getElementById('loginError').classList.add('hidden');
+    currentUser = { role: 'management', username: staff.username, name: staff.name, classes: staff.classes||[], photo: staff.photo||'' };
+    loginSuccess('മാനേജ്മെന്റ്');
+});
+
+// Parent Login
 document.getElementById('loginParentBtn').addEventListener('click', function() {
     const reg = parseInt(document.getElementById('loginParentReg').value.trim());
     if (!reg) { document.getElementById('loginError').classList.remove('hidden'); return; }
     const student = allStudents.find(s => s.reg === reg);
-    if (!student) { document.getElementById('loginError').classList.remove('hidden'); return; }
+    if (!student) {
+        document.getElementById('loginError').classList.remove('hidden');
+        return;
+    }
+    // Check if student is deleted (inactive)
+    if (student.deleted) {
+        document.getElementById('loginError').classList.remove('hidden');
+        document.getElementById('loginError').textContent = '❌ ഈ കുട്ടിയെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്തിരിക്കുന്നു.';
+        return;
+    }
     document.getElementById('loginError').classList.add('hidden');
     currentUser = { role: 'parent', regNo: reg, name: student.name, cls: student.cls, shift: student.shift, parentName: student.father||'രക്ഷിതാവ്', phone: student.phone||'' };
     loginSuccess('രക്ഷിതാവ്');
@@ -838,18 +890,23 @@ function loginSuccess(roleDisplay) {
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('logoutBtn').classList.remove('hidden');
     document.getElementById('userRoleDisplay').textContent = `👤 ${currentUser.name} (${roleDisplay})`;
+    document.getElementById('publicResultSection').style.display = 'none';
     
-    // Show only relevant tabs
     const tabs = document.querySelectorAll('.panel-tab');
     tabs.forEach(tab => tab.style.display = 'none');
     if (currentUser.role === 'sadhar') {
         document.querySelector('[data-tab="sadhar"]').style.display = 'inline-block';
         document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
+        document.querySelector('[data-tab="management"]').style.display = 'inline-block';
         switchTab('sadhar');
-    } else if (currentUser.role === 'staff' || currentUser.role === 'manager' || currentUser.role === 'secretary') {
+    } else if (currentUser.role === 'staff') {
         document.querySelector('[data-tab="teacher"]').style.display = 'inline-block';
         document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
         switchTab('teacher');
+    } else if (currentUser.role === 'management') {
+        document.querySelector('[data-tab="management"]').style.display = 'inline-block';
+        document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
+        switchTab('management');
     } else if (currentUser.role === 'parent') {
         document.querySelector('[data-tab="parent"]').style.display = 'inline-block';
         switchTab('parent');
@@ -858,11 +915,6 @@ function loginSuccess(roleDisplay) {
         document.querySelector('[data-tab="committee"]').style.display = 'inline-block';
         switchTab('committee');
     }
-    if (currentUser.role !== 'sadhar') {
-        document.querySelector('[data-tab="sadhar"]')?.remove();
-    }
-    // Show public result always
-    document.getElementById('publicResultSection').style.display = 'block';
 }
 
 function logout() {
@@ -871,11 +923,9 @@ function logout() {
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('logoutBtn').classList.add('hidden');
     document.getElementById('userRoleDisplay').textContent = 'ലോഗിൻ ചെയ്തിട്ടില്ല';
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginParentReg').value = '';
-    document.querySelectorAll('.panel-tab').forEach(tab => tab.style.display = 'inline-block');
     document.getElementById('publicResultSection').style.display = 'block';
+    showPublicResult();
+    document.querySelectorAll('.panel-tab').forEach(tab => tab.style.display = 'inline-block');
 }
 
 function switchTab(tab) {
@@ -885,7 +935,8 @@ function switchTab(tab) {
     if (panel) panel.classList.add('active');
     const btn = document.querySelector(`[data-tab="${tab}"]`);
     if (btn) btn.classList.add('active');
-    if (tab==='committee') { updateCommitteeStats(); loadCommitteeAttendance(); calculateSalary(); generateMonthlyReport(); }
+    if (tab==='committee') { updateCommitteeStats(); loadCommitteeDailyAttendance(); loadCommitteeMonthlyAttendance(); calculateSalary(); }
+    if (tab==='management') { updateManagementStats(); loadManagementAttendance(); loadManagementFeeReport(); }
     if (tab==='teacher') updateTeacherPanel();
     if (tab==='parent') updateParentPanel();
     if (tab==='sadhar') { loadSadharAttendance(); loadFeeStudents(); renderShiftClassUI(); }
@@ -896,7 +947,7 @@ function toggleAccordion(id) {
 }
 
 // ====================================================
-//  STAFF MANAGEMENT WITH PHOTO
+//  STAFF MANAGEMENT
 // ====================================================
 function addStaff() {
     const name = document.getElementById('staffName').value.trim();
@@ -963,7 +1014,7 @@ function renderStaffList() {
 }
 
 // ====================================================
-//  SHIFT + CLASS LINKING (New Model)
+//  SHIFT + CLASS LINKING
 // ====================================================
 function renderShiftClassUI() {
     const shifts = [1,2,3];
@@ -974,7 +1025,6 @@ function renderShiftClassUI() {
         container.innerHTML = classes.map(c => `<span class="class-chip selected" onclick="removeClassFromShift(${shift},${c})">${c}-ാം ക്ലാസ് ✕</span>`).join('');
         if (classes.length === 0) container.innerHTML = '<span class="text-gray-400 text-sm">ക്ലാസുകൾ ഇവിടെ ഡ്രാഗ് ചെയ്യുക</span>';
     });
-    // Available classes
     const allAssigned = new Set();
     [1,2,3].forEach(s => (shiftClassMapping.shifts?.[s]||[]).forEach(c => allAssigned.add(c)));
     const available = [];
@@ -985,7 +1035,6 @@ function renderShiftClassUI() {
 }
 
 function addClassToShift(cls) {
-    // Find first shift with less than 4 classes
     for(let s=1;s<=3;s++) {
         const classes = shiftClassMapping.shifts?.[s] || [];
         if (classes.length < 4 && !classes.includes(cls)) {
@@ -996,7 +1045,7 @@ function addClassToShift(cls) {
             return;
         }
     }
-    alert('എല്ലാ ഷിഫ്റ്റുകളിലും 4 ക്ലാസുകൾ വീതം ഉണ്ട്. ആദ്യം ഒരു ക്ലാസ് നീക്കുക.');
+    alert('എല്ലാ ഷിഫ്റ്റുകളിലും 4 ക്ലാസുകൾ വീതം ഉണ്ട്.');
 }
 
 function removeClassFromShift(shift, cls) {
@@ -1008,17 +1057,17 @@ function removeClassFromShift(shift, cls) {
 
 function saveShiftClassNew() {
     db.ref('shiftClassMapping').set(shiftClassMapping).then(() => {
-        alert('✅ ഷിഫ്റ്റ് & ക്ലാസ്സ് ലിങ്കിംഗ് സേവ് ചെയ്തു.');
-    }).catch(e => alert('❌ പിശക്: '+e.message));
+        alert('✅ സേവ് ചെയ്തു.');
+    }).catch(e => alert('❌ '+e.message));
 }
 
 // ====================================================
-//  SADHAR ATTENDANCE WITH WHATSAPP ALERT
+//  SADHAR ATTENDANCE
 // ====================================================
 function loadSadharAttendance() {
     const cls = parseInt(document.getElementById('sadharClassSelect').value);
     const date = document.getElementById('sadharAttendanceDate').value || new Date().toISOString().split('T')[0];
-    const students = allStudents.filter(s => s.cls === cls);
+    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
     const container = document.getElementById('sadharAttendanceList');
     container.innerHTML = students.map(s => `
         <div class="flex items-center gap-2 p-1 border-b">
@@ -1049,82 +1098,99 @@ function submitSadharAttendance() {
     });
     db.ref(`attendance/${date}/${cls}`).update(attData).then(() => {
         alert('✅ ഹാജർ സബ്മിറ്റ് ചെയ്തു.');
-        // Store absent for WhatsApp
         window._absentStudents = absentStudents;
-    }).catch(e => alert('❌ പിശക്: '+e.message));
+        const teacher = allStaff.find(s => s.classes && s.classes.includes(cls) && !s.deleted);
+        if (teacher && absentStudents.length > 0) {
+            db.ref(`attendance/${date}/staff/${teacher.username}`).set('absent');
+        }
+    }).catch(e => alert('❌ '+e.message));
 }
 
 function sendAbsentAlert() {
     const absent = window._absentStudents || [];
-    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് കുട്ടികൾ ഇല്ല.'); return; }
+    if (absent.length === 0) { alert('⚠️ അബ്സന്റ് ഇല്ല.'); return; }
     let msg = "📢 അസ്സലാമു അലൈക്കും, ഇന്ന് മദ്റസയിൽ ഹാജരാകാത്ത കുട്ടികൾ:\n\n";
     absent.forEach(s => {
         msg += `👤 ${s.name} (Reg: ${s.reg}) - ${s.cls}-ാം ക്ലാസ്\n`;
     });
     msg += "\nദയവായി അവരുടെ രക്ഷിതാക്കളെ അറിയിക്കുക.";
-    // Open WhatsApp with the message
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ====================================================
-//  EXAM TIMETABLE - CLASS WISE
+//  EXAM TIMETABLE - 3 EXAM TYPES
 // ====================================================
+function selectExamType(btn) {
+    document.querySelectorAll('.exam-type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedExamType = btn.dataset.exam;
+    renderExamTimetable();
+}
+
 function addExamSchedule() {
     const cls = document.getElementById('examClassSelect').value;
     const subject = document.getElementById('examSubject').value.trim();
     const date = document.getElementById('examDate').value;
+    const time = document.getElementById('examTime').value.trim();
     if (!subject || !date) { alert('⚠️ വിഷയവും തീയതിയും നൽകുക.'); return; }
-    if (!allExamTimetables[cls]) allExamTimetables[cls] = [];
-    allExamTimetables[cls].push({ subject, date, id: Date.now() });
+    const examType = selectedExamType;
+    if (!allExamTimetables[cls]) allExamTimetables[cls] = {};
+    if (!allExamTimetables[cls][examType]) allExamTimetables[cls][examType] = [];
+    allExamTimetables[cls][examType].push({ subject, date, time, id: Date.now() });
     db.ref('examTimetables').set(allExamTimetables);
     renderExamTimetable();
     document.getElementById('examSubject').value = '';
     document.getElementById('examDate').value = '';
+    document.getElementById('examTime').value = '';
 }
 
 function renderExamTimetable() {
     const container = document.getElementById('examTimetableList');
     if (!container) return;
     const cls = document.getElementById('examClassSelect')?.value || '1';
-    const exams = allExamTimetables[cls] || [];
-    container.innerHTML = exams.map(e => `
-        <div class="flex justify-between items-center p-1 border-b text-sm">
-            <span>${e.subject} - ${e.date}</span>
-            <button class="btn-danger text-xs" onclick="removeExam(${e.id})">✕</button>
-        </div>
-    `).join('') || '<p class="text-gray-400">ഇതുവരെ ടൈംടേബിൾ ഇല്ല</p>';
+    const examType = selectedExamType;
+    const exams = allExamTimetables[cls]?.[examType] || [];
+    container.innerHTML = `
+        <div class="font-semibold text-blue-900">📚 ${examType} - ${cls}-ാം ക്ലാസ്</div>
+        ${exams.map(e => `
+            <div class="flex justify-between items-center p-1 border-b text-sm">
+                <span>${e.subject} - ${e.date} ${e.time ? '| '+e.time : ''}</span>
+                <button class="btn-danger text-xs" onclick="removeExam(${e.id})">✕</button>
+            </div>
+        `).join('') || '<p class="text-gray-400">ടൈംടേബിൾ ഇല്ല</p>'}
+    `;
 }
 
 function removeExam(id) {
     const cls = document.getElementById('examClassSelect').value;
-    if (!allExamTimetables[cls]) return;
-    allExamTimetables[cls] = allExamTimetables[cls].filter(e => e.id !== id);
+    const examType = selectedExamType;
+    if (!allExamTimetables[cls]?.[examType]) return;
+    allExamTimetables[cls][examType] = allExamTimetables[cls][examType].filter(e => e.id !== id);
     db.ref('examTimetables').set(allExamTimetables);
     renderExamTimetable();
 }
 
 function sendClassExamAlert() {
     const cls = document.getElementById('examClassSelect').value;
-    const exams = allExamTimetables[cls] || [];
+    const examType = selectedExamType;
+    const exams = allExamTimetables[cls]?.[examType] || [];
     if (exams.length === 0) { alert('⚠️ ടൈംടേബിൾ ഇല്ല.'); return; }
-    const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
     const tomorrowExams = exams.filter(e => e.date === tomorrow);
     if (tomorrowExams.length === 0) { alert('⚠️ നാളത്തെ പരീക്ഷ ഇല്ല.'); return; }
-    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ നാളത്തെ പരീക്ഷാ ടൈംടേബിൾ:\n\n`;
-    tomorrowExams.forEach(e => { msg += `📝 ${e.subject} - ${e.date}\n`; });
+    let msg = `📢 ${cls}-ാം ക്ലാസ്സിലെ ${examType} പരീക്ഷാ ടൈംടേബിൾ:\n\n`;
+    tomorrowExams.forEach(e => { msg += `📝 ${e.subject} - ${e.date} ${e.time ? '| '+e.time : ''}\n`; });
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ====================================================
-//  FEE WITH MONTHS
+//  FEE & QR
 // ====================================================
 document.querySelectorAll('#feeMonthSelector .month-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('#feeMonthSelector .month-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         selectedMonth = this.dataset.month;
-        document.getElementById('feeMonthStatus').innerHTML = `<span class="text-green-600">✅ തിരഞ്ഞെടുത്ത മാസം: ${selectedMonth}</span>`;
     });
 });
 
@@ -1161,19 +1227,19 @@ function updateQRUI() {
 }
 
 // ====================================================
-//  FEE STUDENT LIST WITH MONTH
+//  FEE STUDENT LIST
 // ====================================================
 function loadFeeStudents() {
     const cls = parseInt(document.getElementById('feeClassSelect').value);
     const month = document.getElementById('feeMonthSelect').value;
-    const students = allStudents.filter(s => s.cls === cls);
+    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
     const container = document.getElementById('feeStudentList');
     const fee = allFeeQR.monthlyFee || 0;
     container.innerHTML = students.map(s => {
         const key = `${s.reg}_${month}`;
         const paid = allFees[key] || 0;
         return `
-            <div class="flex items-center justify-between p-1 border-b text-sm ${paid >= fee ? 'fee-paid' : 'fee-due'}">
+            <div class="flex items-center justify-between p-1 border-b text-sm ${paid >= fee ? 'bg-green-50' : 'bg-red-50'}">
                 <span>${s.name} (${s.reg})</span>
                 <span>അടച്ചത്: ₹${paid} | ബാക്കി: ₹${fee - paid}</span>
                 <button class="btn-primary text-xs" onclick="updateFeeMonth(${s.reg},'${month}')">ഫീസ്</button>
@@ -1196,6 +1262,7 @@ function updateFeeMonth(reg, month) {
         alert('✅ ഫീസ് അപ്ഡേറ്റ് ചെയ്തു.');
         loadFeeStudents();
         updateCommitteeStats();
+        updateManagementStats();
     }).catch(e => alert('❌ '+e.message));
 }
 
@@ -1211,12 +1278,12 @@ function sendFeeReceiptMonth(reg, month) {
 }
 
 // ====================================================
-//  STUDENT EDITOR - CLASS WISE
+//  STUDENT EDITOR
 // ====================================================
 function renderStudentEditor() {
     const container = document.getElementById('studentEditorList');
     const filter = document.getElementById('studentClassFilter').value;
-    let students = allStudents;
+    let students = allStudents.filter(s => !s.deleted);
     if (filter !== 'all') students = students.filter(s => s.cls === parseInt(filter));
     students.sort((a,b) => a.cls - b.cls || a.reg - b.reg);
     container.innerHTML = students.map(s => `
@@ -1246,39 +1313,25 @@ function editStudent(reg) {
     if (cls !== null && !isNaN(cls) && cls>=1 && cls<=12) s.cls = parseInt(cls);
     const shift = prompt('ഷിഫ്റ്റ് (1-3):', s.shift);
     if (shift !== null && !isNaN(shift) && shift>=1 && shift<=3) s.shift = parseInt(shift);
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.onchange = function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                s.photo = ev.target.result;
-                db.ref(`students/${reg}`).update(s);
-                renderStudentEditor();
-                alert('✅ അപ്ഡേറ്റ് ചെയ്തു');
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    fileInput.click();
     db.ref(`students/${reg}`).update(s);
     renderStudentEditor();
 }
 
 function deleteStudent(reg) {
-    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
-    allStudents = allStudents.filter(s => s.reg !== reg);
-    db.ref(`students/${reg}`).remove();
+    if (!confirm('ഈ കുട്ടിയെ സിസ്റ്റത്തിൽ നിന്ന് നീക്കം ചെയ്യണോ? (ഇനി ഈ Reg No ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യാൻ സാധിക്കില്ല)')) return;
+    const student = allStudents.find(s => s.reg === reg);
+    if (student) {
+        student.deleted = true;
+        db.ref(`students/${reg}`).update({ deleted: true });
+    }
     renderStudentEditor();
 }
 
 // ====================================================
-//  TEACHER PANEL - ENHANCED
+//  TEACHER PANEL
 // ====================================================
 function updateTeacherPanel() {
-    if (!currentUser || !['staff','manager','secretary'].includes(currentUser.role)) return;
+    if (!currentUser || !['staff','management'].includes(currentUser.role)) return;
     const container = document.getElementById('teacherClassList');
     const classes = currentUser.classes || [];
     if (classes.length === 0) {
@@ -1287,7 +1340,7 @@ function updateTeacherPanel() {
     }
     const today = new Date().toISOString().split('T')[0];
     container.innerHTML = classes.map(cls => {
-        const students = allStudents.filter(s => s.cls === cls);
+        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
         const holiday = allHolidays && (allHolidays.shift === 'all' || parseInt(allHolidays.shift) === currentUser.shift);
         return `
             <div class="border rounded-xl p-3 ${holiday ? 'opacity-50 blur-sm' : ''}">
@@ -1309,10 +1362,7 @@ function updateTeacherPanel() {
             </div>
         `;
     }).join('');
-    
-    // Load teacher fee list
     loadTeacherFeeList();
-    // Load teacher complaints
     loadTeacherComplaints();
 }
 
@@ -1343,7 +1393,6 @@ function sendAbsentWhatsApp(cls) {
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-// Teacher Attendance History
 function loadTeacherAttendance() {
     const date = document.getElementById('teacherAttendanceDate').value || new Date().toISOString().split('T')[0];
     const container = document.getElementById('teacherAttendanceView');
@@ -1351,7 +1400,7 @@ function loadTeacherAttendance() {
     let html = `<h5 class="font-semibold">📅 ${date}</h5>`;
     classes.forEach(cls => {
         const att = allAttendance[date]?.[cls] || {};
-        const students = allStudents.filter(s => s.cls === cls);
+        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
         html += `<div class="mt-1"><strong>${cls}-ാം ക്ലാസ്:</strong> `;
         html += students.map(s => `${s.name}: ${att[s.reg] === 'present' ? '✅' : '❌'}`).join(' | ');
         html += '</div>';
@@ -1359,12 +1408,11 @@ function loadTeacherAttendance() {
     container.innerHTML = html || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
 }
 
-// Teacher Fee Update
 function loadTeacherFeeList() {
     const cls = parseInt(document.getElementById('teacherFeeClass').value);
     const month = document.getElementById('teacherFeeMonth').value;
     const container = document.getElementById('teacherFeeList');
-    const students = allStudents.filter(s => s.cls === cls);
+    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
     const fee = allFeeQR.monthlyFee || 0;
     container.innerHTML = students.map(s => {
         const key = `${s.reg}_${month}`;
@@ -1379,7 +1427,9 @@ function loadTeacherFeeList() {
     }).join('');
 }
 
-// Teacher Complaints
+// ====================================================
+//  COMPLAINTS - Teacher & Parent
+// ====================================================
 function submitTeacherComplaint() {
     const complaint = document.getElementById('teacherComplaint').value.trim();
     const reg = parseInt(document.getElementById('teacherComplaintReg').value.trim());
@@ -1403,14 +1453,52 @@ function loadTeacherComplaints() {
     `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>';
 }
 
-// Teacher Marks
+function sendComplaintWhatsApp() {
+    const complaint = document.getElementById('teacherComplaint').value.trim();
+    const reg = parseInt(document.getElementById('teacherComplaintReg').value.trim());
+    if (!complaint || !reg) { alert('⚠️ പരാതിയും Reg No യും നൽകുക.'); return; }
+    const student = allStudents.find(s => s.reg === reg);
+    if (!student) { alert('⚠️ കുട്ടിയെ കണ്ടില്ല.'); return; }
+    const msg = `📢 ${student.name} (Reg: ${reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ പരാതി/നിർദ്ദേശം:\n\n${complaint}\n\n- അധ്യാപകൻ: ${currentUser.name}`;
+    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function submitParentComplaint() {
+    const complaint = document.getElementById('parentComplaint').value.trim();
+    if (!complaint) { alert('⚠️ പരാതി നൽകുക.'); return; }
+    const data = { reg: currentUser.regNo, complaint, parent: currentUser.parentName, date: new Date().toISOString(), id: Date.now() };
+    db.ref('complaints').push(data);
+    alert('✅ പരാതി അയച്ചു.');
+    document.getElementById('parentComplaint').value = '';
+}
+
+function sendParentComplaintWhatsApp() {
+    const complaint = document.getElementById('parentComplaint').value.trim();
+    if (!complaint) { alert('⚠️ പരാതി നൽകുക.'); return; }
+    const msg = `📢 രക്ഷിതാവിന്റെ പരാതി/നിർദ്ദേശം:\n\n${complaint}\n\n- ${currentUser.parentName} (Reg: ${currentUser.regNo})`;
+    // Send to class teacher or sadhar
+    const student = allStudents.find(s => s.reg === currentUser.regNo);
+    if (student) {
+        const teacher = allStaff.find(s => s.classes && s.classes.includes(student.cls) && !s.deleted);
+        if (teacher && teacher.phone) {
+            window.open(`https://wa.me/${teacher.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        } else {
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    }
+}
+
+// ====================================================
+//  TEACHER MARKS
+// ====================================================
 function submitTeacherMarks() {
     const reg = parseInt(document.getElementById('teacherMarksReg').value.trim());
     const subject = document.getElementById('teacherMarksSubject').value.trim();
     const marks = document.getElementById('teacherMarksScore').value.trim();
+    const examType = document.getElementById('teacherMarksExamType').value;
     if (!reg || !subject || !marks) { alert('⚠️ എല്ലാം പൂരിപ്പിക്കുക.'); return; }
     if (!allMarks[reg]) allMarks[reg] = [];
-    allMarks[reg].push({ subject, marks: parseFloat(marks), teacher: currentUser.name, date: new Date().toISOString() });
+    allMarks[reg].push({ subject, marks: parseFloat(marks), examType, teacher: currentUser.name, date: new Date().toISOString() });
     db.ref('marks').set(allMarks);
     alert('✅ മാർക്ക് രേഖപ്പെടുത്തി.');
     document.getElementById('teacherMarksReg').value = '';
@@ -1426,7 +1514,7 @@ function sendMarksToParent() {
     const marks = allMarks[reg] || [];
     if (marks.length === 0) { alert('⚠️ മാർക്ക് ഇല്ല.'); return; }
     let msg = `📝 ${student.name} (Reg: ${student.reg}) - ${student.cls}-ാം ക്ലാസ്സിലെ മാർക്ക്:\n\n`;
-    marks.forEach(m => { msg += `📖 ${m.subject}: ${m.marks}\n`; });
+    marks.forEach(m => { msg += `📖 ${m.subject} (${m.examType||'പാദ വാർഷികം'}): ${m.marks}\n`; });
     window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -1465,10 +1553,9 @@ function updateParentPanel() {
         <p>നില: ${paid >= fee ? '✅ ഫീസ് അടച്ചു' : '⚠️ ബാക്കിയുണ്ട്'}</p>
     `;
 
-    // Show marks
     const marks = allMarks[student.reg] || [];
     document.getElementById('parentMarksList').innerHTML = marks.map(m => `
-        <div class="p-1 border-b text-sm">📖 ${m.subject}: ${m.marks}</div>
+        <div class="p-1 border-b text-sm">📖 ${m.subject} (${m.examType||'പാദ വാർഷികം'}): ${m.marks}</div>
     `).join('') || '<p class="text-gray-400">മാർക്ക് ഇല്ല</p>';
 }
 
@@ -1584,11 +1671,98 @@ function clearAnnounceFields() {
 }
 
 // ====================================================
-//  COMMITTEE PANEL - ENHANCED
+//  MANAGEMENT PANEL
+// ====================================================
+function updateManagementStats() {
+    document.getElementById('mgmtTotalStudents').textContent = allStudents.filter(s=>!s.deleted).length;
+    document.getElementById('mgmtTotalTeachers').textContent = allStaff.filter(s=>!s.deleted && s.role==='teacher').length;
+    const today = new Date().toISOString().split('T')[0];
+    let totalPresent = 0;
+    if (allAttendance[today]) {
+        Object.values(allAttendance[today]).forEach(cls => {
+            Object.values(cls).forEach(status => { if(status==='present') totalPresent++; });
+        });
+    }
+    document.getElementById('mgmtTodayAttendance').textContent = totalPresent;
+    let totalFee = 0;
+    Object.values(allFees).forEach(f => totalFee += f);
+    document.getElementById('mgmtFeeCollected').textContent = '₹' + totalFee;
+}
+
+function loadManagementAttendance() {
+    const month = document.getElementById('mgmtAttendanceMonth').value;
+    const container = document.getElementById('mgmtAttendanceSummary');
+    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
+    const year = 2026;
+    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
+    let html = `<h5 class="font-bold">📊 ${month} - മാസ ഹാജർ സംഗ്രഹം</h5>`;
+    const students = allStudents.filter(s => !s.deleted);
+    students.forEach(s => {
+        let present = 0;
+        for(let d=1; d<=daysInMonth; d++) {
+            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            if (allAttendance[date]?.[s.cls]?.[s.reg] === 'present') present++;
+        }
+        const percentage = Math.round((present / daysInMonth) * 100);
+        html += `
+            <div class="flex items-center gap-2 p-1 border-b text-sm">
+                <span class="w-24">${s.name}</span>
+                <span class="w-16 text-center">${present}/${daysInMonth}</span>
+                <div class="flex-1 attendance-bar">
+                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
+                </div>
+                <span class="w-12 text-right">${percentage}%</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function loadManagementFeeReport() {
+    const month = document.getElementById('mgmtFeeMonth').value;
+    const container = document.getElementById('mgmtFeeReport');
+    const fee = allFeeQR.monthlyFee || 0;
+    let html = `<h5 class="font-bold">💰 ${month} - ഫീസ് റിപ്പോർട്ട്</h5>`;
+    const students = allStudents.filter(s => !s.deleted);
+    let totalFee = 0, totalPaid = 0;
+    students.forEach(s => {
+        const key = `${s.reg}_${month}`;
+        const paid = allFees[key] || 0;
+        totalFee += fee;
+        totalPaid += paid;
+        html += `
+            <div class="flex justify-between p-1 border-b text-sm">
+                <span>${s.name} (${s.reg})</span>
+                <span>₹${paid} / ₹${fee}</span>
+            </div>
+        `;
+    });
+    html += `
+        <div class="mt-2 p-2 bg-gray-100 rounded font-bold flex justify-between">
+            <span>ആകെ:</span>
+            <span>₹${totalPaid} / ₹${totalFee} (കുടിശ്ശിക: ₹${totalFee - totalPaid})</span>
+        </div>
+    `;
+    container.innerHTML = html;
+    
+    // Staff list for management
+    const staffContainer = document.getElementById('mgmtStaffList');
+    const active = allStaff.filter(s => !s.deleted);
+    staffContainer.innerHTML = active.map(s => `
+        <div class="flex items-center gap-2 p-1 border-b text-sm">
+            ${s.photo ? `<img src="${s.photo}" class="w-8 h-8 rounded-full">` : `<div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-xs">👤</div>`}
+            <span><strong>${s.name}</strong> (${s.role||'അധ്യാപകൻ'})</span>
+            <span class="text-xs text-gray-400">ക്ലാസ്സുകൾ: ${s.classes.join(', ')}</span>
+        </div>
+    `).join('');
+}
+
+// ====================================================
+//  COMMITTEE PANEL
 // ====================================================
 function updateCommitteeStats() {
-    document.getElementById('totalStudents').textContent = allStudents.length;
-    document.getElementById('totalTeachers').textContent = allStaff.filter(s=>!s.deleted).length;
+    document.getElementById('totalStudents').textContent = allStudents.filter(s=>!s.deleted).length;
+    document.getElementById('totalTeachers').textContent = allStaff.filter(s=>!s.deleted && s.role==='teacher').length;
     const today = new Date().toISOString().split('T')[0];
     let totalPresent = 0;
     if (allAttendance[today]) {
@@ -1601,16 +1775,15 @@ function updateCommitteeStats() {
     Object.values(allFees).forEach(f => totalFee += f);
     document.getElementById('feeCollected').textContent = '₹' + totalFee;
 
-    // Defaulters
     const container = document.getElementById('defaultersList');
     const fee = allFeeQR.monthlyFee || 0;
-    const defaulters = allStudents.filter(s => (allFees[`${s.reg}_${selectedMonth}`] || 0) < fee);
+    const defaulters = allStudents.filter(s => !s.deleted && (allFees[`${s.reg}_${selectedMonth}`] || 0) < fee);
     container.innerHTML = defaulters.map(s => `
         <div class="flex justify-between items-center p-1 border-b text-sm">
             <span>${s.name} (${s.reg}) - ₹${fee - (allFees[`${s.reg}_${selectedMonth}`] || 0)} കുടിശ്ശിക</span>
             <button class="whatsapp-btn text-xs" onclick="sendDefaulterAlert(${s.reg})"><i class="fab fa-whatsapp"></i></button>
         </div>
-    `).join('');
+    `).join('') || '<p class="text-gray-400">കുടിശ്ശികക്കാരില്ല</p>';
 }
 
 function sendDefaulterAlert(reg) {
@@ -1623,54 +1796,78 @@ function sendDefaulterAlert(reg) {
     window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-// Staff Attendance Tracker with Shift
-function loadCommitteeAttendance() {
-    const shift = document.getElementById('committeeShiftFilter').value;
-    const date = document.getElementById('committeeAttendanceDate').value || new Date().toISOString().split('T')[0];
-    const container = document.getElementById('staffAttendanceTracker');
-    let staff = allStaff.filter(s => !s.deleted);
-    if (shift !== 'all') {
-        staff = staff.filter(s => {
-            const classes = s.classes || [];
-            // Check if any class belongs to this shift
-            return classes.some(c => {
-                const student = allStudents.find(st => st.cls === c);
-                return student && student.shift === parseInt(shift);
-            });
-        });
-    }
-    container.innerHTML = staff.map(s => {
-        const status = allAttendance[date]?.['staff']?.[s.username] || 'absent';
-        return `
-            <div class="flex items-center justify-between p-1 border-b text-sm ${status === 'present' ? 'teacher-present' : 'teacher-absent'}">
-                <div class="flex items-center gap-2">
-                    ${s.photo ? `<img src="${s.photo}" class="w-8 h-8 rounded-full">` : ''}
-                    <span>${s.name}</span>
-                    <span class="text-xs text-gray-400">(${s.role||'അധ്യാപകൻ'})</span>
+function loadCommitteeDailyAttendance() {
+    const date = document.getElementById('committeeDailyDate').value || new Date().toISOString().split('T')[0];
+    const container = document.getElementById('committeeDailyAttendance');
+    let html = `<h5 class="font-bold">📅 ${date} - ദിവസേനയുള്ള ഹാജർ</h5>`;
+    for(let cls=1; cls<=12; cls++) {
+        const students = allStudents.filter(s => s.cls === cls && !s.deleted);
+        if (students.length === 0) continue;
+        const att = allAttendance[date]?.[cls] || {};
+        const present = students.filter(s => att[s.reg] === 'present').length;
+        const total = students.length;
+        const percentage = Math.round((present/total)*100);
+        html += `
+            <div class="flex items-center gap-2 p-1 border-b text-sm">
+                <span class="w-20 font-semibold">${cls}-ാം ക്ലാസ്</span>
+                <span class="w-24">${present}/${total}</span>
+                <div class="flex-1 attendance-bar">
+                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
                 </div>
-                <span>${status === 'present' ? '✅ Present' : '❌ Absent'}</span>
+                <span class="w-12 text-right">${percentage}%</span>
             </div>
         `;
-    }).join('') || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
+    }
+    container.innerHTML = html || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
 }
 
-// Salary Calculator
+function loadCommitteeMonthlyAttendance() {
+    const month = document.getElementById('committeeMonthFilter').value;
+    const shift = document.getElementById('committeeShiftFilter').value;
+    const container = document.getElementById('committeeMonthlyAttendance');
+    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
+    const year = 2026;
+    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
+    let html = `<h5 class="font-bold">📊 ${month} - മാസ ഹാജർ നില</h5>`;
+    let students = allStudents.filter(s => !s.deleted);
+    if (shift !== 'all') students = students.filter(s => s.shift === parseInt(shift));
+    students.forEach(s => {
+        let present = 0;
+        for(let d=1; d<=daysInMonth; d++) {
+            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            if (allAttendance[date]?.[s.cls]?.[s.reg] === 'present') present++;
+        }
+        const percentage = Math.round((present / daysInMonth) * 100);
+        html += `
+            <div class="flex items-center gap-2 p-1 border-b text-sm">
+                <span class="w-24">${s.name}</span>
+                <span class="w-16 text-center">${present}/${daysInMonth}</span>
+                <div class="flex-1 attendance-bar">
+                    <div class="attendance-bar-fill" style="width:${percentage}%"></div>
+                </div>
+                <span class="w-12 text-right">${percentage}%</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
 function calculateSalary() {
     const month = document.getElementById('salaryMonth').value;
     const container = document.getElementById('salaryResult');
-    // Count working days and attendance for each staff
-    const staff = allStaff.filter(s => !s.deleted);
-    const workingDays = 26; // Assuming 26 working days per month
+    const staff = allStaff.filter(s => !s.deleted && s.role === 'teacher');
+    const workingDays = 26;
+    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
+    const year = 2026;
+    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
     let html = `<h5 class="font-bold">💰 ${month} മാസത്തെ ശമ്പളം</h5>`;
     staff.forEach(s => {
         let present = 0;
-        // Count attendance for the month (simplified)
-        const daysInMonth = 30;
         for(let d=1; d<=daysInMonth; d++) {
-            const date = `2026-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             if (allAttendance[date]?.['staff']?.[s.username] === 'present') present++;
         }
-        const salary = (present / workingDays) * 10000; // Assuming ₹10,000 monthly salary
+        const salary = (present / workingDays) * 10000;
         html += `
             <div class="flex justify-between p-1 border-b text-sm">
                 <span>${s.name}</span>
@@ -1681,52 +1878,16 @@ function calculateSalary() {
     container.innerHTML = html;
 }
 
-// Monthly Report
-function generateMonthlyReport() {
-    const month = document.getElementById('reportMonth').value;
-    const container = document.getElementById('monthlyReport');
-    const monthIndex = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(month);
-    const year = 2026;
-    const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
-    let html = `<h5 class="font-bold">📊 ${month} ${year} - റിപ്പോർട്ട്</h5>`;
-    
-    // Fee Report
-    let totalFee = 0, totalPaid = 0;
-    allStudents.forEach(s => {
-        const key = `${s.reg}_${month}`;
-        const fee = allFeeQR.monthlyFee || 0;
-        const paid = allFees[key] || 0;
-        totalFee += fee;
-        totalPaid += paid;
-    });
-    html += `<p><strong>ഫീസ്:</strong> ആകെ ₹${totalFee}, അടച്ചത് ₹${totalPaid}, കുടിശ്ശിക ₹${totalFee - totalPaid}</p>`;
-    
-    // Attendance Report
-    let totalPresent = 0, totalStudents = allStudents.length;
-    for(let d=1; d<=daysInMonth; d++) {
-        const date = `${year}-${String(monthIndex+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        if (allAttendance[date]) {
-            Object.values(allAttendance[date]).forEach(cls => {
-                Object.values(cls).forEach(status => {
-                    if (status === 'present') totalPresent++;
-                });
-            });
-        }
-    }
-    html += `<p><strong>ഹാജർ:</strong> ആകെ ${totalPresent} ഹാജർ (${Math.round(totalPresent/(totalStudents*daysInMonth)*100)}%)</p>`;
-    container.innerHTML = html;
-}
-
 // ====================================================
 //  PUBLIC RESULT
 // ====================================================
 function showPublicResult() {
     const cls = parseInt(document.getElementById('publicResultClass').value);
-    const exam = document.getElementById('publicResultExam').value.trim() || 'പരീക്ഷ';
-    const students = allStudents.filter(s => s.cls === cls);
+    const examType = document.getElementById('publicResultExamType').value;
+    const students = allStudents.filter(s => s.cls === cls && !s.deleted);
     const withMarks = students.map(s => ({
         ...s,
-        marks: allMarks[s.reg] ? allMarks[s.reg].reduce((sum,m) => sum + m.marks, 0) / allMarks[s.reg].length : Math.floor(Math.random()*100)+1
+        marks: allMarks[s.reg] ? allMarks[s.reg].filter(m => m.examType === examType).reduce((sum,m) => sum + m.marks, 0) / (allMarks[s.reg].filter(m => m.examType === examType).length || 1) : Math.floor(Math.random()*100)+1
     }));
     withMarks.sort((a,b) => b.marks - a.marks);
     const top3 = withMarks.slice(0,3);
@@ -1740,24 +1901,22 @@ function showPublicResult() {
             <h3 class="text-xl font-bold text-white mt-2">${s.name}</h3>
             <p class="text-white text-sm">Reg: ${s.reg}</p>
             <p class="text-white text-lg font-bold">${s.marks} മാർക്ക്</p>
-            <p class="text-white text-sm">${exam}</p>
+            <p class="text-white text-sm">${examType}</p>
         </div>
     `).join('') || '<p class="text-gray-400">ഡാറ്റ ഇല്ല</p>';
 }
 
-function printPublicResult() {
-    window.print();
-}
+function printPublicResult() { window.print(); }
 
 // ====================================================
-//  PROFILE EDITOR
+//  PROFILE & UTILITIES
 // ====================================================
 function showProfileEditor() {
     const user = currentUser;
     if (!user) { alert('ലോഗിൻ ചെയ്യുക.'); return; }
     const name = prompt('പേര്:', user.name);
     if (name !== null) user.name = name;
-    if (user.role === 'staff' || user.role === 'manager' || user.role === 'secretary') {
+    if (user.role === 'staff' || user.role === 'management') {
         const staff = allStaff.find(s => s.username === user.username);
         if (staff) {
             staff.name = user.name;
@@ -1778,7 +1937,7 @@ function viewAllComplaints() {
             ${allComplaints.map(c => `
                 <div class="p-2 border-b text-sm">
                     <strong>Reg ${c.reg}:</strong> ${c.complaint}
-                    <div class="text-xs text-gray-400">${c.teacher} | ${new Date(c.date).toLocaleString()}</div>
+                    <div class="text-xs text-gray-400">${c.teacher || c.parent || ''} | ${new Date(c.date).toLocaleString()}</div>
                 </div>
             `).join('') || '<p class="text-gray-400">പരാതികൾ ഇല്ല</p>'}
             <button onclick="this.parentElement.parentElement.remove()" class="mt-4 btn-primary">അടയ്ക്കുക</button>
@@ -1801,15 +1960,16 @@ function exportJSON() {
 // ====================================================
 document.addEventListener('DOMContentLoaded', function() {
     loadAllData();
-    // Set default dates
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('sadharAttendanceDate').value = today;
     document.getElementById('teacherAttendanceDate').value = today;
-    document.getElementById('committeeAttendanceDate').value = today;
+    document.getElementById('committeeDailyDate').value = today;
     console.log('✅ മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡ് ആയി.');
     console.log('💡 Sadhar: sadhar/admin123');
+    console.log('💡 Staff: Use credentials from staff management');
+    console.log('💡 Management: Use credentials from staff management with role=management');
+    console.log('💡 Parent: Use student Reg No');
 });
 </script>
 </body>
 </html>
-```
