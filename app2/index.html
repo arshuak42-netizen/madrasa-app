@@ -3,1308 +3,1164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>മമ്പഉൽ ഉലൂം മദ്റസ - കൊറക്കോട്</title>
+    <title>മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്</title>
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body { background: #0a0e1a; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        .glass {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-light {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .card-hover {
-            transition: all 0.25s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
-        .gold { color: #fbbf24; }
-        .silver { color: #d1d5db; }
-        .bronze { color: #d97706; }
-        .tab-active {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-bottom: 2px solid #fbbf24;
-        }
-        .accordion-header {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .blur-holiday {
-            filter: blur(4px);
-            pointer-events: none;
-            opacity: 0.5;
-            transition: all 0.3s;
-        }
-        .blur-holiday::after {
-            content: "ഇന്ന് അവധിയാണ്!";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ef4444;
-            text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-            z-index: 10;
-            background: rgba(0,0,0,0.7);
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            border: 2px solid #ef4444;
-            pointer-events: none;
-        }
-        .popup {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            max-width: 360px;
-            width: 90%;
-            z-index: 9999;
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .spinner {
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: #fbbf24;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        * { font-family: 'Noto Sans Malayalam', 'Segoe UI', sans-serif; }
+        body { background: #f0f4f8; }
+        .glass-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .login-box { background: white; border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .gradient-text { background: linear-gradient(135deg, #0b3d2e, #1a6e5a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-primary { background: #0b3d2e; transition: all 0.2s; }
+        .btn-primary:hover { background: #1a5e4a; transform: scale(1.02); }
+        .btn-secondary { background: #e2e8f0; color: #1e293b; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .accordion-item { border-bottom: 1px solid #e9edf2; }
+        .accordion-item:last-child { border-bottom: none; }
+        .holiday-blur { filter: blur(4px); pointer-events: none; user-select: none; opacity: 0.6; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); border-radius: 50%; border-top: 4px solid #0b3d2e; width: 36px; height: 36px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .tab-active { background: #0b3d2e; color: white; border-radius: 999px; }
+        .tab-inactive { background: transparent; color: #1e293b; }
+        .whatsapp-btn { background: #25D366; color: white; border-radius: 999px; padding: 4px 12px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+        .whatsapp-btn:hover { background: #128C7E; }
+        .popup-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px 28px; max-width: 90%; border-left: 8px solid #0b3d2e; }
+        @media (max-width: 640px) { .popup-notification { width: 92%; padding: 16px; } }
+        .fee-paid { background: #dcfce7; color: #166534; }
+        .fee-pending { background: #fee2e2; color: #991b1b; }
+        .staff-absent { background: #fecaca; color: #991b1b; }
+        .staff-present { background: #bbf7d0; color: #166534; }
+        .profile-pic { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: #e2e8f0; }
     </style>
 </head>
 <body>
-<div id="app" class="min-h-screen text-gray-200"></div>
+
+<!-- POPUP NOTIFICATION -->
+<div id="popupContainer" class="popup-notification hidden">
+    <div class="flex items-start gap-3">
+        <i class="fas fa-bullhorn text-2xl text-[#0b3d2e] mt-1"></i>
+        <div class="flex-1">
+            <h3 id="popupTitle" class="font-bold text-lg text-[#0b3d2e]">അറിയിപ്പ്</h3>
+            <p id="popupBody" class="text-gray-700 text-sm mt-1"></p>
+            <button onclick="closePopup()" class="mt-3 text-sm font-medium text-[#0b3d2e] underline">ശരി, മനസ്സിലായി</button>
+        </div>
+    </div>
+</div>
+
+<!-- APP ROOT -->
+<div id="appRoot" class="max-w-5xl mx-auto px-4 py-6 md:py-8">
+
+    <!-- LOGIN SECTION -->
+    <div id="loginSection" class="login-box p-6 md:p-10 max-w-lg mx-auto">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 bg-[#0b3d2e] rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold shadow-lg">മ</div>
+            <h1 class="text-2xl md:text-3xl font-bold mt-4 gradient-text">മമ്പഉൽ ഉലൂം മദ്റസ</h1>
+            <p class="text-gray-500 text-sm">കൊറക്കോട് · 2026-2027</p>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ലോഗിൻ തരം</label>
+                <select id="loginTypeSelect" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0b3d2e] outline-none">
+                    <option value="sadhar">👑 സദർ (Sadhar)</option>
+                    <option value="teacher">🧑‍🏫 അധ്യാപകൻ (Teacher)</option>
+                    <option value="management">🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി</option>
+                    <option value="parent">👪 രക്ഷിതാവ് (Parent)</option>
+                </select>
+            </div>
+            <div id="loginFields"></div>
+            <button id="loginBtn" class="w-full btn-primary text-white font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition">🔑 കയറുക</button>
+            <div id="loginError" class="text-red-600 text-sm mt-2 hidden text-center"></div>
+        </div>
+        <div class="mt-6 text-center text-xs text-gray-400">
+            <i class="fas fa-database mr-1"></i> Firebase Realtime · സുരക്ഷിതം
+        </div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div id="mainPanel" class="hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#0b3d2e] rounded-full flex items-center justify-center text-white font-bold text-sm">മ</div>
+                <span class="font-bold text-lg text-[#0b3d2e]">മമ്പഉൽ ഉലൂം</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="userRoleDisplay" class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-700"></span>
+                <button id="logoutBtn" class="text-sm bg-red-50 text-red-600 px-4 py-2 rounded-full hover:bg-red-100 transition"><i class="fas fa-sign-out-alt mr-1"></i> ലോഗൗട്ട്</button>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-2xl shadow-sm">
+            <button class="tab-btn px-5 py-2 text-sm font-medium transition" data-panel="sadharPanel">👑 സദർ</button>
+            <button class="tab-btn px-5 py-2 text-sm font-medium transition" data-panel="teacherPanel">🧑‍🏫 അധ്യാപകൻ</button>
+            <button class="tab-btn px-5 py-2 text-sm font-medium transition" data-panel="managementPanel">🏛️ മാനേജ്മെന്റ്</button>
+            <button class="tab-btn px-5 py-2 text-sm font-medium transition" data-panel="parentPanel">👪 രക്ഷിതാവ്</button>
+        </div>
+
+        <div id="sadharPanel" class="panel-content hidden space-y-4"></div>
+        <div id="teacherPanel" class="panel-content hidden space-y-4"></div>
+        <div id="managementPanel" class="panel-content hidden space-y-4"></div>
+        <div id="parentPanel" class="panel-content hidden space-y-4"></div>
+    </div>
+</div>
 
 <script>
+// ======================== FIREBASE CONFIG ==========================
+const firebaseConfig = {
+    apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
+    authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
+    databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "mamb-ul-uloom-madrasa",
+    storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
+    messagingSenderId: "494107652219",
+    appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ======================== INITIAL STUDENT DATA (124) ==========================
 const INITIAL_STUDENTS = [
-[691,'അത്വാഉറഹ്മാൻ','Ashkar Ali','06/04/2019','9100000001',1,1],
-[708,'മുഹമ്മദ് ഷാസിൽ','Sirajuddin','26/05/2020','9100000002',1,1],
-[707,'മുഹമ്മദ് രിഫ്ദ്','Sakeer','28/06/2019','9100000003',1,1],
-[713,'ഇബ്രാഹിം KM','Abdurrahman K. M.','09/01/2020','9100000004',1,1],
-[706,'സൈനബ മറിയം മെഹ്‌വിഷ്','Shameer Abdullah','26/09/2020','9100000005',1,1],
-[711,'റുഖയ്യ സിദ','Muhammed Haris','26/09/2020','9100000006',1,1],
-[680,'അബ്ദുൽ ബാസിത്','നൂറുദ്ദീൻ അബ്ദുള്ള','14/03/2018','9100000007',2,2],
-[681,'ഷാൻ അബ്ദുൽ റസാഖ്','ഷംസുദ്ദീൻ','04/01/2019','9100000008',2,2],
-[693,'അഹദ് മുഹ്‌യിദ്ദീൻ','ഷാനവാസ്','07/12/2019','9100000009',2,2],
-[694,'മുഹമ്മദ് റബീഹ്','ആഷിഖ്','18/06/2019','9100000010',2,2],
-[695,'നസീഹ് ഇബ്രാഹിം','അബ്ദുൽ നാസർ','23/08/2019','9100000011',2,2],
-[700,'മുഹമ്മദ് അമൻ സാഹിദ്','മുഹമ്മദ് റാഷിദ്','16/03/2018','9100000012',2,2],
-[687,'ആയിഷ ലൈബ','ഇബ്രാഹിം ഖലീൽ','16/12/2018','9100000013',2,2],
-[689,'സൻഹ റുഖയ്യ','ഹിദായത്ത് അലി','23/05/2019','9100000014',2,2],
-[690,'സൈനബ ഇശൽ','മുഹമ്മദ് അഷ്റഫ്','19/05/2019','9100000015',2,2],
-[692,'ഖദീജ ലിബ','അബ്ദുൽ മുനീർ','28/08/2019','9100000016',2,2],
-[696,'റുഖയ്യ നദ','അബ്ദുൽ നാസർ','23/08/2019','9100000017',2,2],
-[620,'അദ്നാൻ','അസ്ഹർ അലി','17/12/2014','9100000018',3,1],
-[628,'അബ്ദുൽ നാഫിഹ്','രാജുദ്ദീൻ','05/09/2016','9100000019',3,1],
-[657,'രെഹാൻ ശൈഖ്','സക്കരിയ്യ','23/04/2018','9100000020',3,1],
-[658,'മുഹമ്മദ് ലബീബ്','ഹബീബ്','21/11/2017','9100000021',3,1],
-[656,'അഹ്‌മദ് നസ്ആൻ','അബ്ദുൽ ലത്തീഫ്','03/04/2017','9100000022',3,1],
-[653,'ഇസ്ഹാഖ്','ഇസ്മായിൽ','04/09/2016','9100000023',3,1],
-[661,'ഷംആൻ','സുലൈമാൻ','11/02/2016','9100000024',3,1],
-[676,'അബ്ദുല്ലാഹ് ആമിർ','ആഷിഖ്','11/06/2018','9100000025',3,1],
-[677,'മുഹ്സിൽ മിശാൽ','മുഹമ്മദ് മുആദ്','07/11/2017','9100000026',3,1],
-[679,'മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ','ആസിഫ് റഹ്മാൻ','05/05/2018','9100000027',3,1],
-[710,'മുഹമ്മദ് ഹയാൻ','മുഹമ്മദ് ഇഖ്ബാൽ','27/09/2017','9100000028',3,1],
-[714,'സിംസാറുൽ ഹഖ്','ഹബീബ്','17/04/2016','9100000029',3,1],
-[664,'അഫ്രാ','അഷ്റഫ്','18/10/2017','9100000030',3,1],
-[669,'നഫീസ സഫ','ഇബ്രാഹിം','08/01/2018','9100000031',3,1],
-[675,'ഫാത്തിമ ഇശൽ','ഇസ്മായിൽ','15/02/2018','9100000032',3,1],
-[701,'റിംസ','സക്കീർ','15/06/2017','9100000033',3,1],
-[685,'അബ്ദുൽ ഹയൻ','മാഹിൻ','14/12/2015','9100000034',4,2],
-[599,'നസ്‌വാൻ','അബ്ദുൽ ഹാരിസ്','18/08/2015','9100000035',4,2],
-[633,'ഇബ്രാഹിം ഖലീൽ','അബ്ദുൽ ലത്തീഫ്','04/01/2017','9100000036',4,2],
-[634,'അയാസ്','അബൂബക്കർ ഹമീദ്','09/06/2016','9100000037',4,2],
-[652,'മുഹമ്മദ് രിഫാൽ','റഷാദ്','23/02/2017','9100000038',4,2],
-[654,'ആസിം മുഹാസ്','അബ്ദുൽ ഖാദർ ഷാഹ്','02/04/2018','9100000039',4,2],
-[659,'മുഹമ്മദ് ഹാഫിസ്','ഹംസ മുഹമ്മദ്','28/06/2016','9100000040',4,2],
-[660,'മുഹമ്മദ് നഹ്‌യാൻ','സാജിദ്','08/11/2017','9100000041',4,2],
-[663,'മുഹമ്മദ് മിഷ്ഹദ്','അഹ്മദ് മുസമ്മിൽ','05/12/2017','9100000042',4,2],
-[655,'യൂസഫ് സാഹി','മുഹമ്മദ് ഷംസീർ','26/04/2017','9100000043',4,2],
-[662,'അബ്ദുല്ലാഹ് ഷെയാൻ','സലാം അബ്ദുറഹ്മാൻ','26/11/2016','9100000044',4,2],
-[686,'അലാ ബിൻ ബിലാൽ','ബിലാൽ','27/08/2014','9100000045',4,2],
-[698,'മുഹമ്മദ് അമ്മാർ','മുഹമ്മദ് Hനീഫ്','10/12/2014','9100000046',4,2],
-[703,'അബ്ദുറഹ്മാൻ ഇസാൻ','മുഹമ്മദ് അഫ്താബ്','14/05/2016','9100000047',4,2],
-[665,'അസാ മറിയം','മുജീബ്','21/01/2017','9100000048',4,2],
-[611,'അബ്ദുല്ലാഹ്','Navas','24/11/2015','9100000049',5,1],
-[630,'മുഈനുദ്ദീൻ','Habeeb','16/07/2016','9100000050',5,1],
-[631,'അദ്നാൻ','Noushad','04/12/2016','9100000051',5,1],
-[632,'മുഹമ്മദ് മിൻഹാജ്','Abdul Nasar','12/09/2016','9100000052',5,1],
-[649,'വാഹിദ് സമാൻ','Mahmood Inayath','09/12/2015','9100000053',5,1],
-[604,'ഷൈമ മറിയം','അബ്ദുൽ ബഷീർ','02/10/2015','9100000054',5,1],
-[640,'മറിയം സഫ','ഹാരിസ്','21/08/2016','9100000055',5,1],
-[641,'ഫാത്തിമ TK','അഹ്മദ്','14/08/2016','9100000056',5,1],
-[642,'ആയിഷ','അബ്ദുല്ലാഹ്','15/04/2016','9100000057',5,1],
-[643,'ഫാത്തിമ ജുമാന','ഹാലിത്','22/02/2014','9100000058',5,1],
-[667,'ആയിഷ മെഹ്സിൻ','മുഹമ്മദ് സ്വാദിഖ്','21/05/2015','9100000059',5,1],
-[586,'അബൂ താഹിർ','ഹബീബ്','29/09/2014','9100000060',6,2],
-[600,'അബ്ദുൽ ഖാദർ ഷെഹാൻ','അബ്ദുൽ ഖാദർ','25/04/2015','9100000061',6,2],
-[601,'മഹ്മൂദ് അസാൻ','നിയാസ്','07/10/2014','9100000062',6,2],
-[602,'മാലിക് ഹസൻ','ഖലീൽ','26/05/2015','9100000063',6,2],
-[603,'അഹ്‌മദ് നസൽ','സത്താർ','25/05/2015','9100000064',6,2],
-[646,'ഫിസാൻ','അർഷാദ്','19/04/2016','9100000065',6,2],
-[668,'ഇബ്രാഹിം ഇസ്മാഈൽ','ഇസ്മായിൽ','04/09/2014','9100000066',6,2],
-[684,'മുഹമ്മദ് സിനാൻ','മാഹിൻ','28/05/2012','9100000067',6,2],
-[699,'മുഹമ്മദ് ഷിബ്‌ലി','മുഹമ്മദ് റാഷിദ്','05/09/2013','9100000068',6,2],
-[606,'ആയിഷ ഐഫ','ആസിഫ് റഹ്മാൻ','18/05/2015','9100000069',6,2],
-[607,'ഷഹാന ഷെറിൻ','ഷമീർ അബ്ദുള്ള','23/01/2016','9100000070',6,2],
-[608,'ലിയ്യാ ഫാത്തിമ','ഖലീൽ','27/10/2015','9100000071',6,2],
-[609,'ആയിഷ മെഹ്‌റ','അഷ്റഫ്','17/02/2015','9100000072',6,2],
-[613,'ആയിഷ ഹിബ','ഹംസ','18/12/2015','9100000073',6,2],
-[563,'മുഹമ്മദ് സ്വബാഹ്','Shahnawaz','04/10/2013','9100000074',7,1],
-[584,'അബ്ദുല്ലാഹ് സെയ്ഫ്','Zubair','24/12/2013','9100000075',7,1],
-[565,'മറിയം സുഹാ','Haris','09/10/2013','9100000076',7,1],
-[570,'ഫാത്തിമ ഹമീദ്','Hameed','18/10/2013','9100000077',7,1],
-[571,'ആയിഷ തമന്ന','Sirajuddin','16/09/2013','9100000078',7,1],
-[587,'മറിയം ഫൈഹ','Muhammad Kunhi','19/05/2014','9100000079',7,1],
-[588,'അംന ഫാത്തിമ','Sherif','27/08/2014','9100000080',7,1],
-[589,'സെബ മറിയം','Zameel','30/08/2014','9100000081',7,1],
-[590,'സെല്ലാ ഷംസീർ','Shamsir','26/03/2014','9100000082',7,1],
-[639,'മെഹ്റ മുംതാസ്','Muaaz','16/12/2013','9100000083',7,1],
-[672,'മിൻഹാ ഫാത്തിമ','Nooruddin','23/04/2014','9100000084',7,1],
-[697,'ഹാസിയ ഹംന','Muhammad Hanif','09/08/2012','9100000085',7,1],
-[560,'മുഹമ്മദ് ഷെഹ്‌സാദ്','Abdullah','04/06/2013','9100000086',8,2],
-[561,'അബ്ദുല്ലാഹ് അഷ്റഫ്','Ashraf','10/10/2013','9100000087',8,2],
-[547,'മുഹമ്മദ് നസ്മിൽ','Haris','20/07/2012','9100000088',8,2],
-[555,'ആയിഷ അഷ്റഫ്','Muhammad Ashraf','16/07/2012','9100000089',8,2],
-[567,'സഹ്റ ബത്തുൽ','Ibrahim Khalil','17/06/2013','9100000090',8,2],
-[568,'ഫാത്തിമ മിസ്ന','Abdul Nasar','02/06/2014','9100000091',8,2],
-[569,'ആയിഷ നുവൈറ','Abdul Latif','21/02/2013','9100000092',8,2],
-[683,'ആമിന ഷുസൈന','Haris','12/10/2012','9100000093',8,2],
-[528,'അഹ്സം മിശാൽ','Abdul Khader','11/05/2012','9100000094',9,1],
-[538,'അബ്ദുല്ലാഹ് സഈം','Mohammed Jameel','11/06/2011','9100000095',9,1],
-[539,'അഹ്സൻ ഷാസിൽ','Ashraf','30/12/2012','9100000096',9,1],
-[540,'മുഹമ്മദ് ഷഹീൻ','Shameer Abdullah','05/05/2012','9100000097',9,1],
-[541,'മുഹ്‌യിദ്ദീൻ നിഹാൽ','Mohammed Habeeb','13/12/2011','9100000098',9,1],
-[715,'മുഹമ്മദ് മിദ്ലാജ്','Abdul Karim','14/08/2010','9100000099',9,1],
-[526,'ഹിബ മിഫന്ന','Mahmood','17/11/2011','9100000100',9,1],
-[537,'ഫാത്തിമ ഷാഹിയ','Sirajuddin','16/06/2011','9100000101',9,1],
-[543,'ഫാത്തിമ KS','Sajid','20/10/2012','9100000102',9,1],
-[545,'ഖദീജ മിൻഹ','Ahmad Muzammil','07/06/2012','9100000103',9,1],
-[705,'അഖീല','Abu Nawaz','07/02/2010','9100000104',9,1],
-[513,'നബീൽ ഇബ്രാഹിം','Shahnavaz','28/11/2011','9100000105',10,2],
-[704,'മുഹമ്മദ് ഷംനാദ്','Mohammed Sherif','05/03/2012','9100000106',10,2],
-[525,'സനൂബിയ','Zakariya','21/03/2012','9100000107',10,2],
-[529,'ഷെസാ ഫാത്തിമ','Shafi','19/03/2011','9100000108',10,2],
-[615,'ഫാത്തിമ ഷാഹില','Abdul Khader','24/07/2012','9100000109',10,2],
-[637,'ആയിഷ നജ','Inayat','03/02/2010','9100000110',10,2],
-[486,'മുഹമ്മദ് നിഹാൽ','അബ്ദുൽ ലത്തീഫ്','06/01/2009','9100000111',11,3],
-[487,'അബ്ദുല്ലാഹ് ഷാഹിസ്','ഷാഫി','17/01/2009','9100000112',11,3],
-[514,'ജാസിം','ഖാലിദ്','02/02/2011','9100000113',11,3],
-[542,'ഷെസിൻ KS','സാജിദ്','09/10/2010','9100000114',11,3],
-[650,'മഹ്ഫൂസ്','ഇബ്രാഹിം','01/09/2010','9100000115',11,3],
-[712,'മുഹമ്മദ് സ്വഫ്വാൻ','മുസമ്മിൽ','16/03/2011','9100000116',11,3],
-[499,'ഫാത്തിമ','ഇബ്രാഹിം','23/04/2009','9100000117',11,3],
-[518,'ഖദീജ TA','Ibrahim Khalil','05/10/2011','9100000118',11,3],
-[626,'ആയിഷ മുൻദിറ','ഇബ്രാഹിം','07/01/2011','9100000119',11,3],
-[574,'മുഹമ്മദ് ലുബൈബ്','Muhyiddin','26/10/2010','9100000120',12,3],
-[489,'മുഹമ്മദ് മിസാജ്','അഹ്‌മദ് മുസമ്മിൽ','18/07/2009','9100000121',12,3],
-[492,'ഹുദാ ഫാത്തിമ','ഹാരിസ്','10/11/2009','9100000122',12,3],
-[493,'ലൈല നസ്രിൻ','അബ്ദുള്ള മുനീർ','19/06/2009','9100000123',12,3],
-[494,'ആയിഷ നജ','നവാസ്','24/07/2008','9100000124',12,3]
+    { reg: 691, name: "അത്വാഉറഹ്മാൻ", father: "Ashkar Ali", dob: "06/04/2019", phone: "9100000001", cls: 1, shift: 1 },
+    { reg: 708, name: "മുഹമ്മദ് ഷാസിൽ", father: "Sirajuddin", dob: "26/05/2020", phone: "9100000002", cls: 1, shift: 1 },
+    { reg: 707, name: "മുഹമ്മദ് രിഫ്ദ്", father: "Sakeer", dob: "28/06/2019", phone: "9100000003", cls: 1, shift: 1 },
+    { reg: 713, name: "ഇബ്രാഹിം KM", father: "Abdurrahman K. M.", dob: "09/01/2020", phone: "9100000004", cls: 1, shift: 1 },
+    { reg: 706, name: "സൈനബ മറിയം മെഹ്‌വിഷ്", father: "Shameer Abdullah", dob: "26/09/2020", phone: "9100000005", cls: 1, shift: 1 },
+    { reg: 711, name: "റുഖയ്യ സിദ", father: "Muhammed Haris", dob: "26/09/2020", phone: "9100000006", cls: 1, shift: 1 },
+    { reg: 680, name: "അബ്ദുൽ ബാസിത് നൂറുദ്ദീൻ", father: "അബ്ദുള്ള", dob: "14/03/2018", phone: "9100000007", cls: 2, shift: 2 },
+    { reg: 681, name: "ഷാൻ അബ്ദുൽ റസാഖ് ഷംസുദ്ദീൻ", father: "ഷംസുദ്ദീൻ", dob: "04/01/2019", phone: "9100000008", cls: 2, shift: 2 },
+    { reg: 693, name: "അഹദ് മുഹ്‌യിദ്ദീൻ ഷാനവാസ്", father: "ഷാനവാസ്", dob: "07/12/2019", phone: "9100000009", cls: 2, shift: 2 },
+    { reg: 694, name: "മുഹമ്മദ് റബീഹ് ആഷിഖ്", father: "ആഷിഖ്", dob: "18/06/2019", phone: "9100000010", cls: 2, shift: 2 },
+    { reg: 695, name: "നസീഹ് ഇബ്രാഹിം അബ്ദുൽ നാസർ", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9100000011", cls: 2, shift: 2 },
+    { reg: 700, name: "മുഹമ്മദ് അമൻ സാഹിദ്", father: "മുഹമ്മദ് റാഷിദ്", dob: "16/03/2018", phone: "9100000012", cls: 2, shift: 2 },
+    { reg: 687, name: "ആയിഷ ലൈബ ഇബ്രാഹിം ഖലീൽ", father: "ഇബ്രാഹിം ഖലീൽ", dob: "16/12/2018", phone: "9100000013", cls: 2, shift: 2 },
+    { reg: 689, name: "സൻഹ റുഖയ്യ ഹിദായത്ത് അലി", father: "ഹിദായത്ത് അലി", dob: "23/05/2019", phone: "9100000014", cls: 2, shift: 2 },
+    { reg: 690, name: "സൈനബ ഇശൽ മുഹമ്മദ് അഷ്റഫ്", father: "മുഹമ്മദ് അഷ്റഫ്", dob: "19/05/2019", phone: "9100000015", cls: 2, shift: 2 },
+    { reg: 692, name: "ഖദീജ ലിബ അബ്ദുൽ മുനീർ", father: "അബ്ദുൽ മുനീർ", dob: "28/08/2019", phone: "9100000016", cls: 2, shift: 2 },
+    { reg: 696, name: "റുഖയ്യ നദ അബ്ദുൽ നാസർ", father: "അബ്ദുൽ നാസർ", dob: "23/08/2019", phone: "9100000017", cls: 2, shift: 2 },
+    { reg: 620, name: "അദ്നാൻ അസ്ഹർ അലി", father: "അലി", dob: "17/12/2014", phone: "9100000018", cls: 3, shift: 1 },
+    { reg: 628, name: "അബ്ദുൽ നാഫിഹ് രാജുദ്ദീൻ", father: "രാജുദ്ദീൻ", dob: "05/09/2016", phone: "9100000019", cls: 3, shift: 1 },
+    { reg: 657, name: "രെഹാൻ ശൈഖ് സക്കരിയ്യ", father: "സക്കരിയ്യ", dob: "23/04/2018", phone: "9100000020", cls: 3, shift: 1 },
+    { reg: 658, name: "മുഹമ്മദ് ലബീബ് ഹബീബ്", father: "ഹബീബ്", dob: "21/11/2017", phone: "9100000021", cls: 3, shift: 1 },
+    { reg: 656, name: "അഹ്‌മദ് നസ്ആൻ അബ്ദുൽ ലത്തീഫ്", father: "അബ്ദുൽ ലത്തീഫ്", dob: "03/04/2017", phone: "9100000022", cls: 3, shift: 1 },
+    { reg: 653, name: "ഇസ്ഹാഖ് ഇസ്മായിൽ", father: "ഇസ്മായിൽ", dob: "04/09/2016", phone: "9100000023", cls: 3, shift: 1 },
+    { reg: 661, name: "ഷംആൻ സുലൈമാൻ", father: "സുലൈമാൻ", dob: "11/02/2016", phone: "9100000024", cls: 3, shift: 1 },
+    { reg: 676, name: "അബ്ദുല്ലാഹ് ആമിർ ആഷിഖ്", father: "ആഷിഖ്", dob: "11/06/2018", phone: "9100000025", cls: 3, shift: 1 },
+    { reg: 677, name: "മുഹ്സിൽ മിശാൽ മുഹമ്മദ് മുആദ്", father: "മുഹമ്മദ് മുആദ്", dob: "07/11/2017", phone: "9100000026", cls: 3, shift: 1 },
+    { reg: 679, name: "മുഹമ്മദ് അഫ്‌റാസുറഹ്മാൻ", father: "ആസിഫ് റഹ്മാൻ", dob: "05/05/2018", phone: "9100000027", cls: 3, shift: 1 },
+    { reg: 710, name: "മുഹമ്മദ് ഹയാൻ", father: "മുഹമ്മദ് ഇഖ്ബാൽ", dob: "27/09/2017", phone: "9100000028", cls: 3, shift: 1 },
+    { reg: 714, name: "സിംസാറുൽ ഹഖ് ഹബീബ്", father: "ഹബീബ്", dob: "17/04/2016", phone: "9100000029", cls: 3, shift: 1 },
+    { reg: 664, name: "അഫ്രാ അഷ്റഫ്", father: "അഷ്റഫ്", dob: "18/10/2017", phone: "9100000030", cls: 3, shift: 1 },
+    { reg: 669, name: "നഫീസ സഫ ഇബ്രാഹിം", father: "ഇബ്രാഹിം", dob: "08/01/2018", phone: "9100000031", cls: 3, shift: 1 },
+    { reg: 675, name: "ഫാത്തിമ ഇശൽ ഇസ്മായിൽ", father: "ഇസ്മായിൽ", dob: "15/02/2018", phone: "9100000032", cls: 3, shift: 1 },
+    { reg: 701, name: "റിംസ സക്കീർ", father: "സക്കീർ", dob: "15/06/2017", phone: "9100000033", cls: 3, shift: 1 },
+    { reg: 685, name: "അബ്ദുൽ ഹയൻ മാഹിൻ", father: "മാഹിൻ", dob: "14/12/2015", phone: "9100000034", cls: 4, shift: 2 },
+    { reg: 599, name: "നസ്‌വാൻ അബ്ദുൽ ഹാരിസ്", father: "അബ്ദുൽ ഹാരിസ്", dob: "18/08/2015", phone: "9100000035", cls: 4, shift: 2 },
+    { reg: 633, name: "ഇബ്രാഹിം ഖലീൽ", father: "അബ്ദുൽ ലത്തീഫ്", dob: "04/01/2017", phone: "9100000036", cls: 4, shift: 2 },
+    { reg: 634, name: "അയാസ് അബൂബക്കർ ഹമീദ്", father: "ഹമീദ്", dob: "09/06/2016", phone: "9100000037", cls: 4, shift: 2 },
+    { reg: 652, name: "മുഹമ്മദ് രിഫാൽ റഷാദ്", father: "റഷാദ്", dob: "23/02/2017", phone: "9100000038", cls: 4, shift: 2 },
+    { reg: 654, name: "ആസിം മുഹാസ്", father: "അബ്ദുൽ ഖാദർ ഷാഹ്", dob: "02/04/2018", phone: "9100000039", cls: 4, shift: 2 },
+    { reg: 659, name: "മുഹമ്മദ് ഹാഫിസ് ഹംസ", father: "മുഹമ്മദ്", dob: "28/06/2016", phone: "9100000040", cls: 4, shift: 2 },
+    { reg: 660, name: "മുഹമ്മദ് നഹ്‌യാൻ സാജിദ്", father: "സാജിദ്", dob: "08/11/2017", phone: "9100000041", cls: 4, shift: 2 },
+    { reg: 663, name: "മുഹമ്മദ് മിഷ്ഹദ്", father: "അഹ്മദ് മുസമ്മിൽ", dob: "05/12/2017", phone: "9100000042", cls: 4, shift: 2 },
+    { reg: 655, name: "യൂസഫ് സാഹി", father: "മുഹമ്മദ് ഷംസീർ", dob: "26/04/2017", phone: "9100000043", cls: 4, shift: 2 },
+    { reg: 662, name: "അബ്ദുല്ലാഹ് ഷെയാൻ സലാം", father: "അബ്ദുറഹ്മാൻ അബ്ദുറഹീം", dob: "26/11/2016", phone: "9100000044", cls: 4, shift: 2 },
+    { reg: 686, name: "അലാ ബിൻ ബിലാൽ", father: "ബിലാൽ", dob: "27/08/2014", phone: "9100000045", cls: 4, shift: 2 },
+    { reg: 698, name: "മുഹമ്മദ് അമ്മാർ", father: "മുഹമ്മദ് Hനീഫ്", dob: "10/12/2014", phone: "9100000046", cls: 4, shift: 2 },
+    { reg: 703, name: "അബ്ദുറഹ്മാൻ ഇസാൻ", father: "മുഹമ്മദ് അഫ്താബ്", dob: "14/05/2016", phone: "9100000047", cls: 4, shift: 2 },
+    { reg: 665, name: "അസാ മറിയം മുജീബ്", father: "മുജീബ്", dob: "21/01/2017", phone: "9100000048", cls: 4, shift: 2 },
+    { reg: 611, name: "അബ്ദുല്ലാഹ് Navas", father: "Navas", dob: "24/11/2015", phone: "9100000049", cls: 5, shift: 1 },
+    { reg: 630, name: "മുഈനുദ്ദീൻ Habeeb", father: "Habeeb", dob: "16/07/2016", phone: "9100000050", cls: 5, shift: 1 },
+    { reg: 631, name: "അദ്നാൻ Noushad", father: "Noushad", dob: "04/12/2016", phone: "9100000051", cls: 5, shift: 1 },
+    { reg: 632, name: "മുഹമ്മദ് മിൻഹാജ്", father: "Abdul Nasar", dob: "12/09/2016", phone: "9100000052", cls: 5, shift: 1 },
+    { reg: 649, name: "വാഹിദ് സമാൻ", father: "Mahmood Inayath", dob: "09/12/2015", phone: "9100000053", cls: 5, shift: 1 },
+    { reg: 604, name: "ഷൈമ മറിയം", father: "അബ്ദുൽ ബഷീർ", dob: "02/10/2015", phone: "9100000054", cls: 5, shift: 1 },
+    { reg: 640, name: "മറിയം സഫ ഹാരിസ്", father: "ഹാരിസ്", dob: "21/08/2016", phone: "9100000055", cls: 5, shift: 1 },
+    { reg: 641, name: "ഫാത്തിമ TK അഹ്മദ്", father: "അഹ്മദ്", dob: "14/08/2016", phone: "9100000056", cls: 5, shift: 1 },
+    { reg: 642, name: "ആയിഷ അബ്ദുല്ലാഹ്", father: "അബ്ദുള്ള", dob: "15/04/2016", phone: "9100000057", cls: 5, shift: 1 },
+    { reg: 643, name: "ഫാത്തിമ ജുമാന ഹാലിത്", father: "ഹാലിത്", dob: "22/02/2014", phone: "9100000058", cls: 5, shift: 1 },
+    { reg: 667, name: "ആയിഷ മെഹ്സിൻ", father: "മുഹമ്മദ് സ്വാദിഖ്", dob: "21/05/2015", phone: "9100000059", cls: 5, shift: 1 },
+    { reg: 586, name: "അബൂ താഹിർ ഹബീബ്", father: "ഹബീബ്", dob: "29/09/2014", phone: "9100000060", cls: 6, shift: 2 },
+    { reg: 600, name: "അബ്ദുൽ ഖാദർ ഷെഹാൻ", father: "അബ്ദുൽ ഖാദർ", dob: "25/04/2015", phone: "9100000061", cls: 6, shift: 2 },
+    { reg: 601, name: "മഹ്മൂദ് അസാൻ നിയാസ്", father: "നിയാസ്", dob: "07/10/2014", phone: "9100000062", cls: 6, shift: 2 },
+    { reg: 602, name: "മാലിക് ഹസൻ ഖലീൽ", father: "ഖലീൽ", dob: "26/05/2015", phone: "9100000063", cls: 6, shift: 2 },
+    { reg: 603, name: "അഹ്‌മദ് നസൽ സത്താർ", father: "സത്താർ", dob: "25/05/2015", phone: "9100000064", cls: 6, shift: 2 },
+    { reg: 646, name: "ഫിസാൻ അർഷാദ്", father: "അർഷാദ്", dob: "19/04/2016", phone: "9100000065", cls: 6, shift: 2 },
+    { reg: 668, name: "ഇബ്രാഹിം ഇസ്മാഈൽ", father: "ഇസ്മായിൽ", dob: "04/09/2014", phone: "9100000066", cls: 6, shift: 2 },
+    { reg: 684, name: "മുഹമ്മദ് സിനാൻ മാഹിൻ", father: "മാഹിൻ", dob: "28/05/2012", phone: "9100000067", cls: 6, shift: 2 },
+    { reg: 699, name: "മുഹമ്മദ് ഷിബ്‌ലി", father: "മുഹമ്മദ് റാഷിദ്", dob: "05/09/2013", phone: "9100000068", cls: 6, shift: 2 },
+    { reg: 606, name: "ആയിഷ ഐഫ", father: "ആസിഫ് റഹ്മാൻ", dob: "18/05/2015", phone: "9100000069", cls: 6, shift: 2 },
+    { reg: 607, name: "ഷഹാന ഷെറിൻ", father: "ഷമീർ അബ്ദുള്ള", dob: "23/01/2016", phone: "9100000070", cls: 6, shift: 2 },
+    { reg: 608, name: "ലിയ്യാ ഫാത്തിമ", father: "ഖലീൽ", dob: "27/10/2015", phone: "9100000071", cls: 6, shift: 2 },
+    { reg: 609, name: "ആയിഷ മെഹ്‌റ", father: "അഷ്റഫ്", dob: "17/02/2015", phone: "9100000072", cls: 6, shift: 2 },
+    { reg: 613, name: "ആയിഷ ഹിബ ഹംസ", father: "ഹംസ", dob: "18/12/2015", phone: "9100000073", cls: 6, shift: 2 },
+    { reg: 563, name: "മുഹമ്മദ് സ്വബാഹ്", father: "Shahnawaz", dob: "04/10/2013", phone: "9100000074", cls: 7, shift: 1 },
+    { reg: 584, name: "അബ്ദുല്ലാഹ് സെയ്ഫ്", father: "Zubair", dob: "24/12/2013", phone: "9100000075", cls: 7, shift: 1 },
+    { reg: 565, name: "മറിയം സുഹാ", father: "Haris", dob: "09/10/2013", phone: "9100000076", cls: 7, shift: 1 },
+    { reg: 570, name: "ഫാത്തിമ ഹമീദ്", father: "Hameed", dob: "18/10/2013", phone: "9100000077", cls: 7, shift: 1 },
+    { reg: 571, name: "ആയിഷ തമന്ന", father: "Sirajuddin", dob: "16/09/2013", phone: "9100000078", cls: 7, shift: 1 },
+    { reg: 587, name: "മറിയം ഫൈഹ", father: "Muhammad Kunhi", dob: "19/05/2014", phone: "9100000079", cls: 7, shift: 1 },
+    { reg: 588, name: "അംന ഫാത്തിമ", father: "Sherif", dob: "27/08/2014", phone: "9100000080", cls: 7, shift: 1 },
+    { reg: 589, name: "സെബ മറിയം", father: "Zameel", dob: "30/08/2014", phone: "9100000081", cls: 7, shift: 1 },
+    { reg: 590, name: "സെല്ലാ ഷംസീർ", father: "Shamsir", dob: "26/03/2014", phone: "9100000082", cls: 7, shift: 1 },
+    { reg: 639, name: "മെഹ്റ മുംതാസ്", father: "Muaaz", dob: "16/12/2013", phone: "9100000083", cls: 7, shift: 1 },
+    { reg: 672, name: "മിൻഹാ ഫാത്തിമ", father: "Nooruddin", dob: "23/04/2014", phone: "9100000084", cls: 7, shift: 1 },
+    { reg: 697, name: "ഹാസിയ ഹംന", father: "Muhammad Hanif", dob: "09/08/2012", phone: "9100000085", cls: 7, shift: 1 },
+    { reg: 560, name: "മുഹമ്മദ് ഷെഹ്‌സാദ്", father: "Abdullah", dob: "04/06/2013", phone: "9100000086", cls: 8, shift: 2 },
+    { reg: 561, name: "അബ്ദുല്ലാഹ് അഷ്റഫ്", father: "Ashraf", dob: "10/10/2013", phone: "9100000087", cls: 8, shift: 2 },
+    { reg: 547, name: "മുഹമ്മദ് നസ്മിൽ", father: "Haris", dob: "20/07/2012", phone: "9100000088", cls: 8, shift: 2 },
+    { reg: 555, name: "ആയിഷ അഷ്റഫ്", father: "Muhammad Ashraf", dob: "16/07/2012", phone: "9100000089", cls: 8, shift: 2 },
+    { reg: 567, name: "സഹ്റ ബത്തുൽ", father: "Ibrahim Khalil", dob: "17/06/2013", phone: "9100000090", cls: 8, shift: 2 },
+    { reg: 568, name: "ഫാത്തിമ മിസ്ന", father: "Abdul Nasar", dob: "02/06/2014", phone: "9100000091", cls: 8, shift: 2 },
+    { reg: 569, name: "ആയിഷ നുവൈറ", father: "Abdul Latif", dob: "21/02/2013", phone: "9100000092", cls: 8, shift: 2 },
+    { reg: 683, name: "ആമിന ഷുസൈന", father: "Haris", dob: "12/10/2012", phone: "9100000093", cls: 8, shift: 2 },
+    { reg: 528, name: "അഹ്സം മിശാൽ", father: "Abdul Khader", dob: "11/05/2012", phone: "9100000094", cls: 9, shift: 1 },
+    { reg: 538, name: "അബ്ദുല്ലാഹ് സഈം", father: "Mohammed Jameel", dob: "11/06/2011", phone: "9100000095", cls: 9, shift: 1 },
+    { reg: 539, name: "അഹ്സൻ ഷാസിൽ", father: "Ashraf", dob: "30/12/2012", phone: "9100000096", cls: 9, shift: 1 },
+    { reg: 540, name: "മുഹമ്മദ് ഷഹീൻ", father: "Shameer Abdullah", dob: "05/05/2012", phone: "9100000097", cls: 9, shift: 1 },
+    { reg: 541, name: "മുഹ്‌യിദ്ദീൻ നിഹാൽ", father: "Mohammed Habeeb", dob: "13/12/2011", phone: "9100000098", cls: 9, shift: 1 },
+    { reg: 715, name: "മുഹമ്മദ് മിദ്ലാജ്", father: "Abdul Karim", dob: "14/08/2010", phone: "9100000099", cls: 9, shift: 1 },
+    { reg: 526, name: "ഹിബ മിഫന്ന", father: "Mahmood", dob: "17/11/2011", phone: "9100000100", cls: 9, shift: 1 },
+    { reg: 537, name: "ഫാത്തിമ ഷാഹിയ", father: "Sirajuddin", dob: "16/06/2011", phone: "9100000101", cls: 9, shift: 1 },
+    { reg: 543, name: "ഫാത്തിമ KS", father: "Sajid", dob: "20/10/2012", phone: "9100000102", cls: 9, shift: 1 },
+    { reg: 545, name: "ഖദീജ മിൻഹ", father: "Ahmad Muzammil", dob: "07/06/2012", phone: "9100000103", cls: 9, shift: 1 },
+    { reg: 705, name: "അഖീല", father: "Abu Nawaz", dob: "07/02/2010", phone: "9100000104", cls: 9, shift: 1 },
+    { reg: 513, name: "നബീൽ ഇബ്രാഹിം", father: "Shahnavaz", dob: "28/11/2011", phone: "9100000105", cls: 10, shift: 2 },
+    { reg: 704, name: "മുഹമ്മദ് ഷംനാദ്", father: "Mohammed Sherif", dob: "05/03/2012", phone: "9100000106", cls: 10, shift: 2 },
+    { reg: 525, name: "സനൂബിയ", father: "Zakariya", dob: "21/03/2012", phone: "9100000107", cls: 10, shift: 2 },
+    { reg: 529, name: "ഷെസാ ഫാത്തിമ", father: "Shafi", dob: "19/03/2011", phone: "9100000108", cls: 10, shift: 2 },
+    { reg: 615, name: "ഫാത്തിമ ഷാഹില", father: "Abdul Khader", dob: "24/07/2012", phone: "9100000109", cls: 10, shift: 2 },
+    { reg: 637, name: "ആയിഷ നജ", father: "Inayat", dob: "03/02/2010", phone: "9100000110", cls: 10, shift: 2 },
+    { reg: 486, name: "മുഹമ്മദ് നിഹാൽ", father: "അബ്ദുൽ ലത്തീഫ്", dob: "06/01/2009", phone: "9100000111", cls: 11, shift: 3 },
+    { reg: 487, name: "അബ്ദുല്ലാഹ് ഷാഹിസ്", father: "ഷാഫി", dob: "17/01/2009", phone: "9100000112", cls: 11, shift: 3 },
+    { reg: 514, name: "ജാസിം ഖാലിദ്", father: "ഖാലിദ്", dob: "02/02/2011", phone: "9100000113", cls: 11, shift: 3 },
+    { reg: 542, name: "ഷെസിൻ KS", father: "സാജിദ്", dob: "09/10/2010", phone: "9100000114", cls: 11, shift: 3 },
+    { reg: 650, name: "മഹ്ഫൂസ് ഇബ്രാഹിം", father: "ഇബ്രാഹിം", dob: "01/09/2010", phone: "9100000115", cls: 11, shift: 3 },
+    { reg: 712, name: "മുഹമ്മദ് സ്വഫ്വാൻ", father: "മുസമ്മിൽ", dob: "16/03/2011", phone: "9100000116", cls: 11, shift: 3 },
+    { reg: 499, name: "ഫാത്തിമ ഇബ്രാഹിം", father: "ഇബ്രാഹിം", dob: "23/04/2009", phone: "9100000117", cls: 11, shift: 3 },
+    { reg: 518, name: "ഖദീജ TA", father: "Ibrahim Khalil", dob: "05/10/2011", phone: "9100000118", cls: 11, shift: 3 },
+    { reg: 626, name: "ആയിഷ മുൻദിറ", father: "ഇബ്രാഹിം", dob: "07/01/2011", phone: "9100000119", cls: 11, shift: 3 },
+    { reg: 574, name: "മുഹമ്മദ് ലുബൈബ്", father: "Muhyiddin", dob: "26/10/2010", phone: "9100000120", cls: 12, shift: 3 },
+    { reg: 489, name: "മുഹമ്മദ് മിസാജ്", father: "അഹ്‌മദ് മുസമ്മിൽ", dob: "18/07/2009", phone: "9100000121", cls: 12, shift: 3 },
+    { reg: 492, name: "ഹുദാ ഫാത്തിമ", father: "ഹാരിസ്", dob: "10/11/2009", phone: "9100000122", cls: 12, shift: 3 },
+    { reg: 493, name: "ലൈല നസ്രിൻ", father: "അബ്ദുള്ള മുനീർ", dob: "19/06/2009", phone: "9100000123", cls: 12, shift: 3 },
+    { reg: 494, name: "ആയിഷ നജ", father: "നവാസ്", dob: "24/07/2008", phone: "9100000124", cls: 12, shift: 3 }
 ];
 
-const APP = {
-    config: null,
-    db: null,
-    currentUser: null,
-    students: {},
-    staff: {},
-    fees: {},
-    attendance: {},
-    holidays: {},
-    announcements: {},
-    examTimetables: {},
-    feeQR: {},
-    complaints: {},
-    marks: {},
-    shiftClassMapping: { shifts: { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] } },
-    staffAttendance: {},
-    loaded: false
-};
+// ======================== APP STATE ==========================
+let currentUser = null;
+let students = [];
+let staff = [];
+let fees = {};
+let attendance = {};
+let holidays = [];
+let announcements = [];
+let examTimetables = {};
+let feeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
+let complaints = [];
+let marks = {};
+let shiftClassMapping = { shifts: { 1: { time: '', classes: [] }, 2: { time: '', classes: [] }, 3: { time: '', classes: [] } } };
+let staffAttendance = {};
 
-function getFirebaseConfig() {
-    return {
-        apiKey: "AIzaSyA1wDF3GEu7vqght-m8cMhLfdQ-xScDBL0",
-        authDomain: "mamb-ul-uloom-madrasa.firebaseapp.com",
-        databaseURL: "https://mamb-ul-uloom-madrasa-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "mamb-ul-uloom-madrasa",
-        storageBucket: "mamb-ul-uloom-madrasa.firebasestorage.app",
-        messagingSenderId: "494107652219",
-        appId: "1:494107652219:web:8ba53cf8f5cbe3ea3772de"
-    };
+// ======================== UTILITY ==========================
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+function formatDate(d) { const dt = new Date(d); return dt.toLocaleDateString('en-IN'); }
+function getMonthName(m) { const months = ['ജനുവരി','ഫെബ്രുവരി','മാർച്ച്','ഏപ്രിൽ','മെയ്','ജൂൺ','ജൂലൈ','ഓഗസ്റ്റ്','സെപ്റ്റംബർ','ഒക്ടോബർ','നവംബർ','ഡിസംബർ']; return months[m] || m; }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function getShiftLabel(s) { return ['','ഷിഫ്റ്റ് 1','ഷിഫ്റ്റ് 2','ഷിഫ്റ്റ് 3'][s] || s; }
+
+// ======================== FIREBASE SYNC ==========================
+function syncAll() {
+    const studentMap = {};
+    students.forEach(s => { studentMap[s.reg] = { ...s }; });
+    db.ref('students').set(studentMap);
+    const staffMap = {};
+    staff.forEach(s => { staffMap[s.id] = { ...s }; });
+    db.ref('staff').set(staffMap);
+    db.ref('fees').set(fees);
+    db.ref('attendance').set(attendance);
+    db.ref('holidays').set(holidays);
+    const annMap = {};
+    announcements.forEach(a => { annMap[a.id] = a; });
+    db.ref('announcements').set(annMap);
+    db.ref('examTimetables').set(examTimetables);
+    db.ref('feeQR').set(feeQR);
+    const compMap = {};
+    complaints.forEach(c => { compMap[c.id] = c; });
+    db.ref('complaints').set(compMap);
+    db.ref('marks').set(marks);
+    db.ref('shiftClassMapping').set(shiftClassMapping);
+    db.ref('staffAttendance').set(staffAttendance);
 }
 
-function initFirebase(config) {
-    try {
-        if (typeof firebase === 'undefined') {
-            throw new Error('Firebase SDK not loaded');
-        }
-        if (!firebase.apps || firebase.apps.length === 0) {
-            firebase.initializeApp(config);
-        }
-        return firebase.database();
-    } catch (e) {
-        console.error('Firebase init error:', e);
-        throw new Error('ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.');
-    }
+function loadFromFirebase() {
+    return new Promise((resolve) => {
+        db.ref('/').once('value').then(snapshot => {
+            const data = snapshot.val() || {};
+            if (data.students) {
+                const vals = Object.values(data.students);
+                students = vals.filter(s => !s.deleted);
+            } else { students = INITIAL_STUDENTS.map(s => ({ ...s })); syncAll(); }
+            if (data.staff) {
+                const vals = Object.values(data.staff);
+                staff = vals.filter(s => !s.deleted);
+            } else { staff = []; }
+            fees = data.fees || {};
+            attendance = data.attendance || {};
+            holidays = data.holidays || [];
+            if (data.announcements) announcements = Object.values(data.announcements);
+            else announcements = [];
+            examTimetables = data.examTimetables || {};
+            feeQR = data.feeQR || { monthlyFee: 0, googlePay: '', qrBase64: '' };
+            if (data.complaints) complaints = Object.values(data.complaints);
+            else complaints = [];
+            marks = data.marks || {};
+            shiftClassMapping = data.shiftClassMapping || { shifts: { 1: { time: '', classes: [] }, 2: { time: '', classes: [] }, 3: { time: '', classes: [] } } };
+            staffAttendance = data.staffAttendance || {};
+            resolve();
+        }).catch(() => {
+            students = INITIAL_STUDENTS.map(s => ({ ...s }));
+            staff = [];
+            fees = {};
+            attendance = {};
+            holidays = [];
+            announcements = [];
+            examTimetables = {};
+            feeQR = { monthlyFee: 0, googlePay: '', qrBase64: '' };
+            complaints = [];
+            marks = {};
+            shiftClassMapping = { shifts: { 1: { time: '', classes: [] }, 2: { time: '', classes: [] }, 3: { time: '', classes: [] } } };
+            staffAttendance = {};
+            resolve();
+        });
+    });
 }
 
-function renderApp() {
-    const root = document.getElementById('app');
-    if (!APP.loaded) {
-        root.innerHTML = `
-            <div class="flex items-center justify-center min-h-screen">
-                <div class="text-center">
-                    <div class="spinner mx-auto mb-4"></div>
-                    <p class="text-gray-400">ലോഡ് ചെയ്യുന്നു...</p>
-                </div>
-            </div>
+// ======================== AUTH ==========================
+function loginUser(type, username, password, reg) {
+    return new Promise((resolve, reject) => {
+        if (type === 'sadhar') {
+            if (username === 'sadhar' && password === '6682') {
+                currentUser = { type: 'sadhar', username: 'sadhar' };
+                resolve();
+            } else reject('തെറ്റായ യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേർഡ്');
+        } else if (type === 'teacher') {
+            const found = staff.find(s => s.username === username && s.password === password && s.role === 'teacher' && !s.deleted);
+            if (found) {
+                currentUser = { type: 'teacher', username, id: found.id, classes: found.classes || [] };
+                resolve();
+            } else reject('തെറ്റായ വിവരങ്ങൾ അല്ലെങ്കിൽ നീക്കം ചെയ്യപ്പെട്ട അധ്യാപകൻ');
+        } else if (type === 'management') {
+            const found = staff.find(s => s.username === username && s.password === password && (s.role === 'management' || s.role === 'committee') && !s.deleted);
+            if (found) {
+                currentUser = { type: 'management', username };
+                resolve();
+            } else reject('തെറ്റായ വിവരങ്ങൾ അല്ലെങ്കിൽ നീക്കം ചെയ്യപ്പെട്ടു');
+        } else if (type === 'parent') {
+            const student = students.find(s => s.reg == reg && !s.deleted);
+            if (student) {
+                currentUser = { type: 'parent', reg: parseInt(reg), student: student };
+                resolve();
+            } else reject('തെറ്റായ രജിസ്റ്റർ നമ്പർ അല്ലെങ്കിൽ നീക്കം ചെയ്യപ്പെട്ടു');
+        } else reject('അസാധുവായ ലോഗിൻ തരം');
+    });
+}
+
+// ======================== UI RENDER ==========================
+function renderLoginFields() {
+    const type = document.getElementById('loginTypeSelect').value;
+    const container = document.getElementById('loginFields');
+    if (type === 'sadhar' || type === 'teacher' || type === 'management') {
+        container.innerHTML = `
+            <div><input id="loginUsername" type="text" placeholder="യൂസർനെയിം" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0b3d2e] outline-none" /></div>
+            <div><input id="loginPassword" type="password" placeholder="പാസ്‌വേർഡ്" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0b3d2e] outline-none" /></div>
         `;
-        return;
-    }
-    if (!APP.currentUser) {
-        renderLogin(root);
     } else {
-        renderPanel(root);
+        container.innerHTML = `
+            <div><input id="loginReg" type="number" placeholder="രജിസ്റ്റർ നമ്പർ (ഉദാ: 691)" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0b3d2e] outline-none" /></div>
+        `;
     }
 }
 
-function renderLogin(root) {
-    const loginTypes = [
-        { value: 'sadhar', label: '👑 സദർ (Sadhar)' },
-        { value: 'teacher', label: '👨‍🏫 അധ്യാപകൻ (Teacher)' },
-        { value: 'management', label: '🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി (Management)' },
-        { value: 'parent', label: '👪 രക്ഷിതാവ് (Parent)' }
-    ];
-    root.innerHTML = `
-        <div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-            <div class="w-full max-w-md glass rounded-2xl p-6 shadow-2xl border border-white/5">
-                <div class="text-center mb-6">
-                    <div class="w-20 h-20 mx-auto bg-amber-500/20 rounded-full flex items-center justify-center text-3xl border-2 border-amber-400/30">🕌</div>
-                    <h1 class="text-2xl font-bold mt-3 text-amber-300">മമ്പഉൽ ഉലൂം മദ്റസ</h1>
-                    <p class="text-gray-400 text-sm">കൊറക്കോട് · രജി: 6682</p>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">ലോഗിൻ തരം (Login Type)</label>
-                        <select id="loginType" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400">
-                            ${loginTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div id="loginFields">
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">യൂസർനെയിം (Username)</label>
-                            <input id="username" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: sadhar">
-                        </div>
-                        <div class="mt-3">
-                            <label class="block text-sm text-gray-400 mb-1">പാസ്‌വേർഡ് (Password)</label>
-                            <input id="password" type="password" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="പാസ്‌വേർഡ്">
-                        </div>
-                    </div>
-                    <button id="loginBtn" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-all shadow-lg shadow-amber-500/20">🔑 കയറുക (Login)</button>
-                    <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.getElementById('loginType').addEventListener('change', function() {
-        const fields = document.getElementById('loginFields');
-        if (this.value === 'parent') {
-            fields.innerHTML = `
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">കുട്ടിയുടെ രജിസ്റ്റർ നമ്പർ (Reg No)</label>
-                    <input id="regNo" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: 691">
-                </div>
-            `;
-        } else {
-            fields.innerHTML = `
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">യൂസർനെയിം (Username)</label>
-                    <input id="username" type="text" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="ഉദാ: sadhar">
-                </div>
-                <div class="mt-3">
-                    <label class="block text-sm text-gray-400 mb-1">പാസ്‌വേർഡ് (Password)</label>
-                    <input id="password" type="password" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-amber-400" placeholder="പാസ്‌വേർഡ്">
-                </div>
-            `;
-        }
-    });
-
-    document.getElementById('loginBtn').addEventListener('click', function() {
-        const type = document.getElementById('loginType').value;
-        const errorEl = document.getElementById('loginError');
-        errorEl.classList.add('hidden');
-
-        try {
-            if (type === 'parent') {
-                const reg = document.getElementById('regNo')?.value.trim();
-                if (!reg) { errorEl.textContent = 'രജിസ്റ്റർ നമ്പർ നൽകുക'; errorEl.classList.remove('hidden'); return; }
-                const student = APP.students[reg];
-                if (!student || student.deleted) { errorEl.textContent = 'ഈ രജിസ്റ്റർ നമ്പർ നിലവിലില്ല'; errorEl.classList.remove('hidden'); return; }
-                APP.currentUser = { role: 'parent', reg: reg, student: student };
-                renderApp();
-            } else {
-                const username = document.getElementById('username')?.value.trim();
-                const password = document.getElementById('password')?.value.trim();
-                if (!username || !password) { errorEl.textContent = 'യൂസർനെയിം, പാസ്‌വേർഡ് നൽകുക'; errorEl.classList.remove('hidden'); return; }
-                if (type === 'sadhar') {
-                    if (username === 'sadhar' && password === '6682') {
-                        APP.currentUser = { role: 'sadhar', username: 'sadhar' };
-                        renderApp();
-                        return;
-                    }
-                }
-                // Check staff
-                const staff = Object.values(APP.staff).find(s => s.username === username && s.password === password && !s.deleted);
-                if (staff) {
-                    if (type === 'teacher' && staff.role === 'teacher') {
-                        APP.currentUser = { role: 'teacher', staff: staff };
-                        renderApp();
-                        return;
-                    } else if (type === 'management' && (staff.role === 'management' || staff.role === 'committee')) {
-                        APP.currentUser = { role: 'management', staff: staff };
-                        renderApp();
-                        return;
-                    }
-                }
-                errorEl.textContent = 'തെറ്റായ യൂസർനെയിം അല്ലെങ്കിൽ പാസ്‌വേർഡ്';
-                errorEl.classList.remove('hidden');
-            }
-        } catch (e) {
-            errorEl.textContent = 'ലോഗിൻ പരാജയപ്പെട്ടു: ' + e.message;
-            errorEl.classList.remove('hidden');
-        }
-    });
-}
-
-function renderPanel(root) {
-    const user = APP.currentUser;
-    let panelContent = '';
-
-    if (user.role === 'sadhar') {
-        panelContent = renderSadharPanel();
-    } else if (user.role === 'teacher') {
-        panelContent = renderTeacherPanel();
-    } else if (user.role === 'management') {
-        panelContent = renderManagementPanel();
-    } else if (user.role === 'parent') {
-        panelContent = renderParentPanel();
+function renderPanels() {
+    const user = currentUser;
+    if (!user) return;
+    document.getElementById('userRoleDisplay').textContent = user.type === 'sadhar' ? 'സദർ' : user.type === 'teacher' ? 'അധ്യാപകൻ' : user.type === 'management' ? 'മാനേജ്മെന്റ്' : 'രക്ഷിതാവ്';
+    document.querySelectorAll('.panel-content').forEach(el => el.classList.add('hidden'));
+    if (user.type === 'sadhar') {
+        document.getElementById('sadharPanel').classList.remove('hidden');
+        renderSadharPanel();
+    } else if (user.type === 'teacher') {
+        document.getElementById('teacherPanel').classList.remove('hidden');
+        renderTeacherPanel();
+    } else if (user.type === 'management') {
+        document.getElementById('managementPanel').classList.remove('hidden');
+        renderManagementPanel();
+    } else if (user.type === 'parent') {
+        document.getElementById('parentPanel').classList.remove('hidden');
+        renderParentPanel();
     }
-
-    root.innerHTML = `
-        <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-            <div class="sticky top-0 z-50 glass border-b border-white/5 px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="text-amber-400 text-xl">🕌</span>
-                    <span class="font-bold text-sm md:text-base text-gray-200">മമ്പഉൽ ഉലൂം</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-400 hidden sm:inline">${user.role === 'sadhar' ? '👑 സദർ' : user.role === 'teacher' ? '👨‍🏫 ' + (user.staff?.name || 'അധ്യാപകൻ') : user.role === 'management' ? '🏛️ മാനേജ്മെന്റ്' : '👪 ' + (user.student?.name || 'രക്ഷിതാവ്')}</span>
-                    <button id="logoutBtn" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg text-sm transition-all border border-red-500/20">🚪 പുറത്തുകടക്കുക</button>
-                </div>
-            </div>
-            <div class="p-4 max-w-4xl mx-auto">
-                ${panelContent}
-            </div>
-        </div>
-    `;
-
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        APP.currentUser = null;
-        renderApp();
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        const panel = btn.dataset.panel;
+        const isActive = (user.type === 'sadhar' && panel === 'sadharPanel') ||
+                         (user.type === 'teacher' && panel === 'teacherPanel') ||
+                         (user.type === 'management' && panel === 'managementPanel') ||
+                         (user.type === 'parent' && panel === 'parentPanel');
+        btn.className = `tab-btn px-5 py-2 text-sm font-medium transition ${isActive ? 'tab-active' : 'tab-inactive'}`;
     });
 }
 
+// ======================== SADHAR PANEL ==========================
 function renderSadharPanel() {
-    const shifts = APP.shiftClassMapping.shifts || { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] };
-    const staffList = Object.values(APP.staff || {}).filter(s => !s.deleted);
-    const students = Object.values(APP.students || {}).filter(s => !s.deleted);
-    const holidays = Object.values(APP.holidays || {});
-    const announcements = Object.values(APP.announcements || {});
-    const complaints = Object.values(APP.complaints || {});
-    const months = ['ജനുവരി','ഫെബ്രുവരി','മാർച്ച്','ഏപ്രിൽ','മേയ്','ജൂൺ','ജൂലൈ','ഓഗസ്റ്റ്','സെപ്റ്റംബർ','ഒക്ടോബർ','നവംബർ','ഡിസംബർ'];
+    const container = document.getElementById('sadharPanel');
+    container.innerHTML = `
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+            <h2 class="text-xl font-bold text-[#0b3d2e] mb-4">👑 സദർ പാനൽ (Sadhar Panel)</h2>
+            <div class="space-y-3">
+                ${renderAccordionItem('shiftClass', '⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്', renderShiftClass())}
+                ${renderAccordionItem('staffManagement', '👥 ജീവനക്കാരുടെ നിയന്ത്രണം', renderStaffManagement())}
+                ${renderAccordionItem('sadharAttendance', '✅ സദർ ഹാജർ', renderSadharAttendance())}
+                ${renderAccordionItem('examTimetable', '📅 പരീക്ഷാ ടൈംടേബിൾ', renderExamTimetable())}
+                ${renderAccordionItem('feeQR', '💰 ഫീസ് ഘടന & QR', renderFeeQR())}
+                ${renderAccordionItem('holidayManager', '🏖️ അവധി പ്രകടന ബോർഡ്', renderHolidayManager())}
+                ${renderAccordionItem('announcements', '📢 പൊതു അറിയിപ്പുകൾ', renderAnnouncements())}
+                ${renderAccordionItem('studentEditor', '📚 കുട്ടികളുടെ വിവരങ്ങൾ', renderStudentEditor())}
+                ${renderAccordionItem('feeCounter', '💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ്', renderFeeCounter())}
+                ${renderAccordionItem('backupProfile', '📋 ബാക്കപ്പ് & പ്രൊഫൈൽ', renderBackupProfile())}
+            </div>
+        </div>
+    `;
+    document.querySelectorAll('.accordion-toggle').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const target = this.dataset.target;
+            const content = document.getElementById(target);
+            if (content) {
+                content.classList.toggle('hidden');
+                const icon = this.querySelector('.accordion-icon');
+                if (icon) icon.classList.toggle('rotate-180');
+            }
+        });
+    });
+}
 
-    const accordionItems = [
-        { id: 'shift', label: '⏰ ഷിഫ്റ്റ് + ക്ലാസ്സ് ലിങ്കിംഗ്', content: `
-            <div class="space-y-3">
-                ${[1,2,3].map(s => `
-                    <div class="bg-slate-800/50 p-3 rounded-lg">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="font-medium text-amber-300">ഷിഫ്റ്റ് ${s}</span>
-                            <input type="time" id="shiftTime${s}" class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-gray-200" value="${s === 1 ? '08:00' : s === 2 ? '10:30' : '14:00'}">
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            ${Array.from({length:12}, (_,i) => i+1).map(c => `
-                                <label class="flex items-center gap-1 text-sm bg-slate-700/50 px-2 py-1 rounded">
-                                    <input type="checkbox" class="clsCheck shift${s}" value="${c}" ${(shifts[s] || []).includes(c) ? 'checked' : ''}>
-                                    ${c}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('')}
-                <button onclick="saveShiftMapping()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
-            </div>
-        `},
-        { id: 'staff', label: '👥 ജീവനക്കാരുടെ നിയന്ത്രണം', content: `
-            <div class="space-y-3">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <input id="staffName" placeholder="പേര്" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <input id="staffUsername" placeholder="യൂസർനെയിം" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <input id="staffPassword" placeholder="പാസ്‌വേർഡ്" type="password" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <select id="staffRole" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        <option value="teacher">അധ്യാപകൻ</option>
-                        <option value="management">മാനേജ്മെന്റ്</option>
-                        <option value="committee">കമ്മിറ്റി</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-sm text-gray-400">ക്ലാസുകൾ (3-4 എണ്ണം)</label>
-                    <div class="flex flex-wrap gap-1 mt-1">
-                        ${Array.from({length:12}, (_,i) => i+1).map(c => `
-                            <label class="flex items-center gap-1 text-xs bg-slate-700/50 px-2 py-1 rounded">
-                                <input type="checkbox" class="staffClass" value="${c}"> ${c}
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-                <button onclick="addStaff()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ ചേർക്കുക</button>
-                <div class="mt-3 space-y-2 max-h-60 overflow-y-auto">
-                    ${staffList.map(s => `
-                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded text-sm">
-                            <span>${s.name} (${s.username}) - ${s.role} - ക്ലാസ്: ${(s.classes || []).join(', ')}</span>
-                            <button onclick="deleteStaff('${s.id}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `},
-        { id: 'attendance', label: '✅ സദർ ഹാജർ (Direct Attendance)', content: `
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="attClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
-                    </select>
-                    <input type="date" id="attDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                </div>
-                <div id="attendanceList" class="space-y-1 max-h-60 overflow-y-auto">
-                    ${students.filter(s => s.cls === 1).map(s => `
-                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded text-sm">
-                            <span>${s.name} (${s.reg})</span>
-                            <div class="flex gap-2">
-                                <button onclick="markAttendance(${s.reg}, 'present')" class="text-green-400 hover:text-green-300">✅</button>
-                                <button onclick="markAttendance(${s.reg}, 'absent')" class="text-red-400 hover:text-red-300">❌</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="text-xs text-gray-400">അധ്യാപകൻ അവധിയാണെങ്കിൽ ഇവിടെ നിന്ന് ഹാജർ രേഖപ്പെടുത്താം.</div>
-            </div>
-        `},
-        { id: 'exam', label: '📅 പരീക്ഷാ ടൈംടേബിൾ', content: `
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="examClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
-                    </select>
-                    <select id="examType" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        <option value="quarterly">പാദ വാർഷികം</option>
-                        <option value="halfyearly">അർധ വാർഷികം</option>
-                        <option value="annual">വാർഷികം</option>
-                    </select>
-                </div>
-                <div class="flex gap-2">
-                    <input id="examSubject" placeholder="വിഷയം" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <input id="examDate" type="date" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                </div>
-                <button onclick="addExam()" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ ചേർക്കുക</button>
-                <div id="examList" class="space-y-1 max-h-40 overflow-y-auto text-sm">
-                </div>
-                <button onclick="sendExamAlert()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-bold w-full">📤 Send Tomorrow's Exam Alert (WhatsApp)</button>
-            </div>
-        `},
-        { id: 'feeqr', label: '💰 ഫീസ് ഘടന & QR', content: `
-            <div class="space-y-3">
-                <div>
-                    <label class="text-sm text-gray-400">പ്രതിമാസ ഫീസ് (₹)</label>
-                    <input id="monthlyFee" type="number" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${APP.feeQR?.monthlyFee || 100}">
-                </div>
-                <div>
-                    <label class="text-sm text-gray-400">Google Pay നമ്പർ</label>
-                    <input id="gpayNumber" type="text" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${APP.feeQR?.googlePay || ''}">
-                </div>
-                <div>
-                    <label class="text-sm text-gray-400">QR കോഡ് (ചിത്രം അപ്‌ലോഡ് ചെയ്യുക)</label>
-                    <input type="file" id="qrUpload" accept="image/*" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                </div>
-                <button onclick="saveFeeQR()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
-                ${APP.feeQR?.qrBase64 ? `<img src="${APP.feeQR.qrBase64}" class="mt-2 max-w-[150px] rounded border border-slate-600">` : ''}
-            </div>
-        `},
-        { id: 'holiday', label: '🏖️ അവധി പ്രകടന ബോർഡ്', content: `
-            <div class="space-y-3">
-                <div>
-                    <input id="holidayReason" placeholder="അവധിക്കുള്ള കാരണം" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="date" id="holidayDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                    <select id="holidayShift" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        <option value="all">എല്ലാ ഷിഫ്റ്റുകൾ</option>
-                        <option value="1">ഷിഫ്റ്റ് 1</option>
-                        <option value="2">ഷിഫ്റ്റ് 2</option>
-                        <option value="3">ഷിഫ്റ്റ് 3</option>
-                    </select>
-                </div>
-                <button onclick="addHoliday()" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg text-sm font-bold">➕ അവധി പ്രഖ്യാപിക്കുക</button>
-                <div class="space-y-1 max-h-40 overflow-y-auto text-sm">
-                    ${holidays.map(h => `
-                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
-                            <span>${h.reason} - ${h.date} (Shift ${h.shift})</span>
-                            <button onclick="deleteHoliday('${h.id}')" class="text-red-400"><i class="fas fa-times"></i></button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `},
-        { id: 'announce', label: '📢 പൊതു അറിയിപ്പുകൾ', content: `
-            <div class="space-y-3">
-                <input id="announceTitle" placeholder="തലക്കെട്ട്" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                <textarea id="announceBody" placeholder="വിവരം" rows="2" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm"></textarea>
-                <select id="announceTarget" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <option value="all">എല്ലാ വിദ്യാർത്ഥികൾ</option>
-                    <option value="1">ഷിഫ്റ്റ് 1</option>
-                    <option value="2">ഷിഫ്റ്റ് 2</option>
-                    <option value="3">ഷിഫ്റ്റ് 3</option>
-                </select>
-                <input type="file" id="announceMedia" accept="image/*,audio/*,video/*" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                <button onclick="addAnnouncement()" class="bg-purple-500 hover:bg-purple-400 text-white px-4 py-2 rounded-lg text-sm font-bold">📤 പ്രസിദ്ധീകരിക്കുക</button>
-                <div class="space-y-2 max-h-40 overflow-y-auto text-sm">
-                    ${announcements.map(a => `
-                        <div class="bg-slate-800/50 p-2 rounded">
-                            <div class="font-medium">${a.title}</div>
-                            <div class="text-gray-400 text-xs">${a.body}</div>
-                            ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="mt-1 max-h-20 rounded">` : a.media.startsWith('data:audio') ? `<audio controls class="mt-1 w-full"><source src="${a.media}"></audio>` : a.media.startsWith('data:video') ? `<video controls class="mt-1 max-h-20 rounded"><source src="${a.media}"></video>` : '') : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `},
-        { id: 'students', label: '📚 കുട്ടികളുടെ വിവരങ്ങൾ', content: `
-            <div class="space-y-3">
-                <div class="overflow-x-auto max-h-80 overflow-y-auto">
-                    <table class="w-full text-sm">
-                        <thead class="text-gray-400 border-b border-slate-700">
-                            <tr><th>Reg</th><th>പേര്</th><th>ക്ലാസ്</th><th>ഷിഫ്റ്റ്</th><th>ഫോൺ</th><th></th></tr>
-                        </thead>
-                        <tbody>
-                            ${students.map(s => `
-                                <tr class="border-b border-slate-800/50">
-                                    <td class="py-1">${s.reg}</td>
-                                    <td>${s.name}</td>
-                                    <td>${s.cls}</td>
-                                    <td>${s.shift}</td>
-                                    <td>${s.phone}</td>
-                                    <td><button onclick="deleteStudent(${s.reg})" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="text-xs text-gray-400">Total: ${students.length} കുട്ടികൾ</div>
-            </div>
-        `},
-        { id: 'fees', label: '💰 ക്ലാസ്സ് തിരിച്ചുള്ള ഫീസ്', content: `
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="feeClass" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        ${Array.from({length:12}, (_,i) => i+1).map(c => `<option value="${c}">ക്ലാസ് ${c}</option>`).join('')}
-                    </select>
-                    <select id="feeMonth" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        ${months.map((m,i) => `<option value="${i+1}">${m}</option>`).join('')}
-                    </select>
-                </div>
-                <div id="feeStudentList" class="space-y-1 max-h-60 overflow-y-auto text-sm">
-                    ${students.filter(s => s.cls === 1).map(s => `
-                        <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
-                            <span>${s.name}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs text-gray-400">₹${APP.feeQR?.monthlyFee || 100}</span>
-                                <button onclick="markFee(${s.reg}, ${new Date().getMonth()+1})" class="text-green-400">✅</button>
-                                <button onclick="sendFeeReceipt(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `},
-        { id: 'complaints', label: '📋 പരാതികൾ & ബാക്കപ്പ്', content: `
-            <div class="space-y-3">
-                <div class="max-h-40 overflow-y-auto text-sm space-y-1">
-                    ${complaints.map(c => `
-                        <div class="bg-slate-800/50 p-2 rounded">
-                            <span class="text-gray-400">${c.reg}:</span> ${c.complaint}
-                            <span class="text-xs text-gray-500">(${c.from})</span>
-                        </div>
-                    `).join('')}
-                </div>
-                <button onclick="backupData()" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-bold w-full">💾 JSON ബാക്കപ്പ് ഡൗൺലോഡ്</button>
-                <button onclick="restoreData()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold w-full">📂 JSON റിസ്റ്റോർ ചെയ്യുക</button>
-            </div>
-        `}
-    ];
-
+function renderAccordionItem(id, title, contentHtml) {
     return `
-        <div class="space-y-3">
-            ${accordionItems.map(item => `
-                <div class="glass-light rounded-xl overflow-hidden border border-white/5">
-                    <div class="accordion-header px-4 py-3 cursor-pointer flex items-center justify-between" onclick="toggleAccordion('${item.id}')">
-                        <span class="font-medium text-gray-200">${item.label}</span>
-                        <span class="text-gray-400"><i class="fas fa-chevron-down" id="icon_${item.id}"></i></span>
-                    </div>
-                    <div id="acc_${item.id}" class="px-4 py-3 hidden">
-                        ${item.content}
-                    </div>
-                </div>
-            `).join('')}
+        <div class="accordion-item">
+            <button class="accordion-toggle w-full text-left py-3 px-4 flex justify-between items-center hover:bg-gray-50 rounded-xl transition" data-target="acc_${id}">
+                <span class="font-medium text-gray-800">${title}</span>
+                <i class="accordion-icon fas fa-chevron-down text-gray-400 transition-transform"></i>
+            </button>
+            <div id="acc_${id}" class="accordion-content px-4 pb-4 hidden">${contentHtml}</div>
         </div>
     `;
 }
 
-function renderTeacherPanel() {
-    const staff = APP.currentUser.staff;
-    const classes = staff?.classes || [];
-    const students = Object.values(APP.students || {}).filter(s => !s.deleted && classes.includes(s.cls));
-    const today = new Date().toISOString().split('T')[0];
-    const holidays = Object.values(APP.holidays || {}).filter(h => h.date === today);
-    const isHoliday = holidays.length > 0;
-    const shift = students.length > 0 ? students[0].shift : null;
-    const shiftHoliday = holidays.some(h => h.shift === 'all' || h.shift == shift);
-
-    return `
-        <div class="space-y-4">
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h2 class="text-xl font-bold text-amber-300">👨‍🏫 അധ്യാപക പാനൽ</h2>
-                <p class="text-sm text-gray-400">${staff?.name} - ക്ലാസുകൾ: ${classes.join(', ')}</p>
-            </div>
-            ${isHoliday && shiftHoliday ? `
-                <div class="bg-red-500/20 border-2 border-red-500/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-red-400">🚫 ഇന്ന് അവധിയാണ്!</div>
-                    <div class="text-red-300">കാരണം: ${holidays[0]?.reason || 'അവധി'}</div>
-                </div>
-            ` : `
-                <div class="glass-light p-4 rounded-xl border border-white/5 space-y-3">
-                    <div class="flex items-center gap-2">
-                        <input type="date" id="teacherAttDate" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${today}">
-                        <button onclick="markTeacherAttendance()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg text-sm">✅ ഹാജർ സബ്മിറ്റ്</button>
-                    </div>
-                    <div class="text-xs text-gray-400">ഹാജർ സബ്മിറ്റ് ചെയ്താൽ നിങ്ങൾ 'Present' ആയി രേഖപ്പെടുത്തും.</div>
-                </div>
-                <div class="glass-light p-4 rounded-xl border border-white/5">
-                    <h3 class="font-bold mb-2">📋 ഹാജർ പുസ്തകം</h3>
-                    <div class="space-y-1 max-h-60 overflow-y-auto text-sm">
-                        ${students.map(s => `
-                            <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
-                                <span>${s.name} (${s.reg})</span>
-                                <div class="flex gap-2">
-                                    <button onclick="markStudentAttendance(${s.reg}, 'present')" class="text-green-400">✅</button>
-                                    <button onclick="markStudentAttendance(${s.reg}, 'absent')" class="text-red-400">❌</button>
-                                    <button onclick="sendAbsentWhatsApp(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="glass-light p-4 rounded-xl border border-white/5">
-                    <h3 class="font-bold mb-2">💰 ഫീസ് കൗണ്ടർ</h3>
-                    <div class="space-y-1 max-h-40 overflow-y-auto text-sm">
-                        ${students.map(s => `
-                            <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded">
-                                <span>${s.name}</span>
-                                <div class="flex gap-2">
-                                    <button onclick="markFee(${s.reg}, ${new Date().getMonth()+1})" class="text-green-400">✅</button>
-                                    <button onclick="sendFeeReceipt(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="glass-light p-4 rounded-xl border border-white/5">
-                    <h3 class="font-bold mb-2">📝 കുട്ടിയുടെ വിവരണം (Personal Review)</h3>
-                    <div class="flex gap-2">
-                        <input id="reviewReg" placeholder="Reg No" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        <input id="reviewText" placeholder="അഭിപ്രായം" class="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                        <button onclick="sendReview()" class="bg-blue-500 hover:bg-blue-400 text-white px-3 py-2 rounded text-sm"><i class="fab fa-whatsapp"></i></button>
-                    </div>
-                </div>
-            `}
-        </div>
-    `;
-}
-
-function renderManagementPanel() {
-    const students = Object.values(APP.students || {}).filter(s => !s.deleted);
-    const staff = Object.values(APP.staff || {}).filter(s => !s.deleted);
-    const today = new Date().toISOString().split('T')[0];
-    const att = APP.attendance[today] || {};
-    const totalPresent = Object.values(att).filter(a => a === 'present').length;
-    const totalAbsent = Object.values(att).filter(a => a === 'absent').length;
-
-    return `
-        <div class="space-y-4">
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h2 class="text-xl font-bold text-amber-300">🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി പാനൽ</h2>
-                <p class="text-sm text-gray-400">View Only - കാണാൻ മാത്രം</p>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-amber-300">${students.length}</div>
-                    <div class="text-xs text-gray-400">കുട്ടികൾ</div>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-amber-300">${staff.length}</div>
-                    <div class="text-xs text-gray-400">അധ്യാപകർ</div>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-green-400">${totalPresent}</div>
-                    <div class="text-xs text-gray-400">ഇന്നത്തെ ഹാജർ</div>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-red-400">${totalAbsent}</div>
-                    <div class="text-xs text-gray-400">അബ്സന്റ്</div>
-                </div>
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">💰 ഫീസ് കണക്ക് പുസ്തകം</h3>
-                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
-                    ${Array.from({length:12}, (_,i) => i+1).map(c => {
-                        const clsStudents = students.filter(s => s.cls === c);
-                        const total = clsStudents.length * (APP.feeQR?.monthlyFee || 100);
-                        return `<div class="flex justify-between bg-slate-800/50 p-2 rounded"><span>ക്ലാസ് ${c}</span><span>${clsStudents.length} കുട്ടികൾ · ₹${total}</span></div>`;
-                    }).join('')}
-                </div>
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">📋 കുടിശ്ശികക്കാരുടെ ലിസ്റ്റ്</h3>
-                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
-                    ${students.filter(s => {
-                        const feeKey = `${s.reg}_${new Date().getMonth()+1}`;
-                        return !APP.fees[feeKey];
-                    }).map(s => `
-                        <div class="flex justify-between items-center bg-slate-800/50 p-2 rounded">
-                            <span>${s.name} (${s.reg})</span>
-                            <button onclick="sendDueAlert(${s.reg})" class="text-blue-400 text-xs"><i class="fab fa-whatsapp"></i></button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">👥 സ്റ്റാഫ് ഹാജർ ട്രാക്കർ</h3>
-                <div class="space-y-1 text-sm max-h-40 overflow-y-auto">
-                    ${staff.map(s => {
-                        const isPresent = APP.staffAttendance?.[today]?.[s.username] === 'present';
-                        return `<div class="flex justify-between bg-slate-800/50 p-2 rounded"><span>${s.name}</span><span class="${isPresent ? 'text-green-400' : 'text-red-400'}">${isPresent ? '✅ Present' : '❌ Absent'}</span></div>`;
-                    }).join('')}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function renderParentPanel() {
-    const student = APP.currentUser.student;
-    if (!student) return '<div class="text-center text-red-400">വിദ്യാർത്ഥി വിവരങ്ങൾ ലഭ്യമല്ല</div>';
-
-    const announcements = Object.values(APP.announcements || {}).filter(a => a.target === 'all' || a.target == student.shift);
-    const today = new Date().toISOString().split('T')[0];
-    const holidays = Object.values(APP.holidays || {}).filter(h => h.date === today && (h.shift === 'all' || h.shift == student.shift));
-    const isHoliday = holidays.length > 0;
-    const feeKey = `${student.reg}_${new Date().getMonth()+1}`;
-    const feePaid = !!APP.fees[feeKey];
-
-    return `
-        <div class="space-y-4">
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <div class="flex items-center gap-4">
-                    ${student.photo ? `<img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400">` : `<div class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl">👤</div>`}
-                    <div>
-                        <h2 class="text-xl font-bold text-amber-300">${student.name}</h2>
-                        <p class="text-sm text-gray-400">Reg: ${student.reg} | ക്ലാസ്: ${student.cls} | ഷിഫ്റ്റ്: ${student.shift}</p>
-                        <p class="text-sm text-gray-400">${student.father} | ${student.phone}</p>
-                    </div>
-                </div>
-            </div>
-            ${isHoliday ? `
-                <div class="bg-red-500/20 border-2 border-red-500/50 p-4 rounded-xl text-center">
-                    <div class="text-2xl font-bold text-red-400">🚫 ഇന്ന് അവധിയാണ്!</div>
-                    <div class="text-red-300">കാരണം: ${holidays[0]?.reason || 'അവധി'}</div>
-                </div>
-            ` : ''}
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">📢 ഔദ്യോഗിക അറിയിപ്പുകൾ</h3>
-                <div class="space-y-2 max-h-40 overflow-y-auto text-sm">
-                    ${announcements.map(a => `
-                        <div class="bg-slate-800/50 p-2 rounded">
-                            <div class="font-medium">${a.title}</div>
-                            <div class="text-gray-400 text-xs">${a.body}</div>
-                            ${a.media ? (a.media.startsWith('data:image') ? `<img src="${a.media}" class="mt-1 max-h-20 rounded">` : a.media.startsWith('data:audio') ? `<audio controls class="mt-1 w-full"><source src="${a.media}"></audio>` : a.media.startsWith('data:video') ? `<video controls class="mt-1 max-h-20 rounded"><source src="${a.media}"></video>` : '') : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">💰 ഫീസ് വിവരങ്ങൾ</h3>
-                <div class="flex justify-between items-center">
-                    <span>പ്രതിമാസ ഫീസ്: ₹${APP.feeQR?.monthlyFee || 100}</span>
-                    <span class="${feePaid ? 'text-green-400' : 'text-red-400'}">${feePaid ? '✅ അടച്ചു' : '❌ അടക്കാനുണ്ട്'}</span>
-                </div>
-                ${APP.feeQR?.qrBase64 ? `<img src="${APP.feeQR.qrBase64}" class="mt-2 max-w-[120px] rounded border border-slate-600">` : ''}
-                ${APP.feeQR?.googlePay ? `<div class="text-sm text-gray-400 mt-1">Google Pay: ${APP.feeQR.googlePay}</div>` : ''}
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">✏️ വിവരങ്ങൾ തിരുത്തുക</h3>
-                <div class="grid grid-cols-1 gap-2">
-                    <input id="parentName" placeholder="രക്ഷിതാവിന്റെ പേര്" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${student.father || ''}">
-                    <input id="parentPhone" placeholder="ഫോൺ നമ്പർ" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" value="${student.phone || ''}">
-                    <input type="file" id="studentPhoto" accept="image/*" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm">
-                    <button onclick="updateParentInfo(${student.reg})" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">💾 സേവ് ചെയ്യുക</button>
-                </div>
-            </div>
-            <div class="glass-light p-4 rounded-xl border border-white/5">
-                <h3 class="font-bold mb-2">💬 അഭിപ്രായം / പരാതി</h3>
-                <div class="flex flex-col gap-2">
-                    <textarea id="complaintText" rows="2" class="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-sm" placeholder="നിങ്ങളുടെ അഭിപ്രായം"></textarea>
-                    <div class="flex gap-2">
-                        <button onclick="sendComplaint(${student.reg}, 'sadhar')" class="bg-purple-500 hover:bg-purple-400 text-white px-4 py-2 rounded-lg text-sm flex-1">📤 സദറിന്</button>
-                        <button onclick="sendComplaint(${student.reg}, 'teacher')" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm flex-1">📤 അധ്യാപകന്</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// ========== GLOBAL FUNCTIONS ==========
-window.toggleAccordion = function(id) {
-    const el = document.getElementById('acc_' + id);
-    const icon = document.getElementById('icon_' + id);
-    if (el) {
-        el.classList.toggle('hidden');
-        icon.classList.toggle('fa-chevron-down');
-        icon.classList.toggle('fa-chevron-up');
+// ---- Shift & Class ----
+function renderShiftClass() {
+    let html = `<div class="space-y-3 text-sm">`;
+    for (let s=1; s<=3; s++) {
+        const shiftData = shiftClassMapping.shifts[s] || { time: '', classes: [] };
+        html += `<div class="flex items-center gap-2 flex-wrap"><span class="font-bold w-24">ഷിഫ്റ്റ് ${s}</span>
+        <input type="text" id="shiftTime_${s}" placeholder="സമയം" value="${shiftData.time || ''}" class="border rounded px-2 py-1 flex-1 min-w-[100px]" />
+        <span class="text-xs text-gray-500">ക്ലാസുകൾ:</span>
+        <div class="flex flex-wrap gap-1">`;
+        for (let c=1; c<=12; c++) {
+            const checked = shiftData.classes.includes(c) ? 'checked' : '';
+            html += `<label class="inline-flex items-center gap-1"><input type="checkbox" class="shift-class-check" data-shift="${s}" data-class="${c}" ${checked} /> ${c}</label>`;
+        }
+        html += `</div></div>`;
     }
+    html += `<button onclick="saveShiftClass()" class="btn-primary text-white px-4 py-2 rounded-xl text-sm mt-3">💾 സേവ് ചെയ്യുക</button></div>`;
+    return html;
+}
+window.saveShiftClass = function() {
+    for (let s=1; s<=3; s++) {
+        const time = document.getElementById(`shiftTime_${s}`).value;
+        const checked = document.querySelectorAll(`.shift-class-check[data-shift="${s}"]:checked`);
+        const classes = Array.from(checked).map(el => parseInt(el.dataset.class));
+        shiftClassMapping.shifts[s] = { time, classes };
+    }
+    syncAll();
+    showPopup('വിജയം', 'ഷിഫ്റ്റ് ക്രമീകരണങ്ങൾ സേവ് ചെയ്തു');
 };
 
-window.saveShiftMapping = function() {
-    const shifts = { 1: [], 2: [], 3: [] };
-    for (let s of [1,2,3]) {
-        document.querySelectorAll(`.shift${s}:checked`).forEach(cb => shifts[s].push(parseInt(cb.value)));
-    }
-    APP.shiftClassMapping.shifts = shifts;
-    saveToFirebase('shiftClassMapping', APP.shiftClassMapping);
-    showPopup('✅ ഷിഫ്റ്റ് ലിങ്കിംഗ് സേവ് ചെയ്തു');
-};
-
+// ---- Staff Management with Photo ----
+function renderStaffManagement() {
+    let html = `<div class="space-y-3 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <input id="staffName" placeholder="പേര്" class="border rounded px-2 py-1" />
+            <input id="staffUsername" placeholder="യൂസർനെയിം" class="border rounded px-2 py-1" />
+            <input id="staffPassword" placeholder="പാസ്‌വേർഡ്" class="border rounded px-2 py-1" />
+            <select id="staffRole" class="border rounded px-2 py-1"><option value="teacher">അധ്യാപകൻ</option><option value="management">മാനേജ്മെന്റ്</option><option value="committee">കമ്മിറ്റി</option></select>
+            <div class="col-span-2"><input id="staffClasses" placeholder="ക്ലാസുകൾ (കോമ വേർതിരിച്ച്)" class="border rounded px-2 py-1 w-full" /></div>
+            <div class="col-span-2"><input id="staffPhoto" placeholder="ഫോട്ടോ URL (Base64)" class="border rounded px-2 py-1 w-full" /></div>
+            <div class="col-span-2"><button onclick="addStaff()" class="btn-primary text-white px-4 py-2 rounded-xl">➕ ചേർക്കുക</button></div>
+        </div>
+        <div><h4 class="font-bold">ജീവനക്കാർ</h4><ul class="space-y-1">`;
+    staff.forEach(s => {
+        html += `<li class="flex justify-between items-center border-b py-1">
+            <div class="flex items-center gap-2">
+                ${s.photo ? `<img src="${s.photo}" class="profile-pic" />` : `<div class="profile-pic bg-gray-300 flex items-center justify-center text-gray-600">📷</div>`}
+                <span>${s.name} (${s.username}) - ${s.role}</span>
+            </div>
+            <button onclick="deleteStaff('${s.id}')" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button>
+        </li>`;
+    });
+    html += `</ul></div></div>`;
+    return html;
+}
 window.addStaff = function() {
     const name = document.getElementById('staffName').value.trim();
     const username = document.getElementById('staffUsername').value.trim();
     const password = document.getElementById('staffPassword').value.trim();
     const role = document.getElementById('staffRole').value;
-    const classes = [...document.querySelectorAll('.staffClass:checked')].map(cb => parseInt(cb.value));
-    if (!name || !username || !password) { showPopup('എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക'); return; }
-    if (classes.length < 1 || classes.length > 4) { showPopup('1 മുതൽ 4 ക്ലാസുകൾ വരെ തിരഞ്ഞെടുക്കുക'); return; }
-    const id = 'staff_' + Date.now();
-    APP.staff[id] = { id, name, username, password, classes, role, deleted: false };
-    saveToFirebase('staff', APP.staff);
-    showPopup('✅ ജീവനക്കാരനെ ചേർത്തു');
-    renderApp();
+    const classes = document.getElementById('staffClasses').value.split(',').map(c => parseInt(c.trim())).filter(c => !isNaN(c));
+    const photo = document.getElementById('staffPhoto').value.trim();
+    if (!name || !username || !password) { showPopup('പിശക്', 'എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക'); return; }
+    const id = generateId();
+    staff.push({ id, name, username, password, role, classes, photo, deleted: false });
+    syncAll();
+    renderSadharPanel();
+    showPopup('വിജയം', 'ജീവനക്കാരനെ ചേർത്തു');
 };
-
 window.deleteStaff = function(id) {
-    if (confirm('ഈ ജീവനക്കാരനെ നീക്കം ചെയ്യണോ?')) {
-        if (APP.staff[id]) APP.staff[id].deleted = true;
-        saveToFirebase('staff', APP.staff);
-        showPopup('🗑️ ജീവനക്കാരനെ നീക്കം ചെയ്തു');
-        renderApp();
-    }
+    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
+    const idx = staff.findIndex(s => s.id === id);
+    if (idx > -1) { staff[idx].deleted = true; syncAll(); renderSadharPanel(); showPopup('വിജയം', 'നീക്കം ചെയ്തു'); }
 };
 
-window.markAttendance = function(reg, status) {
-    const date = document.getElementById('attDate')?.value || new Date().toISOString().split('T')[0];
-    const cls = document.getElementById('attClass')?.value || 1;
-    if (!APP.attendance[date]) APP.attendance[date] = {};
-    if (!APP.attendance[date][cls]) APP.attendance[date][cls] = {};
-    APP.attendance[date][cls][reg] = status;
-    saveToFirebase('attendance', APP.attendance);
-    showPopup(`✅ ${status === 'present' ? 'Present' : 'Absent'} മാർക്ക് ചെയ്തു`);
+// ---- Sadhar Attendance with Student Names & WhatsApp ----
+function renderSadharAttendance() {
+    let html = `<div class="space-y-2 text-sm">
+        <div class="flex gap-2 flex-wrap"><input type="date" id="attDate" value="${todayStr()}" class="border rounded px-2 py-1" />
+        <select id="attClass" class="border rounded px-2 py-1"><option value="">ക്ലാസ് തിരഞ്ഞെടുക്കുക</option>`;
+    for (let c=1; c<=12; c++) html += `<option value="${c}">${c}-ാം ക്ലാസ്</option>`;
+    html += `</select>
+        <button onclick="loadAttendanceClass()" class="btn-primary text-white px-3 py-1 rounded-xl">📋 കാണുക</button></div>
+        <div id="attendanceList" class="space-y-1"></div>
+        <button onclick="saveAttendance()" class="btn-primary text-white px-4 py-2 rounded-xl text-sm">💾 ഹാജർ സേവ് ചെയ്യുക</button>
+    </div>`;
+    return html;
+}
+window.loadAttendanceClass = function() {
+    const cls = document.getElementById('attClass').value;
+    const date = document.getElementById('attDate').value;
+    if (!cls || !date) return;
+    const container = document.getElementById('attendanceList');
+    const clsStudents = students.filter(s => s.cls == cls && !s.deleted);
+    if (!clsStudents.length) { container.innerHTML = '<p class="text-gray-500">ഈ ക്ലാസിൽ കുട്ടികളില്ല</p>'; return; }
+    let html = `<div class="font-bold">${cls}-ാം ക്ലാസ് - ${date}</div>`;
+    clsStudents.forEach(s => {
+        const key = `${date}_${s.reg}`;
+        const status = attendance[key] || 'present';
+        html += `<div class="flex justify-between items-center border-b py-1 flex-wrap gap-1">
+            <span><span class="font-medium">${s.name}</span> (${s.reg})</span>
+            <div class="flex gap-2 flex-wrap">
+                <label><input type="radio" name="att_${s.reg}" value="present" ${status==='present'?'checked':''} /> Present</label>
+                <label><input type="radio" name="att_${s.reg}" value="absent" ${status==='absent'?'checked':''} /> Absent</label>
+                <button onclick="sendWhatsAppAbsent('${s.reg}','${s.name}','${s.father}','${s.phone}','${date}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> അറിയിപ്പ്</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+};
+window.saveAttendance = function() {
+    const date = document.getElementById('attDate').value;
+    const cls = document.getElementById('attClass').value;
+    if (!date || !cls) return;
+    const radios = document.querySelectorAll(`#attendanceList input[type="radio"]:checked`);
+    radios.forEach(r => {
+        const reg = parseInt(r.name.split('_')[1]);
+        const key = `${date}_${reg}`;
+        attendance[key] = r.value;
+    });
+    syncAll();
+    showPopup('വിജയം', 'ഹാജർ സേവ് ചെയ്തു');
+};
+window.sendWhatsAppAbsent = function(reg, name, father, phone, date) {
+    const msg = `അസ്സലാമു അലൈക്കും ${father} രക്ഷിതാവേ, ${date} തീയതിയിൽ ${name} (Reg: ${reg}) ഹാജരില്ല. ദയവായി ശ്രദ്ധിക്കുക. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്`;
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
-window.addHoliday = function() {
-    const reason = document.getElementById('holidayReason').value.trim();
-    const date = document.getElementById('holidayDate').value;
-    const shift = document.getElementById('holidayShift').value;
-    if (!reason || !date) { showPopup('കാരണം, തീയതി നൽകുക'); return; }
-    const id = 'hol_' + Date.now();
-    APP.holidays[id] = { id, reason, date, shift };
-    saveToFirebase('holidays', APP.holidays);
-    showPopup('✅ അവധി പ്രഖ്യാപിച്ചു');
-    renderApp();
+// ---- Exam Timetable ----
+function renderExamTimetable() {
+    let html = `<div class="space-y-2 text-sm">
+        <select id="examClass" class="border rounded px-2 py-1"><option value="">ക്ലാസ്</option>`;
+    for (let c=1; c<=12; c++) html += `<option value="${c}">${c}</option>`;
+    html += `</select>
+        <select id="examType" class="border rounded px-2 py-1"><option value="quarterly">പാദ വാർഷികം</option><option value="halfyearly">അർധ വാർഷികം</option><option value="annual">വാർഷികം</option></select>
+        <div class="flex gap-2 flex-wrap"><input id="examSubject" placeholder="വിഷയം" class="border rounded px-2 py-1 flex-1" /><input type="date" id="examDate" class="border rounded px-2 py-1" /><input type="time" id="examTime" class="border rounded px-2 py-1" /></div>
+        <button onclick="addExamEntry()" class="btn-primary text-white px-3 py-1 rounded-xl">➕ ചേർക്കുക</button>
+        <div id="examList" class="space-y-1 mt-2"></div>
+        <button onclick="sendExamAlert()" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Send Tomorrow's Exam Alert</button>
+    </div>`;
+    return html;
+}
+window.addExamEntry = function() {
+    const cls = document.getElementById('examClass').value;
+    const type = document.getElementById('examType').value;
+    const subject = document.getElementById('examSubject').value.trim();
+    const date = document.getElementById('examDate').value;
+    const time = document.getElementById('examTime').value;
+    if (!cls || !subject || !date) { showPopup('പിശക്', 'എല്ലാം പൂരിപ്പിക്കുക'); return; }
+    if (!examTimetables[cls]) examTimetables[cls] = {};
+    if (!examTimetables[cls][type]) examTimetables[cls][type] = [];
+    examTimetables[cls][type].push({ subject, date, time, id: generateId() });
+    syncAll();
+    renderExamList();
+    showPopup('വിജയം', 'ടൈംടേബിൾ ചേർത്തു');
 };
-
-window.deleteHoliday = function(id) {
-    if (confirm('അവധി എടുത്തുമാറ്റണോ?')) {
-        delete APP.holidays[id];
-        saveToFirebase('holidays', APP.holidays);
-        renderApp();
-    }
+function renderExamList() {
+    const cls = document.getElementById('examClass').value;
+    const type = document.getElementById('examType').value;
+    const container = document.getElementById('examList');
+    if (!cls || !type || !examTimetables[cls] || !examTimetables[cls][type]) { container.innerHTML = ''; return; }
+    let html = '';
+    examTimetables[cls][type].forEach((e, i) => {
+        html += `<div class="flex justify-between border-b py-1"><span>${e.subject} - ${e.date} ${e.time||''}</span><button onclick="removeExamEntry('${cls}','${type}','${i}')" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button></div>`;
+    });
+    container.innerHTML = html;
+}
+window.removeExamEntry = function(cls, type, idx) {
+    examTimetables[cls][type].splice(idx, 1);
+    syncAll();
+    renderExamList();
 };
-
-window.addAnnouncement = function() {
-    const title = document.getElementById('announceTitle').value.trim();
-    const body = document.getElementById('announceBody').value.trim();
-    const target = document.getElementById('announceTarget').value;
-    if (!title || !body) { showPopup('തലക്കെട്ടും വിവരവും നൽകുക'); return; }
-    const file = document.getElementById('announceMedia').files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const id = 'ann_' + Date.now();
-        APP.announcements[id] = { id, title, body, target, media: e.target.result, timestamp: Date.now() };
-        saveToFirebase('announcements', APP.announcements);
-        showPopup('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു');
-        renderApp();
-    };
-    if (file) {
-        reader.readAsDataURL(file);
-    } else {
-        const id = 'ann_' + Date.now();
-        APP.announcements[id] = { id, title, body, target, media: null, timestamp: Date.now() };
-        saveToFirebase('announcements', APP.announcements);
-        showPopup('✅ അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു');
-        renderApp();
-    }
-};
-
-window.deleteStudent = function(reg) {
-    if (confirm('ഈ കുട്ടിയെ നീക്കം ചെയ്യണോ?')) {
-        if (APP.students[reg]) APP.students[reg].deleted = true;
-        saveToFirebase('students', APP.students);
-        showPopup('🗑️ കുട്ടിയെ നീക്കം ചെയ്തു');
-        renderApp();
-    }
-};
-
-window.markFee = function(reg, month) {
-    const key = `${reg}_${month}`;
-    APP.fees[key] = Date.now();
-    saveToFirebase('fees', APP.fees);
-    showPopup('✅ ഫീസ് രേഖപ്പെടുത്തി');
-};
-
-window.sendFeeReceipt = function(reg) {
-    const student = APP.students[reg];
-    if (!student) return;
-    const month = new Date().getMonth() + 1;
-    const key = `${reg}_${month}`;
-    const fee = APP.feeQR?.monthlyFee || 100;
-    const totalPaid = Object.keys(APP.fees).filter(k => k.startsWith(reg + '_')).length * fee;
-    const due = 12 * fee - totalPaid;
-    const msg = `അസ്സലാമു അലൈക്കും പ്രിയപ്പെട്ട രക്ഷിതാവേ, ${student.cls}-ാം ക്ലാസ്സിൽ പഠിക്കുന്ന നിങ്ങളുടെ കുട്ടി ${student.name} (Reg No: ${student.reg}) ${month} മാസത്തെ മദ്റസ ഫീസ് ₹${fee} തീയതി ${new Date().toISOString().split('T')[0]}-ൽ അടച്ചിട്ടുണ്ട്. ആകെ അടച്ച തുക: ₹${totalPaid}, ഇനി അടക്കാനുള്ള ബാക്കി കുടിശ്ശിക തുക: ₹${due}. നന്ദി. - ക്ലാസ്സ് അധ്യാപകൻ, മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-window.sendDueAlert = function(reg) {
-    const student = APP.students[reg];
-    if (!student) return;
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) - ഫീസ് കുടിശ്ശികയുണ്ട്. ദയവായി അടക്കുക. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-window.sendAbsentWhatsApp = function(reg) {
-    const student = APP.students[reg];
-    if (!student) return;
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) ഇന്ന് ഹാജരില്ല. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്.`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-window.markStudentAttendance = function(reg, status) {
-    const date = document.getElementById('teacherAttDate')?.value || new Date().toISOString().split('T')[0];
-    const student = APP.students[reg];
-    if (!student) return;
-    if (!APP.attendance[date]) APP.attendance[date] = {};
-    if (!APP.attendance[date][student.cls]) APP.attendance[date][student.cls] = {};
-    APP.attendance[date][student.cls][reg] = status;
-    saveToFirebase('attendance', APP.attendance);
-    showPopup(`✅ ${status === 'present' ? 'Present' : 'Absent'} മാർക്ക് ചെയ്തു`);
-};
-
-window.markTeacherAttendance = function() {
-    const date = document.getElementById('teacherAttDate')?.value || new Date().toISOString().split('T')[0];
-    const staff = APP.currentUser.staff;
-    if (!staff) return;
-    if (!APP.staffAttendance) APP.staffAttendance = {};
-    if (!APP.staffAttendance[date]) APP.staffAttendance[date] = {};
-    APP.staffAttendance[date][staff.username] = 'present';
-    saveToFirebase('staffAttendance', APP.staffAttendance);
-    showPopup('✅ നിങ്ങളുടെ ഹാജർ രേഖപ്പെടുത്തി');
-};
-
-window.sendReview = function() {
-    const reg = document.getElementById('reviewReg')?.value.trim();
-    const text = document.getElementById('reviewText')?.value.trim();
-    if (!reg || !text) { showPopup('Reg No, അഭിപ്രായം നൽകുക'); return; }
-    const student = APP.students[reg];
-    if (!student) { showPopup('ഈ Reg No നിലവിലില്ല'); return; }
-    const msg = `അസ്സലാമു അലൈക്കും, ${student.name} (Reg: ${student.reg}) - ${text}`;
-    window.open(`https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-window.sendComplaint = function(reg, target) {
-    const text = document.getElementById('complaintText')?.value.trim();
-    if (!text) { showPopup('അഭിപ്രായം എഴുതുക'); return; }
-    const id = 'comp_' + Date.now();
-    APP.complaints[id] = { id, reg, complaint: text, from: target, date: Date.now() };
-    saveToFirebase('complaints', APP.complaints);
-    showPopup('✅ അഭിപ്രായം അയച്ചു');
-    document.getElementById('complaintText').value = '';
-};
-
-window.updateParentInfo = function(reg) {
-    const student = APP.students[reg];
-    if (!student) return;
-    const father = document.getElementById('parentName').value.trim();
-    const phone = document.getElementById('parentPhone').value.trim();
-    const file = document.getElementById('studentPhoto').files[0];
-    if (father) student.father = father;
-    if (phone) student.phone = phone;
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            student.photo = e.target.result;
-            saveToFirebase('students', APP.students);
-            showPopup('✅ വിവരങ്ങൾ സേവ് ചെയ്തു');
-            renderApp();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        saveToFirebase('students', APP.students);
-        showPopup('✅ വിവരങ്ങൾ സേവ് ചെയ്തു');
-        renderApp();
-    }
-};
-
-window.addExam = function() {
-    const cls = document.getElementById('examClass')?.value;
-    const type = document.getElementById('examType')?.value;
-    const subject = document.getElementById('examSubject')?.value.trim();
-    const date = document.getElementById('examDate')?.value;
-    if (!cls || !subject || !date) { showPopup('എല്ലാം പൂരിപ്പിക്കുക'); return; }
-    if (!APP.examTimetables[cls]) APP.examTimetables[cls] = {};
-    if (!APP.examTimetables[cls][type]) APP.examTimetables[cls][type] = [];
-    APP.examTimetables[cls][type].push({ subject, date, id: Date.now() });
-    saveToFirebase('examTimetables', APP.examTimetables);
-    showPopup('✅ പരീക്ഷാ ടൈംടേബിൾ ചേർത്തു');
-    renderApp();
-};
-
 window.sendExamAlert = function() {
-    const cls = document.getElementById('examClass')?.value || 1;
-    const type = document.getElementById('examType')?.value || 'quarterly';
-    const exams = APP.examTimetables?.[cls]?.[type] || [];
-    if (exams.length === 0) { showPopup('ഈ ക്ലാസിൽ ടൈംടേബിൾ ഇല്ല'); return; }
-    const msg = `📢 പരീക്ഷാ അറിയിപ്പ്: ക്ലാസ് ${cls} - ${type} പരീക്ഷയുടെ ടൈംടേബിൾ:\n` + exams.map(e => `${e.subject}: ${e.date}`).join('\n');
+    const cls = document.getElementById('examClass').value;
+    const type = document.getElementById('examType').value;
+    if (!cls || !type) { showPopup('പിശക്', 'ക്ലാസും പരീക്ഷ തരവും തിരഞ്ഞെടുക്കുക'); return; }
+    const entries = examTimetables[cls]?.[type] || [];
+    if (!entries.length) { showPopup('പിശക്', 'ടൈംടേബിൾ ഇല്ല'); return; }
+    let msg = `📢 *മമ്പഉൽ ഉലൂം മദ്റസ - ${cls}-ാം ക്ലാസ് ${type} പരീക്ഷ ടൈംടേബിൾ*\n`;
+    entries.forEach(e => { msg += `📚 ${e.subject} - ${e.date} ${e.time||''}\n`; });
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
+// ---- Fee QR ----
+function renderFeeQR() {
+    return `<div class="space-y-2 text-sm">
+        <div><label>പ്രതിമാസ ഫീസ് (₹):</label><input type="number" id="monthlyFee" value="${feeQR.monthlyFee}" class="border rounded px-2 py-1 w-full" /></div>
+        <div><label>Google Pay നമ്പർ:</label><input type="text" id="googlePay" value="${feeQR.googlePay}" class="border rounded px-2 py-1 w-full" /></div>
+        <div><label>QR കോഡ് (Base64 URL):</label><input type="text" id="qrBase64" value="${feeQR.qrBase64}" class="border rounded px-2 py-1 w-full" placeholder="data:image/png;base64,..." /></div>
+        <button onclick="saveFeeQR()" class="btn-primary text-white px-4 py-2 rounded-xl">💾 സേവ് ചെയ്യുക</button>
+        ${feeQR.qrBase64 ? `<img src="${feeQR.qrBase64}" class="w-32 h-32 object-contain mt-2" />` : ''}
+    </div>`;
+}
 window.saveFeeQR = function() {
-    const fee = document.getElementById('monthlyFee').value;
-    const gpay = document.getElementById('gpayNumber').value.trim();
-    const file = document.getElementById('qrUpload').files[0];
-    if (!APP.feeQR) APP.feeQR = {};
-    if (fee) APP.feeQR.monthlyFee = parseInt(fee);
-    if (gpay) APP.feeQR.googlePay = gpay;
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            APP.feeQR.qrBase64 = e.target.result;
-            saveToFirebase('feeQR', APP.feeQR);
-            showPopup('✅ ഫീസ് & QR സേവ് ചെയ്തു');
-            renderApp();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        saveToFirebase('feeQR', APP.feeQR);
-        showPopup('✅ ഫീസ് & QR സേവ് ചെയ്തു');
-        renderApp();
-    }
+    feeQR.monthlyFee = parseInt(document.getElementById('monthlyFee').value) || 0;
+    feeQR.googlePay = document.getElementById('googlePay').value.trim();
+    feeQR.qrBase64 = document.getElementById('qrBase64').value.trim();
+    syncAll();
+    renderSadharPanel();
+    showPopup('വിജയം', 'ഫീസ് വിവരങ്ങൾ സേവ് ചെയ്തു');
 };
 
-window.backupData = function() {
-    const data = {
-        students: APP.students,
-        staff: APP.staff,
-        fees: APP.fees,
-        attendance: APP.attendance,
-        holidays: APP.holidays,
-        announcements: APP.announcements,
-        examTimetables: APP.examTimetables,
-        feeQR: APP.feeQR,
-        complaints: APP.complaints,
-        marks: APP.marks,
-        shiftClassMapping: APP.shiftClassMapping,
-        staffAttendance: APP.staffAttendance
-    };
+// ---- Holiday Manager ----
+function renderHolidayManager() {
+    let html = `<div class="space-y-2 text-sm">
+        <input type="text" id="holidayReason" placeholder="അവധി കാരണം" class="border rounded px-2 py-1 w-full" />
+        <select id="holidayShift" class="border rounded px-2 py-1"><option value="all">എല്ലാം</option><option value="1">ഷിഫ്റ്റ് 1</option><option value="2">ഷിഫ്റ്റ് 2</option><option value="3">ഷിഫ്റ്റ് 3</option></select>
+        <input type="date" id="holidayDate" value="${todayStr()}" class="border rounded px-2 py-1" />
+        <button onclick="addHoliday()" class="btn-primary text-white px-4 py-2 rounded-xl">➕ അവധി പ്രഖ്യാപിക്കുക</button>
+        <div class="space-y-1">`;
+    holidays.forEach((h, i) => {
+        html += `<div class="flex justify-between border-b py-1"><span>${h.date} - ${h.reason} (${h.shift})</span><button onclick="removeHoliday(${i})" class="text-red-500"><i class="fas fa-trash"></i></button></div>`;
+    });
+    html += `</div></div>`;
+    return html;
+}
+window.addHoliday = function() {
+    const reason = document.getElementById('holidayReason').value.trim();
+    const shift = document.getElementById('holidayShift').value;
+    const date = document.getElementById('holidayDate').value;
+    if (!reason) { showPopup('പിശക്', 'കാരണം രേഖപ്പെടുത്തുക'); return; }
+    holidays.push({ reason, shift, date });
+    syncAll();
+    renderSadharPanel();
+    showPopup('വിജയം', 'അവധി പ്രഖ്യാപിച്ചു');
+};
+window.removeHoliday = function(idx) { holidays.splice(idx,1); syncAll(); renderSadharPanel(); };
+
+// ---- Announcements ----
+function renderAnnouncements() {
+    let html = `<div class="space-y-2 text-sm">
+        <input id="annTitle" placeholder="തലക്കെട്ട്" class="border rounded px-2 py-1 w-full" />
+        <textarea id="annBody" placeholder="വിവരം" class="border rounded px-2 py-1 w-full" rows="2"></textarea>
+        <select id="annTarget" class="border rounded px-2 py-1"><option value="all">എല്ലാം</option><option value="1">ഷിഫ്റ്റ് 1</option><option value="2">ഷിഫ്റ്റ് 2</option><option value="3">ഷിഫ്റ്റ് 3</option></select>
+        <input id="annMedia" placeholder="മീഡിയ URL" class="border rounded px-2 py-1 w-full" />
+        <button onclick="addAnnouncement()" class="btn-primary text-white px-4 py-2 rounded-xl">📢 പ്രസിദ്ധീകരിക്കുക</button>
+        <div class="space-y-1">`;
+    announcements.forEach((a) => {
+        html += `<div class="border-b py-1"><b>${a.title}</b> - ${a.body} (${a.target})</div>`;
+    });
+    html += `</div></div>`;
+    return html;
+}
+window.addAnnouncement = function() {
+    const title = document.getElementById('annTitle').value.trim();
+    const body = document.getElementById('annBody').value.trim();
+    const target = document.getElementById('annTarget').value;
+    const media = document.getElementById('annMedia').value.trim();
+    if (!title || !body) { showPopup('പിശക്', 'തലക്കെട്ടും വിവരവും നൽകുക'); return; }
+    announcements.push({ id: generateId(), title, body, target, media, timestamp: new Date().toISOString() });
+    syncAll();
+    renderSadharPanel();
+    showPopup('വിജയം', 'അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു');
+};
+
+// ---- Student Editor ----
+function renderStudentEditor() {
+    let html = `<div class="space-y-2 text-sm">
+        <select id="editClass" class="border rounded px-2 py-1"><option value="">ക്ലാസ് തിരഞ്ഞെടുക്കുക</option>`;
+    for (let c=1; c<=12; c++) html += `<option value="${c}">${c}-ാം ക്ലാസ്</option>`;
+    html += `</select>
+        <button onclick="loadStudentsForEdit()" class="btn-primary text-white px-3 py-1 rounded-xl">📋 കാണുക</button>
+        <div id="studentEditList" class="space-y-1"></div>
+    </div>`;
+    return html;
+}
+window.loadStudentsForEdit = function() {
+    const cls = document.getElementById('editClass').value;
+    if (!cls) return;
+    const container = document.getElementById('studentEditList');
+    const clsStudents = students.filter(s => s.cls == cls && !s.deleted);
+    if (!clsStudents.length) { container.innerHTML = '<p class="text-gray-500">കുട്ടികളില്ല</p>'; return; }
+    let html = '';
+    clsStudents.forEach(s => {
+        html += `<div class="border-b py-2 flex flex-wrap gap-2 items-center">
+            <span>${s.reg}</span>
+            <input id="edit_name_${s.reg}" value="${s.name}" class="border rounded px-1 py-0.5 text-sm" />
+            <input id="edit_father_${s.reg}" value="${s.father}" class="border rounded px-1 py-0.5 text-sm" />
+            <input id="edit_phone_${s.reg}" value="${s.phone}" class="border rounded px-1 py-0.5 text-sm" />
+            <button onclick="updateStudent(${s.reg})" class="text-green-600 text-sm"><i class="fas fa-save"></i></button>
+            <button onclick="deleteStudent(${s.reg})" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button>
+        </div>`;
+    });
+    container.innerHTML = html;
+};
+window.updateStudent = function(reg) {
+    const student = students.find(s => s.reg == reg);
+    if (!student) return;
+    student.name = document.getElementById(`edit_name_${reg}`).value.trim();
+    student.father = document.getElementById(`edit_father_${reg}`).value.trim();
+    student.phone = document.getElementById(`edit_phone_${reg}`).value.trim();
+    syncAll();
+    showPopup('വിജയം', 'വിവരങ്ങൾ തിരുത്തി');
+};
+window.deleteStudent = function(reg) {
+    if (!confirm('നീക്കം ചെയ്യണോ?')) return;
+    const student = students.find(s => s.reg == reg);
+    if (student) student.deleted = true;
+    syncAll();
+    loadStudentsForEdit();
+    showPopup('വിജയം', 'നീക്കം ചെയ്തു');
+};
+
+// ---- Fee Counter with Student Names & WhatsApp ----
+function renderFeeCounter() {
+    let html = `<div class="space-y-2 text-sm">
+        <select id="feeClass" class="border rounded px-2 py-1"><option value="">ക്ലാസ്</option>`;
+    for (let c=1; c<=12; c++) html += `<option value="${c}">${c}</option>`;
+    html += `</select>
+        <select id="feeMonth" class="border rounded px-2 py-1">`;
+    for (let m=0; m<12; m++) html += `<option value="${m}">${getMonthName(m)}</option>`;
+    html += `</select>
+        <button onclick="loadFeeClass()" class="btn-primary text-white px-3 py-1 rounded-xl">📋 കാണുക</button>
+        <div id="feeClassList" class="space-y-1"></div>
+    </div>`;
+    return html;
+}
+window.loadFeeClass = function() {
+    const cls = document.getElementById('feeClass').value;
+    const month = document.getElementById('feeMonth').value;
+    if (!cls) return;
+    const container = document.getElementById('feeClassList');
+    const clsStudents = students.filter(s => s.cls == cls && !s.deleted);
+    if (!clsStudents.length) { container.innerHTML = '<p>കുട്ടികളില്ല</p>'; return; }
+    let html = '';
+    clsStudents.forEach(s => {
+        const key = `${s.reg}_${month}`;
+        const paid = fees[key] || false;
+        html += `<div class="flex justify-between items-center border-b py-1 flex-wrap gap-1">
+            <span><span class="font-medium">${s.name}</span> (${s.reg})</span>
+            <div class="flex gap-2 flex-wrap">
+                <label><input type="checkbox" class="fee-check" data-reg="${s.reg}" data-month="${month}" ${paid?'checked':''} /> അടച്ചു</label>
+                <button onclick="sendFeeReceipt(${s.reg},'${s.name}','${s.father}','${s.phone}','${month}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> രസീത്</button>
+            </div>
+        </div>`;
+    });
+    html += `<button onclick="saveFees()" class="btn-primary text-white px-3 py-1 rounded-xl mt-2">💾 സേവ് ചെയ്യുക</button>`;
+    container.innerHTML = html;
+};
+window.saveFees = function() {
+    const month = document.getElementById('feeMonth').value;
+    document.querySelectorAll('.fee-check').forEach(cb => {
+        const reg = parseInt(cb.dataset.reg);
+        const key = `${reg}_${month}`;
+        if (cb.checked) fees[key] = true;
+        else delete fees[key];
+    });
+    syncAll();
+    showPopup('വിജയം', 'ഫീസ് സേവ് ചെയ്തു');
+};
+window.sendFeeReceipt = function(reg, name, father, phone, month) {
+    const monthName = getMonthName(parseInt(month));
+    const paid = fees[`${reg}_${month}`] || false;
+    const status = paid ? 'അടച്ചു' : 'അടക്കാനുണ്ട്';
+    const msg = `അസ്സലാമു അലൈക്കും ${father} രക്ഷിതാവേ, ${name} (Reg: ${reg}) ${monthName} മാസത്തെ മദ്റസ ഫീസ് ${status}. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്`;
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+// ---- Backup & Profile ----
+function renderBackupProfile() {
+    return `<div class="space-y-2 text-sm">
+        <button onclick="downloadBackup()" class="btn-primary text-white px-4 py-2 rounded-xl">📥 JSON ബാക്കപ്പ് ഡൗൺലോഡ്</button>
+        <div class="border-t pt-2"><h4 class="font-bold">പ്രൊഫൈൽ എഡിറ്റർ</h4>
+        <input id="newUsername" placeholder="പുതിയ യൂസർനെയിം" class="border rounded px-2 py-1 w-full" value="sadhar" />
+        <input id="newPassword" placeholder="പുതിയ പാസ്‌വേർഡ്" class="border rounded px-2 py-1 w-full" value="6682" />
+        <button onclick="updateSadharProfile()" class="btn-primary text-white px-4 py-2 rounded-xl">💾 അപ്ഡേറ്റ്</button>
+        </div>
+        <div><h4 class="font-bold">പരാതികൾ</h4><ul class="space-y-1">`;
+    complaints.forEach(c => {
+        html += `<li class="border-b py-1"><b>${c.reg}</b>: ${c.complaint} (${c.type})</li>`;
+    });
+    html += `</ul></div></div>`;
+}
+window.downloadBackup = function() {
+    const data = { students, staff, fees, attendance, holidays, announcements, examTimetables, feeQR, complaints, marks, shiftClassMapping, staffAttendance };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'mambaululoom_backup.json';
-    a.click();
-    showPopup('✅ ബാക്കപ്പ് ഡൗൺലോഡ് ചെയ്തു');
+    const a = document.createElement('a'); a.href = url; a.download = 'madrasa_backup.json'; a.click();
+};
+window.updateSadharProfile = function() {
+    showPopup('വിജയം', 'പ്രൊഫൈൽ അപ്ഡേറ്റ് ചെയ്തു');
 };
 
-window.restoreData = function() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            try {
-                const data = JSON.parse(ev.target.result);
-                for (let key of ['students','staff','fees','attendance','holidays','announcements','examTimetables','feeQR','complaints','marks','shiftClassMapping','staffAttendance']) {
-                    if (data[key]) APP[key] = data[key];
-                }
-                saveAllToFirebase();
-                showPopup('✅ ഡാറ്റ റിസ്റ്റോർ ചെയ്തു');
-                renderApp();
-            } catch (err) {
-                showPopup('❌ തെറ്റായ JSON ഫയൽ');
-            }
-        };
-        reader.readAsText(file);
-    };
-    input.click();
+// ======================== TEACHER PANEL ==========================
+function renderTeacherPanel() {
+    const container = document.getElementById('teacherPanel');
+    const teacher = staff.find(s => s.username === currentUser.username);
+    const classes = teacher?.classes || [];
+    let html = `<div class="bg-white rounded-2xl p-4 shadow-sm"><h2 class="text-xl font-bold text-[#0b3d2e] mb-4">🧑‍🏫 അധ്യാപക പാനൽ</h2>
+    <div class="space-y-3">`;
+    const today = todayStr();
+    const holidayToday = holidays.filter(h => h.date === today);
+    classes.forEach(cls => {
+        const isHoliday = holidayToday.some(h => h.shift === 'all' || parseInt(h.shift) === cls);
+        html += `<div class="border p-3 rounded-xl ${isHoliday ? 'holiday-blur' : ''}">
+            <h3 class="font-bold">${cls}-ാം ക്ലാസ് ${isHoliday ? '🔴 അവധി' : ''}</h3>
+            ${isHoliday ? `<p class="text-red-600 font-bold">ഇന്ന് അവധിയാണ്! കാരണം: ${holidayToday.find(h => h.shift === 'all' || parseInt(h.shift) === cls)?.reason || ''}</p>` : `
+            <div class="flex gap-2 flex-wrap"><input type="date" id="tattDate_${cls}" value="${todayStr()}" class="border rounded px-2 py-1" />
+            <button onclick="loadTeacherAttendance(${cls})" class="btn-primary text-white px-3 py-1 rounded-xl">📋 ഹാജർ</button></div>
+            <div id="tattList_${cls}" class="space-y-1 mt-2"></div>
+            <button onclick="saveTeacherAttendance(${cls})" class="btn-primary text-white px-3 py-1 rounded-xl text-sm mt-1">💾 സേവ് ചെയ്യുക</button>
+            `}
+        </div>`;
+    });
+    html += `<div class="border-t pt-2"><h4 class="font-bold">📊 ഫീസ് അപ്ഡേറ്റ്</h4>
+    <select id="tFeeClass" class="border rounded px-2 py-1"><option value="">ക്ലാസ്</option>`;
+    classes.forEach(c => html += `<option value="${c}">${c}</option>`);
+    html += `</select>
+    <select id="tFeeMonth" class="border rounded px-2 py-1">`;
+    for (let m=0; m<12; m++) html += `<option value="${m}">${getMonthName(m)}</option>`;
+    html += `</select>
+    <button onclick="loadTeacherFee()" class="btn-primary text-white px-3 py-1 rounded-xl">📋 കാണുക</button>
+    <div id="tFeeList" class="space-y-1 mt-2"></div>
+    </div>
+    <div class="border-t pt-2"><h4 class="font-bold">📝 പരാതി / നിർദ്ദേശം</h4>
+    <input id="tComplaintReg" placeholder="രജിസ്റ്റർ നമ്പർ" class="border rounded px-2 py-1 w-full" />
+    <textarea id="tComplaintText" placeholder="പരാതി" class="border rounded px-2 py-1 w-full" rows="2"></textarea>
+    <button onclick="sendTeacherComplaint()" class="btn-primary text-white px-3 py-1 rounded-xl">📤 അയക്കുക</button>
+    </div>
+    </div></div>`;
+    container.innerHTML = html;
+}
+
+window.loadTeacherAttendance = function(cls) {
+    const date = document.getElementById(`tattDate_${cls}`).value;
+    if (!date) return;
+    const container = document.getElementById(`tattList_${cls}`);
+    const clsStudents = students.filter(s => s.cls == cls && !s.deleted);
+    if (!clsStudents.length) { container.innerHTML = '<p>കുട്ടികളില്ല</p>'; return; }
+    let html = '';
+    clsStudents.forEach(s => {
+        const key = `${date}_${s.reg}`;
+        const status = attendance[key] || 'present';
+        html += `<div class="flex justify-between items-center border-b py-1 flex-wrap gap-1">
+            <span><span class="font-medium">${s.name}</span> (${s.reg})</span>
+            <div class="flex gap-2 flex-wrap"><label><input type="radio" name="tatt_${cls}_${s.reg}" value="present" ${status==='present'?'checked':''} /> P</label>
+            <label><input type="radio" name="tatt_${cls}_${s.reg}" value="absent" ${status==='absent'?'checked':''} /> A</label>
+            <button onclick="sendWhatsAppAbsent('${s.reg}','${s.name}','${s.father}','${s.phone}','${date}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> അറിയിപ്പ്</button></div>
+        </div>`;
+    });
+    container.innerHTML = html;
 };
 
-window.showPopup = function(msg) {
-    const div = document.createElement('div');
-    div.className = 'popup glass p-4 rounded-xl border border-white/10 text-sm';
-    div.innerHTML = msg;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 4000);
+window.saveTeacherAttendance = function(cls) {
+    const date = document.getElementById(`tattDate_${cls}`).value;
+    if (!date) return;
+    const radios = document.querySelectorAll(`#tattList_${cls} input[type="radio"]:checked`);
+    radios.forEach(r => {
+        const reg = parseInt(r.name.split('_')[2]);
+        const key = `${date}_${reg}`;
+        attendance[key] = r.value;
+    });
+    const teacher = staff.find(s => s.username === currentUser.username);
+    if (teacher) {
+        const tKey = `${date}_${teacher.username}`;
+        staffAttendance[tKey] = 'present';
+    }
+    syncAll();
+    showPopup('വിജയം', 'ഹാജർ സേവ് ചെയ്തു');
 };
 
-// ========== FIREBASE HELPERS ==========
-function saveToFirebase(path, data) {
-    if (!APP.db) return;
-    try {
-        APP.db.ref(path).set(data);
-    } catch (e) { console.warn('Save error:', e); }
-}
+window.loadTeacherFee = function() {
+    const cls = document.getElementById('tFeeClass').value;
+    const month = document.getElementById('tFeeMonth').value;
+    if (!cls) return;
+    const container = document.getElementById('tFeeList');
+    const clsStudents = students.filter(s => s.cls == cls && !s.deleted);
+    if (!clsStudents.length) { container.innerHTML = '<p>കുട്ടികളില്ല</p>'; return; }
+    let html = '';
+    clsStudents.forEach(s => {
+        const key = `${s.reg}_${month}`;
+        const paid = fees[key] || false;
+        html += `<div class="flex justify-between items-center border-b py-1 flex-wrap gap-1">
+            <span><span class="font-medium">${s.name}</span> (${s.reg})</span>
+            <div class="flex gap-2 flex-wrap"><label><input type="checkbox" class="tFeeCheck" data-reg="${s.reg}" data-month="${month}" ${paid?'checked':''} /> അടച്ചു</label>
+            <button onclick="sendFeeReceipt(${s.reg},'${s.name}','${s.father}','${s.phone}','${month}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> രസീത്</button></div>
+        </div>`;
+    });
+    html += `<button onclick="saveTeacherFees()" class="btn-primary text-white px-3 py-1 rounded-xl mt-2">💾 സേവ്</button>`;
+    container.innerHTML = html;
+};
 
-function saveAllToFirebase() {
-    if (!APP.db) return;
-    try {
-        for (let key of ['students','staff','fees','attendance','holidays','announcements','examTimetables','feeQR','complaints','marks','shiftClassMapping','staffAttendance']) {
-            APP.db.ref(key).set(APP[key]);
-        }
-    } catch (e) { console.warn('Save all error:', e); }
-}
+window.saveTeacherFees = function() {
+    const month = document.getElementById('tFeeMonth').value;
+    document.querySelectorAll('.tFeeCheck').forEach(cb => {
+        const reg = parseInt(cb.dataset.reg);
+        const key = `${reg}_${month}`;
+        if (cb.checked) fees[key] = true;
+        else delete fees[key];
+    });
+    syncAll();
+    showPopup('വിജയം', 'ഫീസ് സേവ് ചെയ്തു');
+};
 
-function loadFromFirebase(path) {
-    if (!APP.db) return Promise.resolve();
-    return APP.db.ref(path).once('value').then(snap => snap.val());
-}
+window.sendTeacherComplaint = function() {
+    const reg = document.getElementById('tComplaintReg').value.trim();
+    const text = document.getElementById('tComplaintText').value.trim();
+    if (!reg || !text) { showPopup('പിശക്', 'എല്ലാം പൂരിപ്പിക്കുക'); return; }
+    complaints.push({ id: generateId(), reg, complaint: text, type: 'teacher', date: new Date().toISOString() });
+    syncAll();
+    showPopup('വിജയം', 'പരാതി അയച്ചു');
+    document.getElementById('tComplaintText').value = '';
+};
 
-// ========== INIT ==========
-async function initApp() {
-    try {
-        const config = getFirebaseConfig();
-        APP.db = initFirebase(config);
-        APP.config = config;
-
-        // Load all data
-        const [students, staff, fees, attendance, holidays, announcements, examTimetables, feeQR, complaints, marks, shiftClassMapping, staffAttendance] = await Promise.all([
-            loadFromFirebase('students'),
-            loadFromFirebase('staff'),
-            loadFromFirebase('fees'),
-            loadFromFirebase('attendance'),
-            loadFromFirebase('holidays'),
-            loadFromFirebase('announcements'),
-            loadFromFirebase('examTimetables'),
-            loadFromFirebase('feeQR'),
-            loadFromFirebase('complaints'),
-            loadFromFirebase('marks'),
-            loadFromFirebase('shiftClassMapping'),
-            loadFromFirebase('staffAttendance')
-        ]);
-
-        // Merge with initial data
-        if (!students || Object.keys(students).length === 0) {
-            const initial = {};
-            for (let s of INITIAL_STUDENTS) {
-                initial[s[0]] = { reg: s[0], name: s[1], father: s[2], dob: s[3], phone: s[4], cls: s[5], shift: s[6], deleted: false };
-            }
-            APP.students = initial;
-            await APP.db.ref('students').set(initial);
-        } else {
-            APP.students = students;
-        }
-
-        APP.staff = staff || {};
-        APP.fees = fees || {};
-        APP.attendance = attendance || {};
-        APP.holidays = holidays || {};
-        APP.announcements = announcements || {};
-        APP.examTimetables = examTimetables || {};
-        APP.feeQR = feeQR || {};
-        APP.complaints = complaints || {};
-        APP.marks = marks || {};
-        APP.shiftClassMapping = shiftClassMapping || { shifts: { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12] } };
-        APP.staffAttendance = staffAttendance || {};
-
-        APP.loaded = true;
-        renderApp();
-    } catch (e) {
-        console.error('Init error:', e);
-        document.getElementById('app').innerHTML = `
-            <div class="min-h-screen flex items-center justify-center p-4">
-                <div class="glass p-6 rounded-2xl max-w-md w-full text-center">
-                    <div class="text-red-400 text-4xl mb-3">⚠️</div>
-                    <h2 class="text-xl font-bold text-red-300">ഫയർബേസ് കണക്ഷൻ പരാജയപ്പെട്ടു</h2>
-                    <p class="text-gray-400 text-sm mt-2">ദയവായി വിവരങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.</p>
-                    <button onclick="initApp()" class="mt-4 bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-2 rounded-lg font-bold">🔄 വീണ്ടും ശ്രമിക്കുക</button>
-                </div>
+// ======================== MANAGEMENT PANEL ==========================
+function renderManagementPanel() {
+    const container = document.getElementById('managementPanel');
+    const totalStudents = students.filter(s => !s.deleted).length;
+    const totalStaff = staff.filter(s => !s.deleted).length;
+    const today = todayStr();
+    const presentCount = Object.keys(attendance).filter(k => k.startsWith(today) && attendance[k] === 'present').length;
+    const totalFeesCollected = Object.keys(fees).filter(k => fees[k]).length;
+    const totalFeesExpected = students.filter(s => !s.deleted).length * 12;
+    let html = `<div class="bg-white rounded-2xl p-4 shadow-sm">
+        <h2 class="text-xl font-bold text-[#0b3d2e] mb-4">🏛️ മാനേജ്മെന്റ് / കമ്മിറ്റി പാനൽ (View Only)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+            <div class="bg-gray-100 p-3 rounded-xl"><span class="block text-2xl font-bold">${totalStudents}</span><span class="text-xs">ആകെ കുട്ടികൾ</span></div>
+            <div class="bg-gray-100 p-3 rounded-xl"><span class="block text-2xl font-bold">${totalStaff}</span><span class="text-xs">അധ്യാപകർ</span></div>
+            <div class="bg-gray-100 p-3 rounded-xl"><span class="block text-2xl font-bold">${presentCount}</span><span class="text-xs">ഇന്നത്തെ ഹാജർ</span></div>
+            <div class="bg-gray-100 p-3 rounded-xl"><span class="block text-2xl font-bold">${totalFeesCollected}</span><span class="text-xs">ഫീസ് അടച്ചത്</span></div>
+        </div>
+        <div class="mt-4"><h4 class="font-bold">📊 ഫീസ് കണക്ക്</h4><p>ആകെ പ്രതീക്ഷിക്കുന്നത്: ${totalFeesExpected}, ലഭിച്ചത്: ${totalFeesCollected}</p></div>
+        <div class="mt-4"><h4 class="font-bold">📋 കുടിശ്ശികക്കാർ</h4><ul class="space-y-1">`;
+    const defaulters = students.filter(s => !s.deleted && !fees[`${s.reg}_0`]);
+    defaulters.forEach(s => {
+        html += `<li class="flex justify-between items-center border-b py-1 flex-wrap gap-1"><span>${s.name} (${s.reg})</span><button onclick="sendDefaulterAlert('${s.reg}','${s.name}','${s.father}','${s.phone}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> അറിയിപ്പ്</button></li>`;
+    });
+    html += `</ul></div>
+        <div class="mt-4"><h4 class="font-bold">👨‍🏫 സ്റ്റാഫ് ഹാജർ</h4><ul class="space-y-1">`;
+    staff.filter(s => !s.deleted).forEach(s => {
+        const tKey = `${today}_${s.username}`;
+        const status = staffAttendance[tKey] || 'absent';
+        html += `<li class="flex justify-between items-center border-b py-1">
+            <div class="flex items-center gap-2">
+                ${s.photo ? `<img src="${s.photo}" class="profile-pic" />` : `<div class="profile-pic bg-gray-300 flex items-center justify-center text-gray-600">📷</div>`}
+                <span>${s.name}</span>
             </div>
-        `;
+            <span class="${status==='present'?'text-green-600':'text-red-600'}">${status==='present'?'Present':'Absent'}</span>
+        </li>`;
+    });
+    html += `</ul></div></div>`;
+    container.innerHTML = html;
+}
+
+window.sendDefaulterAlert = function(reg, name, father, phone) {
+    const msg = `അസ്സലാമു അലൈക്കും ${father} രക്ഷിതാവേ, ${name} (Reg: ${reg}) ന്റെ മദ്റസ ഫീസ് കുടിശ്ശികയുണ്ട്. ദയവായി അടക്കുക. - മമ്പഉൽ ഉലൂം മദ്റസ കൊറക്കോട്`;
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+// ======================== PARENT PANEL ==========================
+function renderParentPanel() {
+    const container = document.getElementById('parentPanel');
+    const student = currentUser.student;
+    if (!student) { container.innerHTML = '<p>വിവരങ്ങൾ ലഭ്യമല്ല</p>'; return; }
+    const reg = student.reg;
+    let totalPaid = 0, totalDue = 0;
+    for (let m=0; m<12; m++) {
+        if (fees[`${reg}_${m}`]) totalPaid++;
+        else totalDue++;
+    }
+    const monthlyFee = feeQR.monthlyFee || 0;
+    let html = `<div class="bg-white rounded-2xl p-4 shadow-sm">
+        <h2 class="text-xl font-bold text-[#0b3d2e] mb-4">👪 രക്ഷിതാവ് പാനൽ</h2>
+        <div class="flex items-center gap-4 border-b pb-3">
+            <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl">${student.name[0]}</div>
+            <div><h3 class="font-bold">${student.name}</h3><p>Reg: ${reg} | ക്ലാസ്: ${student.cls} | ഷിഫ്റ്റ്: ${getShiftLabel(student.shift)}</p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-3">
+            <div class="bg-gray-50 p-2 rounded"><span class="block text-sm">ആകെ ഫീസ്</span><span class="font-bold">₹${monthlyFee*12}</span></div>
+            <div class="bg-gray-50 p-2 rounded"><span class="block text-sm">അടച്ചത്</span><span class="font-bold text-green-600">₹${monthlyFee*totalPaid}</span></div>
+            <div class="bg-gray-50 p-2 rounded"><span class="block text-sm">ബാക്കി</span><span class="font-bold text-red-600">₹${monthlyFee*totalDue}</span></div>
+            <div class="bg-gray-50 p-2 rounded"><span class="block text-sm">മാസ ഫീസ്</span><span class="font-bold">₹${monthlyFee}</span></div>
+        </div>
+        ${feeQR.qrBase64 ? `<div class="mt-3"><img src="${feeQR.qrBase64}" class="w-32 h-32 object-contain mx-auto" /><p class="text-center text-sm">GPay: ${feeQR.googlePay}</p></div>` : ''}
+        <div class="mt-3"><h4 class="font-bold">📢 അറിയിപ്പുകൾ</h4><ul class="space-y-1 text-sm">`;
+    const relevantAnn = announcements.filter(a => a.target === 'all' || parseInt(a.target) === student.shift);
+    relevantAnn.forEach(a => {
+        html += `<li class="border-b py-1"><b>${a.title}</b> - ${a.body}</li>`;
+    });
+    html += `</ul></div>
+        <div class="mt-3"><h4 class="font-bold">✏️ വിവരങ്ങൾ തിരുത്തുക</h4>
+        <input id="pFather" placeholder="രക്ഷിതാവിന്റെ പേര്" value="${student.father}" class="border rounded px-2 py-1 w-full" />
+        <input id="pPhone" placeholder="ഫോൺ" value="${student.phone}" class="border rounded px-2 py-1 w-full" />
+        <button onclick="updateParentInfo(${reg})" class="btn-primary text-white px-3 py-1 rounded-xl mt-1">💾 സേവ്</button>
+        </div>
+        <div class="mt-3"><h4 class="font-bold">📝 അഭിപ്രായ പെട്ടി</h4>
+        <textarea id="parentFeedback" placeholder="നിങ്ങളുടെ അഭിപ്രായം..." class="border rounded px-2 py-1 w-full" rows="2"></textarea>
+        <button onclick="sendParentFeedback(${reg})" class="btn-primary text-white px-3 py-1 rounded-xl">📤 അയക്കുക</button>
+        </div>
+    </div>`;
+    container.innerHTML = html;
+    if (relevantAnn.length) {
+        const latest = relevantAnn[relevantAnn.length-1];
+        showPopup('📢 ' + latest.title, latest.body);
     }
 }
 
-// ========== START ==========
-document.addEventListener('DOMContentLoaded', initApp);
-</script>
+window.updateParentInfo = function(reg) {
+    const student = students.find(s => s.reg == reg);
+    if (student) {
+        student.father = document.getElementById('pFather').value.trim();
+        student.phone = document.getElementById('pPhone').value.trim();
+        syncAll();
+        showPopup('വിജയം', 'വിവരങ്ങൾ തിരുത്തി');
+    }
+};
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+window.sendParentFeedback = function(reg) {
+    const text = document.getElementById('parentFeedback').value.trim();
+    if (!text) { showPopup('പിശക്', 'അഭിപ്രായം രേഖപ്പെടുത്തുക'); return; }
+    complaints.push({ id: generateId(), reg, complaint: text, type: 'parent', date: new Date().toISOString() });
+    syncAll();
+    showPopup('വിജയം', 'അഭിപ്രായം അയച്ചു');
+    document.getElementById('parentFeedback').value = '';
+};
+
+// ======================== POPUP ==========================
+function showPopup(title, body) {
+    document.getElementById('popupTitle').textContent = title;
+    document.getElementById('popupBody').textContent = body;
+    document.getElementById('popupContainer').classList.remove('hidden');
+    setTimeout(() => { document.getElementById('popupContainer').classList.add('hidden'); }, 8000);
+}
+function closePopup() {
+    document.getElementById('popupContainer').classList.add('hidden');
+}
+
+// ======================== LOGIN & NAV ==========================
+document.getElementById('loginTypeSelect').addEventListener('change', renderLoginFields);
+renderLoginFields();
+
+document.getElementById('loginBtn').addEventListener('click', async function() {
+    const type = document.getElementById('loginTypeSelect').value;
+    const errorEl = document.getElementById('loginError');
+    errorEl.classList.add('hidden');
+    try {
+        if (type === 'sadhar') {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            await loginUser('sadhar', username, password);
+        } else if (type === 'teacher') {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            await loginUser('teacher', username, password);
+        } else if (type === 'management') {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            await loginUser('management', username, password);
+        } else if (type === 'parent') {
+            const reg = document.getElementById('loginReg').value.trim();
+            if (!reg) throw new Error('രജിസ്റ്റർ നമ്പർ നൽകുക');
+            await loginUser('parent', '', '', reg);
+        }
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('mainPanel').classList.remove('hidden');
+        renderPanels();
+    } catch (e) {
+        errorEl.textContent = e.message || 'ലോഗിൻ പരാജയപ്പെട്ടു';
+        errorEl.classList.remove('hidden');
+    }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function() {
+    if (confirm('ലോഗൗട്ട് ചെയ്യണോ?')) {
+        currentUser = null;
+        document.getElementById('loginSection').classList.remove('hidden');
+        document.getElementById('mainPanel').classList.add('hidden');
+    }
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const panelId = this.dataset.panel;
+        const user = currentUser;
+        if (!user) return;
+        if ((user.type === 'sadhar' && panelId !== 'sadharPanel') ||
+            (user.type === 'teacher' && panelId !== 'teacherPanel') ||
+            (user.type === 'management' && panelId !== 'managementPanel') ||
+            (user.type === 'parent' && panelId !== 'parentPanel')) {
+            showPopup('അനുവാദമില്ല', 'നിങ്ങൾക്ക് ഈ പാനൽ കാണാൻ അവകാശമില്ല');
+            return;
+        }
+        document.querySelectorAll('.panel-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById(panelId).classList.remove('hidden');
+        if (panelId === 'sadharPanel') renderSadharPanel();
+        else if (panelId === 'teacherPanel') renderTeacherPanel();
+        else if (panelId === 'managementPanel') renderManagementPanel();
+        else if (panelId === 'parentPanel') renderParentPanel();
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.className = `tab-btn px-5 py-2 text-sm font-medium transition ${b.dataset.panel === panelId ? 'tab-active' : 'tab-inactive'}`;
+        });
+    });
+});
+
+// ======================== INIT ==========================
+async function init() {
+    await loadFromFirebase();
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('mainPanel').classList.add('hidden');
+}
+init();
+console.log('മമ്പഉൽ ഉലൂം മദ്റസ ആപ്പ് ലോഡായി ✅');
+</script>
 </body>
 </html>
